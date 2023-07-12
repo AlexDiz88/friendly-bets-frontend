@@ -2,17 +2,13 @@ import Credentials from './types/Credentials';
 import RegisterData from './types/RegisterData';
 import User from './types/User';
 
-export async function user(): Promise<
-  {
-    id: number;
-    email: string;
-    role: string;
-  }
-> {
+export async function getProfile(): Promise<{
+  id: number;
+  email: string;
+  role: string;
+}> {
   const res = await fetch('/api/users/my/profile');
   if (res.status >= 400) {
-    // const { message } = await res.json();
-    // throw new Error(message);
     const answer = await res.json();
     throw new Error(answer.message);
   }
@@ -28,7 +24,6 @@ export async function login(credentials: Credentials): Promise<User> {
     },
   });
 
-  // 332 реджектим промис если вернулся ошибочный статус
   if (res.status >= 400) {
     const { error } = await res.json();
     throw error;
@@ -36,7 +31,9 @@ export async function login(credentials: Credentials): Promise<User> {
   return res.json();
 }
 
-export async function register(data: RegisterData): Promise<{ id: number, email: string }> {
+export async function register(
+  data: RegisterData
+): Promise<{ id: number; email: string }> {
   const res = await fetch('/api/register', {
     method: 'POST',
     body: JSON.stringify(data),

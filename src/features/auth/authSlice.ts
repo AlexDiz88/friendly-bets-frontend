@@ -11,7 +11,9 @@ const initialState: AuthState = {
   registerFormError: undefined,
 };
 
-export const getUser = createAsyncThunk('api/users/my/profile', () => api.user());
+export const getProfile = createAsyncThunk('api/users/my/profile', () =>
+  api.getProfile()
+);
 
 export const login = createAsyncThunk('login', async (credentials: Credentials) => {
   if (!credentials.email.trim() || !credentials.password.trim()) {
@@ -20,16 +22,19 @@ export const login = createAsyncThunk('login', async (credentials: Credentials) 
   return api.login(credentials);
 });
 
-export const register = createAsyncThunk('api/register', async (data: RegisterData) => {
-  if (data.password !== data.passwordRepeat) {
-    throw new Error('Пароли не совпадают');
-  }
-  if (!data.email.trim() || !data.password.trim()) {
-    throw new Error('Не все поля заполнены');
-  }
+export const register = createAsyncThunk(
+  'api/register',
+  async (data: RegisterData) => {
+    if (data.password !== data.passwordRepeat) {
+      throw new Error('Пароли не совпадают');
+    }
+    if (!data.email.trim() || !data.password.trim()) {
+      throw new Error('Не все поля заполнены');
+    }
 
-  return api.register(data);
-});
+    return api.register(data);
+  }
+);
 
 export const logout = createAsyncThunk('logout', api.logout);
 
@@ -37,7 +42,6 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // 332 редьюсер для очистки ошибки
     resetLoginFormError: (state) => {
       state.loginFormError = undefined;
     },
@@ -47,11 +51,11 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getUser.fulfilled, (state, action) => {
+      .addCase(getProfile.fulfilled, (state, action) => {
         state.authChecked = true;
         state.user = action.payload;
       })
-      .addCase(getUser.rejected, (state) => {
+      .addCase(getProfile.rejected, (state) => {
         state.authChecked = true;
       })
       .addCase(login.fulfilled, (state) => {
