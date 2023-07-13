@@ -8,13 +8,20 @@ import {
   IconButton,
   InputAdornment,
   Link,
+  Snackbar,
   TextField,
   Typography,
 } from '@mui/material';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 import { register, resetRegisterFormError, login } from './authSlice';
 import { selectRegisterFormError } from './selectors';
 import { useAppDispatch } from '../../store';
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+));
 
 function Register(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -24,6 +31,21 @@ function Register(): JSX.Element {
   const [password, setPassword] = React.useState<string>('');
   const [passwordRepeat, setPasswordRepeat] = React.useState<string>('');
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = React.useState(false);
+  const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false);
+  const snackbarDuration = 1000;
+  const snackbarErrorDuration = 3000;
+
+  const handleSnackbarClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ): void => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSuccessSnackbar(false);
+    setOpenErrorSnackbar(false);
+  };
 
   const handleTogglePasswordVisibility = (): void => {
     setShowPassword((prevShowPassword: boolean) => !prevShowPassword);
@@ -42,8 +64,14 @@ function Register(): JSX.Element {
       );
 
       if (register.fulfilled.match(dispatchResult)) {
+        setOpenSuccessSnackbar(true);
         await dispatch(login({ email, password }));
-        navigate('/');
+        setTimeout(() => {
+          navigate('/my/profile');
+        }, snackbarDuration);
+      }
+      if (register.rejected.match(dispatchResult)) {
+        setOpenErrorSnackbar(true);
       }
     },
     [dispatch, email, navigate, password, passwordRepeat]
@@ -169,11 +197,45 @@ function Register(): JSX.Element {
               Регистрация
             </Typography>
           </Button>
-          {error && <Box sx={{ display: 'block' }}>{error}</Box>}
         </Box>
         <Box sx={{ fontSize: 16, mt: 3 }}>
           <Link href="#/auth/login">Уже есть аккаунт? Войти</Link>
         </Box>
+
+        <Snackbar
+          sx={{
+            justifyContent: 'center',
+            mb: 3,
+          }}
+          open={openSuccessSnackbar}
+          autoHideDuration={snackbarDuration}
+          onClose={handleSnackbarClose}
+        >
+          <Alert
+            onClose={handleSnackbarClose}
+            severity="success"
+            sx={{ width: '15rem' }}
+          >
+            Успешная регистрация!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          sx={{
+            justifyContent: 'center',
+            mb: 3,
+          }}
+          open={openErrorSnackbar}
+          autoHideDuration={snackbarErrorDuration}
+          onClose={handleSnackbarClose}
+        >
+          <Alert
+            onClose={handleSnackbarClose}
+            severity="error"
+            sx={{ width: '15rem' }}
+          >
+            {error && <Box>{error}</Box>}
+          </Alert>
+        </Snackbar>
       </FormControl>
     </Box>
   );

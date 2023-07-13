@@ -19,7 +19,7 @@ export default function MenuPages(): JSX.Element {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   const handleProfile = (): void => {
-    // логика для обработки события клика на "Календарь игр" и прочие меню
+    // логика для обработки события клика на "Календарь игр" + добавить прочие меню
   };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>): void => {
@@ -80,7 +80,7 @@ export default function MenuPages(): JSX.Element {
           variant="h5"
           noWrap
           component="a"
-          href=""
+          href="#/homepage"
           sx={{
             my: 2,
             mx: 1,
@@ -99,7 +99,7 @@ export default function MenuPages(): JSX.Element {
           variant="h5"
           noWrap
           component="a"
-          href=""
+          href="#/bets"
           sx={{
             my: 2,
             mx: 1,

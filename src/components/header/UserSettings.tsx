@@ -10,12 +10,21 @@ import {
   MenuItem,
   Menu,
 } from '@mui/material';
-import { useAppDispatch } from '../store';
-import { selectUser } from '../features/auth/selectors';
-import { getProfile, logout } from '../features/auth/authSlice';
+import { useAppDispatch } from '../../store';
+import { selectUser } from '../../features/auth/selectors';
+import { getProfile, logout } from '../../features/auth/authSlice';
 
+const adminSettings = [
+  'Внести ставку',
+  'Удалить ставку',
+  'Мой профиль',
+  'Моя статистика',
+  'Выйти',
+];
+const moderSettings = ['Внести ставку', 'Мой профиль', 'Моя статистика', 'Выйти'];
 const authSettings = ['Мой профиль', 'Моя статистика', 'Выйти'];
-const settings = ['Войти', 'Зарегистрироваться'];
+const notAuthSettings = ['Войти', 'Зарегистрироваться'];
+let settings: string[] = [];
 
 export default function UserSettings(): JSX.Element {
   const user = useSelector(selectUser);
@@ -23,12 +32,30 @@ export default function UserSettings(): JSX.Element {
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-  const handleProfile = (): void => {
-    // логика для обработки события клика на "Мой профиль"
+  if (user === undefined) {
+    settings = notAuthSettings;
+  } else if (user.role === 'USER') {
+    settings = authSettings;
+  } else if (user.role === 'MODERATOR') {
+    settings = moderSettings;
+  } else if (user.role === 'ADMIN') {
+    settings = adminSettings;
+  }
+
+  const handleMyProfile = (): void => {
+    navigate('/my/profile');
   };
 
-  const handleStatistics = (): void => {
-    // логика для обработки события клика на "Моя статистика"
+  const handleMyStatistic = (): void => {
+    navigate('/my/stats');
+  };
+
+  const handleBetInput = (): void => {
+    navigate('/bet-input');
+  };
+
+  const handleBetDelete = (): void => {
+    // логика для обработки события клика на "Удалить ставку"
   };
 
   const handleLogout = React.useCallback(async () => {
@@ -86,20 +113,24 @@ export default function UserSettings(): JSX.Element {
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
       >
-        {(user !== undefined ? authSettings : settings).map((setting: string) => (
+        {settings.map((setting: string) => (
           <MenuItem
             key={setting}
             onClick={() => {
               if (setting === 'Мой профиль') {
-                handleProfile();
+                handleMyProfile();
               } else if (setting === 'Моя статистика') {
-                handleStatistics();
+                handleMyStatistic();
               } else if (setting === 'Выйти') {
                 handleLogout();
               } else if (setting === 'Войти') {
                 handleLogin();
               } else if (setting === 'Зарегистрироваться') {
                 handleRegister();
+              } else if (setting === 'Внести ставку') {
+                handleBetInput();
+              } else if (setting === 'Удалить ставку') {
+                handleBetDelete();
               }
               handleCloseUserMenu();
             }}

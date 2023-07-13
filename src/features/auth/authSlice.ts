@@ -11,7 +11,7 @@ const initialState: AuthState = {
   registerFormError: undefined,
 };
 
-export const getProfile = createAsyncThunk('api/users/my/profile', () =>
+export const getProfile = createAsyncThunk('api/users/my/profile', async () =>
   api.getProfile()
 );
 
@@ -31,7 +31,6 @@ export const register = createAsyncThunk(
     if (!data.email.trim() || !data.password.trim()) {
       throw new Error('Не все поля заполнены');
     }
-
     return api.register(data);
   }
 );
@@ -58,10 +57,10 @@ const authSlice = createSlice({
       .addCase(getProfile.rejected, (state) => {
         state.authChecked = true;
       })
+
       .addCase(login.fulfilled, (state) => {
         state.loginFormError = undefined;
       })
-      // 332 так изменяется стэйт если вернулась ошибка
       .addCase(login.rejected, (state, action) => {
         state.loginFormError = action.error.message;
       })
