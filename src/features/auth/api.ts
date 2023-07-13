@@ -2,11 +2,7 @@ import Credentials from './types/Credentials';
 import RegisterData from './types/RegisterData';
 import User from './types/User';
 
-export async function getProfile(): Promise<{
-  id: number;
-  email: string;
-  role: string;
-}> {
+export async function getProfile(): Promise<User> {
   const res = await fetch('/api/users/my/profile');
   if (res.status >= 400) {
     const answer = await res.json();
@@ -31,9 +27,7 @@ export async function login(credentials: Credentials): Promise<User> {
   return res.json();
 }
 
-export async function register(
-  data: RegisterData
-): Promise<{ id: number; email: string }> {
+export async function register(data: RegisterData): Promise<User> {
   const res = await fetch('/api/register', {
     method: 'POST',
     body: JSON.stringify(data),

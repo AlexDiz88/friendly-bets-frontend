@@ -52,8 +52,8 @@ function Register(): JSX.Element {
   };
 
   const handleSubmit = React.useCallback(
-    async (event: React.FormEvent) => {
-      event.preventDefault();
+    async (event?: React.FormEvent) => {
+      event?.preventDefault();
 
       const dispatchResult = await dispatch(
         register({
@@ -101,6 +101,12 @@ function Register(): JSX.Element {
     [dispatch]
   );
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   return (
     <Box sx={{ margin: '0 auto', textAlign: 'center', width: '14rem' }}>
       <FormControl>
@@ -124,6 +130,7 @@ function Register(): JSX.Element {
             variant="outlined"
             value={email}
             onChange={handleNameChange}
+            onKeyDown={handleKeyDown}
           />
         </Box>
         <Box sx={{ my: 2 }}>
@@ -136,6 +143,7 @@ function Register(): JSX.Element {
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={handlePasswordChange}
+            onKeyDown={handleKeyDown}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -162,6 +170,7 @@ function Register(): JSX.Element {
             type={showPassword ? 'text' : 'password'}
             value={passwordRepeat}
             onChange={handlePasswordRepeatChange}
+            onKeyDown={handleKeyDown}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

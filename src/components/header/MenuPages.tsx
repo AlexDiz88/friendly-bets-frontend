@@ -80,7 +80,7 @@ export default function MenuPages(): JSX.Element {
           variant="h5"
           noWrap
           component="a"
-          href="#/homepage"
+          href="#"
           sx={{
             my: 2,
             mx: 1,

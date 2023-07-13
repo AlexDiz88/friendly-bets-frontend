@@ -14,13 +14,7 @@ import { useAppDispatch } from '../../store';
 import { selectUser } from '../../features/auth/selectors';
 import { getProfile, logout } from '../../features/auth/authSlice';
 
-const adminSettings = [
-  'Внести ставку',
-  'Удалить ставку',
-  'Мой профиль',
-  'Моя статистика',
-  'Выйти',
-];
+const adminSettings = ['Админ кабинет', 'Внести ставку', 'Удалить ставку', 'Выйти'];
 const moderSettings = ['Внести ставку', 'Мой профиль', 'Моя статистика', 'Выйти'];
 const authSettings = ['Мой профиль', 'Моя статистика', 'Выйти'];
 const notAuthSettings = ['Войти', 'Зарегистрироваться'];
@@ -52,6 +46,10 @@ export default function UserSettings(): JSX.Element {
 
   const handleBetInput = (): void => {
     navigate('/bet-input');
+  };
+
+  const handleAdminCabinet = (): void => {
+    navigate('/admin/cabinet');
   };
 
   const handleBetDelete = (): void => {
@@ -131,6 +129,8 @@ export default function UserSettings(): JSX.Element {
                 handleBetInput();
               } else if (setting === 'Удалить ставку') {
                 handleBetDelete();
+              } else if (setting === 'Админ кабинет') {
+                handleAdminCabinet();
               }
               handleCloseUserMenu();
             }}

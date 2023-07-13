@@ -51,8 +51,8 @@ function Login(): JSX.Element {
   };
 
   const handleSubmit = React.useCallback(
-    async (event: React.FormEvent) => {
-      event.preventDefault();
+    async (event?: React.FormEvent) => {
+      event?.preventDefault();
       const dispatchResult = await dispatch(
         login({
           email,
@@ -64,7 +64,7 @@ function Login(): JSX.Element {
         dispatch(getProfile());
         setOpenSuccessSnackbar(true);
         setTimeout(() => {
-          navigate('/homepage');
+          navigate('/');
         }, snackbarDuration);
       }
       if (login.rejected.match(dispatchResult)) {
@@ -74,7 +74,7 @@ function Login(): JSX.Element {
     [dispatch, email, navigate, password]
   );
 
-  const handleNameChange = React.useCallback(
+  const handleEmailChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setEmail(event.target.value);
       // 332 очищаем ошибку
@@ -90,6 +90,12 @@ function Login(): JSX.Element {
     },
     [dispatch]
   );
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
 
   return (
     <Box sx={{ margin: '0 auto', textAlign: 'center', width: '14rem' }}>
@@ -113,7 +119,8 @@ function Login(): JSX.Element {
             label="E-mail"
             variant="outlined"
             value={email}
-            onChange={handleNameChange}
+            onChange={handleEmailChange}
+            onKeyDown={handleKeyDown}
           />
         </Box>
         <Box sx={{ my: 2 }}>
@@ -126,6 +133,7 @@ function Login(): JSX.Element {
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={handlePasswordChange}
+            onKeyDown={handleKeyDown}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
