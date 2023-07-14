@@ -7,7 +7,7 @@ import MenuPages from './MenuPages';
 
 export default function Header(): JSX.Element {
   return (
-    <AppBar position="static">
+    <AppBar position="fixed">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <MenuPages />

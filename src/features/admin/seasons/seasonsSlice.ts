@@ -5,6 +5,7 @@ import * as api from './api';
 const initialState: SeasonsState = {
   seasons: [],
   statuses: [],
+  activeSeason: null,
   error: undefined,
 };
 
@@ -46,6 +47,11 @@ export const changeSeasonStatus = createAsyncThunk(
   }
 );
 
+export const getActiveSeason = createAsyncThunk(
+  'seasons/getActiveSeason',
+  async () => api.getActiveSeason()
+);
+
 const seasonsSlice = createSlice({
   name: 'seasons',
   initialState,
@@ -80,6 +86,13 @@ const seasonsSlice = createSlice({
         );
       })
       .addCase(changeSeasonStatus.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(getActiveSeason.fulfilled, (state, action) => {
+        state.activeSeason = action.payload;
+      })
+      .addCase(getActiveSeason.rejected, (state, action) => {
+        state.activeSeason = null; // TODO переделать
         state.error = action.error.message;
       });
   },

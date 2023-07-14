@@ -53,3 +53,13 @@ export async function changeSeasonStatus(
   }
   return result.json();
 }
+
+export async function getActiveSeason(): Promise<Season> {
+  const result = await fetch('/api/seasons/active');
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    console.log(message);
+    throw new Error(message);
+  }
+  return result.json();
+}
