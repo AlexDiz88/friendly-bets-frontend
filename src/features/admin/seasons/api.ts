@@ -20,11 +20,19 @@ export async function addSeason(
 
 export async function getSeasons(): Promise<{ seasons: Season[] }> {
   const result = await fetch('/api/seasons');
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
   return result.json();
 }
 
 export async function getSeasonStatusList(): Promise<string[]> {
   const result = await fetch('/api/seasons/statuses');
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
   return result.json();
 }
 
@@ -39,5 +47,9 @@ export async function changeSeasonStatus(
       'Content-Type': 'application/json',
     },
   });
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
   return result.json();
 }

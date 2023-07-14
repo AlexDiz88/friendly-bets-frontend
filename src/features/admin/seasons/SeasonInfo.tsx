@@ -25,6 +25,7 @@ import Season from './types/Season';
 import { selectStatuses } from './selectors';
 import { useAppDispatch } from '../../../store';
 import { changeSeasonStatus } from './seasonsSlice';
+import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
 
 export default function SeasonInfo({
   data: { id, title, status },
@@ -35,6 +36,11 @@ export default function SeasonInfo({
   const statuses = useSelector(selectStatuses);
   const [seasonStatus, setSeasonStatus] = useState<string>(status);
   const [showStatusOptions, setShowStatusOptions] = useState<boolean>(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState<
+    'success' | 'error' | 'warning' | 'info'
+  >('info');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleStatusChange = (event: SelectChangeEvent): void => {
     setSeasonStatus(event.target.value);
@@ -49,15 +55,41 @@ export default function SeasonInfo({
     setSeasonStatus(status);
   };
 
-  const handleSaveClick = (): void => {
-    // Обработка сохранения нового статуса
-    dispatch(changeSeasonStatus({ title, status: seasonStatus }));
-    setShowStatusOptions(false);
-    setSeasonStatus(status);
+  const handleSaveClick = React.useCallback(async () => {
+    const dispatchResult = await dispatch(
+      changeSeasonStatus({ title, status: seasonStatus })
+    );
+    if (changeSeasonStatus.fulfilled.match(dispatchResult)) {
+      setOpenSnackbar(true);
+      setSnackbarSeverity('success');
+      setSnackbarMessage('Статус сезона успешно изменен!');
+      setShowStatusOptions(false);
+      setSeasonStatus(seasonStatus);
+    }
+    if (changeSeasonStatus.rejected.match(dispatchResult)) {
+      setOpenSnackbar(true);
+      setSnackbarSeverity('error');
+      if (dispatchResult.error.message) {
+        setSnackbarMessage(dispatchResult.error.message);
+      }
+    }
+  }, [dispatch, seasonStatus, title]);
+
+  const handleCloseSnackbar = (): void => {
+    setOpenSnackbar(false);
   };
 
   return (
-    <Box sx={{ border: 1, borderRadius: 3, mb: 1, p: 1 }}>
+    <Box
+      sx={{
+        border: 1,
+        borderRadius: 2,
+        mb: 2,
+        p: 1,
+        boxShadow:
+          '0px 2px 4px rgba(0, 0, 0, 0.25), 0px 4px 8px rgba(0, 0, 0, 0.25)',
+      }}
+    >
       <ListItem
         key={id}
         secondaryAction={
@@ -70,7 +102,7 @@ export default function SeasonInfo({
             )}
             {status === 'SCHEDULED' && (
               <IconButton>
-                <PlaylistAddCircle fontSize="large" color="info" />
+                <PlaylistAddCircle fontSize="large" color="secondary" />
               </IconButton>
             )}
             {status === 'ACTIVE' && (
@@ -162,6 +194,15 @@ export default function SeasonInfo({
             </Button>
           </>
         )}
+      </Box>
+      <Box textAlign="center">
+        <NotificationSnackbar
+          open={openSnackbar}
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          message={snackbarMessage}
+          duration={3000}
+        />
       </Box>
     </Box>
   );

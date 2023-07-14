@@ -26,6 +26,7 @@ export default function Seasons(): JSX.Element {
     'success' | 'error' | 'warning' | 'info'
   >('info');
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [showAllSeasons, setShowAllSeasons] = useState(false);
 
   const handleSubmit = React.useCallback(
     async (event?: React.FormEvent) => {
@@ -60,6 +61,11 @@ export default function Seasons(): JSX.Element {
   const handleShowAllSeasons = (): void => {
     dispatch(getSeasonStatusList());
     dispatch(getSeasons());
+    setShowAllSeasons(true);
+  };
+
+  const handleHideAllSeasons = (): void => {
+    setShowAllSeasons(false);
   };
 
   const handleSeasonTitleChange = (
@@ -153,41 +159,65 @@ export default function Seasons(): JSX.Element {
       >
         Управление сезонами
       </Box>
-      <Box sx={{ my: 1 }}>
-        <Button
-          onClick={handleShowAllSeasons}
-          sx={{ height: '2.5rem', px: 3 }}
-          variant="contained"
-          color="info"
-          size="large"
-        >
-          <Typography
-            variant="button"
-            fontWeight="600"
-            fontSize="0.9rem"
-            fontFamily="Shantell Sans"
+      {!showAllSeasons && (
+        <Box sx={{ my: 1 }}>
+          <Button
+            onClick={handleShowAllSeasons}
+            sx={{ height: '2.5rem', px: 3 }}
+            variant="contained"
+            color="info"
+            size="large"
           >
-            Показать все сезоны
-          </Typography>
-        </Button>
-      </Box>
-      <Grid item xs={2} md={2}>
-        {!!seasons.length && (
-          <>
-            <Typography sx={{ mt: 1, mb: 1 }} variant="body1" component="div">
-              Список всех сезонов:
+            <Typography
+              variant="button"
+              fontWeight="600"
+              fontSize="0.9rem"
+              fontFamily="Shantell Sans"
+            >
+              Показать все сезоны
             </Typography>
-            <List>
-              {seasons
-                .slice()
-                .reverse()
-                .map((season) => (
-                  <SeasonInfo key={season.id} data={season} />
-                ))}
-            </List>
-          </>
-        )}
-      </Grid>
+          </Button>
+        </Box>
+      )}
+      {showAllSeasons && (
+        <Box sx={{ my: 1 }}>
+          <Button
+            onClick={handleHideAllSeasons}
+            sx={{ height: '2.5rem', px: 3 }}
+            variant="contained"
+            color="info"
+            size="large"
+          >
+            <Typography
+              variant="button"
+              fontWeight="600"
+              fontSize="0.9rem"
+              fontFamily="Shantell Sans"
+            >
+              Скрыть
+            </Typography>
+          </Button>
+        </Box>
+      )}
+      {showAllSeasons && (
+        <Grid item xs={2} md={2}>
+          {!!seasons.length && (
+            <>
+              <Typography sx={{ mt: 1.5, mb: 0.5 }} variant="body1" component="div">
+                Список всех сезонов:
+              </Typography>
+              <List>
+                {seasons
+                  .slice()
+                  .reverse()
+                  .map((season) => (
+                    <SeasonInfo key={season.id} data={season} />
+                  ))}
+              </List>
+            </>
+          )}
+        </Grid>
+      )}
     </Box>
   );
 }
