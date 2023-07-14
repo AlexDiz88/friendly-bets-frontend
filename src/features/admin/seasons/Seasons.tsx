@@ -5,17 +5,12 @@ import {
   TextField,
   Button,
   Typography,
-  Avatar,
   Grid,
-  IconButton,
   List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { PlayCircle, PlaylistAddCheckCircle, StopCircle } from '@mui/icons-material';
-import { addSeason, getSeasons } from './seasonsSlice';
+import { addSeason, getSeasonStatusList, getSeasons } from './seasonsSlice';
+import SeasonInfo from './SeasonInfo';
 import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
 import { selectSeasons } from './selectors';
 import { useAppDispatch } from '../../../store';
@@ -23,6 +18,7 @@ import { useAppDispatch } from '../../../store';
 export default function Seasons(): JSX.Element {
   const dispatch = useAppDispatch();
   const seasons = useSelector(selectSeasons);
+
   const [seasonTitle, setSeasonTitle] = useState<string>('');
   const [seasonBetCount, setSeasonBetCount] = useState<string>('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -47,6 +43,7 @@ export default function Seasons(): JSX.Element {
         setSnackbarMessage('Сезон успешно создан!');
         setSeasonTitle('');
         setSeasonBetCount('');
+        dispatch(getSeasonStatusList());
         dispatch(getSeasons());
       }
       if (addSeason.rejected.match(dispatchResult)) {
@@ -61,6 +58,7 @@ export default function Seasons(): JSX.Element {
   );
 
   const handleShowAllSeasons = (): void => {
+    dispatch(getSeasonStatusList());
     dispatch(getSeasons());
   };
 
@@ -173,32 +171,19 @@ export default function Seasons(): JSX.Element {
           </Typography>
         </Button>
       </Box>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={2} md={2}>
         {!!seasons.length && (
           <>
             <Typography sx={{ mt: 1, mb: 1 }} variant="body1" component="div">
-              Seasons List:
+              Список всех сезонов:
             </Typography>
             <List>
-              {seasons.map((season) => (
-                <ListItem
-                  key={season.id}
-                  secondaryAction={
-                    // eslint-disable-next-line react/jsx-wrap-multilines
-                    <IconButton edge="end" aria-label="delete">
-                      <PlayCircle />
-                      <StopCircle />
-                    </IconButton>
-                  }
-                >
-                  <ListItemAvatar>
-                    <Avatar>
-                      <PlaylistAddCheckCircle />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={season.title} />
-                </ListItem>
-              ))}
+              {seasons
+                .slice()
+                .reverse()
+                .map((season) => (
+                  <SeasonInfo key={season.id} data={season} />
+                ))}
             </List>
           </>
         )}
