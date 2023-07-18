@@ -36,11 +36,17 @@ export default function SeasonInfo({
   const statuses = useSelector(selectStatuses);
   const [seasonStatus, setSeasonStatus] = useState<string>(status);
   const [showStatusOptions, setShowStatusOptions] = useState<boolean>(false);
+  const [showLeaguesList, setShowLeaguesList] = useState<boolean>(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<
     'success' | 'error' | 'warning' | 'info'
   >('info');
   const [snackbarMessage, setSnackbarMessage] = useState('');
+
+  const handleLeaguesClick = (): void => {
+    setShowStatusOptions(!showStatusOptions);
+    setShowLeaguesList(true);
+  };
 
   const handleStatusChange = (event: SelectChangeEvent): void => {
     setSeasonStatus(event.target.value);
@@ -57,7 +63,7 @@ export default function SeasonInfo({
 
   const handleSaveClick = React.useCallback(async () => {
     const dispatchResult = await dispatch(
-      changeSeasonStatus({ title, status: seasonStatus })
+      changeSeasonStatus({ id, status: seasonStatus })
     );
     if (changeSeasonStatus.fulfilled.match(dispatchResult)) {
       setOpenSnackbar(true);
@@ -73,7 +79,7 @@ export default function SeasonInfo({
         setSnackbarMessage(dispatchResult.error.message);
       }
     }
-  }, [dispatch, seasonStatus, title]);
+  }, [dispatch, id, seasonStatus]);
 
   const handleCloseSnackbar = (): void => {
     setOpenSnackbar(false);
@@ -131,20 +137,36 @@ export default function SeasonInfo({
       <Box>
         <InputLabel id="season-status-label">Текущий статус: {status}</InputLabel>
         {!showStatusOptions && (
-          <Button
-            sx={{ height: '1.8rem', px: 3, border: 3 }}
-            variant="outlined"
-            onClick={handleStatusChangeClick}
-          >
-            <Typography
-              variant="button"
-              fontWeight="600"
-              fontSize="0.9rem"
-              fontFamily="Shantell Sans"
+          <>
+            <Button
+              sx={{ height: '1.8rem', px: 3, border: 3 }}
+              variant="outlined"
+              onClick={handleStatusChangeClick}
             >
-              Изменить статус
-            </Typography>
-          </Button>
+              <Typography
+                variant="button"
+                fontWeight="600"
+                fontSize="0.9rem"
+                fontFamily="Shantell Sans"
+              >
+                Изменить статус
+              </Typography>
+            </Button>
+            <Button
+              sx={{ height: '1.8rem', px: 6.7, mt: 1 }}
+              variant="contained"
+              onClick={handleLeaguesClick}
+            >
+              <Typography
+                variant="button"
+                fontWeight="600"
+                fontSize="0.9rem"
+                fontFamily="Shantell Sans"
+              >
+                Список лиг
+              </Typography>
+            </Button>
+          </>
         )}
         {showStatusOptions && (
           <>
@@ -190,6 +212,40 @@ export default function SeasonInfo({
                 fontFamily="Shantell Sans"
               >
                 Изменить
+              </Typography>
+            </Button>
+          </>
+        )}
+        {showLeaguesList && (
+          <>
+            <Button
+              sx={{ height: '1.8rem', px: 1, mr: 1 }}
+              variant="contained"
+              color="error"
+              onClick={handleCancelClick}
+            >
+              <Typography
+                variant="button"
+                fontWeight="600"
+                fontSize="0.9rem"
+                fontFamily="Shantell Sans"
+              >
+                Отмена
+              </Typography>
+            </Button>
+            <Button
+              onClick={handleSaveClick}
+              sx={{ height: '1.8rem', px: 1 }}
+              variant="contained"
+              color="success"
+            >
+              <Typography
+                variant="button"
+                fontWeight="600"
+                fontSize="0.9rem"
+                fontFamily="Shantell Sans"
+              >
+                Добавить
               </Typography>
             </Button>
           </>

@@ -6,6 +6,7 @@ const initialState: SeasonsState = {
   seasons: [],
   statuses: [],
   activeSeason: null,
+  scheduledSeason: null,
   error: undefined,
 };
 
@@ -39,17 +40,23 @@ export const getSeasonStatusList = createAsyncThunk(
 
 export const changeSeasonStatus = createAsyncThunk(
   'seasons/changeSeasonStatus',
-  async ({ title, status }: { title: string; status: string }) => {
-    if (!title.trim()) {
-      throw new Error('Название сезона не должно быть пустым');
-    }
-    return api.changeSeasonStatus(title, status);
-  }
+  async ({ id, status }: { id: string; status: string }) =>
+    api.changeSeasonStatus(id, status)
 );
 
 export const getActiveSeason = createAsyncThunk(
   'seasons/getActiveSeason',
   async () => api.getActiveSeason()
+);
+
+export const getScheduledSeason = createAsyncThunk(
+  'seasons/getScheduledSeason',
+  async () => api.getScheduledSeason()
+);
+
+export const registrationInSeason = createAsyncThunk(
+  'seasons/registrationInSeason',
+  async ({ seasonId }: { seasonId: string }) => api.registrationInSeason(seasonId)
 );
 
 const seasonsSlice = createSlice({
@@ -92,7 +99,20 @@ const seasonsSlice = createSlice({
         state.activeSeason = action.payload;
       })
       .addCase(getActiveSeason.rejected, (state, action) => {
-        state.activeSeason = null; // TODO переделать
+        state.error = action.error.message;
+      })
+      .addCase(getScheduledSeason.fulfilled, (state, action) => {
+        state.scheduledSeason = action.payload;
+      })
+      .addCase(getScheduledSeason.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(registrationInSeason.fulfilled, (state, action) => {
+        state.seasons = state.seasons.map((season) =>
+          season.id === action.payload.id ? action.payload : season
+        );
+      })
+      .addCase(registrationInSeason.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },

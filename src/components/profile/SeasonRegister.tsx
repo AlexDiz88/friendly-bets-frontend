@@ -14,13 +14,16 @@ import {
 } from '@mui/material';
 import { Close, DoubleArrow, SportsSoccer } from '@mui/icons-material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { getActiveSeason } from '../../features/admin/seasons/seasonsSlice';
+import {
+  getScheduledSeason,
+  registrationInSeason,
+} from '../../features/admin/seasons/seasonsSlice';
 import NotificationSnackbar from '../utils/NotificationSnackbar';
-import { selectActiveSeason } from '../../features/admin/seasons/selectors';
+import { selectScheduledSeason } from '../../features/admin/seasons/selectors';
 import { useAppDispatch } from '../../store';
 
 export default function SeasonRegister(): JSX.Element {
-  const activeSeason = useSelector(selectActiveSeason);
+  const scheduledSeason = useSelector(selectScheduledSeason);
   const dispatch = useAppDispatch();
   const [showRules, setShowRules] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -31,10 +34,27 @@ export default function SeasonRegister(): JSX.Element {
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleConfirm = React.useCallback(async () => {
-    setOpenDialog(false);
-    setSnackbarSeverity('success');
-    setSnackbarMessage('Вы были успешно зарегистрированы на турнир!');
-  }, []);
+    if (scheduledSeason?.id) {
+      const dispatchResult = await dispatch(
+        registrationInSeason({ seasonId: scheduledSeason.id })
+      );
+
+      if (registrationInSeason.fulfilled.match(dispatchResult)) {
+        setOpenSnackbar(true);
+        setSnackbarSeverity('success');
+        setSnackbarMessage('Вы были успешно зарегистрированы на турнир!');
+        setOpenDialog(false);
+      }
+      if (registrationInSeason.rejected.match(dispatchResult)) {
+        setOpenDialog(false);
+        setOpenSnackbar(true);
+        setSnackbarSeverity('error');
+        if (dispatchResult.error.message) {
+          setSnackbarMessage(dispatchResult.error.message);
+        }
+      }
+    }
+  }, [dispatch, scheduledSeason]);
 
   const handleOpenDialog = (): void => {
     setOpenDialog(true);
@@ -56,7 +76,7 @@ export default function SeasonRegister(): JSX.Element {
   };
 
   React.useEffect(() => {
-    dispatch(getActiveSeason());
+    dispatch(getScheduledSeason());
   }, [dispatch]);
 
   const handleCloseSnackbar = (): void => {
@@ -70,7 +90,7 @@ export default function SeasonRegister(): JSX.Element {
       >
         Регистрация на сезон
       </Typography>
-      {activeSeason ? (
+      {scheduledSeason && scheduledSeason.title ? (
         <>
           <Typography
             sx={{ pb: 1, mx: 2, mt: 3, fontWeight: '600', fontSize: '1.1rem' }}
@@ -78,7 +98,7 @@ export default function SeasonRegister(): JSX.Element {
             <Icon sx={{ pr: 0.5, pb: 0.5, mb: -0.5 }}>
               <SportsSoccer />
             </Icon>
-            Сезон: {activeSeason.title}
+            Сезон: {scheduledSeason.title}
           </Typography>
           <Button
             onClick={handleOpenDialog}
@@ -198,8 +218,7 @@ export default function SeasonRegister(): JSX.Element {
                   <ul>
                     Разрешенные типы ставок:
                     <li>
-                      - На победу хозяев/гостей, или ничью (в том числе в первом
-                      тайме)
+                      На победу хозяев/гостей, или ничью (в том числе в первом тайме)
                     </li>
                     <li>На точный счет матча/первого тайма</li>
                     <li>На фору (кроме Азиатских фор)</li>

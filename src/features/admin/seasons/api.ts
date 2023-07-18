@@ -37,10 +37,10 @@ export async function getSeasonStatusList(): Promise<string[]> {
 }
 
 export async function changeSeasonStatus(
-  title: string,
+  id: string,
   status: string
 ): Promise<Season> {
-  const result = await fetch(`/api/seasons/${title}`, {
+  const result = await fetch(`/api/seasons/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(status),
     headers: {
@@ -56,9 +56,33 @@ export async function changeSeasonStatus(
 
 export async function getActiveSeason(): Promise<Season> {
   const result = await fetch('/api/seasons/active');
+
   if (result.status >= 400) {
     const { message } = await result.json();
-    console.log(message);
+    throw new Error(message);
+  }
+  return result.json();
+}
+
+export async function getScheduledSeason(): Promise<Season> {
+  const result = await fetch('/api/seasons/scheduled');
+
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
+  return result.json();
+}
+
+export async function registrationInSeason(seasonId: string): Promise<Season> {
+  const result = await fetch(`/api/seasons/registration/${seasonId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (result.status >= 400) {
+    const { message } = await result.json();
     throw new Error(message);
   }
   return result.json();
