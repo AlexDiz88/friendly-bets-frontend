@@ -3,7 +3,8 @@ import Team from '../../teams/types/Team';
 export default interface League {
   id: string;
   name: string;
-  displayName: string;
+  displayNameRu: string;
+  displayNameEn: string;
   teams: Team[];
 }
 

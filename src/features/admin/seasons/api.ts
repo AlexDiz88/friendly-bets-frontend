@@ -87,3 +87,31 @@ export async function registrationInSeason(seasonId: string): Promise<Season> {
   }
   return result.json();
 }
+
+// export async function getLeaguesBySeason(seasonId: string): Promise<Season> {
+//   const result = await fetch(`/api/seasons/${seasonId}/leagues`);
+//   if (result.status >= 400) {
+//     const { message } = await result.json();
+//     throw new Error(message);
+//   }
+//   return result.json();
+// }
+
+export async function addLeagueToSeason(
+  seasonId: string,
+  displayNameRu: string,
+  displayNameEn: string
+): Promise<Season> {
+  const result = await fetch(`/api/seasons/${seasonId}/leagues`, {
+    method: 'POST',
+    body: JSON.stringify({ displayNameRu, displayNameEn }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
+  return result.json();
+}

@@ -8,4 +8,4 @@ export const selectActiveSeason = (state: RootState): Season | null =>
 export const selectScheduledSeason = (state: RootState): Season | null =>
   state.seasons.scheduledSeason;
 export const selectError = (state: RootState): string | undefined =>
-  state.tasks.error;
+  state.seasons.error;

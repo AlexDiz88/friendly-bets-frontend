@@ -59,6 +59,29 @@ export const registrationInSeason = createAsyncThunk(
   async ({ seasonId }: { seasonId: string }) => api.registrationInSeason(seasonId)
 );
 
+// export const getLeaguesBySeason = createAsyncThunk(
+//   'seasons/getLeaguesBySeason',
+//   async ({ seasonId }: { seasonId: string }) => api.getLeaguesBySeason(seasonId)
+// );
+
+export const addLeagueToSeason = createAsyncThunk(
+  'seasons/addLeagueToSeason',
+  async ({
+    seasonId,
+    displayNameRu,
+    displayNameEn,
+  }: {
+    seasonId: string;
+    displayNameRu: string;
+    displayNameEn: string;
+  }) => {
+    if (!displayNameRu.trim() || !displayNameEn.trim()) {
+      throw new Error('Название лиги не должно быть пустым');
+    }
+    return api.addLeagueToSeason(seasonId, displayNameRu, displayNameEn);
+  }
+);
+
 const seasonsSlice = createSlice({
   name: 'seasons',
   initialState,
@@ -113,6 +136,14 @@ const seasonsSlice = createSlice({
         );
       })
       .addCase(registrationInSeason.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(addLeagueToSeason.fulfilled, (state, action) => {
+        state.seasons = state.seasons.map((season) =>
+          season.id === action.payload.id ? action.payload : season
+        );
+      })
+      .addCase(addLeagueToSeason.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },

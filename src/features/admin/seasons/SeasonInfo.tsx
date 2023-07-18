@@ -26,9 +26,10 @@ import { selectStatuses } from './selectors';
 import { useAppDispatch } from '../../../store';
 import { changeSeasonStatus } from './seasonsSlice';
 import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
+import AddLeagueInSeason from './AddLeagueInSeason';
 
 export default function SeasonInfo({
-  data: { id, title, status },
+  data: { id, title, status, leagues },
 }: {
   data: Season;
 }): JSX.Element {
@@ -44,8 +45,8 @@ export default function SeasonInfo({
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleLeaguesClick = (): void => {
-    setShowStatusOptions(!showStatusOptions);
-    setShowLeaguesList(true);
+    setShowStatusOptions(false);
+    setShowLeaguesList(!showLeaguesList);
   };
 
   const handleStatusChange = (event: SelectChangeEvent): void => {
@@ -54,11 +55,17 @@ export default function SeasonInfo({
 
   const handleStatusChangeClick = (): void => {
     setShowStatusOptions(!showStatusOptions);
+    setShowLeaguesList(false);
   };
 
   const handleCancelClick = (): void => {
     setShowStatusOptions(false);
+    setShowLeaguesList(false);
     setSeasonStatus(status);
+  };
+
+  const handleLeagueListShow = (isShow: boolean): void => {
+    setShowLeaguesList(isShow);
   };
 
   const handleSaveClick = React.useCallback(async () => {
@@ -217,38 +224,11 @@ export default function SeasonInfo({
           </>
         )}
         {showLeaguesList && (
-          <>
-            <Button
-              sx={{ height: '1.8rem', px: 1, mr: 1 }}
-              variant="contained"
-              color="error"
-              onClick={handleCancelClick}
-            >
-              <Typography
-                variant="button"
-                fontWeight="600"
-                fontSize="0.9rem"
-                fontFamily="Shantell Sans"
-              >
-                Отмена
-              </Typography>
-            </Button>
-            <Button
-              onClick={handleSaveClick}
-              sx={{ height: '1.8rem', px: 1 }}
-              variant="contained"
-              color="success"
-            >
-              <Typography
-                variant="button"
-                fontWeight="600"
-                fontSize="0.9rem"
-                fontFamily="Shantell Sans"
-              >
-                Добавить
-              </Typography>
-            </Button>
-          </>
+          <AddLeagueInSeason
+            seasonId={id}
+            leagues={leagues}
+            handleLeagueListShow={handleLeagueListShow}
+          />
         )}
       </Box>
       <Box textAlign="center">
