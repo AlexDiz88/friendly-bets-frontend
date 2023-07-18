@@ -1,9 +1,9 @@
 export default interface Team {
   id: string;
   fullTitleRu: string;
-  shortTitleRu: string;
   fullTitleEn: string;
-  shortTitleEn: string;
+  country: string;
+  logo?: string;
 }
 
 export type TeamId = Team['id'];

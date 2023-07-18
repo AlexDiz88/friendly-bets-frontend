@@ -82,6 +82,19 @@ export const addLeagueToSeason = createAsyncThunk(
   }
 );
 
+export const addTeamToLeagueInSeason = createAsyncThunk(
+  'seasons/addTeamToLeagueInSeason',
+  async ({
+    seasonId,
+    leagueId,
+    teamId,
+  }: {
+    seasonId: string;
+    leagueId: string;
+    teamId: string;
+  }) => api.addTeamToLeagueInSeason(seasonId, leagueId, teamId)
+);
+
 const seasonsSlice = createSlice({
   name: 'seasons',
   initialState,
@@ -144,6 +157,14 @@ const seasonsSlice = createSlice({
         );
       })
       .addCase(addLeagueToSeason.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(addTeamToLeagueInSeason.fulfilled, (state, action) => {
+        state.seasons = state.seasons.map((season) =>
+          season.id === action.payload.id ? action.payload : season
+        );
+      })
+      .addCase(addTeamToLeagueInSeason.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },

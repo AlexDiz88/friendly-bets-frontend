@@ -4,7 +4,7 @@ import { useAppDispatch } from '../../../store';
 import { createTeam } from './teamsSlice';
 import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
 
-export default function AddNewTeam({
+export default function CreateNewTeam({
   closeAddNewTeam,
 }: {
   closeAddNewTeam: any;

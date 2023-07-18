@@ -75,7 +75,7 @@ export default function SeasonInfo({
     if (changeSeasonStatus.fulfilled.match(dispatchResult)) {
       setOpenSnackbar(true);
       setSnackbarSeverity('success');
-      setSnackbarMessage('Статус сезона успешно изменен!');
+      setSnackbarMessage('Статус сезона успешно изменен');
       setShowStatusOptions(false);
       setSeasonStatus(seasonStatus);
     }

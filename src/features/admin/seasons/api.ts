@@ -115,3 +115,24 @@ export async function addLeagueToSeason(
   }
   return result.json();
 }
+
+export async function addTeamToLeagueInSeason(
+  seasonId: string,
+  leagueId: string,
+  teamId: string
+): Promise<Season> {
+  const result = await fetch(
+    `/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
+  return result.json();
+}

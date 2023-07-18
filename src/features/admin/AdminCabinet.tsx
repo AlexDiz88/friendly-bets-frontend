@@ -18,8 +18,6 @@ export default function AdminCabinet(): JSX.Element {
       <Typography sx={{ borderBottom: 2, pb: 1, mx: 2 }}>AdminCabinet</Typography>
       <Seasons />
       <br />
-      <div>Добавить команду в лигу</div>
-      <br />
       <div>Добавить страницу добавления ставок</div>
       <br />
       <div>Закрыть доступ по ссылке в админ кабинет для других</div>

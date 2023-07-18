@@ -14,7 +14,8 @@ import SeasonInfo from './SeasonInfo';
 import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
 import { selectSeasons } from './selectors';
 import { useAppDispatch } from '../../../store';
-import AddNewTeam from '../teams/AddNewTeam';
+import CreateNewTeam from '../teams/CreateNewTeam';
+import AddTeamToLeague from '../teams/AddTeamToLeague';
 
 export default function Seasons(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -28,6 +29,7 @@ export default function Seasons(): JSX.Element {
   >('info');
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [showAllSeasons, setShowAllSeasons] = useState(false);
+  const [showAddTeamToLeague, setShowAddTeamToLeague] = useState(false);
   const [addNewTeam, setAddNewTeam] = useState(false);
 
   const handleSubmit = React.useCallback(
@@ -90,8 +92,16 @@ export default function Seasons(): JSX.Element {
     setAddNewTeam(!addNewTeam);
   };
 
+  const closeAddTeamToLeague = (isClose: boolean): void => {
+    setShowAddTeamToLeague(isClose);
+  };
+
   const closeAddNewTeam = (isClose: boolean): void => {
     setAddNewTeam(isClose);
+  };
+
+  const handleShowAddTeamToLeague = (): void => {
+    setShowAddTeamToLeague(!showAddTeamToLeague);
   };
 
   return (
@@ -263,13 +273,13 @@ export default function Seasons(): JSX.Element {
       </Box>
       {addNewTeam && (
         <Box>
-          <AddNewTeam closeAddNewTeam={closeAddNewTeam} />
+          <CreateNewTeam closeAddNewTeam={closeAddNewTeam} />
         </Box>
       )}
       {!addNewTeam && (
         <Box sx={{ my: 1 }}>
           <Button
-            onClick={handleShowAllSeasons}
+            onClick={handleShowAddTeamToLeague}
             sx={{ height: '2.5rem', px: 1, mb: 2 }}
             variant="contained"
             color="info"
@@ -284,6 +294,11 @@ export default function Seasons(): JSX.Element {
               Добавить команду в лигу
             </Typography>
           </Button>
+          {showAddTeamToLeague && (
+            <Box>
+              <AddTeamToLeague closeAddTeamToLeague={closeAddTeamToLeague} />
+            </Box>
+          )}
         </Box>
       )}
     </Box>
