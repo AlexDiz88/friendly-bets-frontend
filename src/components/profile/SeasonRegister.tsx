@@ -88,7 +88,7 @@ export default function SeasonRegister(): JSX.Element {
       <Typography
         sx={{ borderBottom: 2, pb: 1, mx: 2, fontWeight: '600', fontSize: '1.4rem' }}
       >
-        Регистрация на сезон
+        Регистрация на турнир
       </Typography>
       {scheduledSeason && scheduledSeason.title ? (
         <>
@@ -167,7 +167,7 @@ export default function SeasonRegister(): JSX.Element {
                   fontSize="0.9rem"
                   fontFamily="Shantell Sans"
                 >
-                  Правила на сезон
+                  Правила турнира
                 </Typography>
                 <DoubleArrow sx={{ ml: 1 }} color="info" />
               </Fab>
@@ -279,7 +279,7 @@ export default function SeasonRegister(): JSX.Element {
         </>
       ) : (
         <Typography sx={{ pb: 1, mx: 2, mt: 2 }}>
-          В данный момент нет сезонов доступных для регистрации
+          В данный момент нет турниров доступных для регистрации
         </Typography>
       )}
 

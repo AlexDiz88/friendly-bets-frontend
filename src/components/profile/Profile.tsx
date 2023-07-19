@@ -22,7 +22,6 @@ export default function Profile(): JSX.Element {
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleEditEmail = (): void => {
-    setNewName(newName);
     setShowEmailInput(true);
   };
 
@@ -31,10 +30,16 @@ export default function Profile(): JSX.Element {
   };
 
   const handleCancelEmail = (): void => {
+    if (user?.email) {
+      setNewEmail(user.email);
+    }
     setShowEmailInput(false);
   };
 
   const handleCancelName = (): void => {
+    if (user?.username) {
+      setNewName(user?.username);
+    }
     setShowNameInput(false);
   };
 

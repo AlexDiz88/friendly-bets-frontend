@@ -19,13 +19,13 @@ const moderSettings = [
   'Внести ставку',
   'Мой профиль',
   'Моя статистика',
-  'Регистрация на сезон',
+  'Регистрация на турнир',
   'Выйти',
 ];
 const authSettings = [
   'Мой профиль',
   'Моя статистика',
-  'Регистрация на сезон',
+  'Регистрация на турнир',
   'Выйти',
 ];
 const notAuthSettings = ['Войти', 'Зарегистрироваться'];
@@ -146,7 +146,7 @@ export default function UserSettings(): JSX.Element {
                 handleBetDelete();
               } else if (setting === 'Админ кабинет') {
                 handleAdminCabinet();
-              } else if (setting === 'Регистрация на сезон') {
+              } else if (setting === 'Регистрация на турнир') {
                 handleSeasonRegister();
               }
               handleCloseUserMenu();
