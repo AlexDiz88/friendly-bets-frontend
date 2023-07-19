@@ -15,8 +15,19 @@ import { selectUser } from '../../features/auth/selectors';
 import { getProfile, logout } from '../../features/auth/authSlice';
 
 const adminSettings = ['Админ кабинет', 'Внести ставку', 'Удалить ставку', 'Выйти'];
-const moderSettings = ['Внести ставку', 'Мой профиль', 'Моя статистика', 'Выйти'];
-const authSettings = ['Мой профиль', 'Моя статистика', 'Выйти'];
+const moderSettings = [
+  'Внести ставку',
+  'Мой профиль',
+  'Моя статистика',
+  'Регистрация на сезон',
+  'Выйти',
+];
+const authSettings = [
+  'Мой профиль',
+  'Моя статистика',
+  'Регистрация на сезон',
+  'Выйти',
+];
 const notAuthSettings = ['Войти', 'Зарегистрироваться'];
 let settings: string[] = [];
 
@@ -50,6 +61,10 @@ export default function UserSettings(): JSX.Element {
 
   const handleAdminCabinet = (): void => {
     navigate('/admin/cabinet');
+  };
+
+  const handleSeasonRegister = (): void => {
+    navigate('/season/register');
   };
 
   const handleBetDelete = (): void => {
@@ -131,6 +146,8 @@ export default function UserSettings(): JSX.Element {
                 handleBetDelete();
               } else if (setting === 'Админ кабинет') {
                 handleAdminCabinet();
+              } else if (setting === 'Регистрация на сезон') {
+                handleSeasonRegister();
               }
               handleCloseUserMenu();
             }}

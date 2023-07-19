@@ -9,6 +9,7 @@ const initialState: AuthState = {
   user: undefined,
   loginFormError: undefined,
   registerFormError: undefined,
+  error: undefined,
 };
 
 export const getProfile = createAsyncThunk('api/users/my/profile', async () =>
@@ -23,7 +24,7 @@ export const login = createAsyncThunk('login', async (credentials: Credentials) 
 });
 
 export const register = createAsyncThunk(
-  'api/register',
+  'auth/register',
   async (data: RegisterData) => {
     if (data.password !== data.passwordRepeat) {
       throw new Error('Пароли не совпадают');
@@ -36,6 +37,26 @@ export const register = createAsyncThunk(
 );
 
 export const logout = createAsyncThunk('logout', api.logout);
+
+export const editEmail = createAsyncThunk(
+  'api/users/my/profile/editEmail',
+  async ({ email }: { email: string }) => {
+    if (!email.trim()) {
+      throw new Error('Email не может быть пустым');
+    }
+    return api.editEmail(email);
+  }
+);
+
+export const editUsername = createAsyncThunk(
+  'api/users/my/profile/editUsername',
+  async ({ username }: { username: string }) => {
+    if (!username.trim()) {
+      throw new Error('Имя не может быть пустым');
+    }
+    return api.editUsername(username);
+  }
+);
 
 const authSlice = createSlice({
   name: 'auth',
@@ -76,6 +97,20 @@ const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.registerFormError = action.error.message;
+      })
+
+      .addCase(editEmail.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(editEmail.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+
+      .addCase(editUsername.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(editUsername.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });

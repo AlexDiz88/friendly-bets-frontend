@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   List,
@@ -81,7 +82,21 @@ export default function AddLeagueInSeason({
       <List sx={{ borderBottom: 1 }}>
         {leagues?.map((item) => (
           <ListItem sx={{ my: 0, px: 2, py: 0 }} key={item.id}>
-            <ListItemText primary={item.displayNameRu} />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <Avatar
+                sx={{ mr: 1, width: 30, height: 30 }}
+                alt="league_logo"
+                src={`${
+                  process.env.PUBLIC_URL
+                }/upload/logo/${item.displayNameEn.replace(/\s/g, '_')}.png`}
+              />
+              <ListItemText primary={item.displayNameRu} />
+            </div>
           </ListItem>
         ))}
       </List>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
+  Avatar,
   Box,
   Button,
   List,
@@ -56,14 +57,6 @@ export default function AddTeamToLeague({
       setSnackbarSeverity('success');
       setSnackbarMessage('Команда успешно добавлена в лигу');
       setSelectedTeam('');
-      if (selectedSeason && selectedSeason.leagues) {
-        const updatedLeague = selectedSeason.leagues.find(
-          (league) => league.name === selectedLeague
-        );
-        if (updatedLeague) {
-          setLeagueTeams(updatedLeague.teams);
-        }
-      }
     }
     if (addTeamToLeagueInSeason.rejected.match(dispatchResult)) {
       setOpenSnackbar(true);
@@ -72,7 +65,7 @@ export default function AddTeamToLeague({
         setSnackbarMessage(dispatchResult.error.message);
       }
     }
-  }, [dispatch, leagueId, seasonId, selectedLeague, selectedSeason, teamId]);
+  }, [dispatch, leagueId, seasonId, teamId]);
 
   const handleSeasonChange = (event: SelectChangeEvent): void => {
     setSelectedSeasonTitle(event.target.value);
@@ -91,6 +84,7 @@ export default function AddTeamToLeague({
     );
     if (league) {
       setLeagueId(league.id);
+      setLeagueTeams(league.teams);
     }
     dispatch(getAllTeams());
   };
@@ -153,7 +147,22 @@ export default function AddTeamToLeague({
           >
             {selectedSeason.leagues?.map((league) => (
               <MenuItem key={league.id} value={league.name}>
-                {league.name}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Avatar
+                    sx={{ mr: 1 }}
+                    alt="league_logo"
+                    src={`${
+                      process.env.PUBLIC_URL
+                    }/upload/logo/${league.displayNameEn.replace(/\s/g, '_')}.png`}
+                  />
+
+                  <Typography sx={{ fontSize: '0.85rem' }}>{league.name}</Typography>
+                </div>
               </MenuItem>
             ))}
           </Select>
@@ -161,16 +170,29 @@ export default function AddTeamToLeague({
       )}
       {selectedSeason && selectedLeague && (
         <>
-          <Typography sx={{ fontWeight: 600 }}>Список команд лиги:</Typography>
-          <List>
+          <Typography sx={{ fontWeight: 600 }}>
+            Список команд лиги: ({leagueTeams.length})
+          </Typography>
+          <List sx={{ pb: 0 }}>
             {selectedSeason.leagues &&
-              leagueTeams.map((team) => (
-                <ListItem sx={{ py: 0 }} key={team.id}>
-                  <Typography sx={{ fontSize: '0.9rem' }}>
-                    {team.fullTitleRu}
-                  </Typography>
-                </ListItem>
-              ))}
+              leagueTeams
+                .slice()
+                .sort((a, b) => a.fullTitleRu.localeCompare(b.fullTitleRu))
+                .map((team) => (
+                  <ListItem sx={{ py: 0 }} key={team.id}>
+                    <Avatar
+                      sx={{ mr: 1, width: 25, height: 25 }}
+                      alt="team_logo"
+                      src={`${
+                        process.env.PUBLIC_URL
+                      }/upload/logo/${team.fullTitleEn.replace(/\s/g, '_')}.png`}
+                    />
+                    <Typography sx={{ fontSize: '0.9rem' }}>
+                      {team.fullTitleRu}
+                    </Typography>
+                  </ListItem>
+                ))}
+
             {selectedSeason.leagues &&
               selectedSeason.leagues.find((league) => league.name === selectedLeague)
                 ?.teams.length === 0 && (
@@ -194,48 +216,62 @@ export default function AddTeamToLeague({
           <Select
             fullWidth
             size="small"
-            sx={{ my: 1 }}
+            sx={{ mt: 1, mb: 2.5 }}
             labelId="team-title-label"
             id="team-title-select"
             value={selectedTeam}
             onChange={handleTeamChange}
           >
-            {allTeams.map((team) => (
-              <MenuItem key={team.id} value={team.fullTitleRu}>
-                {team.fullTitleRu}
-              </MenuItem>
-            ))}
+            {allTeams
+              .slice()
+              .sort((a, b) => a.fullTitleRu.localeCompare(b.fullTitleRu))
+              .map((team) => (
+                <MenuItem dense key={team.id} value={team.fullTitleRu}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Avatar
+                      sx={{ mr: 1 }}
+                      alt="team_logo"
+                      src={`${
+                        process.env.PUBLIC_URL
+                      }/upload/logo/${team.fullTitleEn.replace(/\s/g, '_')}.png`}
+                    />
+                    <Typography>{team.fullTitleRu}</Typography>
+                  </div>
+                </MenuItem>
+              ))}
           </Select>
-          <Button
-            sx={{ height: '1.8rem', px: 1, mr: 1 }}
-            variant="contained"
-            color="error"
-            onClick={handleCancelClick}
-          >
-            <Typography
-              variant="button"
-              fontWeight="600"
-              fontSize="0.9rem"
-              fontFamily="Shantell Sans"
+          <Box>
+            <Button
+              sx={{ height: '1.8rem', px: 1, mr: 1 }}
+              variant="contained"
+              color="error"
+              onClick={handleCancelClick}
             >
-              Отмена
-            </Typography>
-          </Button>
-          <Button
-            onClick={handleAddTeamClick}
-            sx={{ height: '1.8rem', px: 1 }}
-            variant="contained"
-            color="success"
-          >
-            <Typography
-              variant="button"
-              fontWeight="600"
-              fontSize="0.9rem"
-              fontFamily="Shantell Sans"
+              <Typography
+                variant="button"
+                fontWeight="600"
+                fontSize="0.9rem"
+                fontFamily="Shantell Sans"
+              >
+                Отмена
+              </Typography>
+            </Button>
+            <Button
+              onClick={handleAddTeamClick}
+              sx={{ height: '1.8rem', px: 1 }}
+              variant="contained"
+              color="success"
             >
-              Добавить
-            </Typography>
-          </Button>
+              <Typography
+                variant="button"
+                fontWeight="600"
+                fontSize="0.9rem"
+                fontFamily="Shantell Sans"
+              >
+                Добавить
+              </Typography>
+            </Button>
+          </Box>
         </>
       )}
       <Box textAlign="center">

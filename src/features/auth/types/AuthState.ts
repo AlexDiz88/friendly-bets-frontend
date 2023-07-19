@@ -5,4 +5,5 @@ export default interface AuthState {
   user?: User;
   loginFormError?: string;
   registerFormError?: string;
+  error?: string;
 }

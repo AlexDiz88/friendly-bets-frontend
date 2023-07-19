@@ -10,8 +10,9 @@ import AdminCabinet from '../features/admin/AdminCabinet';
 import Profile from '../components/profile/Profile';
 import BetsList from '../features/bets/BetsList';
 import Homepage from '../components/Homepage';
-import BetInput from '../features/bets/BetInput';
+import BetInput from '../features/bets/BetInputContainer';
 import MyStats from '../components/profile/MyStats';
+import SeasonRegister from '../components/profile/SeasonRegister';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -34,6 +35,7 @@ function App(): JSX.Element {
           <Route path="/bets" element={<BetsList />} />
           <Route path="/bet-input" element={<BetInput />} />
           <Route path="/my/stats" element={<MyStats />} />
+          <Route path="/season/register" element={<SeasonRegister />} />
         </Route>
       </Routes>
     </HashRouter>
