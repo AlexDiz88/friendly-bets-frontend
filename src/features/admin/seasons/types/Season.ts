@@ -1,5 +1,4 @@
 import User from '../../../auth/types/User';
-import Bet from '../../../bets/types/Bet';
 import League from '../../leagues/types/League';
 
 export default interface Season {
@@ -7,9 +6,8 @@ export default interface Season {
   title: string;
   betCountPerMatchDay: number;
   status: string;
-  players?: User[];
-  leagues?: League[];
-  bets?: Bet[];
+  players: User[];
+  leagues: League[];
 }
 
 export type SeasonId = Season['id'];

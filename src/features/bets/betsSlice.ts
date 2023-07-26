@@ -2,16 +2,14 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import BetsState from './types/BetsState';
 import * as api from './api';
 import { BetId } from './types/Bet';
-import NewBet from './types/NewBet';
 
 const initialState: BetsState = {
   bets: [],
   error: undefined,
 };
 
-export const addBet = createAsyncThunk('bets/addBet', async (bet: NewBet) => {
-  api.addBet(bet);
-});
+// TODO переделать GET методы на getAllByLeagueInSeason,
+// TODO getAllBySeason, getAllByPlayerInSeason, getAllByPlayerByLeagueInSeason
 
 export const getUserBets = createAsyncThunk('bets/getAllBets', async () => {
   api.getAllBets();
@@ -33,10 +31,10 @@ const betsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .addCase(addBet.fulfilled, (state, action) => {
-        //   state.bets.push(action.payload);
+      .addCase(getUserBets.fulfilled, (state, action) => {
+      //   state.bets.push(action.payload);
       })
-      .addCase(addBet.rejected, (state, action) => {
+      .addCase(getUserBets.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },

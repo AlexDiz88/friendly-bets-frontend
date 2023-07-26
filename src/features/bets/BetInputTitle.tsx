@@ -27,7 +27,7 @@ export default function BetInputTitle({
   const handleAccordionChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpandedAccordion(isExpanded ? panel : false);
-      // Сворачиваем вложенные аккордеоны при клике на верхнеуровневый
+      // cворачиваем вложенные аккордеоны при клике на верхнеуровневый
       setExpandedNestedAccordion(false);
     };
 

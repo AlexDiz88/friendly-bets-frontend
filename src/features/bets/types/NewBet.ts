@@ -1,7 +1,5 @@
 export default interface NewBet {
   userId: string;
-  seasonId: string;
-  leagueId: string;
   matchDay: string;
   gameId?: string;
   gameDate?: string;

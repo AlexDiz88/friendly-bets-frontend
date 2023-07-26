@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import SeasonsState from './types/SeasonsState';
 import * as api from './api';
+import NewBet from '../../bets/types/NewBet';
 
 const initialState: SeasonsState = {
   seasons: [],
@@ -95,6 +96,25 @@ export const addTeamToLeagueInSeason = createAsyncThunk(
   }) => api.addTeamToLeagueInSeason(seasonId, leagueId, teamId)
 );
 
+export const addBetToLeagueInSeason = createAsyncThunk(
+  'bets/addBetToLeagueInSeason',
+  async ({
+    seasonId,
+    leagueId,
+    newBet,
+  }: {
+    seasonId: string;
+    leagueId: string;
+    newBet: NewBet;
+  }) => {
+    if (!newBet.betTitle) {
+      throw new Error('Отсутствует ставка');
+    }
+    // TODO доделать проверки
+    return api.addBetToLeagueInSeason(seasonId, leagueId, newBet);
+  }
+);
+
 const seasonsSlice = createSlice({
   name: 'seasons',
   initialState,
@@ -165,6 +185,14 @@ const seasonsSlice = createSlice({
         );
       })
       .addCase(addTeamToLeagueInSeason.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(addBetToLeagueInSeason.fulfilled, (state, action) => {
+        state.seasons = state.seasons.map((season) =>
+          season.id === action.payload.id ? action.payload : season
+        );
+      })
+      .addCase(addBetToLeagueInSeason.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },

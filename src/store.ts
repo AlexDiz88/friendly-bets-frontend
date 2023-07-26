@@ -4,6 +4,7 @@ import tasksSlice from './features/tasks/tasksSlice';
 import authSlice from './features/auth/authSlice';
 import seasonsSlice from './features/admin/seasons/seasonsSlice';
 import teamsSlice from './features/admin/teams/teamsSlice';
+import betsSlice from './features/bets/betsSlice';
 
 const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ const store = configureStore({
     seasons: seasonsSlice,
     teams: teamsSlice,
     tasks: tasksSlice,
+    bets: betsSlice,
   },
 });
 

@@ -17,10 +17,10 @@ import BetInputLeague from './BetInputLeague';
 import BetInputTeams from './BetInputTeams';
 import BetInputOdds from './BetInputOdds';
 import BetInputTitle from './BetInputTitle';
-import { addBet } from './betsSlice';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import { useAppDispatch } from '../../store';
+import { addBetToLeagueInSeason } from '../admin/seasons/seasonsSlice';
 
 export default function BetInputContainer(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -44,22 +44,25 @@ export default function BetInputContainer(): JSX.Element {
   const handleSaveClick = React.useCallback(async () => {
     setOpenDialog(false);
     if (season) {
-      const betOddsToNumber = Number(selectedBetOdds.replace(',', '.'));
+      const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
+      // TODO добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
       const dispatchResult = await dispatch(
-        addBet({
-          userId: selectedUserId,
+        addBetToLeagueInSeason({
           seasonId: season?.id,
           leagueId: selectedLeagueId,
-          matchDay: selectedMatchDay,
-          homeTeamId: selectedHomeTeamId,
-          awayTeamId: selectedAwayTeamId,
-          betTitle: selectedBetTitle,
-          betOdds: betOddsToNumber,
-          betSize: Number(selectedBetSize),
+          newBet: {
+            userId: selectedUserId,
+            matchDay: selectedMatchDay,
+            homeTeamId: selectedHomeTeamId,
+            awayTeamId: selectedAwayTeamId,
+            betTitle: selectedBetTitle,
+            betOdds: betOddsToNumber,
+            betSize: Number(selectedBetSize),
+          },
         })
       );
 
-      if (addBet.fulfilled.match(dispatchResult)) {
+      if (addBetToLeagueInSeason.fulfilled.match(dispatchResult)) {
         setOpenSnackbar(true);
         setSnackbarSeverity('success');
         setSnackbarMessage('Ставка успешно добавлена');
@@ -69,12 +72,14 @@ export default function BetInputContainer(): JSX.Element {
         setSelectedBetTitle('');
         setSelectedBetOdds('');
       }
-      if (addBet.rejected.match(dispatchResult)) {
+      if (addBetToLeagueInSeason.rejected.match(dispatchResult)) {
         setOpenSnackbar(true);
         setSnackbarSeverity('error');
         if (dispatchResult.error.message) {
           setSnackbarMessage(dispatchResult.error.message);
         }
+        setSelectedBetTitle('');
+        setSelectedBetOdds('');
       }
     }
   }, [
@@ -198,7 +203,8 @@ export default function BetInputContainer(): JSX.Element {
         <DialogContent>
           <DialogTitle>Добавить ставку?</DialogTitle>
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-            {selectedBetTitle}
+            <Typography>Ставка: {selectedBetTitle}</Typography>
+            <Typography>Кэф: {selectedBetOdds}</Typography>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
