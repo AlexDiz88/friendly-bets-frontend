@@ -1,21 +1,95 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Typography } from '@mui/material';
+import { useSelector } from 'react-redux';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Typography,
+} from '@mui/material';
 import { Dangerous } from '@mui/icons-material';
 import BetInputPlayer from './BetInputPlayer';
 import BetInputLeague from './BetInputLeague';
 import BetInputTeams from './BetInputTeams';
 import BetInputOdds from './BetInputOdds';
 import BetInputTitle from './BetInputTitle';
+import { addBet } from './betsSlice';
+import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
+import { selectActiveSeason } from '../admin/seasons/selectors';
+import { useAppDispatch } from '../../store';
 
 export default function BetInputContainer(): JSX.Element {
+  const dispatch = useAppDispatch();
+  const season = useSelector(selectActiveSeason);
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
   const [selectedMatchDay, setSelectedMatchDay] = useState<string>('');
   const [selectedHomeTeamId, setSelectedHomeTeamId] = useState<string>('');
   const [selectedAwayTeamId, setSelectedAwayTeamId] = useState<string>('');
+  const [resetTeams, setResetTeams] = useState(false);
   const [selectedBetTitle, setSelectedBetTitle] = useState<string>('');
   const [selectedBetOdds, setSelectedBetOdds] = useState<string>('');
   const [selectedBetSize, setSelectedBetSize] = useState<string>('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState<
+    'success' | 'error' | 'warning' | 'info'
+  >('info');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleSaveClick = React.useCallback(async () => {
+    setOpenDialog(false);
+    if (season) {
+      const betOddsToNumber = Number(selectedBetOdds.replace(',', '.'));
+      const dispatchResult = await dispatch(
+        addBet({
+          userId: selectedUserId,
+          seasonId: season?.id,
+          leagueId: selectedLeagueId,
+          matchDay: selectedMatchDay,
+          homeTeamId: selectedHomeTeamId,
+          awayTeamId: selectedAwayTeamId,
+          betTitle: selectedBetTitle,
+          betOdds: betOddsToNumber,
+          betSize: Number(selectedBetSize),
+        })
+      );
+
+      if (addBet.fulfilled.match(dispatchResult)) {
+        setOpenSnackbar(true);
+        setSnackbarSeverity('success');
+        setSnackbarMessage('Ставка успешно добавлена');
+        setResetTeams(!resetTeams);
+        setSelectedHomeTeamId('');
+        setSelectedAwayTeamId('');
+        setSelectedBetTitle('');
+        setSelectedBetOdds('');
+      }
+      if (addBet.rejected.match(dispatchResult)) {
+        setOpenSnackbar(true);
+        setSnackbarSeverity('error');
+        if (dispatchResult.error.message) {
+          setSnackbarMessage(dispatchResult.error.message);
+        }
+      }
+    }
+  }, [
+    dispatch,
+    resetTeams,
+    season,
+    selectedAwayTeamId,
+    selectedBetOdds,
+    selectedBetSize,
+    selectedBetTitle,
+    selectedHomeTeamId,
+    selectedLeagueId,
+    selectedMatchDay,
+    selectedUserId,
+  ]);
 
   const handleUserSelection = (userId: string): void => {
     setSelectedUserId(userId);
@@ -47,14 +121,23 @@ export default function BetInputContainer(): JSX.Element {
     setSelectedBetSize(betSize);
   };
 
-  // TEMP ----------------------------------------- //
-  console.log(selectedBetOdds);
-  console.log(selectedBetSize);
-  // TEMP ----------------------------------------- //
+  const handleOpenDialog = (): void => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = (): void => {
+    setOpenDialog(false);
+  };
+
+  const handleCloseSnackbar = (): void => {
+    setOpenSnackbar(false);
+  };
 
   return (
     <Box sx={{ m: 1 }}>
-      <Typography>Bet Input Container</Typography>
+      <Typography sx={{ textAlign: 'center', borderBottom: 2, pb: 1, mx: 2 }}>
+        Добавление ставок
+      </Typography>
       <BetInputPlayer onUserSelect={handleUserSelection} />
       {selectedUserId && <BetInputLeague onLeagueSelect={handleLeagueSelection} />}
       {selectedLeagueId && selectedMatchDay && (
@@ -62,6 +145,7 @@ export default function BetInputContainer(): JSX.Element {
           onHomeTeamSelect={handleHomeTeamSelection}
           onAwayTeamSelect={handleAwayTeamSelection}
           leagueId={selectedLeagueId}
+          resetTeams={resetTeams}
         />
       )}
       {selectedHomeTeamId && selectedAwayTeamId && !selectedBetTitle && (
@@ -92,6 +176,73 @@ export default function BetInputContainer(): JSX.Element {
         </Box>
       )}
       {selectedBetTitle && <BetInputOdds onOddsSelect={handleOddsSelection} />}
+      {selectedBetOdds && selectedBetSize && (
+        <Button
+          onClick={handleOpenDialog}
+          sx={{ mt: 2, height: '2.5rem', px: 6.6 }}
+          variant="contained"
+          color="secondary"
+          size="large"
+        >
+          <Typography
+            variant="button"
+            fontWeight="600"
+            fontSize="0.9rem"
+            fontFamily="Shantell Sans"
+          >
+            Отправить ставку
+          </Typography>
+        </Button>
+      )}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogContent>
+          <DialogTitle>Добавить ставку?</DialogTitle>
+          <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
+            {selectedBetTitle}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            sx={{ mr: 1 }}
+            variant="contained"
+            color="error"
+            onClick={handleCloseDialog}
+          >
+            <Typography
+              variant="button"
+              fontWeight="600"
+              fontSize="0.9rem"
+              fontFamily="Shantell Sans"
+            >
+              Отмена
+            </Typography>
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleSaveClick}
+            autoFocus
+          >
+            <Typography
+              variant="button"
+              fontWeight="600"
+              fontSize="0.9rem"
+              fontFamily="Shantell Sans"
+            >
+              Подтвердить
+            </Typography>
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Box textAlign="center">
+        <NotificationSnackbar
+          open={openSnackbar}
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          message={snackbarMessage}
+          duration={3000}
+        />
+      </Box>
     </Box>
   );
 }

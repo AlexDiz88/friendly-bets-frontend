@@ -1,19 +1,19 @@
 export default interface Bet {
   id: string;
   username: string;
-  seasonTitle: string;
-  leagueTitle: string;
+  seasonId: string;
+  leagueName: string;
   matchDay: string;
-  gameId: number;
-  gameDate: string;
-  homeTeam: string;
-  awayTeam: string;
+  gameId?: string;
+  gameDate?: string;
+  homeTeamTitle: string;
+  awayTeamTitle: string;
   betTitle: string;
   betOdds: number;
   betSize: number;
-  gameResult: string;
+  gameResult?: string;
   betStatus: string;
-  balanceChange: number;
+  balanceChange?: number;
 }
 
 export type BetId = Bet['id'];

@@ -16,10 +16,12 @@ export default function BetInputPlayer({
   onHomeTeamSelect,
   onAwayTeamSelect,
   leagueId,
+  resetTeams,
 }: {
   onHomeTeamSelect: (homeTeamId: string) => void;
   onAwayTeamSelect: (awayTeamId: string) => void;
   leagueId: string;
+  resetTeams: boolean;
 }): JSX.Element {
   const dispatch = useAppDispatch();
   const activeSeason = useSelector(selectActiveSeason);
@@ -62,7 +64,7 @@ export default function BetInputPlayer({
     onHomeTeamSelect('');
     onAwayTeamSelect('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [leagueId]);
+  }, [leagueId, resetTeams]);
 
   useEffect(() => {
     dispatch(getActiveSeason());

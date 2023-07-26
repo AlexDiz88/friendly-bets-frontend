@@ -1,19 +1,20 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import BetsState from './types/BetsState';
 import * as api from './api';
-import Bet, { BetId } from './types/Bet';
+import { BetId } from './types/Bet';
+import NewBet from './types/NewBet';
 
 const initialState: BetsState = {
   bets: [],
   error: undefined,
 };
 
-export const addBet = createAsyncThunk('bets/addBet', async (bet: Bet) => {
+export const addBet = createAsyncThunk('bets/addBet', async (bet: NewBet) => {
   api.addBet(bet);
 });
 
-export const getUserBets = createAsyncThunk('bets/getBets', async () => {
-  api.getUserBets();
+export const getUserBets = createAsyncThunk('bets/getAllBets', async () => {
+  api.getAllBets();
 });
 
 export const deleteBet = createAsyncThunk('bets/deleteBet', async (id: BetId) => {
