@@ -1,4 +1,5 @@
 import NewBet from '../../bets/types/NewBet';
+import NewEmptyBet from '../../bets/types/NewEmptyBet';
 import Season from './types/Season';
 
 export async function addSeason(
@@ -146,6 +147,25 @@ export async function addBetToLeagueInSeason(
   const result = await fetch(`/api/seasons/${seasonId}/leagues/${leagueId}/bets`, {
     method: 'POST',
     body: JSON.stringify(newBet),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
+  return result.json();
+}
+
+export async function addEmptyBetToLeagueInSeason(
+  seasonId: string,
+  leagueId: string,
+  newEmptyBet: NewEmptyBet
+): Promise<Season> {
+  const result = await fetch(`/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`, {
+    method: 'POST',
+    body: JSON.stringify(newEmptyBet),
     headers: {
       'Content-Type': 'application/json',
     },
