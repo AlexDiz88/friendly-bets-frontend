@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
@@ -7,6 +8,7 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
+  TextField,
   Typography,
 } from '@mui/material';
 import { selectActiveSeason } from '../admin/seasons/selectors';
@@ -22,6 +24,8 @@ export default function BetsCheck(): JSX.Element {
   const [betReturnOpenDialog, setBetReturnOpenDialog] = useState(false);
   const [betWinOpenDialog, setBetWinOpenDialog] = useState(false);
   const [selectedBetId, setSelectedBetId] = useState<string | undefined>(undefined);
+  const [gameResult, setGameResult] = useState<string>('');
+  const [inputValues, setInputValues] = useState<Record<string, string>>({});
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<
     'success' | 'error' | 'warning' | 'info'
@@ -33,12 +37,13 @@ export default function BetsCheck(): JSX.Element {
       handleCloseDialog();
 
       if (activeSeason && selectedBetId) {
+        console.log(gameResult);
+        console.log(betStatus);
         const dispatchResult = await dispatch(
           betResult({
             seasonId: activeSeason.id,
             betId: selectedBetId,
-            gameResult: '1',
-            betStatus,
+            newGameResult: { gameResult, betStatus },
           })
         );
 
@@ -56,7 +61,7 @@ export default function BetsCheck(): JSX.Element {
         }
       }
     },
-    [activeSeason, dispatch, selectedBetId]
+    [activeSeason, dispatch, gameResult, selectedBetId]
   );
 
   // хэндлеры
@@ -72,20 +77,82 @@ export default function BetsCheck(): JSX.Element {
     handleSaveBetCheck('WON');
   };
 
-  const handleBetLoseOpenDialog = (betId: string): void => {
+  const handleGameResultChange = (betId: string, value: string): void => {
+    setInputValues((prevGameResult) => ({
+      ...prevGameResult,
+      [betId]: value,
+    }));
+  };
+
+  const handleBetLoseOpenDialog = (betId: string, result: string): void => {
+    const res = resultTransform(result);
+    setGameResult(res);
     setSelectedBetId(betId);
     setBetLoseOpenDialog(true);
   };
 
-  const handleBetReturnOpenDialog = (betId: string): void => {
+  const handleBetReturnOpenDialog = (betId: string, result: string): void => {
+    const res = resultTransform(result);
+    setGameResult(res);
     setSelectedBetId(betId);
     setBetReturnOpenDialog(true);
   };
 
-  const handleBetWinOpenDialog = (betId: string): void => {
+  const handleBetWinOpenDialog = (betId: string, result: string): void => {
+    const res = resultTransform(result);
+    setGameResult(res);
     setSelectedBetId(betId);
     setBetWinOpenDialog(true);
   };
+
+  // проверка счёта
+  function isValidScore(matchScore: string): boolean {
+    const scoreRegex = /^(\d+):(\d+) \((\d+):(\d+)\)$/;
+    console.log(matchScore);
+
+    if (!scoreRegex.test(matchScore)) {
+      return false;
+    }
+    const matchArray = scoreRegex.exec(matchScore);
+    if (!matchArray) {
+      return false;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [p, fullTimeHome, fullTimeAway, halfTimeHome, halfTimeAway] = matchArray;
+    const fullTimeHomeGoals = parseInt(fullTimeHome, 10);
+    const fullTimeAwayGoals = parseInt(fullTimeAway, 10);
+    const halfTimeHomeGoals = parseInt(halfTimeHome, 10);
+    const halfTimeAwayGoals = parseInt(halfTimeAway, 10);
+    if (
+      fullTimeHomeGoals < halfTimeHomeGoals ||
+      fullTimeAwayGoals < halfTimeAwayGoals
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function resultTransform(inputString: string): string {
+    if (!inputString) {
+      return '';
+    }
+    const transformedString = inputString
+      .trim()
+      .replace(/[$!"№%?(){}\]§&=]/g, '')
+      .replace(/[.*;_/-]/g, ':')
+      .replace(/:+/g, ':')
+      .replace(/[,]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .replace(/([^\s]+)\s(.+)/, '$1 ($2)');
+
+    if (!isValidScore(transformedString)) {
+      return 'Некорректный счет матча!';
+    }
+
+    return transformedString;
+  }
+  // конец проверки счета
 
   const handleCloseDialog = (): void => {
     setBetWinOpenDialog(false);
@@ -132,50 +199,73 @@ export default function BetsCheck(): JSX.Element {
                         justifyContent: 'center',
                       }}
                     >
-                      <Button
-                        sx={{ mr: 1 }}
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleBetLoseOpenDialog(bet.id)}
-                      >
-                        <Typography
-                          variant="button"
-                          fontWeight="600"
-                          fontSize="0.8rem"
-                          fontFamily="Shantell Sans"
-                        >
-                          Не зашла
-                        </Typography>
-                      </Button>
-                      <Button
-                        sx={{ mr: 1, bgcolor: 'yellow', color: 'black' }}
-                        variant="contained"
-                        onClick={() => handleBetReturnOpenDialog(bet.id)}
-                      >
-                        <Typography
-                          variant="button"
-                          fontWeight="600"
-                          fontSize="0.8rem"
-                          fontFamily="Shantell Sans"
-                        >
-                          Вернулась
-                        </Typography>
-                      </Button>
-                      <Button
-                        sx={{ mr: 1 }}
-                        variant="contained"
-                        color="success"
-                        onClick={() => handleBetWinOpenDialog(bet.id)}
-                      >
-                        <Typography
-                          variant="button"
-                          fontWeight="600"
-                          fontSize="0.8rem"
-                          fontFamily="Shantell Sans"
-                        >
-                          Зашла
-                        </Typography>
-                      </Button>
+                      <Box>
+                        <Box sx={{ mb: 0.5, px: 0.5 }}>
+                          <TextField
+                            fullWidth
+                            required
+                            id={`inputValues-${bet.id}`}
+                            label="Счёт матча"
+                            variant="outlined"
+                            value={inputValues[bet.id] || ''}
+                            onChange={(event) =>
+                              handleGameResultChange(bet.id, event.target.value)
+                            }
+                          />
+                        </Box>
+                        <Box>
+                          <Button
+                            sx={{ mr: 1 }}
+                            variant="contained"
+                            color="error"
+                            onClick={() =>
+                              handleBetLoseOpenDialog(bet.id, inputValues[bet.id])
+                            }
+                          >
+                            <Typography
+                              variant="button"
+                              fontWeight="600"
+                              fontSize="0.8rem"
+                              fontFamily="Shantell Sans"
+                            >
+                              Не зашла
+                            </Typography>
+                          </Button>
+                          <Button
+                            sx={{ mr: 1, bgcolor: 'yellow', color: 'black' }}
+                            variant="contained"
+                            onClick={() =>
+                              handleBetReturnOpenDialog(bet.id, inputValues[bet.id])
+                            }
+                          >
+                            <Typography
+                              variant="button"
+                              fontWeight="600"
+                              fontSize="0.8rem"
+                              fontFamily="Shantell Sans"
+                            >
+                              Вернулась
+                            </Typography>
+                          </Button>
+                          <Button
+                            sx={{ mr: 1 }}
+                            variant="contained"
+                            color="success"
+                            onClick={() =>
+                              handleBetWinOpenDialog(bet.id, inputValues[bet.id])
+                            }
+                          >
+                            <Typography
+                              variant="button"
+                              fontWeight="600"
+                              fontSize="0.8rem"
+                              fontFamily="Shantell Sans"
+                            >
+                              Зашла
+                            </Typography>
+                          </Button>
+                        </Box>
+                      </Box>
                     </Box>
                   </Box>
                 ))}
@@ -188,6 +278,8 @@ export default function BetsCheck(): JSX.Element {
         <DialogContent>
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
             Подтвердить
+            <br />
+            Итовый счёт: {gameResult || 'НЕ УКАЗАН!'}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -228,6 +320,8 @@ export default function BetsCheck(): JSX.Element {
         <DialogContent>
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
             Подтвердить
+            <br />
+            Итовый счёт: {gameResult || 'НЕ УКАЗАН!'}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -269,6 +363,8 @@ export default function BetsCheck(): JSX.Element {
         <DialogContent>
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
             Подтвердить
+            <br />
+            Итовый счёт: {gameResult || 'НЕ УКАЗАН!'}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

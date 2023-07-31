@@ -3,6 +3,7 @@ import SeasonsState from './types/SeasonsState';
 import * as api from './api';
 import NewBet from '../../bets/types/NewBet';
 import NewEmptyBet from '../../bets/types/NewEmptyBet';
+import NewGameResult from '../../bets/types/NewGameResult';
 
 const initialState: SeasonsState = {
   seasons: [],
@@ -145,27 +146,25 @@ export const betResult = createAsyncThunk(
   async ({
     seasonId,
     betId,
-    gameResult,
-    betStatus,
+    newGameResult,
   }: {
     seasonId: string;
     betId: string;
-    gameResult: string;
-    betStatus: string;
+    newGameResult: NewGameResult;
   }) => {
     if (!seasonId) {
       throw new Error('Не выбран сезон');
     }
-    if (!gameResult) {
+    if (!newGameResult.gameResult) {
       throw new Error('Отсутствует результат матча');
     }
     if (!betId) {
       throw new Error('Не выбрана ставка');
     }
-    if (!betStatus) {
+    if (!newGameResult.betStatus) {
       throw new Error('Отсутствует статус ставки');
     }
-    return api.betResult(seasonId, betId, gameResult, betStatus);
+    return api.betResult(seasonId, betId, newGameResult);
   }
 );
 

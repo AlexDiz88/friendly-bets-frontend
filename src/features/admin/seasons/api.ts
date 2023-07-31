@@ -1,5 +1,6 @@
 import NewBet from '../../bets/types/NewBet';
 import NewEmptyBet from '../../bets/types/NewEmptyBet';
+import NewGameResult from '../../bets/types/NewGameResult';
 import Season from './types/Season';
 
 export async function addSeason(
@@ -183,12 +184,11 @@ export async function addEmptyBetToLeagueInSeason(
 export async function betResult(
   seasonId: string,
   betId: string,
-  gameResult: string,
-  betStatus: string
+  newGameResult: NewGameResult
 ): Promise<Season> {
   const result = await fetch(`/api/seasons/${seasonId}/bets/${betId}`, {
     method: 'POST',
-    body: JSON.stringify({ gameResult, betStatus }),
+    body: JSON.stringify(newGameResult),
     headers: {
       'Content-Type': 'application/json',
     },
