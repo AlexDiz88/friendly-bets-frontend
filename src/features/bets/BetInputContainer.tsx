@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -48,6 +49,7 @@ export default function BetInputContainer(): JSX.Element {
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialogEmptyBet, setOpenDialogEmptyBet] = useState(false);
   const [openDialogTwoEmptyBet, setOpenDialogTwoEmptyBet] = useState(false);
+  const [isNot, setIsNot] = useState(false);
 
   // добавление ставки
   const handleSaveClick = React.useCallback(async () => {
@@ -64,7 +66,7 @@ export default function BetInputContainer(): JSX.Element {
             matchDay: selectedMatchDay,
             homeTeamId: selectedHomeTeamId,
             awayTeamId: selectedAwayTeamId,
-            betTitle: selectedBetTitle,
+            betTitle: isNot ? `${selectedBetTitle} - нет` : selectedBetTitle,
             betOdds: betOddsToNumber,
             betSize: Number(selectedBetSize),
           },
@@ -93,6 +95,7 @@ export default function BetInputContainer(): JSX.Element {
     }
   }, [
     dispatch,
+    isNot,
     resetTeams,
     season,
     selectedAwayTeamId,
@@ -206,6 +209,11 @@ export default function BetInputContainer(): JSX.Element {
     setOpenDialogTwoEmptyBet(true);
   };
 
+  const handleIsNotChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const { checked } = event.target;
+    setIsNot(checked);
+  };
+
   const handleCloseDialog = (): void => {
     setOpenDialog(false);
     setOpenDialogEmptyBet(false);
@@ -245,27 +253,36 @@ export default function BetInputContainer(): JSX.Element {
             <BetInputTitle onBetTitleSelect={handleBetTitleSelection} />
           )}
           {selectedBetTitle && (
-            <Box sx={{ my: 2, width: '18.2rem', display: 'flex' }}>
-              <Typography
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  fontSize: '0.85rem',
-                  width: '17rem',
-                  height: '2.3rem',
-                  border: '1px solid rgba(0, 0, 0, 0.23)',
-                  borderRadius: '4px',
-                }}
-              >
-                {selectedBetTitle}
-              </Typography>
-              <IconButton onClick={handleBetCancel}>
-                <Dangerous
-                  color="error"
-                  sx={{ mt: -1.75, ml: -1.5, fontSize: '3rem' }}
-                />
-              </IconButton>
+            <Box sx={{ my: 2, width: '18.2rem' }}>
+              <Box sx={{ display: 'flex' }}>
+                <Typography
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    fontSize: '0.85rem',
+                    width: '17rem',
+                    height: '2.3rem',
+                    border: '1px solid rgba(0, 0, 0, 0.23)',
+                    borderRadius: '4px',
+                  }}
+                >
+                  {selectedBetTitle}
+                </Typography>
+                <IconButton onClick={handleBetCancel}>
+                  <Dangerous
+                    color="error"
+                    sx={{ mt: -1.75, ml: -1.5, fontSize: '3rem' }}
+                  />
+                </IconButton>
+              </Box>
+              <Checkbox
+                sx={{ pt: 0.5 }}
+                checked={isNot}
+                onChange={handleIsNotChange}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />
+              Нет
             </Box>
           )}
           {selectedBetTitle && <BetInputOdds onOddsSelect={handleOddsSelection} />}
@@ -340,7 +357,8 @@ export default function BetInputContainer(): JSX.Element {
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
             Добавить ставку? <br />
             Ставка: {selectedBetTitle} <br />
-            Кэф: {selectedBetOdds}
+            Кэф: {selectedBetOdds} <br />
+            Сумма: {selectedBetSize}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -140,6 +140,35 @@ export const addEmptyBetToLeagueInSeason = createAsyncThunk(
   }
 );
 
+export const betResult = createAsyncThunk(
+  'bets/betResult',
+  async ({
+    seasonId,
+    betId,
+    gameResult,
+    betStatus,
+  }: {
+    seasonId: string;
+    betId: string;
+    gameResult: string;
+    betStatus: string;
+  }) => {
+    if (!seasonId) {
+      throw new Error('Не выбран сезон');
+    }
+    if (!gameResult) {
+      throw new Error('Отсутствует результат матча');
+    }
+    if (!betId) {
+      throw new Error('Не выбрана ставка');
+    }
+    if (!betStatus) {
+      throw new Error('Отсутствует статус ставки');
+    }
+    return api.betResult(seasonId, betId, gameResult, betStatus);
+  }
+);
+
 const seasonsSlice = createSlice({
   name: 'seasons',
   initialState,
@@ -226,6 +255,14 @@ const seasonsSlice = createSlice({
         );
       })
       .addCase(addEmptyBetToLeagueInSeason.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(betResult.fulfilled, (state, action) => {
+        state.seasons = state.seasons.map((season) =>
+          season.id === action.payload.id ? action.payload : season
+        );
+      })
+      .addCase(betResult.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },

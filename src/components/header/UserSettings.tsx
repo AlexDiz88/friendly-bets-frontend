@@ -14,9 +14,16 @@ import { useAppDispatch } from '../../store';
 import { selectUser } from '../../features/auth/selectors';
 import { getProfile, logout } from '../../features/auth/authSlice';
 
-const adminSettings = ['Админ кабинет', 'Внести ставку', 'Удалить ставку', 'Выйти'];
+const adminSettings = [
+  'Внести ставку',
+  'Подвести итоги',
+  'Админ кабинет',
+  'Удалить ставку',
+  'Выйти',
+];
 const moderSettings = [
   'Внести ставку',
+  'Подвести итоги',
   'Мой профиль',
   'Моя статистика',
   'Регистрация на турнир',
@@ -67,6 +74,10 @@ export default function UserSettings(): JSX.Element {
     navigate('/season/register');
   };
 
+  const handleBetsCheck = (): void => {
+    navigate('/bets/check');
+  };
+
   const handleBetDelete = (): void => {
     // логика для обработки события клика на "Удалить ставку"
   };
@@ -105,7 +116,7 @@ export default function UserSettings(): JSX.Element {
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
           <Avatar
-            alt="Remy Sharp"
+            alt="avatar"
             src="https://kartinkin.net/pics/uploads/posts/2022-09/1662642172_2-kartinkin-net-p-risunok-na-avatarku-dlya-muzhchin-instagra-2.jpg"
           />
         </IconButton>
@@ -148,6 +159,8 @@ export default function UserSettings(): JSX.Element {
                 handleAdminCabinet();
               } else if (setting === 'Регистрация на турнир') {
                 handleSeasonRegister();
+              } else if (setting === 'Подвести итоги') {
+                handleBetsCheck();
               }
               handleCloseUserMenu();
             }}

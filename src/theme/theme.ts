@@ -1,6 +1,11 @@
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
+  palette: {
+    background: {
+      // default: '#d3d3d3', // цвет фона для всех страниц
+    },
+  },
   typography: {
     fontFamily: 'Exo 2', // общий шрифт
     button: {

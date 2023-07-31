@@ -13,6 +13,7 @@ import Homepage from '../components/Homepage';
 import BetInput from '../features/bets/BetInputContainer';
 import MyStats from '../components/profile/MyStats';
 import SeasonRegister from '../components/profile/SeasonRegister';
+import BetsCheck from '../features/bets/BetsCheck';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -36,6 +37,7 @@ function App(): JSX.Element {
           <Route path="/bet-input" element={<BetInput />} />
           <Route path="/my/stats" element={<MyStats />} />
           <Route path="/season/register" element={<SeasonRegister />} />
+          <Route path="/bets/check" element={<BetsCheck />} />
         </Route>
       </Routes>
     </HashRouter>

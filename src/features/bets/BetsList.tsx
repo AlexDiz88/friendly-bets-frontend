@@ -15,7 +15,12 @@ export default function BetsList(): JSX.Element {
   }, [dispatch]);
 
   return (
-    <Box>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
       {activeSeason && (
         <Box>
           {activeSeason.leagues.map((l) => (
@@ -24,7 +29,7 @@ export default function BetsList(): JSX.Element {
                 .filter((bet) => bet.betStatus === 'OPENED')
                 .map((bet) => (
                   <Box key={bet.id}>
-                    <BetCard bet={bet} leagueName={l.displayNameRu} />
+                    <BetCard bet={bet} league={l} />
                   </Box>
                 ))}
             </Box>

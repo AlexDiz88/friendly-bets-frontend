@@ -163,9 +163,32 @@ export async function addEmptyBetToLeagueInSeason(
   leagueId: string,
   newEmptyBet: NewEmptyBet
 ): Promise<Season> {
-  const result = await fetch(`/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`, {
+  const result = await fetch(
+    `/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`,
+    {
+      method: 'POST',
+      body: JSON.stringify(newEmptyBet),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
+  return result.json();
+}
+
+export async function betResult(
+  seasonId: string,
+  betId: string,
+  gameResult: string,
+  betStatus: string
+): Promise<Season> {
+  const result = await fetch(`/api/seasons/${seasonId}/bets/${betId}`, {
     method: 'POST',
-    body: JSON.stringify(newEmptyBet),
+    body: JSON.stringify({ gameResult, betStatus }),
     headers: {
       'Content-Type': 'application/json',
     },
