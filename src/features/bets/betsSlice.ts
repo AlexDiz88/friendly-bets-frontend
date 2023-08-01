@@ -8,12 +8,9 @@ const initialState: BetsState = {
   error: undefined,
 };
 
-// TODO переделать GET методы на getAllByLeagueInSeason,
-// TODO getAllBySeason, getAllByPlayerInSeason, getAllByPlayerByLeagueInSeason
-
-export const getUserBets = createAsyncThunk('bets/getAllBets', async () => {
-  api.getAllBets();
-});
+export const getUserBets = createAsyncThunk('bets/getAllBets', async () =>
+  api.getAllBets()
+);
 
 export const deleteBet = createAsyncThunk('bets/deleteBet', async (id: BetId) => {
   await api.deleteBet(id);

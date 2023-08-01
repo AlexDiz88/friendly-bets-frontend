@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import { useAppDispatch } from '../../store';
-import { betResult, getActiveSeason } from '../admin/seasons/seasonsSlice';
+import { addBetResult, getActiveSeason } from '../admin/seasons/seasonsSlice';
 import BetCard from './BetCard';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 
@@ -37,22 +37,21 @@ export default function BetsCheck(): JSX.Element {
       handleCloseDialog();
 
       if (activeSeason && selectedBetId) {
-        console.log(gameResult);
-        console.log(betStatus);
         const dispatchResult = await dispatch(
-          betResult({
+          addBetResult({
             seasonId: activeSeason.id,
             betId: selectedBetId,
             newGameResult: { gameResult, betStatus },
           })
         );
 
-        if (betResult.fulfilled.match(dispatchResult)) {
+        if (addBetResult.fulfilled.match(dispatchResult)) {
           setOpenSnackbar(true);
           setSnackbarSeverity('success');
           setSnackbarMessage('Ставка успешно обработана');
+          setGameResult('');
         }
-        if (betResult.rejected.match(dispatchResult)) {
+        if (addBetResult.rejected.match(dispatchResult)) {
           setOpenSnackbar(true);
           setSnackbarSeverity('error');
           if (dispatchResult.error.message) {
@@ -108,8 +107,6 @@ export default function BetsCheck(): JSX.Element {
   // проверка счёта
   function isValidScore(matchScore: string): boolean {
     const scoreRegex = /^(\d+):(\d+) \((\d+):(\d+)\)$/;
-    console.log(matchScore);
-
     if (!scoreRegex.test(matchScore)) {
       return false;
     }

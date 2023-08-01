@@ -141,8 +141,8 @@ export const addEmptyBetToLeagueInSeason = createAsyncThunk(
   }
 );
 
-export const betResult = createAsyncThunk(
-  'bets/betResult',
+export const addBetResult = createAsyncThunk(
+  'bets/addBetResult',
   async ({
     seasonId,
     betId,
@@ -164,7 +164,7 @@ export const betResult = createAsyncThunk(
     if (!newGameResult.betStatus) {
       throw new Error('Отсутствует статус ставки');
     }
-    return api.betResult(seasonId, betId, newGameResult);
+    return api.addBetResult(seasonId, betId, newGameResult);
   }
 );
 
@@ -256,12 +256,12 @@ const seasonsSlice = createSlice({
       .addCase(addEmptyBetToLeagueInSeason.rejected, (state, action) => {
         state.error = action.error.message;
       })
-      .addCase(betResult.fulfilled, (state, action) => {
+      .addCase(addBetResult.fulfilled, (state, action) => {
         state.seasons = state.seasons.map((season) =>
           season.id === action.payload.id ? action.payload : season
         );
       })
-      .addCase(betResult.rejected, (state, action) => {
+      .addCase(addBetResult.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },

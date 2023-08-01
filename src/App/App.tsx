@@ -14,13 +14,14 @@ import BetInput from '../features/bets/BetInputContainer';
 import MyStats from '../components/profile/MyStats';
 import SeasonRegister from '../components/profile/SeasonRegister';
 import BetsCheck from '../features/bets/BetsCheck';
+import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     dispatch(getProfile());
-    // console.log(authChecked);
+    dispatch(getActiveSeason());
   }, [dispatch]);
 
   return (

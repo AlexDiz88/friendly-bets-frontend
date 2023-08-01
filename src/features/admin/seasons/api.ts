@@ -181,7 +181,7 @@ export async function addEmptyBetToLeagueInSeason(
   return result.json();
 }
 
-export async function betResult(
+export async function addBetResult(
   seasonId: string,
   betId: string,
   newGameResult: NewGameResult
