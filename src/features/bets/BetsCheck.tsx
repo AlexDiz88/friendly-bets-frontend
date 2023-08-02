@@ -47,7 +47,7 @@ export default function BetsCheck(): JSX.Element {
 
         if (addBetResult.fulfilled.match(dispatchResult)) {
           setOpenSnackbar(true);
-          setSnackbarSeverity('success');
+          setSnackbarSeverity('info');
           setSnackbarMessage('Ставка успешно обработана');
           setGameResult('');
         }

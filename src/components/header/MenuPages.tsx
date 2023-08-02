@@ -85,11 +85,12 @@ export default function MenuPages(): JSX.Element {
             my: 2,
             mx: 1,
             fontFamily: 'Exo 2',
+            fontWeight: 600,
             fontSize: '1rem',
             color: 'inherit',
             textDecoration: 'none',
             '&:hover': {
-              color: '#09e260',
+              color: '#ff9800',
             },
           }}
         >
@@ -104,11 +105,12 @@ export default function MenuPages(): JSX.Element {
             my: 2,
             mx: 1,
             fontFamily: 'Exo 2',
+            fontWeight: 600,
             fontSize: '1rem',
             color: 'inherit',
             textDecoration: 'none',
             '&:hover': {
-              color: '#09e260',
+              color: '#ff9800',
             },
           }}
         >
@@ -132,11 +134,12 @@ export default function MenuPages(): JSX.Element {
                 my: 2,
                 mx: 1,
                 fontFamily: 'Exo 2',
+                fontWeight: 600,
                 fontSize: '1rem',
                 color: 'inherit',
                 textDecoration: 'none',
                 '&:hover': {
-                  color: '#09e260',
+                  color: '#ff9800',
                 },
               }}
             >

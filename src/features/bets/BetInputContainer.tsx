@@ -82,6 +82,7 @@ export default function BetInputContainer(): JSX.Element {
         setSelectedAwayTeamId('');
         setSelectedBetTitle('');
         setSelectedBetOdds('');
+        setIsNot(false);
       }
       if (addBetToLeagueInSeason.rejected.match(dispatchResult)) {
         setOpenSnackbar(true);
@@ -91,6 +92,7 @@ export default function BetInputContainer(): JSX.Element {
         }
         setSelectedBetTitle('');
         setSelectedBetOdds('');
+        setIsNot(false);
       }
     }
   }, [

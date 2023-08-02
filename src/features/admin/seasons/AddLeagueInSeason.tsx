@@ -14,6 +14,8 @@ import { addLeagueToSeason } from './seasonsSlice';
 import { useAppDispatch } from '../../../store';
 import League from '../leagues/types/League';
 
+// TODO сделать короткое название лиги для удобного выбора и короткой записи
+
 export default function AddLeagueInSeason({
   seasonId,
   leagues,

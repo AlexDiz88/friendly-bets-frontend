@@ -6,11 +6,16 @@ import { selectPlayersStats } from '../features/stats/selectors';
 import { useAppDispatch } from '../store';
 import { getPlayersStatsBySeason } from '../features/stats/statsSlice';
 import { selectActiveSeason } from '../features/admin/seasons/selectors';
+import MainTable from './MainTable';
 
 export default function Homepage(): JSX.Element {
   const activeSeason = useSelector(selectActiveSeason);
   const playersStats = useSelector(selectPlayersStats);
   const dispatch = useAppDispatch();
+
+  const sortedPlayersStats = [...playersStats].sort(
+    (a, b) => b.actualBalance - a.actualBalance
+  );
 
   useEffect(() => {
     dispatch(getActiveSeason());
@@ -23,17 +28,14 @@ export default function Homepage(): JSX.Element {
   }, [activeSeason, dispatch]);
 
   return (
-    <Box>
-      {playersStats.map((pStats) => (
-        <Box key={pStats.username}>
-          <Box>
-            {pStats.username}, {pStats.betCount}, {pStats.wonBetCount},{' '}
-            {pStats.returnedBetCount}, {pStats.lostBetCount}, {pStats.emptyBetCount},{' '}
-            {pStats.winRate}, {pStats.averageOdds}, {pStats.averageWonBetOdds},{' '}
-            {pStats.actualBalance}
-          </Box>
-        </Box>
-      ))}
+    <Box
+      sx={{
+        maxWidth: '25rem',
+        margin: '0 auto',
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
+      }}
+    >
+      <MainTable playersStats={sortedPlayersStats} />
     </Box>
   );
 }
