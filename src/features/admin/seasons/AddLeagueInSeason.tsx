@@ -28,6 +28,8 @@ export default function AddLeagueInSeason({
   const dispatch = useAppDispatch();
   const [leagueDisplayNameRu, setLeagueDisplayNameRu] = useState<string>('');
   const [leagueDisplayNameEn, setLeagueDisplayNameEn] = useState<string>('');
+  const [leagueShortNameRu, setLeagueShortNameRu] = useState<string>('');
+  const [leagueShortNameEn, setLeagueShortNameEn] = useState<string>('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<
     'success' | 'error' | 'warning' | 'info'
@@ -40,6 +42,8 @@ export default function AddLeagueInSeason({
         seasonId,
         displayNameRu: leagueDisplayNameRu,
         displayNameEn: leagueDisplayNameEn,
+        shortNameRu: leagueShortNameRu,
+        shortNameEn: leagueShortNameEn,
       })
     );
     if (addLeagueToSeason.fulfilled.match(dispatchResult)) {
@@ -48,6 +52,8 @@ export default function AddLeagueInSeason({
       setSnackbarMessage('Лига успешно добавлена в сезон');
       setLeagueDisplayNameRu('');
       setLeagueDisplayNameEn('');
+      setLeagueShortNameRu('');
+      setLeagueShortNameEn('');
     }
     if (addLeagueToSeason.rejected.match(dispatchResult)) {
       setOpenSnackbar(true);
@@ -56,7 +62,14 @@ export default function AddLeagueInSeason({
         setSnackbarMessage(dispatchResult.error.message);
       }
     }
-  }, [dispatch, leagueDisplayNameEn, leagueDisplayNameRu, seasonId]);
+  }, [
+    dispatch,
+    leagueDisplayNameEn,
+    leagueDisplayNameRu,
+    leagueShortNameEn,
+    leagueShortNameRu,
+    seasonId,
+  ]);
 
   const handleLeagueNameRuChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -70,6 +83,18 @@ export default function AddLeagueInSeason({
     setLeagueDisplayNameEn(event.target.value);
   };
 
+  const handleLeagueShortNameRuChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setLeagueShortNameRu(event.target.value);
+  };
+
+  const handleLeagueShortNameEnChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setLeagueShortNameEn(event.target.value);
+  };
+
   const handleCancelClick = (): void => {
     handleLeagueListShow(false);
   };
@@ -81,27 +106,31 @@ export default function AddLeagueInSeason({
   return (
     <>
       <Typography sx={{ mt: 1.5 }}>Список лиг сезона:</Typography>
-      <List sx={{ borderBottom: 1 }}>
-        {leagues?.map((item) => (
-          <ListItem sx={{ my: 0, px: 2, py: 0 }} key={item.id}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <Avatar
-                sx={{ mr: 1, width: 30, height: 30 }}
-                alt="league_logo"
-                src={`${
-                  process.env.PUBLIC_URL
-                }/upload/logo/${item.displayNameEn.replace(/\s/g, '_')}.png`}
-              />
-              <ListItemText primary={item.displayNameRu} />
-            </div>
-          </ListItem>
-        ))}
-      </List>
+      {leagues && leagues.length > 0 ? (
+        <List sx={{ borderBottom: 1 }}>
+          {leagues?.map((item) => (
+            <ListItem sx={{ my: 0, px: 2, py: 0 }} key={item.id}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <Avatar
+                  sx={{ mr: 1, width: 30, height: 30 }}
+                  alt="league_logo"
+                  src={`${
+                    process.env.PUBLIC_URL
+                  }/upload/logo/${item.displayNameEn.replace(/\s/g, '_')}.png`}
+                />
+                <ListItemText primary={item.displayNameRu} />
+              </div>
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <Box sx={{ fontWeight: 600, color: 'brown' }}>В данном сезоне нет лиг</Box>
+      )}
       <Box sx={{ my: 1 }}>
         <TextField
           fullWidth
@@ -113,7 +142,7 @@ export default function AddLeagueInSeason({
           onChange={handleLeagueNameRuChange}
         />
       </Box>
-      <Box sx={{ mb: 1, fontSize: '3rem' }}>
+      <Box sx={{ mb: 1 }}>
         <TextField
           fullWidth
           required
@@ -122,6 +151,28 @@ export default function AddLeagueInSeason({
           variant="outlined"
           value={leagueDisplayNameEn}
           onChange={handleLeagueNameEnChange}
+        />
+      </Box>
+      <Box sx={{ mb: 1 }}>
+        <TextField
+          fullWidth
+          required
+          id="league-short-name-ru"
+          label="Сокращенное имя лиги(RU)"
+          variant="outlined"
+          value={leagueShortNameRu}
+          onChange={handleLeagueShortNameRuChange}
+        />
+      </Box>
+      <Box sx={{ mb: 3 }}>
+        <TextField
+          fullWidth
+          required
+          id="league-short-name-en"
+          label="Сокращенное имя лиги(EN)"
+          variant="outlined"
+          value={leagueShortNameEn}
+          onChange={handleLeagueShortNameEnChange}
         />
       </Box>
 

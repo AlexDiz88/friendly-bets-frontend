@@ -8,7 +8,13 @@ import MenuPages from './MenuPages';
 export default function Header(): JSX.Element {
   return (
     <AppBar position="fixed" sx={{ bgcolor: '#1e3471' }}>
-      <Container maxWidth="xl">
+      <Container
+        maxWidth="xl"
+        sx={{
+          display: { xs: 'block', md: 'flex' },
+          justifyContent: { xs: 'block', md: 'space-evenly' },
+        }}
+      >
         <Toolbar disableGutters>
           <MenuPages />
           <UserSettings />

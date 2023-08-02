@@ -6,6 +6,8 @@ export default interface League {
   name: string;
   displayNameRu: string;
   displayNameEn: string;
+  shortNameRu: string;
+  shortNameEn: string;
   teams: Team[];
   bets: Bet[];
 }

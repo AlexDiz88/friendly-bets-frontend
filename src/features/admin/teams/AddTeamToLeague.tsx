@@ -43,6 +43,7 @@ export default function AddTeamToLeague({
     'success' | 'error' | 'warning' | 'info'
   >('info');
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarDuration, setSnackbarDuration] = useState(3000);
 
   const handleAddTeamClick = React.useCallback(async () => {
     const dispatchResult = await dispatch(
@@ -54,6 +55,7 @@ export default function AddTeamToLeague({
     );
     if (addTeamToLeagueInSeason.fulfilled.match(dispatchResult)) {
       setOpenSnackbar(true);
+      setSnackbarDuration(1000);
       setSnackbarSeverity('success');
       setSnackbarMessage('Команда успешно добавлена в лигу');
       setSelectedTeam('');
@@ -109,7 +111,7 @@ export default function AddTeamToLeague({
         setLeagueTeams(league.teams);
       }
     }
-  }, [dispatch, selectedSeason, selectedLeague]);
+  }, [dispatch, selectedSeason, selectedLeague, openSnackbar, leagueTeams]);
 
   const handleCloseSnackbar = (): void => {
     setOpenSnackbar(false);
@@ -280,7 +282,7 @@ export default function AddTeamToLeague({
           onClose={handleCloseSnackbar}
           severity={snackbarSeverity}
           message={snackbarMessage}
-          duration={3000}
+          duration={snackbarDuration}
         />
       </Box>
     </Box>

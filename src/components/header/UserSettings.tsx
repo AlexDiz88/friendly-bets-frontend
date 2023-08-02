@@ -112,7 +112,14 @@ export default function UserSettings(): JSX.Element {
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexGrow: 1 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        flexGrow: 1,
+        pl: { xs: 0, md: 3 },
+      }}
+    >
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
           <Avatar

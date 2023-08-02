@@ -103,11 +103,13 @@ export async function registrationInSeason(seasonId: string): Promise<Season> {
 export async function addLeagueToSeason(
   seasonId: string,
   displayNameRu: string,
-  displayNameEn: string
+  displayNameEn: string,
+  shortNameRu: string,
+  shortNameEn: string
 ): Promise<Season> {
   const result = await fetch(`/api/seasons/${seasonId}/leagues`, {
     method: 'POST',
-    body: JSON.stringify({ displayNameRu, displayNameEn }),
+    body: JSON.stringify({ displayNameRu, displayNameEn, shortNameRu, shortNameEn }),
     headers: {
       'Content-Type': 'application/json',
     },

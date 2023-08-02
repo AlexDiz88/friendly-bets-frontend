@@ -73,15 +73,28 @@ export const addLeagueToSeason = createAsyncThunk(
     seasonId,
     displayNameRu,
     displayNameEn,
+    shortNameRu,
+    shortNameEn,
   }: {
     seasonId: string;
     displayNameRu: string;
     displayNameEn: string;
+    shortNameRu: string;
+    shortNameEn: string;
   }) => {
     if (!displayNameRu.trim() || !displayNameEn.trim()) {
       throw new Error('Название лиги не должно быть пустым');
     }
-    return api.addLeagueToSeason(seasonId, displayNameRu, displayNameEn);
+    if (!shortNameRu.trim() || !shortNameEn.trim()) {
+      throw new Error('Сокращенное имя лиги не должно быть пустым');
+    }
+    return api.addLeagueToSeason(
+      seasonId,
+      displayNameRu,
+      displayNameEn,
+      shortNameRu,
+      shortNameEn
+    );
   }
 );
 

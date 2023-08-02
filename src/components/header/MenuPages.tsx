@@ -82,6 +82,7 @@ export default function MenuPages(): JSX.Element {
           component="a"
           href="#"
           sx={{
+            px: { xs: 0, md: 0.5 },
             my: 2,
             mx: 1,
             fontFamily: 'Exo 2',
@@ -102,6 +103,7 @@ export default function MenuPages(): JSX.Element {
           component="a"
           href="#/bets"
           sx={{
+            px: { xs: 0, md: 0.5 },
             my: 2,
             mx: 1,
             fontFamily: 'Exo 2',
@@ -116,7 +118,12 @@ export default function MenuPages(): JSX.Element {
         >
           Ставки
         </Typography>
-        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: { xs: 'none', md: 'flex' },
+          }}
+        >
           {pages.map((page) => (
             <Typography
               fontFamily="Exo 2"
@@ -131,6 +138,7 @@ export default function MenuPages(): JSX.Element {
               component="a"
               href=""
               sx={{
+                px: { xs: 0, md: 0.5 },
                 my: 2,
                 mx: 1,
                 fontFamily: 'Exo 2',
