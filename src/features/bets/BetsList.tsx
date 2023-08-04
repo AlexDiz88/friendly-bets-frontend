@@ -5,6 +5,8 @@ import { selectActiveSeason } from '../admin/seasons/selectors';
 import { useAppDispatch } from '../../store';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import BetCard from './BetCard';
+import CompleteBetCard from './CompleteBetCard';
+import EmptyBetCard from './EmptyBetCard';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -127,11 +129,19 @@ export default function BetsList(): JSX.Element {
                     {l.bets
                       .filter(
                         (bet) =>
-                          bet.betStatus !== 'OPENED' && bet.betStatus !== 'EMPTY'
+                          bet.betStatus === 'WON' ||
+                          bet.betStatus === 'RETURNED' ||
+                          bet.betStatus === 'LOST' ||
+                          bet.betStatus === 'EMPTY'
                       )
+                      .reverse()
                       .map((bet) => (
                         <Box key={bet.id}>
-                          <BetCard bet={bet} league={l} />
+                          {bet.betStatus === 'EMPTY' ? (
+                            <EmptyBetCard bet={bet} league={l} />
+                          ) : (
+                            <CompleteBetCard bet={bet} league={l} />
+                          )}
                         </Box>
                       ))}
                   </Box>

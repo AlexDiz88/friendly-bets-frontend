@@ -20,6 +20,7 @@ export default function Profile(): JSX.Element {
     'success' | 'error' | 'warning' | 'info'
   >('info');
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarDuration, setSnackbarduration] = useState(3000);
 
   const handleEditEmail = (): void => {
     setShowEmailInput(true);
@@ -54,6 +55,7 @@ export default function Profile(): JSX.Element {
     if (editEmail.rejected.match(dispatchResult)) {
       setOpenSnackbar(true);
       setSnackbarSeverity('error');
+      setSnackbarduration(5000);
       if (dispatchResult.error.message) {
         setSnackbarMessage(dispatchResult.error.message);
       }
@@ -71,6 +73,7 @@ export default function Profile(): JSX.Element {
     if (editUsername.rejected.match(dispatchResult)) {
       setOpenSnackbar(true);
       setSnackbarSeverity('error');
+      setSnackbarduration(10000);
       if (dispatchResult.error.message) {
         setSnackbarMessage(dispatchResult.error.message);
       }
@@ -213,7 +216,12 @@ export default function Profile(): JSX.Element {
         </Box>
       )}
       <Box sx={{ mt: 3 }}>
-        <Typography sx={{ pb: 1, mx: 2 }}>Текущий сезон:</Typography>
+        <Typography sx={{ pb: 1, mx: 2, borderBottom: 2 }}>
+          Текущий сезон:
+        </Typography>
+        <Typography sx={{ mt: 1, mx: 2, fontWeight: 600, color: 'brown' }}>
+          Контент в разработке
+        </Typography>
       </Box>
       <Box textAlign="center">
         <NotificationSnackbar
@@ -221,7 +229,7 @@ export default function Profile(): JSX.Element {
           onClose={handleCloseSnackbar}
           severity={snackbarSeverity}
           message={snackbarMessage}
-          duration={3000}
+          duration={snackbarDuration}
         />
       </Box>
     </Box>

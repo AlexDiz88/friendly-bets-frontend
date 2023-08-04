@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
-import { register, resetRegisterFormError, login } from './authSlice';
+import { register, login } from './authSlice';
 import { selectRegisterFormError } from './selectors';
 import { useAppDispatch } from '../../store';
 
@@ -33,8 +33,8 @@ function Register(): JSX.Element {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = React.useState(false);
   const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false);
-  const snackbarDuration = 1000;
-  const snackbarErrorDuration = 3000;
+  const snackbarDuration = 1500;
+  const snackbarErrorDuration = 5000;
 
   const handleSnackbarClose = (
     event?: React.SyntheticEvent | Event,
@@ -80,7 +80,6 @@ function Register(): JSX.Element {
   const handleNameChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setEmail(event.target.value);
-      dispatch(resetRegisterFormError());
     },
     [dispatch]
   );
@@ -88,7 +87,6 @@ function Register(): JSX.Element {
   const handlePasswordChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setPassword(event.target.value);
-      dispatch(resetRegisterFormError());
     },
     [dispatch]
   );
@@ -96,7 +94,6 @@ function Register(): JSX.Element {
   const handlePasswordRepeatChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setPasswordRepeat(event.target.value);
-      dispatch(resetRegisterFormError());
     },
     [dispatch]
   );
