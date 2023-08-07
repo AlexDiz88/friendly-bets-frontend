@@ -81,21 +81,21 @@ function Register(): JSX.Element {
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setEmail(event.target.value);
     },
-    [dispatch]
+    []
   );
 
   const handlePasswordChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setPassword(event.target.value);
     },
-    [dispatch]
+    []
   );
 
   const handlePasswordRepeatChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setPasswordRepeat(event.target.value);
     },
-    [dispatch]
+    []
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {

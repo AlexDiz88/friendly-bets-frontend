@@ -22,7 +22,7 @@
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5"
   },
-  "proxy": "http://localhost:8080",
+  "proxy": "https://friendly-bets.up.railway.app/",
   "homepage": ".",
   "scripts": {
     "start": "react-scripts start",
