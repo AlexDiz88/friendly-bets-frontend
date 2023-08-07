@@ -58,7 +58,7 @@ export async function changeSeasonStatus(
 }
 
 export async function getActiveSeason(): Promise<Season> {
-  const result = await fetch('/api/seasons/active');
+  const result = await fetch('https://friendly-bets.up.railway.app/api/seasons/active');
 
   if (result.status >= 400) {
     const { message } = await result.json();
