@@ -24,7 +24,7 @@
     "typescript": "^4.9.5"
   },
   "proxy": "https://friendly-bets.up.railway.app/",
-  "homepage": ".",
+  "homepage": "./",
   "scripts": {
     "dev": "react-scripts start",
     "start": "serve build -s -n -L -p $PORT",
