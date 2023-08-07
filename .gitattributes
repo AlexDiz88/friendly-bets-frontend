@@ -1,1 +1,4 @@
-*.tsx text eol=crlf
+* text eol=crlf
+*.jpg binary
+*.jpeg binary
+*.png binary
