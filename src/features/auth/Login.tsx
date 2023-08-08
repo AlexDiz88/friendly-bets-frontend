@@ -77,7 +77,6 @@ function Login(): JSX.Element {
   const handleEmailChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setEmail(event.target.value);
-      // 332 очищаем ошибку
       dispatch(resetLoginFormError());
     },
     [dispatch]
