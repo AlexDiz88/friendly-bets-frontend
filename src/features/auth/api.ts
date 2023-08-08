@@ -4,7 +4,7 @@ import User from './types/User';
 
 export async function getProfile(): Promise<User> {
   const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile`
+    'https://friendly-bets-be.up.railway.app/api/users/my/profile'
   );
   if (result.status >= 400) {
     const { message } = await result.json();
@@ -14,7 +14,7 @@ export async function getProfile(): Promise<User> {
 }
 
 export async function login(credentials: Credentials): Promise<User> {
-  const result = await fetch('/login', {
+  const result = await fetch('https://friendly-bets-be.up.railway.app/login', {
     method: 'POST',
     body: `username=${credentials.email}&password=${credentials.password}`,
     headers: {
