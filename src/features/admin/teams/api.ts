@@ -5,7 +5,7 @@ export async function createTeam(
   fullTitleEn: string,
   country: string
 ): Promise<Team> {
-  const result = await fetch('/api/teams', {
+  const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/api/teams`, {
     method: 'POST',
     body: JSON.stringify({ fullTitleRu, fullTitleEn, country }),
     headers: {
@@ -20,7 +20,7 @@ export async function createTeam(
 }
 
 export async function getAllTeams(): Promise<{ teams: Team[] }> {
-  const result = await fetch('/api/teams');
+  const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/api/teams`);
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
