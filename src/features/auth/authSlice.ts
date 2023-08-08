@@ -12,9 +12,10 @@ const initialState: AuthState = {
   error: undefined,
 };
 
-export const getProfile = createAsyncThunk('api/users/my/profile', async () =>
-  api.getProfile()
-);
+export const getProfile = createAsyncThunk('api/users/my/profile', async () => {
+  console.log('Зашли в санк getProfile');
+  return api.getProfile();
+});
 
 export const login = createAsyncThunk('login', async (credentials: Credentials) => {
   if (!credentials.email.trim() || !credentials.password.trim()) {
