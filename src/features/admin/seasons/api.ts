@@ -7,13 +7,16 @@ export async function addSeason(
   title: string,
   betCountPerMatchDay: number
 ): Promise<Season> {
-  const result = await fetch('/api/seasons', {
-    method: 'POST',
-    body: JSON.stringify({ title, betCountPerMatchDay }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const result = await fetch(
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ title, betCountPerMatchDay }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -22,7 +25,7 @@ export async function addSeason(
 }
 
 export async function getSeasons(): Promise<{ seasons: Season[] }> {
-  const result = await fetch('/api/seasons');
+  const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons`);
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -31,7 +34,9 @@ export async function getSeasons(): Promise<{ seasons: Season[] }> {
 }
 
 export async function getSeasonStatusList(): Promise<string[]> {
-  const result = await fetch('/api/seasons/statuses');
+  const result = await fetch(
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/statuses`
+  );
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -43,13 +48,16 @@ export async function changeSeasonStatus(
   id: string,
   status: string
 ): Promise<Season> {
-  const result = await fetch(`/api/seasons/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(status),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const result = await fetch(
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${id}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(status),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -58,7 +66,9 @@ export async function changeSeasonStatus(
 }
 
 export async function getActiveSeason(): Promise<Season> {
-  const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/active`);
+  const result = await fetch(
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/active`
+  );
 
   if (result.status >= 400) {
     const { message } = await result.json();
@@ -68,7 +78,9 @@ export async function getActiveSeason(): Promise<Season> {
 }
 
 export async function getScheduledSeason(): Promise<Season> {
-  const result = await fetch('/api/seasons/scheduled');
+  const result = await fetch(
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/scheduled`
+  );
 
   if (result.status >= 400) {
     const { message } = await result.json();
@@ -78,12 +90,15 @@ export async function getScheduledSeason(): Promise<Season> {
 }
 
 export async function registrationInSeason(seasonId: string): Promise<Season> {
-  const result = await fetch(`/api/seasons/registration/${seasonId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const result = await fetch(
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/registration/${seasonId}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -107,13 +122,21 @@ export async function addLeagueToSeason(
   shortNameRu: string,
   shortNameEn: string
 ): Promise<Season> {
-  const result = await fetch(`/api/seasons/${seasonId}/leagues`, {
-    method: 'POST',
-    body: JSON.stringify({ displayNameRu, displayNameEn, shortNameRu, shortNameEn }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const result = await fetch(
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        displayNameRu,
+        displayNameEn,
+        shortNameRu,
+        shortNameEn,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -127,7 +150,7 @@ export async function addTeamToLeagueInSeason(
   teamId: string
 ): Promise<Season> {
   const result = await fetch(
-    `/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`,
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`,
     {
       method: 'POST',
       headers: {
@@ -147,13 +170,16 @@ export async function addBetToLeagueInSeason(
   leagueId: string,
   newBet: NewBet
 ): Promise<Season> {
-  const result = await fetch(`/api/seasons/${seasonId}/leagues/${leagueId}/bets`, {
-    method: 'POST',
-    body: JSON.stringify(newBet),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const result = await fetch(
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/bets`,
+    {
+      method: 'POST',
+      body: JSON.stringify(newBet),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -167,7 +193,7 @@ export async function addEmptyBetToLeagueInSeason(
   newEmptyBet: NewEmptyBet
 ): Promise<Season> {
   const result = await fetch(
-    `/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`,
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`,
     {
       method: 'POST',
       body: JSON.stringify(newEmptyBet),
@@ -188,13 +214,16 @@ export async function addBetResult(
   betId: string,
   newGameResult: NewGameResult
 ): Promise<Season> {
-  const result = await fetch(`/api/seasons/${seasonId}/bets/${betId}`, {
-    method: 'POST',
-    body: JSON.stringify(newGameResult),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const result = await fetch(
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/bets/${betId}`,
+    {
+      method: 'POST',
+      body: JSON.stringify(newGameResult),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
