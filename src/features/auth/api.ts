@@ -18,7 +18,7 @@ export async function login(credentials: Credentials): Promise<User> {
     method: 'POST',
     body: `username=${credentials.email}&password=${credentials.password}`,
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
   });
   if (result.status >= 400) {
@@ -27,8 +27,6 @@ export async function login(credentials: Credentials): Promise<User> {
   }
   return result.json();
 }
-
-// 'Content-Type': 'application/x-www-form-urlencoded',
 
 export async function register(data: RegisterData): Promise<User> {
   const result = await fetch(
