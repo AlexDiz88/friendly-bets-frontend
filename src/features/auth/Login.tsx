@@ -61,7 +61,7 @@ function Login(): JSX.Element {
       );
 
       if (login.fulfilled.match(dispatchResult)) {
-        dispatch(getProfile());
+      //   dispatch(getProfile());
         setOpenSuccessSnackbar(true);
         setTimeout(() => {
           navigate('/');
