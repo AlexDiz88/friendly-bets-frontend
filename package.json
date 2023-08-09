@@ -28,7 +28,7 @@
   "scripts": {
     "dev": "env-cmd -f .env react-scripts start",
     "start": "serve build -s -n -L -p $PORT",
-    "build": "react-scripts build && type nul > build\\.gitkeep",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "typecheck": "tsc",
