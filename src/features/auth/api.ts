@@ -4,7 +4,7 @@ import User from './types/User';
 
 export async function getProfile(): Promise<User> {
   const result = await fetch(
-    'https://friendly-bets-be.up.railway.app/api/users/my/profile'
+    `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile`
   );
   if (result.status >= 400) {
     const { message } = await result.json();
@@ -14,7 +14,7 @@ export async function getProfile(): Promise<User> {
 }
 
 export async function login(credentials: Credentials): Promise<User> {
-  const result = await fetch('https://friendly-bets-be.up.railway.app/login', {
+  const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/login`, {
     method: 'POST',
     body: `username=${credentials.email}&password=${credentials.password}`,
     headers: {
@@ -28,21 +28,6 @@ export async function login(credentials: Credentials): Promise<User> {
   return result.json();
 }
 
-// export async function login(credentials: Credentials): Promise<User> {
-//   const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/login`, {
-//     method: 'POST',
-//     body: `username=${credentials.email}&password=${credentials.password}`,
-//     headers: {
-//       'Content-Type': 'application/x-www-form-urlencoded',
-//     },
-//   });
-//   if (result.status >= 400) {
-//     const { message } = await result.json();
-//     throw new Error(message);
-//   }
-//   return result.json();
-// }
-
 export async function register(data: RegisterData): Promise<User> {
   const result = await fetch(
     `${process.env.REACT_APP_PRODUCT_SERVER}/api/register`,
@@ -52,8 +37,6 @@ export async function register(data: RegisterData): Promise<User> {
       headers: {
         'Content-Type': 'application/json',
       },
-      mode: 'cors',
-      credentials: 'include',
     }
   );
   if (result.status >= 400) {
