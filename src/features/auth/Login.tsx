@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
-import { getProfile, login, resetLoginFormError } from './authSlice';
+import { login, resetLoginFormError } from './authSlice';
 import { selectLoginFormError } from './selectors';
 import { useAppDispatch } from '../../store';
 
@@ -61,7 +61,7 @@ function Login(): JSX.Element {
       );
 
       if (login.fulfilled.match(dispatchResult)) {
-      //   dispatch(getProfile());
+      // dispatch(getProfile());
         setOpenSuccessSnackbar(true);
         setTimeout(() => {
           navigate('/');
