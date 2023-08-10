@@ -85,8 +85,21 @@ export default function Profile(): JSX.Element {
   };
 
   return (
-    <Box sx={{ textAlign: 'center', mx: 2, mt: 2, mb: 4 }}>
-      <Typography sx={{ borderBottom: 2, pb: 1, mx: 2 }}>Личный кабинет</Typography>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        mx: 2,
+        mt: 2,
+        mb: 4,
+      }}
+    >
+      <Typography sx={{ borderBottom: 2, pb: 1, mx: 2, px: 7 }}>
+        Личный кабинет
+      </Typography>
       <Box sx={{ p: 2 }}>
         <Avatar
           sx={{ mr: 1, height: '7rem', width: '7rem', border: 1 }}
@@ -94,11 +107,11 @@ export default function Profile(): JSX.Element {
           src="https://kartinkin.net/pics/uploads/posts/2022-09/1662642172_2-kartinkin-net-p-risunok-na-avatarku-dlya-muzhchin-instagra-2.jpg"
         />
       </Box>
-      <Typography sx={{ textAlign: 'left', pt: 1, mx: 2 }}>
+      <Typography sx={{ textAlign: 'center', pt: 1, mx: 2 }}>
         <b>Email:</b> {user?.email}
       </Typography>
       {showEmailInput ? (
-        <Box sx={{ textAlign: 'left', mx: 2, mt: 1, mb: 2 }}>
+        <Box sx={{ textAlign: 'center', mx: 2, mt: 1, mb: 2 }}>
           <TextField
             size="small"
             value={newEmail}
@@ -137,7 +150,7 @@ export default function Profile(): JSX.Element {
           </Button>
         </Box>
       ) : (
-        <Box sx={{ textAlign: 'left', mx: 2, mt: 1, mb: 2 }}>
+        <Box sx={{ textAlign: 'center', mx: 2, mt: 1, mb: 2 }}>
           <Button
             sx={{ height: '1.8rem', px: 2 }}
             variant="contained"
@@ -154,11 +167,11 @@ export default function Profile(): JSX.Element {
           </Button>
         </Box>
       )}
-      <Typography sx={{ textAlign: 'left', pt: 1, mx: 2 }}>
+      <Typography sx={{ textAlign: 'center', pt: 1, mx: 2 }}>
         <b>Имя:</b> {user?.username}
       </Typography>
       {showNameInput ? (
-        <Box sx={{ textAlign: 'left', mx: 2, mt: 1, mb: 2 }}>
+        <Box sx={{ textAlign: 'center', mx: 2, mt: 1, mb: 2 }}>
           <TextField
             size="small"
             value={newName}
@@ -216,7 +229,7 @@ export default function Profile(): JSX.Element {
         </Box>
       )}
       <Box sx={{ mt: 3 }}>
-        <Typography sx={{ pb: 1, mx: 2, borderBottom: 2 }}>
+        <Typography sx={{ pb: 1, px: 7, mx: 2, borderBottom: 2 }}>
           Текущий сезон:
         </Typography>
         <Typography sx={{ mt: 1, mx: 2, fontWeight: 600, color: 'brown' }}>

@@ -103,7 +103,7 @@ export default function CompleteBetCard({
         <b>Ставка:</b> {betTitle}
       </Box>
       <Box sx={{ textAlign: 'left', ml: 0.5 }}>
-        <b>Кэф:</b> {betOdds}, <b>Сумма:</b> {betSize}
+        <b>Кэф:</b> {betOdds.toFixed(2)}, <b>Сумма:</b> {betSize}
       </Box>
       <Box
         sx={{
@@ -147,7 +147,10 @@ export default function CompleteBetCard({
                 balanceChange > 0 ? 'green' : balanceChange < 0 ? 'brown' : 'black',
             }}
           >
-            {balanceChange}€
+            {Number.isInteger(balanceChange)
+              ? balanceChange
+              : balanceChange.toFixed(2)}
+            €
           </Box>
         )}
       </Box>

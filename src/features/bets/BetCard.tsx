@@ -71,9 +71,7 @@ export default function BetCard({
           <Avatar
             sx={{ mr: 0.5, ml: 1, width: 25, height: 25 }}
             alt="team_logo"
-            src={`${
-              process.env.PUBLIC_URL
-            }/upload/logo/${awayTeam.fullTitleEn.replace(/\s/g, '_')}.png`}
+            src={`/upload/logo/${awayTeam.fullTitleEn.replace(/\s/g, '_')}.png`}
           />
           {awayTeam.fullTitleRu}
         </Box>
@@ -82,7 +80,7 @@ export default function BetCard({
         <b>Ставка:</b> {betTitle}
       </Box>
       <Box sx={{ textAlign: 'left', ml: 0.5 }}>
-        <b>Кэф:</b> {betOdds}, <b>Сумма:</b> {betSize}
+        <b>Кэф:</b> {betOdds.toFixed(2)}, <b>Сумма:</b> {betSize}
       </Box>
     </Box>
   );

@@ -7,16 +7,17 @@ export async function addSeason(
   title: string,
   betCountPerMatchDay: number
 ): Promise<Season> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons`,
-    {
-      method: 'POST',
-      body: JSON.stringify({ title, betCountPerMatchDay }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/seasons';
+  }
+  const result = await fetch(`${url}`, {
+    method: 'POST',
+    body: JSON.stringify({ title, betCountPerMatchDay }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -25,7 +26,11 @@ export async function addSeason(
 }
 
 export async function getSeasons(): Promise<{ seasons: Season[] }> {
-  const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons`);
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/seasons';
+  }
+  const result = await fetch(`${url}`);
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -34,9 +39,11 @@ export async function getSeasons(): Promise<{ seasons: Season[] }> {
 }
 
 export async function getSeasonStatusList(): Promise<string[]> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/statuses`
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/statuses`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/seasons/statuses';
+  }
+  const result = await fetch(`${url}`);
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -48,16 +55,17 @@ export async function changeSeasonStatus(
   id: string,
   status: string
 ): Promise<Season> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${id}`,
-    {
-      method: 'PATCH',
-      body: JSON.stringify(status),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${id}`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = `/api/seasons/${id}`;
+  }
+  const result = await fetch(`${url}`, {
+    method: 'PATCH',
+    body: JSON.stringify(status),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -66,9 +74,11 @@ export async function changeSeasonStatus(
 }
 
 export async function getActiveSeason(): Promise<Season> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/active`
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/active`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/seasons/active';
+  }
+  const result = await fetch(`${url}`);
 
   if (result.status >= 400) {
     const { message } = await result.json();
@@ -78,9 +88,11 @@ export async function getActiveSeason(): Promise<Season> {
 }
 
 export async function getScheduledSeason(): Promise<Season> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/scheduled`
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/scheduled`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/seasons/scheduled';
+  }
+  const result = await fetch(`${url}`);
 
   if (result.status >= 400) {
     const { message } = await result.json();
@@ -90,15 +102,16 @@ export async function getScheduledSeason(): Promise<Season> {
 }
 
 export async function registrationInSeason(seasonId: string): Promise<Season> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/registration/${seasonId}`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/registration/${seasonId}`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = `/api/seasons/registration/${seasonId}`;
+  }
+  const result = await fetch(`${url}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -107,6 +120,10 @@ export async function registrationInSeason(seasonId: string): Promise<Season> {
 }
 
 // export async function getLeaguesBySeason(seasonId: string): Promise<Season> {
+//   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/login`;
+//   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+//     url = '/login';
+//   }
 //   const result = await fetch(`/api/seasons/${seasonId}/leagues`);
 //   if (result.status >= 400) {
 //     const { message } = await result.json();
@@ -122,21 +139,22 @@ export async function addLeagueToSeason(
   shortNameRu: string,
   shortNameEn: string
 ): Promise<Season> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues`,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        displayNameRu,
-        displayNameEn,
-        shortNameRu,
-        shortNameEn,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = `/api/seasons/${seasonId}/leagues`;
+  }
+  const result = await fetch(`${url}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      displayNameRu,
+      displayNameEn,
+      shortNameRu,
+      shortNameEn,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -149,15 +167,16 @@ export async function addTeamToLeagueInSeason(
   leagueId: string,
   teamId: string
 ): Promise<Season> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = `/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`;
+  }
+  const result = await fetch(`${url}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -170,16 +189,17 @@ export async function addBetToLeagueInSeason(
   leagueId: string,
   newBet: NewBet
 ): Promise<Season> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/bets`,
-    {
-      method: 'POST',
-      body: JSON.stringify(newBet),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/bets`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = `/api/seasons/${seasonId}/leagues/${leagueId}/bets`;
+  }
+  const result = await fetch(`${url}`, {
+    method: 'POST',
+    body: JSON.stringify(newBet),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -192,16 +212,17 @@ export async function addEmptyBetToLeagueInSeason(
   leagueId: string,
   newEmptyBet: NewEmptyBet
 ): Promise<Season> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`,
-    {
-      method: 'POST',
-      body: JSON.stringify(newEmptyBet),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = `/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`;
+  }
+  const result = await fetch(`${url}`, {
+    method: 'POST',
+    body: JSON.stringify(newEmptyBet),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -214,16 +235,17 @@ export async function addBetResult(
   betId: string,
   newGameResult: NewGameResult
 ): Promise<Season> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/bets/${betId}`,
-    {
-      method: 'POST',
-      body: JSON.stringify(newGameResult),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/bets/${betId}`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = `/api/seasons/${seasonId}/bets/${betId}`;
+  }
+  const result = await fetch(`${url}`, {
+    method: 'POST',
+    body: JSON.stringify(newGameResult),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);

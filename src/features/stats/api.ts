@@ -3,9 +3,11 @@ import PlayerStats from './types/PlayerStats';
 export async function getPlayersStatsBySeason(
   seasonId: string
 ): Promise<{ playersStats: PlayerStats[] }> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/season/${seasonId}/stats`
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/season/${seasonId}/stats`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = `/api/users/season/${seasonId}/stats`;
+  }
+  const result = await fetch(`${url}`);
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -16,7 +18,11 @@ export async function getPlayersStatsBySeason(
 export async function getAllPlayersStats(): Promise<{
   playersStats: PlayerStats[];
 }> {
-  const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/api/my/bets`);
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/my/bets`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/my/bets';
+  }
+  const result = await fetch(`${url}`);
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);

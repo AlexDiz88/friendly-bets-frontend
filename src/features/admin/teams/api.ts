@@ -5,7 +5,11 @@ export async function createTeam(
   fullTitleEn: string,
   country: string
 ): Promise<Team> {
-  const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/api/teams`, {
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/teams`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/teams';
+  }
+  const result = await fetch(`${url}`, {
     method: 'POST',
     body: JSON.stringify({ fullTitleRu, fullTitleEn, country }),
     headers: {
@@ -20,7 +24,11 @@ export async function createTeam(
 }
 
 export async function getAllTeams(): Promise<{ teams: Team[] }> {
-  const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/api/teams`);
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/teams`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/teams';
+  }
+  const result = await fetch(`${url}`);
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
