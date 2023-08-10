@@ -37,16 +37,17 @@ export async function login(credentials: Credentials): Promise<User> {
 }
 
 export async function register(data: RegisterData): Promise<User> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/register`,
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/register`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/register';
+  }
+  const result = await fetch(`${url}`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -55,22 +56,27 @@ export async function register(data: RegisterData): Promise<User> {
 }
 
 export async function logout(): Promise<void> {
-  await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/logout`, {
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/logout`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/logout';
+  }
+  await fetch(`${url}`, {
     method: 'PUT',
   });
 }
 
 export async function editEmail(email: string): Promise<User> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/email`,
-    {
-      method: 'PUT',
-      body: email,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/email`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/users/my/profile/email';
+  }
+  const result = await fetch(`${url}`, {
+    method: 'PUT',
+    body: email,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -79,16 +85,17 @@ export async function editEmail(email: string): Promise<User> {
 }
 
 export async function editUsername(username: string): Promise<User> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/username`,
-    {
-      method: 'PUT',
-      body: username,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/username`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/users/my/profile/username';
+  }
+  const result = await fetch(`${url}`, {
+    method: 'PUT',
+    body: username,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);

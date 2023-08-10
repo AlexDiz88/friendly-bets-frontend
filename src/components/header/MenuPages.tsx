@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useNavigate } from 'react-router-dom';
 
 const pages = [
   'Календарь игр',
@@ -16,10 +17,12 @@ const pages = [
 ];
 
 export default function MenuPages(): JSX.Element {
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
-  const handleProfile = (): void => {
-    // логика для обработки события клика на "Календарь игр" + добавить прочие меню
+  const handleNavigate = (): void => {
+    // отслеживаем имя клика и адресуем на нужный роут
+    navigate('/in-progress');
   };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>): void => {
@@ -131,12 +134,12 @@ export default function MenuPages(): JSX.Element {
               key={page}
               onClickCapture={() => {
                 handleCloseNavMenu();
-                handleProfile();
+                handleNavigate();
               }}
               variant="h5"
               noWrap
               component="a"
-              href=""
+              href="#/in-progress"
               sx={{
                 px: { xs: 0, md: 0.5 },
                 my: 2,
