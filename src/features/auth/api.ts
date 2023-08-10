@@ -3,9 +3,11 @@ import RegisterData from './types/RegisterData';
 import User from './types/User';
 
 export async function getProfile(): Promise<User> {
-  const result = await fetch(
-    `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile`
-  );
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/users/my/profile';
+  }
+  const result = await fetch(`${url}`);
   if (result.status >= 400) {
     const { message } = await result.json();
     throw new Error(message);
@@ -14,7 +16,11 @@ export async function getProfile(): Promise<User> {
 }
 
 export async function login(credentials: Credentials): Promise<User> {
-  const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/login`, {
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/login`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/login';
+  }
+  const result = await fetch(`${url}`, {
     method: 'POST',
     mode: 'cors',
     credentials: 'include',
