@@ -16,8 +16,11 @@ export async function getProfile(): Promise<User> {
 export async function login(credentials: Credentials): Promise<User> {
   const result = await fetch(`${process.env.REACT_APP_PRODUCT_SERVER}/login`, {
     method: 'POST',
+    mode: 'cors',
+    credentials: 'include',
     body: `username=${credentials.email}&password=${credentials.password}`,
     headers: {
+      accept: 'application/json',
       'Content-Type': 'application/x-www-form-urlencoded',
     },
   });
