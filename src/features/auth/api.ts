@@ -20,7 +20,6 @@ export async function login(credentials: Credentials): Promise<User> {
     credentials: 'include',
     body: `username=${credentials.email}&password=${credentials.password}`,
     headers: {
-      accept: 'application/json',
       'Content-Type': 'application/x-www-form-urlencoded',
     },
   });
