@@ -151,9 +151,10 @@ export default function BetInputPlayer({
                     <Avatar
                       sx={{ width: 27, height: 27 }}
                       alt="team_logo"
-                      src={`${
-                        process.env.PUBLIC_URL
-                      }/upload/logo/${t.fullTitleEn?.replace(/\s/g, '_')}.png`}
+                      src={`/public/upload/logo/${t.fullTitleEn?.replace(
+                        /\s/g,
+                        '_'
+                      )}.png`}
                     />
 
                     <Typography sx={{ mx: 1, fontSize: '1rem' }}>
