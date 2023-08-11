@@ -106,7 +106,9 @@ export default function BetInputPlayer({
                     <Avatar
                       sx={{ width: 27, height: 27 }}
                       alt="team_logo"
-                      src={`/static/upload/logo/${t.fullTitleEn?.replace(/\s/g, '_')}.png`}
+                      src={`/static/upload/logo/${t.fullTitleEn
+                        .toLowerCase()
+                        .replace(/\s/g, '_')}.png`}
                     />
 
                     <Typography sx={{ mx: 1, fontSize: '1rem' }}>
@@ -151,10 +153,9 @@ export default function BetInputPlayer({
                     <Avatar
                       sx={{ width: 27, height: 27 }}
                       alt="team_logo"
-                      src={`/public/upload/logo/${t.fullTitleEn?.replace(
-                        /\s/g,
-                        '_'
-                      )}.png`}
+                      src={`/public/upload/logo/${t.fullTitleEn
+                        .toLowerCase()
+                        .replace(/\s/g, '_')}.png`}
                     />
 
                     <Typography sx={{ mx: 1, fontSize: '1rem' }}>
