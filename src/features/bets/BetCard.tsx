@@ -51,9 +51,9 @@ export default function BetCard({
           <Avatar
             sx={{ mr: 0.5, width: 25, height: 25 }}
             alt="team_logo"
-            src={`${
-              process.env.PUBLIC_URL
-            }/upload/logo/${league.displayNameEn.replace(/\s/g, '_')}.png`}
+            src={`${process.env.PUBLIC_URL}/upload/logo/${league.displayNameEn
+              .toLowerCase()
+              .replace(/\s/g, '_')}.png`}
           />
           {league.shortNameRu} - {matchDay}й
         </Box>
@@ -71,7 +71,9 @@ export default function BetCard({
           <Avatar
             sx={{ mr: 0.5, ml: 1, width: 25, height: 25 }}
             alt="team_logo"
-            src={`/build/upload/logo/${awayTeam.fullTitleEn.replace(/\s/g, '_')}.png`}
+            src={`upload/logo/${awayTeam.fullTitleEn
+              .toLowerCase()
+              .replace(/\s/g, '_')}.png`}
           />
           {awayTeam.fullTitleRu}
         </Box>
