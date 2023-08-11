@@ -155,8 +155,6 @@ export default function MenuPages(): JSX.Element {
               }}
               variant="h5"
               noWrap
-              component="a"
-              href="#/in-progress"
               sx={{
                 px: { xs: 0, md: 0.5 },
                 my: 2,
