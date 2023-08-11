@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
 
 const pages = [
-  'Календарь игр',
+  'Новости',
   'По турам',
   'По турнирам',
   'По командам',
@@ -20,9 +20,20 @@ export default function MenuPages(): JSX.Element {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
-  const handleNavigate = (): void => {
-    // отслеживаем имя клика и адресуем на нужный роут
-    navigate('/in-progress');
+  const handleNavigate = (page: string): void => {
+    if (page === 'Новости') {
+      navigate('/news');
+    } else if (page === 'По турам') {
+      navigate('/in-progress');
+    } else if (page === 'По турнирам') {
+      navigate('/in-progress');
+    } else if (page === 'По командам') {
+      navigate('/in-progress');
+    } else if (page === 'По месяцам') {
+      navigate('/in-progress');
+    } else if (page === 'Правила') {
+      navigate('/in-progress');
+    }
   };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>): void => {
@@ -61,11 +72,17 @@ export default function MenuPages(): JSX.Element {
           open={Boolean(anchorElNav)}
           onClose={handleCloseNavMenu}
           sx={{
-            display: { xs: 'block', md: 'none' },
+            display: { xs: 'block', md: 'none', lg: 'none' },
           }}
         >
           {pages.map((page) => (
-            <MenuItem key={page} onClick={handleCloseNavMenu}>
+            <MenuItem
+              key={page}
+              onClick={() => {
+                handleCloseNavMenu();
+                handleNavigate(page);
+              }}
+            >
               <Typography fontFamily="Exo 2" textAlign="center">
                 {page}
               </Typography>
@@ -134,7 +151,7 @@ export default function MenuPages(): JSX.Element {
               key={page}
               onClickCapture={() => {
                 handleCloseNavMenu();
-                handleNavigate();
+                handleNavigate(page);
               }}
               variant="h5"
               noWrap
