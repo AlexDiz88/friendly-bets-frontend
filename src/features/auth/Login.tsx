@@ -55,7 +55,7 @@ function Login(): JSX.Element {
       event?.preventDefault();
       const dispatchResult = await dispatch(
         login({
-          email,
+          email: email.toLowerCase(),
           password,
         })
       );
