@@ -121,7 +121,7 @@ export default function AddLeagueInSeason({
                   alt="league_logo"
                   src={`${
                     process.env.PUBLIC_URL
-                  }/upload/logo/${item.displayNameEn.replace(/\s/g, '_')}.png`}
+                  }/upload/logo/${item.displayNameEn.toLowerCase().replace(/\s/g, '_')}.png`}
                 />
                 <ListItemText primary={item.displayNameRu} />
               </div>

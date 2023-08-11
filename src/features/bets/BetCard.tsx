@@ -63,15 +63,15 @@ export default function BetCard({
           <Avatar
             sx={{ mr: 0.5, width: 25, height: 25 }}
             alt="team_logo"
-            src={`${
-              process.env.PUBLIC_URL
-            }/upload/logo/${homeTeam.fullTitleEn.replace(/\s/g, '_')}.png`}
+            src={`${process.env.PUBLIC_URL}/upload/logo/${homeTeam.fullTitleEn
+              .toLowerCase()
+              .replace(/\s/g, '_')}.png`}
           />
           {homeTeam.fullTitleRu}
           <Avatar
             sx={{ mr: 0.5, ml: 1, width: 25, height: 25 }}
             alt="team_logo"
-            src={`upload/logo/${awayTeam.fullTitleEn
+            src={`${process.env.PUBLIC_URL}/upload/logo/${awayTeam.fullTitleEn
               .toLowerCase()
               .replace(/\s/g, '_')}.png`}
           />

@@ -71,7 +71,7 @@ export default function CompleteBetCard({
             alt="team_logo"
             src={`${
               process.env.PUBLIC_URL
-            }/upload/logo/${league.displayNameEn.replace(/\s/g, '_')}.png`}
+            }/upload/logo/${league.displayNameEn.toLowerCase().replace(/\s/g, '_')}.png`}
           />
           {league.shortNameRu} - {matchDay}й
         </Box>
@@ -83,7 +83,7 @@ export default function CompleteBetCard({
             alt="team_logo"
             src={`${
               process.env.PUBLIC_URL
-            }/upload/logo/${homeTeam.fullTitleEn.replace(/\s/g, '_')}.png`}
+            }/upload/logo/${homeTeam.fullTitleEn.toLowerCase().replace(/\s/g, '_')}.png`}
           />
           {homeTeam.fullTitleRu}
           <Avatar
@@ -91,7 +91,7 @@ export default function CompleteBetCard({
             alt="team_logo"
             src={`${
               process.env.PUBLIC_URL
-            }/upload/logo/${awayTeam.fullTitleEn.replace(/\s/g, '_')}.png`}
+            }/upload/logo/${awayTeam.fullTitleEn.toLowerCase().replace(/\s/g, '_')}.png`}
           />
           {awayTeam.fullTitleRu}
         </Box>
