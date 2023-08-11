@@ -54,6 +54,7 @@ export default function AddTeamToLeague({
       })
     );
     if (addTeamToLeagueInSeason.fulfilled.match(dispatchResult)) {
+      await dispatch(getSeasons());
       setOpenSnackbar(true);
       setSnackbarDuration(1000);
       setSnackbarSeverity('success');

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   Box,
@@ -26,9 +27,13 @@ import {
   addBetToLeagueInSeason,
   addEmptyBetToLeagueInSeason,
 } from '../admin/seasons/seasonsSlice';
+import { getProfile } from '../auth/authSlice';
+import { selectUser } from '../auth/selectors';
 
 export default function BetInputContainer(): JSX.Element {
   const dispatch = useAppDispatch();
+  const user = useSelector(selectUser);
+  const navigate = useNavigate();
   const season = useSelector(selectActiveSeason);
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
@@ -225,6 +230,31 @@ export default function BetInputContainer(): JSX.Element {
   const handleCloseSnackbar = (): void => {
     setOpenSnackbar(false);
   };
+
+  // редирект неавторизованных пользователей
+
+  useEffect(() => {
+    if (!user) {
+      // Если пользовательне авторизован, перенаправляем на главную
+      navigate('/');
+    } else if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
+      // Если пользователь не админ или модератор, также перенаправляем на главную
+      navigate('/');
+    } else {
+      dispatch(getProfile());
+    }
+  }, [dispatch, navigate, user]);
+
+  if (!user || (user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
+    return (
+      <div>
+        <Typography sx={{ m: 1, fontSize: '1rem', fontWeight: 600, color: 'brown' }}>
+          У вас нет доступа к панели модератора
+          <br /> Вы будете перенаправлены на главную страницу
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <Box sx={{ m: 1 }}>

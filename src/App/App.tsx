@@ -16,6 +16,7 @@ import SeasonRegister from '../components/profile/SeasonRegister';
 import BetsCheck from '../features/bets/BetsCheck';
 import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
 import EmptyPage from '../components/EmptyPage';
+import News from '../components/News';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -41,6 +42,7 @@ function App(): JSX.Element {
           <Route path="/season/register" element={<SeasonRegister />} />
           <Route path="/bets/check" element={<BetsCheck />} />
           <Route path="/in-progress" element={<EmptyPage />} />
+          <Route path="/news" element={<News />} />
         </Route>
       </Routes>
     </HashRouter>
