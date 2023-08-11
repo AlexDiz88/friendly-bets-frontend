@@ -19,12 +19,15 @@ import {
   registrationInSeason,
 } from '../../features/admin/seasons/seasonsSlice';
 import NotificationSnackbar from '../utils/NotificationSnackbar';
+import { getProfile } from '../../features/auth/authSlice';
 import { selectScheduledSeason } from '../../features/admin/seasons/selectors';
 import { useAppDispatch } from '../../store';
+import { selectUser } from '../../features/auth/selectors';
 
 export default function SeasonRegister(): JSX.Element {
   const scheduledSeason = useSelector(selectScheduledSeason);
   const dispatch = useAppDispatch();
+  const currentUser = useSelector(selectUser);
   const [showRules, setShowRules] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<
@@ -40,6 +43,7 @@ export default function SeasonRegister(): JSX.Element {
       );
 
       if (registrationInSeason.fulfilled.match(dispatchResult)) {
+        await dispatch(getScheduledSeason());
         setOpenSnackbar(true);
         setSnackbarSeverity('success');
         setSnackbarMessage('Вы были успешно зарегистрированы на турнир!');
@@ -76,6 +80,7 @@ export default function SeasonRegister(): JSX.Element {
   };
 
   React.useEffect(() => {
+    dispatch(getProfile());
     dispatch(getScheduledSeason());
   }, [dispatch]);
 
@@ -100,21 +105,35 @@ export default function SeasonRegister(): JSX.Element {
             </Icon>
             Сезон: {scheduledSeason.title}
           </Typography>
-          <Button
-            onClick={handleOpenDialog}
-            sx={{ height: '3rem', px: 3 }}
-            variant="contained"
-            color="success"
-          >
-            <Typography
-              variant="button"
-              fontWeight="600"
-              fontSize="0.9rem"
-              fontFamily="Shantell Sans"
+          <Typography sx={{ pb: 1, mx: 2, fontWeight: '600', fontSize: '1.1rem' }}>
+            Список участников:
+          </Typography>
+          {scheduledSeason.players.map((p) => (
+            <Box key={p.id}>{p.username}</Box>
+          ))}
+          {currentUser &&
+          scheduledSeason.players.some((player) => player.id === currentUser.id) ? (
+            <Box sx={{ mt: 1, fontSize: '1rem', fontWeight: 600, color: 'green' }}>
+              Поздравляем! <br /> Вы зарегистрированы
+            </Box>
+          ) : (
+            <Button
+              onClick={handleOpenDialog}
+              sx={{ height: '3rem', px: 3, mt: 1 }}
+              variant="contained"
+              color="success"
             >
-              Принять участие
-            </Typography>
-          </Button>
+              <Typography
+                variant="button"
+                fontWeight="600"
+                fontSize="0.9rem"
+                fontFamily="Shantell Sans"
+              >
+                Принять участие
+              </Typography>
+            </Button>
+          )}
+
           <Dialog open={openDialog} onClose={handleCloseDialog}>
             <DialogContent>
               <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
@@ -198,6 +217,14 @@ export default function SeasonRegister(): JSX.Element {
                   итоговом зачёте - около 33% от общего банка. Конкретные суммы будут
                   объявлены после окончания регистрации всех участников и начала
                   нового футбольного сезона (10 августа 2023)
+                </Typography>
+                <Typography sx={{ my: 1 }}>
+                  <b>1.1 Оплата хостинга сайта</b> - 50-60 евро (за сезон). На
+                  содержание и обслуживание нашего замечательного сайта требуется
+                  минимум 5 евро в месяц. Если я смогу найти более дешевый вариант, я
+                  сообщу. Но пока что придется смириться с этими небольшими тратами.
+                  Соответственно, данная сумма будет вычтена из общего банка
+                  призовых.
                 </Typography>
                 <Typography sx={{ my: 1 }}>
                   <b>2. Футбольные лиги.</b> Ставки делаем на АПЛ, Бундеслигу, Лигу

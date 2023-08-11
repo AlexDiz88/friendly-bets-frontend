@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-curly-newline */
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   Box,
@@ -16,10 +17,14 @@ import { useAppDispatch } from '../../store';
 import { addBetResult, getActiveSeason } from '../admin/seasons/seasonsSlice';
 import BetCard from './BetCard';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
+import { selectUser } from '../auth/selectors';
+import { getProfile } from '../auth/authSlice';
 
 export default function BetsCheck(): JSX.Element {
   const activeSeason = useSelector(selectActiveSeason);
   const dispatch = useAppDispatch();
+  const user = useSelector(selectUser);
+  const navigate = useNavigate();
   const [betLoseOpenDialog, setBetLoseOpenDialog] = useState(false);
   const [betReturnOpenDialog, setBetReturnOpenDialog] = useState(false);
   const [betWinOpenDialog, setBetWinOpenDialog] = useState(false);
@@ -164,6 +169,31 @@ export default function BetsCheck(): JSX.Element {
   useEffect(() => {
     dispatch(getActiveSeason());
   }, [dispatch, openSnackbar]);
+
+  // редирект неавторизованных пользователей
+
+  useEffect(() => {
+    if (!user) {
+      // Если пользовательне авторизован, перенаправляем на главную
+      navigate('/');
+    } else if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
+      // Если пользователь не админ или модератор, также перенаправляем на главную
+      navigate('/');
+    } else {
+      dispatch(getProfile());
+    }
+  }, [dispatch, navigate, user]);
+
+  if (!user || (user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
+    return (
+      <div>
+        <Typography sx={{ m: 1, fontSize: '1rem', fontWeight: 600, color: 'brown' }}>
+          У вас нет доступа к панели модератора
+          <br /> Вы будете перенаправлены на главную страницу
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <Box
