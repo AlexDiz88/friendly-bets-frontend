@@ -71,7 +71,7 @@ export default function BetCard({
           <Avatar
             sx={{ mr: 0.5, ml: 1, width: 25, height: 25 }}
             alt="team_logo"
-            src={`/upload/logo/${awayTeam.fullTitleEn
+            src={`upload/logo/${awayTeam.fullTitleEn
               .toLowerCase()
               .replace(/\s/g, '_')}.png`}
           />
