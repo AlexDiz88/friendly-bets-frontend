@@ -85,9 +85,9 @@ export default function BetInputLeague({
                 <Avatar
                   sx={{ width: 27, height: 27 }}
                   alt="league_logo"
-                  src={`${
-                    process.env.PUBLIC_URL
-                  }/upload/logo/${l.displayNameEn?.replace(/\s/g, '_')}.png`}
+                  src={`${process.env.PUBLIC_URL}/upload/logo/${l.displayNameEn
+                    .toLowerCase()
+                    .replace(/\s/g, '_')}.png`}
                 />
 
                 <Typography sx={{ mx: 1, fontSize: '1rem' }}>

@@ -29,8 +29,9 @@ export default function NotificationSnackbar({
   };
 
   return (
-    <Box textAlign="center">
+    <Box sx={{ textAlign: 'center' }}>
       <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         sx={{
           justifyContent: 'center',
           mb: 3,

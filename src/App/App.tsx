@@ -10,7 +10,7 @@ import AdminCabinet from '../features/admin/AdminCabinet';
 import Profile from '../components/profile/Profile';
 import BetsList from '../features/bets/BetsList';
 import Homepage from '../components/Homepage';
-import BetInput from '../features/bets/BetInputContainer';
+import BetInputContainer from '../features/bets/BetInputContainer';
 import MyStats from '../components/profile/MyStats';
 import SeasonRegister from '../components/profile/SeasonRegister';
 import BetsCheck from '../features/bets/BetsCheck';
@@ -36,7 +36,7 @@ function App(): JSX.Element {
           <Route path="/admin/cabinet" element={<AdminCabinet />} />
           <Route path="/my/profile" element={<Profile />} />
           <Route path="/bets" element={<BetsList />} />
-          <Route path="/bet-input" element={<BetInput />} />
+          <Route path="/bet-input" element={<BetInputContainer />} />
           <Route path="/my/stats" element={<MyStats />} />
           <Route path="/season/register" element={<SeasonRegister />} />
           <Route path="/bets/check" element={<BetsCheck />} />
