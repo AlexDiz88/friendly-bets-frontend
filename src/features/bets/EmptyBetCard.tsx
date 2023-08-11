@@ -54,7 +54,7 @@ export default function EmptyBetCard({
             alt="team_logo"
             src={`${
               process.env.PUBLIC_URL
-            }/upload/logo/${league.displayNameEn.replace(/\s/g, '_')}.png`}
+            }/upload/logo/${league.displayNameEn.toLowerCase().replace(/\s/g, '_')}.png`}
           />
           {league.shortNameRu} - {matchDay}й
         </Box>

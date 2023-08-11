@@ -160,7 +160,9 @@ export default function AddTeamToLeague({
                     alt="league_logo"
                     src={`${
                       process.env.PUBLIC_URL
-                    }/upload/logo/${league.displayNameEn.replace(/\s/g, '_')}.png`}
+                    }/upload/logo/${league.displayNameEn
+                      .toLowerCase()
+                      .replace(/\s/g, '_')}.png`}
                   />
 
                   <Typography sx={{ fontSize: '0.85rem' }}>{league.name}</Typography>
@@ -185,9 +187,9 @@ export default function AddTeamToLeague({
                     <Avatar
                       sx={{ mr: 1, width: 25, height: 25 }}
                       alt="team_logo"
-                      src={`${
-                        process.env.PUBLIC_URL
-                      }/upload/logo/${team.fullTitleEn.replace(/\s/g, '_')}.png`}
+                      src={`${process.env.PUBLIC_URL}/upload/logo/${team.fullTitleEn
+                        .toLowerCase()
+                        .replace(/\s/g, '_')}.png`}
                     />
                     <Typography sx={{ fontSize: '0.9rem' }}>
                       {team.fullTitleRu}
@@ -233,9 +235,9 @@ export default function AddTeamToLeague({
                     <Avatar
                       sx={{ mr: 1 }}
                       alt="team_logo"
-                      src={`${
-                        process.env.PUBLIC_URL
-                      }/upload/logo/${team.fullTitleEn.replace(/\s/g, '_')}.png`}
+                      src={`${process.env.PUBLIC_URL}/upload/logo/${team.fullTitleEn
+                        .toLowerCase()
+                        .replace(/\s/g, '_')}.png`}
                     />
                     <Typography>{team.fullTitleRu}</Typography>
                   </div>
