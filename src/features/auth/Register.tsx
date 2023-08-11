@@ -209,6 +209,7 @@ function Register(): JSX.Element {
         </Box>
 
         <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           sx={{
             justifyContent: 'center',
             mb: 3,
@@ -226,6 +227,7 @@ function Register(): JSX.Element {
           </Alert>
         </Snackbar>
         <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           sx={{
             justifyContent: 'center',
             mb: 3,
