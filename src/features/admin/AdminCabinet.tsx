@@ -57,7 +57,7 @@ export default function AdminCabinet(): JSX.Element {
   }
 
   return (
-    <Box sx={{ textAlign: 'center', mx: 2, mb: 4 }}>
+    <Box sx={{ textAlign: 'center', mx: 2, mb: 10 }}>
       <Typography sx={{ borderBottom: 2, pb: 1, mx: 2 }}>AdminCabinet</Typography>
       <Seasons />
     </Box>
