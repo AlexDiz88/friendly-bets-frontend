@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Avatar,
@@ -9,15 +9,12 @@ import {
   Typography,
 } from '@mui/material';
 import { selectActiveSeason } from '../admin/seasons/selectors';
-import { useAppDispatch } from '../../store';
-import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 
 export default function BetInputPlayer({
   onUserSelect,
 }: {
   onUserSelect: (userId: string) => void;
 }): JSX.Element {
-  const dispatch = useAppDispatch();
   const activeSeason = useSelector(selectActiveSeason);
   const players = activeSeason?.players;
   const [selectedUsername, setSelectedUsername] = useState<string>('');
@@ -30,10 +27,6 @@ export default function BetInputPlayer({
       onUserSelect(selectedUser.id);
     }
   };
-
-  useEffect(() => {
-    dispatch(getActiveSeason());
-  }, [dispatch]);
 
   return (
     <Box sx={{ textAlign: 'left' }}>

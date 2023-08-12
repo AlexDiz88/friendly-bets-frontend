@@ -164,6 +164,7 @@ export default function MenuPages(): JSX.Element {
                 fontSize: '1rem',
                 color: 'inherit',
                 textDecoration: 'none',
+                cursor: 'pointer',
                 '&:hover': {
                   color: '#ff9800',
                 },

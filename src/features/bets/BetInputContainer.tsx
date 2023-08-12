@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -27,7 +28,6 @@ import {
   addBetToLeagueInSeason,
   addEmptyBetToLeagueInSeason,
 } from '../admin/seasons/seasonsSlice';
-import { getProfile } from '../auth/authSlice';
 import { selectUser } from '../auth/selectors';
 
 export default function BetInputContainer(): JSX.Element {
@@ -35,6 +35,7 @@ export default function BetInputContainer(): JSX.Element {
   const user = useSelector(selectUser);
   const navigate = useNavigate();
   const season = useSelector(selectActiveSeason);
+  const [showMessage, setShowMessage] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
   const [selectedMatchDay, setSelectedMatchDay] = useState<string>('');
@@ -232,27 +233,43 @@ export default function BetInputContainer(): JSX.Element {
   };
 
   // редирект неавторизованных пользователей
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!user) {
+        navigate('/');
+      } else if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
+        navigate('/');
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [navigate, user]);
 
   useEffect(() => {
-    if (!user) {
-      // Если пользовательне авторизован, перенаправляем на главную
-      navigate('/');
-    } else if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
-      // Если пользователь не админ или модератор, также перенаправляем на главную
-      navigate('/');
-    } else {
-      dispatch(getProfile());
-    }
-  }, [dispatch, navigate, user]);
+    const timer = setTimeout(() => {
+      setShowMessage(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
-  if (!user || (user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
+  if (!user || (user && user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
     return (
-      <div>
-        <Typography sx={{ m: 1, fontSize: '1rem', fontWeight: 600, color: 'brown' }}>
-          У вас нет доступа к панели модератора
-          <br /> Вы будете перенаправлены на главную страницу
-        </Typography>
-      </div>
+      <Box
+        sx={{
+          p: 5,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '70vh',
+        }}
+      >
+        {showMessage && (
+          <Box sx={{ textAlign: 'center', my: 3, fontWeight: 600, color: 'brown' }}>
+            Проверка авторизации на доступ к панели модератора
+          </Box>
+        )}
+        <CircularProgress size={100} color="primary" />
+      </Box>
     );
   }
 

@@ -84,6 +84,31 @@ export async function editEmail(email: string): Promise<User> {
   return result.json();
 }
 
+export async function editPassword({
+  currentPassword,
+  newPassword,
+}: {
+  currentPassword: string;
+  newPassword: string;
+}): Promise<User> {
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/password`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/users/my/profile/password';
+  }
+  const result = await fetch(`${url}`, {
+    method: 'PUT',
+    body: JSON.stringify({ currentPassword, newPassword }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
+  return result.json();
+}
+
 export async function editUsername(username: string): Promise<User> {
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/username`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {

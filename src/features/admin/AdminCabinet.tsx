@@ -1,37 +1,58 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Box, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import Seasons from './seasons/Seasons';
 import { selectUser } from '../auth/selectors';
 import { useAppDispatch } from '../../store';
-import { getProfile } from '../auth/authSlice';
 
 export default function AdminCabinet(): JSX.Element {
   const dispatch = useAppDispatch();
   const user = useSelector(selectUser);
   const navigate = useNavigate();
+  const [showMessage, setShowMessage] = useState(false);
 
+  // редирект неавторизованных пользователей
   useEffect(() => {
-    if (!user) {
-      // Если пользовательне авторизован, перенаправляем на главную
+    if (user && user.role !== 'ADMIN') {
       navigate('/');
-    } else if (user.role !== 'ADMIN') {
-      // Если пользователь не админ, также перенаправляем на главную
-      navigate('/');
-    } else {
-      dispatch(getProfile());
     }
+    const timer = setTimeout(() => {
+      if (!user) {
+        navigate('/');
+      } else if (user && user.role !== 'ADMIN') {
+        navigate('/');
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
   }, [dispatch, navigate, user]);
 
-  if (!user || user.role !== 'ADMIN') {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowMessage(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!user || (user && user.role !== 'ADMIN')) {
     return (
-      <div>
-        <Typography sx={{ m: 1, fontSize: '1rem', fontWeight: 600, color: 'brown' }}>
-          У вас нет доступа к админ-панели
-          <br /> Вы будете перенаправлены на главную страницу
-        </Typography>
-      </div>
+      <Box
+        sx={{
+          p: 5,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '70vh',
+        }}
+      >
+        {showMessage && (
+          <Box sx={{ textAlign: 'center', my: 3, fontWeight: 600, color: 'brown' }}>
+            Проверка авторизации на доступ к админ-панели
+          </Box>
+        )}
+        <CircularProgress size={100} color="primary" />
+      </Box>
     );
   }
 
