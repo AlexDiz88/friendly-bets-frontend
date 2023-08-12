@@ -58,7 +58,7 @@ export default function BetsList(): JSX.Element {
 
   useEffect(() => {
     dispatch(getActiveSeason());
-  }, [dispatch]);
+  }, [dispatch, value]);
 
   return (
     <Box>

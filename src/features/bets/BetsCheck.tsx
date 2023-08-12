@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -18,7 +19,6 @@ import { addBetResult, getActiveSeason } from '../admin/seasons/seasonsSlice';
 import BetCard from './BetCard';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import { selectUser } from '../auth/selectors';
-import { getProfile } from '../auth/authSlice';
 
 export default function BetsCheck(): JSX.Element {
   const activeSeason = useSelector(selectActiveSeason);
@@ -31,6 +31,7 @@ export default function BetsCheck(): JSX.Element {
   const [selectedBetId, setSelectedBetId] = useState<string | undefined>(undefined);
   const [gameResult, setGameResult] = useState<string>('');
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
+  const [showMessage, setShowMessage] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<
     'success' | 'error' | 'warning' | 'info'
@@ -171,27 +172,43 @@ export default function BetsCheck(): JSX.Element {
   }, [dispatch, openSnackbar]);
 
   // редирект неавторизованных пользователей
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!user) {
+        navigate('/');
+      } else if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
+        navigate('/');
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [navigate, user]);
 
   useEffect(() => {
-    if (!user) {
-      // Если пользовательне авторизован, перенаправляем на главную
-      navigate('/');
-    } else if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
-      // Если пользователь не админ или модератор, также перенаправляем на главную
-      navigate('/');
-    } else {
-      dispatch(getProfile());
-    }
-  }, [dispatch, navigate, user]);
+    const timer = setTimeout(() => {
+      setShowMessage(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
-  if (!user || (user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
+  if (!user || (user && user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
     return (
-      <div>
-        <Typography sx={{ m: 1, fontSize: '1rem', fontWeight: 600, color: 'brown' }}>
-          У вас нет доступа к панели модератора
-          <br /> Вы будете перенаправлены на главную страницу
-        </Typography>
-      </div>
+      <Box
+        sx={{
+          p: 5,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '70vh',
+        }}
+      >
+        {showMessage && (
+          <Box sx={{ textAlign: 'center', my: 3, fontWeight: 600, color: 'brown' }}>
+            Проверка авторизации на доступ к панели модератора
+          </Box>
+        )}
+        <CircularProgress size={100} color="primary" />
+      </Box>
     );
   }
 

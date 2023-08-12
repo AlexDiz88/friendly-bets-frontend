@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Box } from '@mui/material';
-import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { useAppDispatch } from '../store';
 import { getPlayersStatsBySeason } from '../features/stats/statsSlice';
 import { selectActiveSeason } from '../features/admin/seasons/selectors';
+import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
 import MainTable from './MainTable';
 
 export default function Homepage(): JSX.Element {

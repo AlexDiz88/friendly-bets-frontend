@@ -48,6 +48,27 @@ export const editEmail = createAsyncThunk(
   }
 );
 
+export const editPassword = createAsyncThunk(
+  'api/users/my/profile/editPassword',
+  async ({
+    currentPassword,
+    newPassword,
+    newPasswordRepeat,
+  }: {
+    currentPassword: string;
+    newPassword: string;
+    newPasswordRepeat: string;
+  }) => {
+    if (!currentPassword || !newPassword || !newPasswordRepeat) {
+      throw new Error('Текущий или новый пароль не может быть пустым');
+    }
+    if (newPassword !== newPasswordRepeat) {
+      throw new Error('Новый пароль и повтор пароля не совпадают');
+    }
+    return api.editPassword({ currentPassword, newPassword });
+  }
+);
+
 export const editUsername = createAsyncThunk(
   'api/users/my/profile/editUsername',
   async ({ username }: { username: string }) => {
@@ -110,6 +131,13 @@ const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(editUsername.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+
+      .addCase(editPassword.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(editPassword.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },
