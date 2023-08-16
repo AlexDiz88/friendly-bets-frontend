@@ -11,13 +11,15 @@ import {
 import { selectActiveSeason } from '../admin/seasons/selectors';
 
 export default function BetInputPlayer({
+  defaultValue,
   onUserSelect,
 }: {
+  defaultValue: string;
   onUserSelect: (userId: string) => void;
 }): JSX.Element {
   const activeSeason = useSelector(selectActiveSeason);
   const players = activeSeason?.players;
-  const [selectedUsername, setSelectedUsername] = useState<string>('');
+  const [selectedUsername, setSelectedUsername] = useState<string>(defaultValue);
 
   const handleSeasonChange = (event: SelectChangeEvent): void => {
     const username = event.target.value;

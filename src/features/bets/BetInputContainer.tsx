@@ -27,8 +27,11 @@ import { useAppDispatch } from '../../store';
 import {
   addBetToLeagueInSeason,
   addEmptyBetToLeagueInSeason,
+  getActiveSeason,
 } from '../admin/seasons/seasonsSlice';
 import { selectUser } from '../auth/selectors';
+import MatchDayForm from '../../components/MatchDayForm';
+import League from '../admin/leagues/types/League';
 
 export default function BetInputContainer(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -37,6 +40,7 @@ export default function BetInputContainer(): JSX.Element {
   const season = useSelector(selectActiveSeason);
   const [showMessage, setShowMessage] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [selectedLeague, setSelectedLeague] = useState<League>();
   const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
   const [selectedMatchDay, setSelectedMatchDay] = useState<string>('');
   const [selectedHomeTeamId, setSelectedHomeTeamId] = useState<string>('');
@@ -89,6 +93,7 @@ export default function BetInputContainer(): JSX.Element {
         setSelectedBetTitle('');
         setSelectedBetOdds('');
         setIsNot(false);
+        await dispatch(getActiveSeason());
       }
       if (addBetToLeagueInSeason.rejected.match(dispatchResult)) {
         setOpenSnackbar(true);
@@ -169,9 +174,13 @@ export default function BetInputContainer(): JSX.Element {
     setSelectedUserId(userId);
   };
 
-  const handleLeagueSelection = (leagueId: string, matchDay: number): void => {
-    setSelectedLeagueId(leagueId);
-    setSelectedMatchDay(matchDay.toString());
+  const handleLeagueSelection = (league: League): void => {
+    setSelectedLeague(league);
+    setSelectedLeagueId(league.id);
+  };
+
+  const handleMatchDaySelection = (matchDay: string): void => {
+    setSelectedMatchDay(matchDay);
   };
 
   const handleHomeTeamSelection = (homeTeamId: string): void => {
@@ -208,8 +217,8 @@ export default function BetInputContainer(): JSX.Element {
     setOpenDialogEmptyBet(true);
   };
 
-  const handleSaveTwoEmptyBet = (): void => {
-    handleSaveEmptyBetClick();
+  const handleSaveTwoEmptyBet = async (): Promise<void> => {
+    await handleSaveEmptyBetClick();
     handleSaveEmptyBetClick();
   };
 
@@ -231,6 +240,12 @@ export default function BetInputContainer(): JSX.Element {
   const handleCloseSnackbar = (): void => {
     setOpenSnackbar(false);
   };
+
+  useEffect(() => {
+    if (season && selectedLeague) {
+      setSelectedMatchDay(selectedLeague.currentMatchDay || '1');
+    }
+  }, [season, selectedLeague, openSnackbar]);
 
   // редирект неавторизованных пользователей
   useEffect(() => {
@@ -286,8 +301,20 @@ export default function BetInputContainer(): JSX.Element {
           inputProps={{ 'aria-label': 'controlled' }}
         />
       </Typography>
-      <BetInputPlayer onUserSelect={handleUserSelection} />
-      {selectedUserId && <BetInputLeague onLeagueSelect={handleLeagueSelection} />}
+      <BetInputPlayer defaultValue="" onUserSelect={handleUserSelection} />
+      {selectedUserId && (
+        <Box>
+          <BetInputLeague onLeagueSelect={handleLeagueSelection} />
+          {selectedLeague && (
+            <MatchDayForm
+              key={selectedLeague.id}
+              defaultValue={selectedLeague ? selectedLeague.currentMatchDay : '1'}
+              selectedLeague={selectedLeague}
+              onMatchDaySelect={handleMatchDaySelection}
+            />
+          )}
+        </Box>
+      )}
       {!isEmptyBet && (
         <>
           {selectedLeagueId && selectedMatchDay && (

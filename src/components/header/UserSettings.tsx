@@ -24,6 +24,7 @@ const adminSettings = [
 const moderSettings = [
   'Внести ставку',
   'Подвести итоги',
+  'Редактирование ставок',
   'Мой профиль',
   'Моя статистика',
   'Регистрация на турнир',
@@ -53,6 +54,10 @@ export default function UserSettings(): JSX.Element {
   } else if (user.role === 'ADMIN') {
     settings = adminSettings;
   }
+
+  const handleBetsEditList = (): void => {
+    navigate('/bets/edit');
+  };
 
   const handleMyProfile = (): void => {
     navigate('/my/profile');
@@ -168,6 +173,8 @@ export default function UserSettings(): JSX.Element {
                 handleSeasonRegister();
               } else if (setting === 'Подвести итоги') {
                 handleBetsCheck();
+              } else if (setting === 'Редактирование ставок') {
+                handleBetsEditList();
               }
               handleCloseUserMenu();
             }}

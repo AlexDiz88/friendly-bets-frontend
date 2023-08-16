@@ -7,6 +7,7 @@ import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import BetCard from './BetCard';
 import CompleteBetCard from './CompleteBetCard';
 import EmptyBetCard from './EmptyBetCard';
+import Bet from './types/Bet';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -124,28 +125,45 @@ export default function BetsList(): JSX.Element {
             <Box>
               {activeSeason &&
                 activeSeason.leagues &&
-                activeSeason.leagues.map((l) => (
-                  <Box key={l.id}>
-                    {l.bets
-                      .filter(
+                (() => {
+                  // Создаем массив всех ставок из всех лиг
+                  const allBets: Bet[] = [];
+                  activeSeason.leagues.forEach((l) => {
+                    allBets.push(
+                      ...l.bets.filter(
                         (bet) =>
                           bet.betStatus === 'WON' ||
                           bet.betStatus === 'RETURNED' ||
                           bet.betStatus === 'LOST' ||
                           bet.betStatus === 'EMPTY'
                       )
-                      .reverse()
-                      .map((bet) => (
-                        <Box key={bet.id}>
-                          {bet.betStatus === 'EMPTY' ? (
-                            <EmptyBetCard bet={bet} league={l} />
+                    );
+                  });
+
+                  // Сортируем массив всех ставок по дате создания
+                  const sortedBets = allBets.sort(
+                    (betA, betB) =>
+                      new Date(betB.betResultAddedAt).getTime() -
+                      new Date(betA.betResultAddedAt).getTime()
+                  );
+
+                  return sortedBets.map((bet) => {
+                    const league = activeSeason.leagues.find((l) =>
+                      l.bets.some((betInLeague) => betInLeague.id === bet.id)
+                    );
+
+                    return (
+                      <Box key={bet.id}>
+                        {league &&
+                          (bet.betStatus === 'EMPTY' ? (
+                            <EmptyBetCard bet={bet} league={league} />
                           ) : (
-                            <CompleteBetCard bet={bet} league={l} />
-                          )}
-                        </Box>
-                      ))}
-                  </Box>
-                ))}
+                            <CompleteBetCard bet={bet} league={league} />
+                          ))}
+                      </Box>
+                    );
+                  });
+                })()}
             </Box>
           </Box>
         </CustomTabPanel>

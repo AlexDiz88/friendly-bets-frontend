@@ -59,7 +59,6 @@ export default function AddTeamToLeague({
       setSnackbarDuration(1000);
       setSnackbarSeverity('success');
       setSnackbarMessage('Команда успешно добавлена в лигу');
-      setSelectedTeam('');
     }
     if (addTeamToLeagueInSeason.rejected.match(dispatchResult)) {
       setOpenSnackbar(true);

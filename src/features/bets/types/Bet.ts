@@ -2,6 +2,7 @@ import Team from '../../admin/teams/types/Team';
 
 export default interface Bet {
   id: string;
+  createdAt: Date;
   username: string;
   matchDay: string;
   gameId?: string;
@@ -12,6 +13,7 @@ export default interface Bet {
   betOdds: number;
   betSize: number;
   gameResult?: string;
+  betResultAddedAt: Date;
   betStatus: string;
   balanceChange?: number;
 }
