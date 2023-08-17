@@ -9,24 +9,27 @@ import {
   Typography,
 } from '@mui/material';
 import { selectActiveSeason } from '../admin/seasons/selectors';
+import User from '../auth/types/User';
 
 export default function BetInputPlayer({
   defaultValue,
   onUserSelect,
 }: {
-  defaultValue: string;
-  onUserSelect: (userId: string) => void;
+  defaultValue: User | undefined;
+  onUserSelect: (user: User) => void;
 }): JSX.Element {
   const activeSeason = useSelector(selectActiveSeason);
   const players = activeSeason?.players;
-  const [selectedUsername, setSelectedUsername] = useState<string>(defaultValue);
+  const [selectedUsername, setSelectedUsername] = useState<string>(
+    defaultValue?.username || ''
+  );
 
   const handleSeasonChange = (event: SelectChangeEvent): void => {
     const username = event.target.value;
     setSelectedUsername(username);
     const selectedUser = players?.find((player) => player.username === username);
     if (selectedUser) {
-      onUserSelect(selectedUser.id);
+      onUserSelect(selectedUser);
     }
   };
 

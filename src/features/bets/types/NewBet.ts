@@ -7,4 +7,6 @@ export default interface NewBet extends NewEmptyBet {
   awayTeamId: string;
   betTitle: string;
   betOdds: number;
+  betStatus?: string;
+  gameResult?: string;
 }

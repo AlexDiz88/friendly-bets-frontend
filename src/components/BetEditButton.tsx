@@ -10,8 +10,15 @@ import {
 } from '@mui/material';
 import Bet from '../features/bets/types/Bet';
 import BetEditForm from '../features/bets/BetEditForm';
+import League from '../features/admin/leagues/types/League';
 
-export default function BetEditButton({ bet }: { bet: Bet }): JSX.Element {
+export default function BetEditButton({
+  bet,
+  league,
+}: {
+  bet: Bet;
+  league: League;
+}): JSX.Element {
   const [showEditForm, setShowEditForm] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
@@ -64,7 +71,15 @@ export default function BetEditButton({ bet }: { bet: Bet }): JSX.Element {
           </Typography>
         </Button>
       </Box>
-      {showEditForm && <BetEditForm bet={bet} />}
+      {showEditForm && bet.betStatus !== 'EMPTY' && (
+        <BetEditForm bet={bet} league={league} handleEditBet={handleEditBet} />
+      )}
+      {/* // TODO сделать отдельную форму для пустой ставки ? */}
+      {showEditForm && bet.betStatus === 'EMPTY' && (
+        <Box sx={{ color: 'brown', fontWeight: 600, m: 1 }}>
+          Редактирование пустых ставок в разработке
+        </Box>
+      )}
       <Dialog open={openDeleteDialog} onClose={handleCloseDialog}>
         <DialogContent>
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>

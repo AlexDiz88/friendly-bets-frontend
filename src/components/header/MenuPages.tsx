@@ -158,6 +158,7 @@ export default function MenuPages(): JSX.Element {
               onClickCapture={() => {
                 handleCloseNavMenu();
                 handleNavigate(page);
+                scrollToTop();
               }}
               variant="h5"
               noWrap

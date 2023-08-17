@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, IconButton, TextField } from '@mui/material';
 import { RemoveCircle, AddCircle } from '@mui/icons-material';
-import League from '../features/admin/leagues/types/League';
 
 export default function MatchDayForm({
   defaultValue,
-  selectedLeague,
   onMatchDaySelect,
 }: {
   defaultValue: string;
-  selectedLeague: League;
   onMatchDaySelect: (matchDay: string) => void;
 }): JSX.Element {
   const [matchDay, setMatchDay] = useState<string>(defaultValue);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [dummyChange, setDummyChange] = useState<number>(0);
 
   const handleIncrement = (): void => {
     setMatchDay((prevValue) => {
@@ -38,10 +33,6 @@ export default function MatchDayForm({
     setMatchDay(newValue);
     onMatchDaySelect(newValue);
   };
-
-  useEffect(() => {
-    setMatchDay(selectedLeague.currentMatchDay || '1');
-  }, [selectedLeague, dummyChange]);
 
   return (
     <Box>

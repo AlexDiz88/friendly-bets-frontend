@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { Box, TextField, Typography } from '@mui/material';
 
 export default function BetInputOdds({
+  defaultBetOdds,
+  defaultBetSize,
   onOddsSelect,
 }: {
+  defaultBetOdds: string;
+  defaultBetSize: string;
   onOddsSelect: (betOdds: string, betSize: string) => void;
 }): JSX.Element {
-  const [betOdds, setBetOdds] = useState<string>('');
-  const [betSize, setBetSize] = useState<string>('10');
+  const [betOdds, setBetOdds] = useState<string>(defaultBetOdds);
+  const [betSize, setBetSize] = useState<string>(defaultBetSize);
 
   const handleBetOdds = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const odds = event.target.value;

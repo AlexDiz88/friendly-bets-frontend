@@ -32,6 +32,9 @@ import {
 import { selectUser } from '../auth/selectors';
 import MatchDayForm from '../../components/MatchDayForm';
 import League from '../admin/leagues/types/League';
+import User from '../auth/types/User';
+import Team from '../admin/teams/types/Team';
+import BetSummaryInfo from './BetSummaryInfo';
 
 export default function BetInputContainer(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -39,12 +42,16 @@ export default function BetInputContainer(): JSX.Element {
   const navigate = useNavigate();
   const season = useSelector(selectActiveSeason);
   const [showMessage, setShowMessage] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const [selectedLeague, setSelectedLeague] = useState<League>();
   const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
   const [selectedMatchDay, setSelectedMatchDay] = useState<string>('');
-  const [selectedHomeTeamId, setSelectedHomeTeamId] = useState<string>('');
-  const [selectedAwayTeamId, setSelectedAwayTeamId] = useState<string>('');
+  const [selectedHomeTeam, setSelectedHomeTeam] = useState<Team | undefined>(
+    undefined
+  );
+  const [selectedAwayTeam, setSelectedAwayTeam] = useState<Team | undefined>(
+    undefined
+  );
   const [selectedEmptyBetSize, setSelectedEmptyBetSize] = useState<string>('10');
   const [resetTeams, setResetTeams] = useState(false);
   const [isEmptyBet, setIsEmptyBet] = useState(false);
@@ -64,7 +71,7 @@ export default function BetInputContainer(): JSX.Element {
   // добавление ставки
   const handleSaveClick = React.useCallback(async () => {
     setOpenDialog(false);
-    if (season) {
+    if (season && selectedUser && selectedHomeTeam && selectedAwayTeam) {
       const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
       // TODO добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
       const dispatchResult = await dispatch(
@@ -72,10 +79,10 @@ export default function BetInputContainer(): JSX.Element {
           seasonId: season.id,
           leagueId: selectedLeagueId,
           newBet: {
-            userId: selectedUserId,
+            userId: selectedUser?.id,
             matchDay: selectedMatchDay,
-            homeTeamId: selectedHomeTeamId,
-            awayTeamId: selectedAwayTeamId,
+            homeTeamId: selectedHomeTeam?.id,
+            awayTeamId: selectedAwayTeam?.id,
             betTitle: isNot ? `${selectedBetTitle} - нет` : selectedBetTitle,
             betOdds: betOddsToNumber,
             betSize: Number(selectedBetSize),
@@ -88,8 +95,8 @@ export default function BetInputContainer(): JSX.Element {
         setSnackbarSeverity('success');
         setSnackbarMessage('Ставка успешно добавлена');
         setResetTeams(!resetTeams);
-        setSelectedHomeTeamId('');
-        setSelectedAwayTeamId('');
+        setSelectedHomeTeam(undefined);
+        setSelectedAwayTeam(undefined);
         setSelectedBetTitle('');
         setSelectedBetOdds('');
         setIsNot(false);
@@ -111,25 +118,25 @@ export default function BetInputContainer(): JSX.Element {
     isNot,
     resetTeams,
     season,
-    selectedAwayTeamId,
+    selectedAwayTeam,
     selectedBetOdds,
     selectedBetSize,
     selectedBetTitle,
-    selectedHomeTeamId,
+    selectedHomeTeam,
     selectedLeagueId,
     selectedMatchDay,
-    selectedUserId,
+    selectedUser,
   ]);
 
   // добавление пустой ставки
   const handleSaveEmptyBetClick = React.useCallback(async () => {
-    if (season) {
+    if (season && selectedUser) {
       const dispatchResult = await dispatch(
         addEmptyBetToLeagueInSeason({
           seasonId: season.id,
           leagueId: selectedLeagueId,
           newEmptyBet: {
-            userId: selectedUserId,
+            userId: selectedUser.id,
             matchDay: selectedMatchDay,
             betSize: Number(selectedEmptyBetSize),
           },
@@ -162,7 +169,7 @@ export default function BetInputContainer(): JSX.Element {
     selectedEmptyBetSize,
     selectedLeagueId,
     selectedMatchDay,
-    selectedUserId,
+    selectedUser,
   ]);
 
   // хэндлеры
@@ -170,8 +177,8 @@ export default function BetInputContainer(): JSX.Element {
     setIsEmptyBet(event.target.checked);
   };
 
-  const handleUserSelection = (userId: string): void => {
-    setSelectedUserId(userId);
+  const handleUserSelection = (player: User): void => {
+    setSelectedUser(player);
   };
 
   const handleLeagueSelection = (league: League): void => {
@@ -183,12 +190,12 @@ export default function BetInputContainer(): JSX.Element {
     setSelectedMatchDay(matchDay);
   };
 
-  const handleHomeTeamSelection = (homeTeamId: string): void => {
-    setSelectedHomeTeamId(homeTeamId);
+  const handleHomeTeamSelection = (homeTeam: Team): void => {
+    setSelectedHomeTeam(homeTeam);
   };
 
-  const handleAwayTeamSelection = (awayTeamId: string): void => {
-    setSelectedAwayTeamId(awayTeamId);
+  const handleAwayTeamSelection = (awayTeam: Team): void => {
+    setSelectedAwayTeam(awayTeam);
   };
 
   const handleBetCancel = (): void => {
@@ -301,15 +308,14 @@ export default function BetInputContainer(): JSX.Element {
           inputProps={{ 'aria-label': 'controlled' }}
         />
       </Typography>
-      <BetInputPlayer defaultValue="" onUserSelect={handleUserSelection} />
-      {selectedUserId && (
+      <BetInputPlayer defaultValue={undefined} onUserSelect={handleUserSelection} />
+      {selectedUser && (
         <Box>
           <BetInputLeague onLeagueSelect={handleLeagueSelection} />
           {selectedLeague && (
             <MatchDayForm
               key={selectedLeague.id}
               defaultValue={selectedLeague ? selectedLeague.currentMatchDay : '1'}
-              selectedLeague={selectedLeague}
               onMatchDaySelect={handleMatchDaySelection}
             />
           )}
@@ -319,13 +325,15 @@ export default function BetInputContainer(): JSX.Element {
         <>
           {selectedLeagueId && selectedMatchDay && (
             <BetInputTeams
+              defaultHomeTeamName=""
+              defaultAwayTeamName=""
               onHomeTeamSelect={handleHomeTeamSelection}
               onAwayTeamSelect={handleAwayTeamSelection}
               leagueId={selectedLeagueId}
               resetTeams={resetTeams}
             />
           )}
-          {selectedHomeTeamId && selectedAwayTeamId && !selectedBetTitle && (
+          {selectedHomeTeam && selectedAwayTeam && !selectedBetTitle && (
             <BetInputTitle onBetTitleSelect={handleBetTitleSelection} />
           )}
           {selectedBetTitle && (
@@ -361,7 +369,9 @@ export default function BetInputContainer(): JSX.Element {
               Нет
             </Box>
           )}
-          {selectedBetTitle && <BetInputOdds onOddsSelect={handleOddsSelection} />}
+          {selectedBetTitle && (
+            <BetInputOdds defaultBetOdds="" defaultBetSize="10" onOddsSelect={handleOddsSelection} />
+          )}
           {selectedBetOdds && selectedBetSize && (
             <Button
               onClick={handleOpenDialog}
@@ -430,11 +440,21 @@ export default function BetInputContainer(): JSX.Element {
       )}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogContent>
-          <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-            Добавить ставку? <br />
-            Ставка: {selectedBetTitle} <br />
-            Кэф: {selectedBetOdds} <br />
-            Сумма: {selectedBetSize}
+          <DialogContentText sx={{ fontSize: '1rem' }}>
+            <BetSummaryInfo
+              message="Добавить ставку"
+              player={selectedUser}
+              league={selectedLeague}
+              matchDay={selectedMatchDay}
+              homeTeam={selectedHomeTeam}
+              awayTeam={selectedAwayTeam}
+              isNot={isNot}
+              betTitle={selectedBetTitle}
+              betOdds={selectedBetOdds}
+              betSize={selectedBetSize}
+              gameResult=""
+              betStatus=""
+            />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
