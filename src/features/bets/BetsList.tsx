@@ -7,6 +7,7 @@ import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import BetCard from './BetCard';
 import CompleteBetCard from './CompleteBetCard';
 import EmptyBetCard from './EmptyBetCard';
+import Bet from './types/Bet';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -100,17 +101,32 @@ export default function BetsList(): JSX.Element {
             <Box>
               {activeSeason &&
                 activeSeason.leagues &&
-                activeSeason.leagues.map((l) => (
-                  <Box key={l.id}>
-                    {l.bets
-                      .filter((bet) => bet.betStatus === 'OPENED')
-                      .map((bet) => (
-                        <Box key={bet.id}>
-                          <BetCard bet={bet} league={l} />
-                        </Box>
-                      ))}
-                  </Box>
-                ))}
+                (() => {
+                  const allBets: Bet[] = [];
+                  activeSeason.leagues.forEach((l) => {
+                    allBets.push(
+                      ...l.bets.filter((bet) => bet.betStatus === 'OPENED')
+                    );
+                  });
+
+                  const sortedBets = allBets.sort(
+                    (betA, betB) =>
+                      new Date(betB.createdAt).getTime() -
+                      new Date(betA.createdAt).getTime()
+                  );
+
+                  return sortedBets.map((bet) => {
+                    const league = activeSeason.leagues.find((l) =>
+                      l.bets.some((betInLeague) => betInLeague.id === bet.id)
+                    );
+
+                    return (
+                      <Box key={bet.id}>
+                        {league && <BetCard bet={bet} league={league} />}
+                      </Box>
+                    );
+                  });
+                })()}
             </Box>
           </Box>
         </CustomTabPanel>
@@ -124,28 +140,47 @@ export default function BetsList(): JSX.Element {
             <Box>
               {activeSeason &&
                 activeSeason.leagues &&
-                activeSeason.leagues.map((l) => (
-                  <Box key={l.id}>
-                    {l.bets
-                      .filter(
+                (() => {
+                  const allBets: Bet[] = [];
+                  activeSeason.leagues.forEach((l) => {
+                    allBets.push(
+                      ...l.bets.filter(
                         (bet) =>
                           bet.betStatus === 'WON' ||
                           bet.betStatus === 'RETURNED' ||
                           bet.betStatus === 'LOST' ||
                           bet.betStatus === 'EMPTY'
                       )
-                      .reverse()
-                      .map((bet) => (
-                        <Box key={bet.id}>
-                          {bet.betStatus === 'EMPTY' ? (
-                            <EmptyBetCard bet={bet} league={l} />
+                    );
+                  });
+
+                  const sortedBets = allBets.sort((betA, betB) => {
+                    const dateA = betA.betResultAddedAt
+                      ? new Date(betA.betResultAddedAt)
+                      : new Date(betA.createdAt);
+                    const dateB = betB.betResultAddedAt
+                      ? new Date(betB.betResultAddedAt)
+                      : new Date(betB.createdAt);
+                    return dateB.getTime() - dateA.getTime();
+                  });
+
+                  return sortedBets.map((bet) => {
+                    const league = activeSeason.leagues.find((l) =>
+                      l.bets.some((betInLeague) => betInLeague.id === bet.id)
+                    );
+
+                    return (
+                      <Box key={bet.id}>
+                        {league &&
+                          (bet.betStatus === 'EMPTY' ? (
+                            <EmptyBetCard bet={bet} league={league} />
                           ) : (
-                            <CompleteBetCard bet={bet} league={l} />
-                          )}
-                        </Box>
-                      ))}
-                  </Box>
-                ))}
+                            <CompleteBetCard bet={bet} league={league} />
+                          ))}
+                      </Box>
+                    );
+                  });
+                })()}
             </Box>
           </Box>
         </CustomTabPanel>

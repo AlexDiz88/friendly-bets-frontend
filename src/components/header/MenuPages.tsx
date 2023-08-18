@@ -44,6 +44,10 @@ export default function MenuPages(): JSX.Element {
     setAnchorElNav(null);
   };
 
+  const scrollToTop = (): void => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <>
       <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -101,6 +105,7 @@ export default function MenuPages(): JSX.Element {
           noWrap
           component="a"
           href="#"
+          onClick={scrollToTop}
           sx={{
             px: { xs: 0, md: 0.5 },
             my: 2,
@@ -122,6 +127,7 @@ export default function MenuPages(): JSX.Element {
           noWrap
           component="a"
           href="#/bets"
+          onClick={scrollToTop}
           sx={{
             px: { xs: 0, md: 0.5 },
             my: 2,
@@ -152,6 +158,7 @@ export default function MenuPages(): JSX.Element {
               onClickCapture={() => {
                 handleCloseNavMenu();
                 handleNavigate(page);
+                scrollToTop();
               }}
               variant="h5"
               noWrap

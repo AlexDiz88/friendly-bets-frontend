@@ -11,7 +11,7 @@ export default function EmptyBetCard({
   bet: Bet;
   league: League;
 }): JSX.Element {
-  const { username, balanceChange, betSize, matchDay } = bet;
+  const { player, balanceChange, betSize, matchDay } = bet;
   return (
     <Box
       sx={{
@@ -40,7 +40,7 @@ export default function EmptyBetCard({
             alt="user_avatar"
             src="https://kartinkin.net/pics/uploads/posts/2022-09/1662642172_2-kartinkin-net-p-risunok-na-avatarku-dlya-muzhchin-instagra-2.jpg"
           />
-          <b>{username}</b>
+          <b>{player.username}</b>
         </Box>
         <Box
           sx={{
@@ -52,9 +52,9 @@ export default function EmptyBetCard({
           <Avatar
             sx={{ mr: 0.5, width: 25, height: 25 }}
             alt="team_logo"
-            src={`${
-              process.env.PUBLIC_URL
-            }/upload/logo/${league.displayNameEn.toLowerCase().replace(/\s/g, '_')}.png`}
+            src={`${process.env.PUBLIC_URL}/upload/logo/${league.displayNameEn
+              .toLowerCase()
+              .replace(/\s/g, '_')}.png`}
           />
           {league.shortNameRu} - {matchDay}й
         </Box>

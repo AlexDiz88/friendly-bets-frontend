@@ -8,6 +8,7 @@ export default interface League {
   displayNameEn: string;
   shortNameRu: string;
   shortNameEn: string;
+  currentMatchDay: string;
   teams: Team[];
   bets: Bet[];
 }

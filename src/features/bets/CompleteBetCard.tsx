@@ -12,7 +12,7 @@ export default function CompleteBetCard({
   league: League;
 }): JSX.Element {
   const {
-    username,
+    player,
     homeTeam,
     awayTeam,
     betTitle,
@@ -57,7 +57,7 @@ export default function CompleteBetCard({
             alt="user_avatar"
             src="https://kartinkin.net/pics/uploads/posts/2022-09/1662642172_2-kartinkin-net-p-risunok-na-avatarku-dlya-muzhchin-instagra-2.jpg"
           />
-          <b>{username}</b>
+          <b>{player.username}</b>
         </Box>
         <Box
           sx={{
@@ -69,9 +69,9 @@ export default function CompleteBetCard({
           <Avatar
             sx={{ mr: 0.5, width: 25, height: 25 }}
             alt="team_logo"
-            src={`${
-              process.env.PUBLIC_URL
-            }/upload/logo/${league.displayNameEn.toLowerCase().replace(/\s/g, '_')}.png`}
+            src={`${process.env.PUBLIC_URL}/upload/logo/${league.displayNameEn
+              .toLowerCase()
+              .replace(/\s/g, '_')}.png`}
           />
           {league.shortNameRu} - {matchDay}й
         </Box>
@@ -81,17 +81,17 @@ export default function CompleteBetCard({
           <Avatar
             sx={{ mr: 0.5, width: 25, height: 25 }}
             alt="team_logo"
-            src={`${
-              process.env.PUBLIC_URL
-            }/upload/logo/${homeTeam.fullTitleEn.toLowerCase().replace(/\s/g, '_')}.png`}
+            src={`${process.env.PUBLIC_URL}/upload/logo/${homeTeam.fullTitleEn
+              .toLowerCase()
+              .replace(/\s/g, '_')}.png`}
           />
           {homeTeam.fullTitleRu}
           <Avatar
             sx={{ mr: 0.5, ml: 1, width: 25, height: 25 }}
             alt="team_logo"
-            src={`${
-              process.env.PUBLIC_URL
-            }/upload/logo/${awayTeam.fullTitleEn.toLowerCase().replace(/\s/g, '_')}.png`}
+            src={`${process.env.PUBLIC_URL}/upload/logo/${awayTeam.fullTitleEn
+              .toLowerCase()
+              .replace(/\s/g, '_')}.png`}
           />
           {awayTeam.fullTitleRu}
         </Box>

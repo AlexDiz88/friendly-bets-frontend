@@ -19,6 +19,8 @@ import { addBetResult, getActiveSeason } from '../admin/seasons/seasonsSlice';
 import BetCard from './BetCard';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import { selectUser } from '../auth/selectors';
+import GameScoreValidation from '../../components/utils/GameScoreValidation';
+import BetGameResultInfo from './BetGameResultInfo';
 
 export default function BetsCheck(): JSX.Element {
   const activeSeason = useSelector(selectActiveSeason);
@@ -31,6 +33,7 @@ export default function BetsCheck(): JSX.Element {
   const [selectedBetId, setSelectedBetId] = useState<string | undefined>(undefined);
   const [gameResult, setGameResult] = useState<string>('');
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
+  const [selectedLeague, setSelectedLeague] = useState('Все');
   const [showMessage, setShowMessage] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<
@@ -90,72 +93,25 @@ export default function BetsCheck(): JSX.Element {
   };
 
   const handleBetLoseOpenDialog = (betId: string, result: string): void => {
-    const res = resultTransform(result);
+    const res = GameScoreValidation(result);
     setGameResult(res);
     setSelectedBetId(betId);
     setBetLoseOpenDialog(true);
   };
 
   const handleBetReturnOpenDialog = (betId: string, result: string): void => {
-    const res = resultTransform(result);
+    const res = GameScoreValidation(result);
     setGameResult(res);
     setSelectedBetId(betId);
     setBetReturnOpenDialog(true);
   };
 
   const handleBetWinOpenDialog = (betId: string, result: string): void => {
-    const res = resultTransform(result);
+    const res = GameScoreValidation(result);
     setGameResult(res);
     setSelectedBetId(betId);
     setBetWinOpenDialog(true);
   };
-
-  // проверка счёта
-  function isValidScore(matchScore: string): boolean {
-    const scoreRegex = /^(\d+):(\d+) \((\d+):(\d+)\)$/;
-    if (!scoreRegex.test(matchScore)) {
-      return false;
-    }
-    const matchArray = scoreRegex.exec(matchScore);
-    if (!matchArray) {
-      return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [p, fullTimeHome, fullTimeAway, halfTimeHome, halfTimeAway] = matchArray;
-    const fullTimeHomeGoals = parseInt(fullTimeHome, 10);
-    const fullTimeAwayGoals = parseInt(fullTimeAway, 10);
-    const halfTimeHomeGoals = parseInt(halfTimeHome, 10);
-    const halfTimeAwayGoals = parseInt(halfTimeAway, 10);
-    if (
-      fullTimeHomeGoals < halfTimeHomeGoals ||
-      fullTimeAwayGoals < halfTimeAwayGoals
-    ) {
-      return false;
-    }
-
-    return true;
-  }
-
-  function resultTransform(inputString: string): string {
-    if (!inputString) {
-      return '';
-    }
-    const transformedString = inputString
-      .trim()
-      .replace(/[$!"№%?(){}\]§&=]/g, '')
-      .replace(/[.*;_/-]/g, ':')
-      .replace(/:+/g, ':')
-      .replace(/[,]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .replace(/([^\s]+)\s(.+)/, '$1 ($2)');
-
-    if (!isValidScore(transformedString)) {
-      return 'Некорректный счет матча!';
-    }
-
-    return transformedString;
-  }
-  // конец проверки счета
 
   const handleCloseDialog = (): void => {
     setBetWinOpenDialog(false);
@@ -165,6 +121,10 @@ export default function BetsCheck(): JSX.Element {
 
   const handleCloseSnackbar = (): void => {
     setOpenSnackbar(false);
+  };
+
+  const handleLeagueChange = (leagueName: string): void => {
+    setSelectedLeague(leagueName);
   };
 
   useEffect(() => {
@@ -222,15 +182,74 @@ export default function BetsCheck(): JSX.Element {
       {activeSeason && (
         <Box>
           <Box
-            sx={{ borderBottom: 1, textAlign: 'center', mx: 3, pb: 0.5, mb: 1.5 }}
+            sx={{ borderBottom: 2, textAlign: 'center', mx: 3, pb: 0.5, mb: 1.5 }}
           >
             Проверка ставок
           </Box>
+
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ mb: 1 }}>
+              <Button
+                sx={{
+                  borderRadius: 0,
+                  borderBottom: selectedLeague === 'Все' ? 1 : 0,
+                  color: selectedLeague === 'Все' ? 'brown' : 'black',
+                  fontFamily: 'Exo 2',
+                  px: 0,
+                  mr: 0.5,
+                  fontWeight: selectedLeague === 'Все' ? 'bold' : 'normal',
+                }}
+                onClick={() => handleLeagueChange('Все')}
+              >
+                <Typography
+                  variant="button"
+                  fontWeight="inherit"
+                  fontSize="0.9rem"
+                  fontFamily="Shantell Sans"
+                >
+                  Все
+                </Typography>
+              </Button>
+            </Box>
+            {activeSeason.leagues &&
+              activeSeason.leagues.map((l) => (
+                <Box key={l.id} sx={{ mb: 1 }}>
+                  <Button
+                    key={l.shortNameRu}
+                    sx={{
+                      borderRadius: 0,
+                      borderBottom: selectedLeague === l.shortNameRu ? 1 : 0,
+                      color: selectedLeague === l.shortNameRu ? 'brown' : 'black',
+                      fontFamily: 'Exo 2',
+                      px: 0,
+                      mr: 0.5,
+                      fontWeight:
+                        selectedLeague === l.shortNameRu ? 'bold' : 'normal',
+                    }}
+                    onClick={() => handleLeagueChange(l.shortNameRu)}
+                  >
+                    <Typography
+                      variant="button"
+                      fontWeight="inherit"
+                      fontSize="0.9rem"
+                      fontFamily="Shantell Sans"
+                    >
+                      {l.shortNameRu}
+                    </Typography>
+                  </Button>
+                </Box>
+              ))}
+          </Box>
+
           {activeSeason.leagues &&
             activeSeason.leagues.map((l) => (
               <Box key={l.id}>
                 {l.bets
-                  .filter((bet) => bet.betStatus === 'OPENED')
+                  .filter(
+                    (bet) =>
+                      bet.betStatus === 'OPENED' &&
+                      (selectedLeague === 'Все' || selectedLeague === l.shortNameRu)
+                  )
                   .map((bet) => (
                     <Box key={bet.id}>
                       <BetCard bet={bet} league={l} />
@@ -325,9 +344,7 @@ export default function BetsCheck(): JSX.Element {
       <Dialog open={betLoseOpenDialog} onClose={handleCloseDialog}>
         <DialogContent>
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-            Подтвердить
-            <br />
-            Итовый счёт: {gameResult || 'НЕ УКАЗАН!'}
+            <BetGameResultInfo gameResult={gameResult} />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -367,9 +384,7 @@ export default function BetsCheck(): JSX.Element {
       <Dialog open={betReturnOpenDialog} onClose={handleCloseDialog}>
         <DialogContent>
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-            Подтвердить
-            <br />
-            Итовый счёт: {gameResult || 'НЕ УКАЗАН!'}
+            <BetGameResultInfo gameResult={gameResult} />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -410,9 +425,7 @@ export default function BetsCheck(): JSX.Element {
       <Dialog open={betWinOpenDialog} onClose={handleCloseDialog}>
         <DialogContent>
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-            Подтвердить
-            <br />
-            Итовый счёт: {gameResult || 'НЕ УКАЗАН!'}
+            <BetGameResultInfo gameResult={gameResult} />
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -10,7 +10,8 @@ export default function BetCard({
   bet: Bet;
   league: League;
 }): JSX.Element {
-  const { username, homeTeam, awayTeam, betTitle, betOdds, betSize, matchDay } = bet;
+  const { player, homeTeam, awayTeam, betTitle, betOdds, betSize, matchDay } = bet;
+
   return (
     <Box
       sx={{
@@ -39,7 +40,7 @@ export default function BetCard({
             alt="user_avatar"
             src="https://kartinkin.net/pics/uploads/posts/2022-09/1662642172_2-kartinkin-net-p-risunok-na-avatarku-dlya-muzhchin-instagra-2.jpg"
           />
-          <b>{username}</b>
+          <b>{player.username}</b>
         </Box>
         <Box
           sx={{

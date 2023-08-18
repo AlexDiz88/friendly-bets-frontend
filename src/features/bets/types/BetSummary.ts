@@ -1,23 +1,17 @@
+import League from '../../admin/leagues/types/League';
 import Team from '../../admin/teams/types/Team';
 import User from '../../auth/types/User';
 
-export default interface Bet {
-  id: string;
-  createdAt: Date;
+export default interface BetSummary {
   player: User;
+  league: League;
   matchDay: string;
-  gameId?: string;
-  gameDate?: string;
   homeTeam: Team;
   awayTeam: Team;
   betTitle: string;
+  isNot: boolean;
   betOdds: number;
   betSize: number;
   gameResult?: string;
-  betResultAddedAt: Date;
-  betStatus: string;
-  balanceChange?: number;
-  updatedAt: Date;
+  betStatus?: string;
 }
-
-export type BetId = Bet['id'];

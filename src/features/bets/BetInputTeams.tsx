@@ -11,15 +11,20 @@ import {
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { useAppDispatch } from '../../store';
 import { selectActiveSeason } from '../admin/seasons/selectors';
+import Team from '../admin/teams/types/Team';
 
-export default function BetInputPlayer({
+export default function BetInputTeams({
+  defaultHomeTeamName,
+  defaultAwayTeamName,
   onHomeTeamSelect,
   onAwayTeamSelect,
   leagueId,
   resetTeams,
 }: {
-  onHomeTeamSelect: (homeTeamId: string) => void;
-  onAwayTeamSelect: (awayTeamId: string) => void;
+  defaultHomeTeamName: string;
+  defaultAwayTeamName: string;
+  onHomeTeamSelect: (homeTeam: Team) => void;
+  onAwayTeamSelect: (awayTeam: Team) => void;
   leagueId: string;
   resetTeams: boolean;
 }): JSX.Element {
@@ -27,8 +32,10 @@ export default function BetInputPlayer({
   const activeSeason = useSelector(selectActiveSeason);
   const leagues = activeSeason?.leagues;
   const league = leagues?.find((l) => l.id === leagueId);
-  const [selectedHomeTeamName, setSelectedHomeTeamName] = useState<string>('');
-  const [selectedAwayTeamName, setSelectedAwayTeamName] = useState<string>('');
+  const [selectedHomeTeamName, setSelectedHomeTeamName] =
+    useState<string>(defaultHomeTeamName);
+  const [selectedAwayTeamName, setSelectedAwayTeamName] =
+    useState<string>(defaultAwayTeamName);
 
   const handleHomeTeamChange = (event: SelectChangeEvent): void => {
     const teamName = event.target.value;
@@ -39,7 +46,7 @@ export default function BetInputPlayer({
         (team) => team.fullTitleRu === teamName
       );
       if (selectedTeam) {
-        onHomeTeamSelect(selectedTeam.id);
+        onHomeTeamSelect(selectedTeam);
       }
     }
   };
@@ -53,16 +60,16 @@ export default function BetInputPlayer({
         (team) => team.fullTitleRu === teamName
       );
       if (selectedTeam) {
-        onAwayTeamSelect(selectedTeam.id);
+        onAwayTeamSelect(selectedTeam);
       }
     }
   };
 
   useEffect(() => {
-    setSelectedHomeTeamName('');
-    setSelectedAwayTeamName('');
-    onHomeTeamSelect('');
-    onAwayTeamSelect('');
+    setSelectedHomeTeamName(defaultHomeTeamName);
+    setSelectedAwayTeamName(defaultAwayTeamName);
+    //  onHomeTeamSelect(undefined);
+    //  onAwayTeamSelect(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leagueId, resetTeams]);
 
