@@ -37,7 +37,7 @@ export default function BetCard({
       >
         <Box sx={{ mb: 0.8, ml: 0.5, display: 'flex', alignItems: 'center' }}>
           <Avatar
-            sx={{ mr: 0.5, width: 30, height: 30 }}
+            sx={{ mr: 0.5, width: 40, height: 40, border: 1, borderColor: 'gray' }}
             alt="user_avatar"
             src={pathToAvatarImage(player.avatar)}
           />
@@ -51,7 +51,7 @@ export default function BetCard({
           }}
         >
           <Avatar
-            sx={{ mr: 0.5, width: 25, height: 25 }}
+            sx={{ mr: 0.5, width: 'auto', height: 25 }}
             alt="team_logo"
             src={`${process.env.PUBLIC_URL}/upload/logo/${league.displayNameEn
               .toLowerCase()
