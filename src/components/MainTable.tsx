@@ -48,7 +48,7 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
           }}
         >
           <Avatar
-            sx={{ mr: 0.5, width: 35, height: 35, border: 0 }}
+            sx={{ mr: 0.5, width: 50, height: 50, border: 0 }}
             alt="user_avatar"
             src={pathToAvatarImage(pStats.avatar)}
           />
