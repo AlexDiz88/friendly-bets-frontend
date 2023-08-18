@@ -13,6 +13,7 @@ import {
 import { useAppDispatch } from '../../store';
 import { selectUser } from '../../features/auth/selectors';
 import { getProfile, logout } from '../../features/auth/authSlice';
+import pathToAvatarImage from '../utils/pathToAvatarImage';
 
 const adminSettings = [
   'Внести ставку',
@@ -127,10 +128,7 @@ export default function UserSettings(): JSX.Element {
     >
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar
-            alt="avatar"
-            src="https://kartinkin.net/pics/uploads/posts/2022-09/1662642172_2-kartinkin-net-p-risunok-na-avatarku-dlya-muzhchin-instagra-2.jpg"
-          />
+          <Avatar alt="avatar" src={pathToAvatarImage(user?.avatar)} />
         </IconButton>
       </Tooltip>
       <Menu
