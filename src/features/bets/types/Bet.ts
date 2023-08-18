@@ -17,6 +17,7 @@ export default interface Bet {
   betResultAddedAt: Date;
   betStatus: string;
   balanceChange?: number;
+  updatedAt: Date;
 }
 
 export type BetId = Bet['id'];

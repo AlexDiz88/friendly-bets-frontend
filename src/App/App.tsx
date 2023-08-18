@@ -14,7 +14,6 @@ import BetInputContainer from '../features/bets/BetInputContainer';
 import MyStats from '../components/profile/MyStats';
 import SeasonRegister from '../components/profile/SeasonRegister';
 import BetsCheck from '../features/bets/BetsCheck';
-import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
 import EmptyPage from '../components/EmptyPage';
 import News from '../components/News';
 import BetEditList from '../features/bets/BetEditList';
@@ -24,7 +23,6 @@ function App(): JSX.Element {
 
   React.useEffect(() => {
     dispatch(getProfile());
-    dispatch(getActiveSeason());
   }, [dispatch]);
 
   return (

@@ -8,23 +8,51 @@ import {
   DialogContentText,
   Typography,
 } from '@mui/material';
-import Bet from '../features/bets/types/Bet';
-import BetEditForm from '../features/bets/BetEditForm';
-import League from '../features/admin/leagues/types/League';
+import Bet from './types/Bet';
+import BetEditForm from './BetEditForm';
+import League from '../admin/leagues/types/League';
+import { useAppDispatch } from '../../store';
+import { getActiveSeason } from '../admin/seasons/seasonsSlice';
+import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
+import { deleteBet } from './betsSlice';
 
-export default function BetEditButton({
+export default function BetEditButtons({
   bet,
   league,
 }: {
   bet: Bet;
   league: League;
 }): JSX.Element {
+  const dispatch = useAppDispatch();
   const [showEditForm, setShowEditForm] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState<
+    'success' | 'error' | 'warning' | 'info'
+  >('info');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarDuration, setSnackbarduration] = useState(1500);
 
-  const handleBetDeleteSave = (): void => {
-    console.log('dispatch на аннулирование');
-  };
+  const handleBetDeleteSave = React.useCallback(async () => {
+    setOpenDeleteDialog(false);
+    const dispatchResult = await dispatch(deleteBet({ betId: bet.id }));
+
+    if (deleteBet.fulfilled.match(dispatchResult)) {
+      setOpenSnackbar(true);
+      setSnackbarSeverity('success');
+      setSnackbarMessage('Ставка успешно аннулирована');
+      await dispatch(getActiveSeason());
+    }
+    if (deleteBet.rejected.match(dispatchResult)) {
+      setOpenSnackbar(true);
+      setSnackbarduration(3000);
+      setSnackbarSeverity('error');
+      if (dispatchResult.error.message) {
+        setSnackbarMessage(dispatchResult.error.message);
+      }
+    }
+  }, [dispatch, bet.id]);
+  // конец добавления ставки
 
   const handleEditBet = (): void => {
     setShowEditForm(!showEditForm);
@@ -36,6 +64,10 @@ export default function BetEditButton({
 
   const handleCloseDialog = (): void => {
     setOpenDeleteDialog(false);
+  };
+
+  const handleCloseSnackbar = (): void => {
+    setOpenSnackbar(false);
   };
 
   return (
@@ -126,6 +158,15 @@ export default function BetEditButton({
           </Button>
         </DialogActions>
       </Dialog>
+      <Box textAlign="center">
+        <NotificationSnackbar
+          open={openSnackbar}
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          message={snackbarMessage}
+          duration={snackbarDuration}
+        />
+      </Box>
     </Box>
   );
 }

@@ -29,7 +29,7 @@ import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import User from '../auth/types/User';
 import Team from '../admin/teams/types/Team';
 import BetSummaryInfo from './BetSummaryInfo';
-import { updateBetInLeagueInSeason } from './betsSlice';
+import { updateBet } from './betsSlice';
 
 const statuses = ['WON', 'RETURNED', 'LOST'];
 
@@ -79,7 +79,7 @@ export default function BetEditForm({
     const betOddsToNumber = Number(updatedBetOdds.trim().replace(',', '.'));
     // TODO добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
     const dispatchResult = await dispatch(
-      updateBetInLeagueInSeason({
+      updateBet({
         betId: bet.id,
         newBet: {
           userId: updatedUser.id,
@@ -95,7 +95,7 @@ export default function BetEditForm({
       })
     );
 
-    if (updateBetInLeagueInSeason.fulfilled.match(dispatchResult)) {
+    if (updateBet.fulfilled.match(dispatchResult)) {
       setOpenSnackbar(true);
       setSnackbarSeverity('success');
       setSnackbarMessage('Ставка успешно отредактирована');
@@ -103,8 +103,11 @@ export default function BetEditForm({
         handleEditBet(false);
         await dispatch(getActiveSeason());
       }, 1500);
+      setTimeout(async () => {
+        scrollToTop();
+      }, 3000);
     }
-    if (updateBetInLeagueInSeason.rejected.match(dispatchResult)) {
+    if (updateBet.rejected.match(dispatchResult)) {
       setOpenSnackbar(true);
       setSnackbarduration(3000);
       setSnackbarSeverity('error');
@@ -128,6 +131,10 @@ export default function BetEditForm({
     updatedGameResult,
   ]);
   // конец добавления ставки
+
+  const scrollToTop = (): void => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleUserSelection = (selectedUser: User): void => {
     setUpdatedUser(selectedUser);

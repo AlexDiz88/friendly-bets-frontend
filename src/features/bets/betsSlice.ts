@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import BetsState from './types/BetsState';
 import * as api from './api';
-import { BetId } from './types/Bet';
 import NewBet from './types/NewBet';
 
 const initialState: BetsState = {
@@ -14,21 +13,26 @@ export const getUserBets = createAsyncThunk('bets/getAllBets', async () =>
   api.getAllBets()
 );
 
-export const updateBetInLeagueInSeason = createAsyncThunk(
-  'bets/updateBetInLeagueInSeason',
+export const updateBet = createAsyncThunk(
+  'bets/updateBet',
   async ({ betId, newBet }: { betId: string; newBet: NewBet }) => {
     if (!newBet.betTitle) {
       throw new Error('Отсутствует ставка');
     }
     // TODO доделать проверки
-    return api.updateBetInLeagueInSeason(betId, newBet);
+    return api.updateBet(betId, newBet);
   }
 );
 
-export const deleteBet = createAsyncThunk('bets/deleteBet', async (id: BetId) => {
-  await api.deleteBet(id);
-  return id;
-});
+export const deleteBet = createAsyncThunk(
+  'bets/deleteBet',
+  async ({ betId }: { betId: string }) => {
+    if (!betId) {
+      throw new Error('Отсутствует ID ставки');
+    }
+    return api.deleteBet(betId);
+  }
+);
 
 const betsSlice = createSlice({
   name: 'bets',
@@ -46,10 +50,16 @@ const betsSlice = createSlice({
       .addCase(getUserBets.rejected, (state, action) => {
         state.error = action.error.message;
       })
-      .addCase(updateBetInLeagueInSeason.fulfilled, (state, action) => {
+      .addCase(updateBet.fulfilled, (state, action) => {
         state.bet = action.payload;
       })
-      .addCase(updateBetInLeagueInSeason.rejected, (state, action) => {
+      .addCase(updateBet.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(deleteBet.fulfilled, (state, action) => {
+        state.bet = action.payload;
+      })
+      .addCase(deleteBet.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },

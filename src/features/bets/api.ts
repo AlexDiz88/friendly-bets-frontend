@@ -27,10 +27,7 @@ export async function getAllBets(): Promise<{ bets: Bet[] }> {
   return result.json();
 }
 
-export async function updateBetInLeagueInSeason(
-  betId: string,
-  newBet: NewBet
-): Promise<Bet> {
+export async function updateBet(betId: string, newBet: NewBet): Promise<Bet> {
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/bets/${betId}`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
     url = `/api/bets/${betId}`;
@@ -49,10 +46,10 @@ export async function updateBetInLeagueInSeason(
   return result.json();
 }
 
-export async function deleteBet(id: BetId): Promise<Bet> {
-  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/bets/${id}`;
+export async function deleteBet(betId: BetId): Promise<Bet> {
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/bets/${betId}`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
-    url = `/api/bets/${id}`;
+    url = `/api/bets/${betId}`;
   }
   const result = await fetch(`${url}`, {
     method: 'DELETE',

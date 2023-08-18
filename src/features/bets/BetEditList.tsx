@@ -8,8 +8,9 @@ import { selectActiveSeason } from '../admin/seasons/selectors';
 import BetCard from './BetCard';
 import EmptyBetCard from './EmptyBetCard';
 import CompleteBetCard from './CompleteBetCard';
-import BetEditButton from '../../components/BetEditButton';
+import BetEditButtons from './BetEditButtons';
 import { selectUser } from '../auth/selectors';
+import Bet from './types/Bet';
 
 export default function BetEditList(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -37,7 +38,7 @@ export default function BetEditList(): JSX.Element {
       }
     }, 3000);
     return () => clearTimeout(timer);
-  }, [navigate, user]);
+  }, [navigate, user, season]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -79,6 +80,66 @@ export default function BetEditList(): JSX.Element {
       <Box sx={{ borderBottom: 1, textAlign: 'center', mx: 3, pb: 0.5, mb: 1.5 }}>
         Редактирование ставок
       </Box>
+      <Box>
+        {season &&
+          season.leagues &&
+          (() => {
+            const allBets: Bet[] = [];
+            season.leagues.forEach((l) => {
+              allBets.push(...l.bets.filter((bet) => bet.betStatus !== 'DELETED'));
+            });
+
+            const sortedBets = allBets.sort((betA, betB) => {
+              const dateA = betA.updatedAt
+                ? new Date(betA.updatedAt)
+                : betA.betResultAddedAt
+                ? new Date(betA.betResultAddedAt)
+                : new Date(betA.createdAt);
+              const dateB = betB.updatedAt
+                ? new Date(betB.updatedAt)
+                : betB.betResultAddedAt
+                ? new Date(betB.betResultAddedAt)
+                : new Date(betB.createdAt);
+
+              return dateB.getTime() - dateA.getTime();
+            });
+
+            return sortedBets.map((bet) => {
+              const league = season.leagues.find((l) =>
+                l.bets.some((betInLeague) => betInLeague.id === bet.id)
+              );
+
+              return (
+                <Box key={bet.id}>
+                  {league && bet.betStatus === 'OPENED' ? (
+                    <>
+                      <BetCard bet={bet} league={league} />
+                      <BetEditButtons bet={bet} league={league} />
+                    </>
+                  ) : (
+                    <Box>
+                      {league && bet.betStatus === 'EMPTY' ? (
+                        <>
+                          <EmptyBetCard bet={bet} league={league} />
+                          <BetEditButtons bet={bet} league={league} />
+                        </>
+                      ) : (
+                        <Box>
+                          {league && (
+                            <>
+                              <CompleteBetCard bet={bet} league={league} />
+                              <BetEditButtons bet={bet} league={league} />
+                            </>
+                          )}
+                        </Box>
+                      )}
+                    </Box>
+                  )}
+                </Box>
+              );
+            });
+          })()}
+      </Box>
       {season &&
         season.leagues.slice().map((league) => (
           <Box key={league.id}>
@@ -90,19 +151,19 @@ export default function BetEditList(): JSX.Element {
                   {bet.betStatus === 'OPENED' ? (
                     <Box>
                       <BetCard bet={bet} league={league} />
-                      <BetEditButton bet={bet} league={league} />
+                      <BetEditButtons bet={bet} league={league} />
                     </Box>
                   ) : (
                     <Box>
                       {bet.betStatus === 'EMPTY' ? (
                         <Box>
                           <EmptyBetCard bet={bet} league={league} />
-                          <BetEditButton bet={bet} league={league} />
+                          <BetEditButtons bet={bet} league={league} />
                         </Box>
                       ) : (
                         <Box>
                           <CompleteBetCard bet={bet} league={league} />
-                          <BetEditButton bet={bet} league={league} />
+                          <BetEditButtons bet={bet} league={league} />
                         </Box>
                       )}
                     </Box>

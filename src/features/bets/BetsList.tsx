@@ -101,17 +101,32 @@ export default function BetsList(): JSX.Element {
             <Box>
               {activeSeason &&
                 activeSeason.leagues &&
-                activeSeason.leagues.map((l) => (
-                  <Box key={l.id}>
-                    {l.bets
-                      .filter((bet) => bet.betStatus === 'OPENED')
-                      .map((bet) => (
-                        <Box key={bet.id}>
-                          <BetCard bet={bet} league={l} />
-                        </Box>
-                      ))}
-                  </Box>
-                ))}
+                (() => {
+                  const allBets: Bet[] = [];
+                  activeSeason.leagues.forEach((l) => {
+                    allBets.push(
+                      ...l.bets.filter((bet) => bet.betStatus === 'OPENED')
+                    );
+                  });
+
+                  const sortedBets = allBets.sort(
+                    (betA, betB) =>
+                      new Date(betB.createdAt).getTime() -
+                      new Date(betA.createdAt).getTime()
+                  );
+
+                  return sortedBets.map((bet) => {
+                    const league = activeSeason.leagues.find((l) =>
+                      l.bets.some((betInLeague) => betInLeague.id === bet.id)
+                    );
+
+                    return (
+                      <Box key={bet.id}>
+                        {league && <BetCard bet={bet} league={league} />}
+                      </Box>
+                    );
+                  });
+                })()}
             </Box>
           </Box>
         </CustomTabPanel>
@@ -126,7 +141,6 @@ export default function BetsList(): JSX.Element {
               {activeSeason &&
                 activeSeason.leagues &&
                 (() => {
-                  // Создаем массив всех ставок из всех лиг
                   const allBets: Bet[] = [];
                   activeSeason.leagues.forEach((l) => {
                     allBets.push(
@@ -140,12 +154,15 @@ export default function BetsList(): JSX.Element {
                     );
                   });
 
-                  // Сортируем массив всех ставок по дате создания
-                  const sortedBets = allBets.sort(
-                    (betA, betB) =>
-                      new Date(betB.betResultAddedAt).getTime() -
-                      new Date(betA.betResultAddedAt).getTime()
-                  );
+                  const sortedBets = allBets.sort((betA, betB) => {
+                    const dateA = betA.betResultAddedAt
+                      ? new Date(betA.betResultAddedAt)
+                      : new Date(betA.createdAt);
+                    const dateB = betB.betResultAddedAt
+                      ? new Date(betB.betResultAddedAt)
+                      : new Date(betB.createdAt);
+                    return dateB.getTime() - dateA.getTime();
+                  });
 
                   return sortedBets.map((bet) => {
                     const league = activeSeason.leagues.find((l) =>
