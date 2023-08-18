@@ -38,7 +38,11 @@ function UploadForm({ onClose }: UploadFormProps): JSX.Element {
     try {
       const formData = new FormData();
       formData.append('image', image);
-      const response = await fetch('api/files/upload/avatars', {
+      let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/files/upload/avatars`;
+      if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+        url = '/api/files/upload/avatars';
+      }
+      const response = await fetch(`${url}`, {
         method: 'POST',
         body: formData,
       });
