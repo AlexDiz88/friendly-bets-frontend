@@ -221,7 +221,7 @@ export default function Profile(): JSX.Element {
         />
       </Box>
 
-      {!showUploadForm && (
+      {showUploadForm && (
         <Button
           sx={{ height: '1.8rem', px: 1 }}
           variant="contained"
