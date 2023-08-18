@@ -187,7 +187,7 @@ export default function BetsList(): JSX.Element {
             value={selectedPlayerName}
             onChange={handlePlayerChange}
           >
-            <MenuItem key="Все" sx={{ ml: -0.5, minWidth: '6.5rem' }} value="Все">
+            <MenuItem key="Все" sx={{ ml: -0.5, minWidth: '11rem' }} value="Все">
               <div
                 style={{
                   display: 'flex',

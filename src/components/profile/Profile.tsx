@@ -22,6 +22,7 @@ import {
 } from '../../features/auth/authSlice';
 import NotificationSnackbar from '../utils/NotificationSnackbar';
 import pathToAvatarImage from '../utils/pathToAvatarImage';
+import UploadForm from '../UploadForm';
 
 export default function Profile(): JSX.Element {
   const user = useSelector(selectUser);
@@ -38,7 +39,7 @@ export default function Profile(): JSX.Element {
   const [newName, setNewName] = useState(user?.username || '');
   const [showCurrentPassword, setShowCurrentPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
-
+  const [showUploadForm, setShowUploadForm] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<
     'success' | 'error' | 'warning' | 'info'
@@ -219,6 +220,24 @@ export default function Profile(): JSX.Element {
           src={pathToAvatarImage(user.avatar)}
         />
       </Box>
+
+      {!showUploadForm && (
+        <Button
+          sx={{ height: '1.8rem', px: 1 }}
+          variant="contained"
+          onClick={() => setShowUploadForm(true)}
+        >
+          <Typography
+            variant="button"
+            fontWeight="600"
+            fontSize="0.9rem"
+            fontFamily="Shantell Sans"
+          >
+            Изменить фото
+          </Typography>
+        </Button>
+      )}
+      {showUploadForm && <UploadForm onClose={() => setShowUploadForm(false)} />}
 
       <Typography sx={{ textAlign: 'center', pt: 1, mx: 2 }}>
         <b>Email:</b> {user?.email}

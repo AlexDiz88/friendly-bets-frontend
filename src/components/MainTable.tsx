@@ -18,8 +18,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import PlayerStats from '../features/stats/types/PlayerStats';
 import pathToAvatarImage from './utils/pathToAvatarImage';
 
-function Row(props: { pStats: PlayerStats }): JSX.Element {
-  const { pStats } = props;
+function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -51,7 +50,7 @@ function Row(props: { pStats: PlayerStats }): JSX.Element {
           <Avatar
             sx={{ mr: 0.5, width: 35, height: 35, border: 0 }}
             alt="user_avatar"
-            src={pathToAvatarImage(undefined)}
+            src={pathToAvatarImage(pStats.avatar)}
           />
           <Box sx={{ fontSize: '0.95rem', textAlign: 'left', maxWidth: '4.8rem' }}>
             {pStats.username}
