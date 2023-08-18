@@ -2,6 +2,7 @@ import React from 'react';
 import { Avatar, Box } from '@mui/material';
 import Bet from './types/Bet';
 import League from '../admin/leagues/types/League';
+import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 
 export default function BetCard({
   bet,
@@ -38,7 +39,7 @@ export default function BetCard({
           <Avatar
             sx={{ mr: 0.5, width: 30, height: 30 }}
             alt="user_avatar"
-            src="https://kartinkin.net/pics/uploads/posts/2022-09/1662642172_2-kartinkin-net-p-risunok-na-avatarku-dlya-muzhchin-instagra-2.jpg"
+            src={pathToAvatarImage(player.avatar)}
           />
           <b>{player.username}</b>
         </Box>

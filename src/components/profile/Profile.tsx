@@ -21,6 +21,7 @@ import {
   getProfile,
 } from '../../features/auth/authSlice';
 import NotificationSnackbar from '../utils/NotificationSnackbar';
+import pathToAvatarImage from '../utils/pathToAvatarImage';
 
 export default function Profile(): JSX.Element {
   const user = useSelector(selectUser);
@@ -215,7 +216,7 @@ export default function Profile(): JSX.Element {
         <Avatar
           sx={{ mr: 1, height: '7rem', width: '7rem', border: 1 }}
           alt="user_avatar"
-          src="https://kartinkin.net/pics/uploads/posts/2022-09/1662642172_2-kartinkin-net-p-risunok-na-avatarku-dlya-muzhchin-instagra-2.jpg"
+          src={pathToAvatarImage(user.avatar)}
         />
       </Box>
 

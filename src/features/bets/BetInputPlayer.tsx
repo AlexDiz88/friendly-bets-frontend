@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import User from '../auth/types/User';
+import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 
 export default function BetInputPlayer({
   defaultValue,
@@ -66,10 +67,7 @@ export default function BetInputPlayer({
                   <Avatar
                     sx={{ width: 27, height: 27 }}
                     alt="player_avatar"
-                    src={`${process.env.PUBLIC_URL}/upload/logo/${p.avatar?.replace(
-                      /\s/g,
-                      '_'
-                    )}.png`}
+                    src={pathToAvatarImage(p.avatar)}
                   />
 
                   <Typography sx={{ mx: 1, fontSize: '1rem' }}>

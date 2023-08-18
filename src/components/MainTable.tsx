@@ -16,6 +16,7 @@ import {
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import PlayerStats from '../features/stats/types/PlayerStats';
+import pathToAvatarImage from './utils/pathToAvatarImage';
 
 function Row(props: { pStats: PlayerStats }): JSX.Element {
   const { pStats } = props;
@@ -50,7 +51,7 @@ function Row(props: { pStats: PlayerStats }): JSX.Element {
           <Avatar
             sx={{ mr: 0.5, width: 35, height: 35, border: 0 }}
             alt="user_avatar"
-            src="https://kartinkin.net/pics/uploads/posts/2022-09/1662642172_2-kartinkin-net-p-risunok-na-avatarku-dlya-muzhchin-instagra-2.jpg"
+            src={pathToAvatarImage(undefined)}
           />
           <Box sx={{ fontSize: '0.95rem', textAlign: 'left', maxWidth: '4.8rem' }}>
             {pStats.username}

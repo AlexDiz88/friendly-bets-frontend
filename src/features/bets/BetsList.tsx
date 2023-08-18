@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Box, Tab, Tabs } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Tab,
+  Tabs,
+  Typography,
+} from '@mui/material';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import { useAppDispatch } from '../../store';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
@@ -8,6 +17,8 @@ import BetCard from './BetCard';
 import CompleteBetCard from './CompleteBetCard';
 import EmptyBetCard from './EmptyBetCard';
 import Bet from './types/Bet';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -49,12 +60,26 @@ export default function BetsList(): JSX.Element {
   const activeSeason = useSelector(selectActiveSeason);
   const dispatch = useAppDispatch();
   const [value, setValue] = useState(0);
+  const [selectedLeagueName, setSelectedLeagueName] = useState<string>('Все');
+  const [selectedPlayerName, setSelectedPlayerName] = useState<string>('Все');
+
+  const handleLeagueChange = (event: SelectChangeEvent): void => {
+    const leagueName = event.target.value;
+    setSelectedLeagueName(leagueName);
+  };
+
+  const handlePlayerChange = (event: SelectChangeEvent): void => {
+    const playerName = event.target.value;
+    setSelectedPlayerName(playerName);
+  };
 
   const handleBetsTypeChange = (
     event: React.SyntheticEvent,
     newValue: number
   ): void => {
     setValue(newValue);
+    setSelectedLeagueName('Все');
+    setSelectedPlayerName('Все');
   };
 
   useEffect(() => {
@@ -66,7 +91,7 @@ export default function BetsList(): JSX.Element {
       <Box sx={{ width: '100%' }}>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <Tabs
-            sx={{ my: -1 }}
+            sx={{ mb: 1, mt: -2 }}
             value={value}
             onChange={handleBetsTypeChange}
             aria-label="basic tabs example"
@@ -77,6 +102,7 @@ export default function BetsList(): JSX.Element {
                 fontWeight: 600,
                 textTransform: 'none',
                 fontSize: '1rem',
+                pb: 0.5,
               }}
               label="Текущие"
               id={a11yProps(0).id}
@@ -84,106 +110,266 @@ export default function BetsList(): JSX.Element {
             />
             <Tab
               component="span"
-              sx={{ fontWeight: 600, textTransform: 'none', fontSize: '1rem' }}
+              sx={{
+                fontWeight: 600,
+                textTransform: 'none',
+                fontSize: '1rem',
+                pb: 0.5,
+              }}
               label="Завершенные"
               id={a11yProps(1).id}
               aria-controls={a11yProps(1)['aria-controls']}
             />
           </Tabs>
         </Box>
-        <CustomTabPanel value={value} index={0}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-            }}
+
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Select
+            autoWidth
+            size="small"
+            sx={{ minWidth: '7rem', ml: -0.2 }}
+            labelId="league-title-label"
+            id="league-title-select"
+            value={selectedLeagueName}
+            onChange={handleLeagueChange}
           >
-            <Box>
-              {activeSeason &&
-                activeSeason.leagues &&
-                (() => {
-                  const allBets: Bet[] = [];
-                  activeSeason.leagues.forEach((l) => {
-                    allBets.push(
-                      ...l.bets.filter((bet) => bet.betStatus === 'OPENED')
-                    );
-                  });
+            <MenuItem key="Все" sx={{ ml: -0.5, minWidth: '6.5rem' }} value="Все">
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <Avatar
+                  variant="square"
+                  sx={{ width: 27, height: 27 }}
+                  alt="league_logo"
+                  src={`${process.env.PUBLIC_URL}/upload/logo/total.png`}
+                />
 
-                  const sortedBets = allBets.sort(
-                    (betA, betB) =>
-                      new Date(betB.createdAt).getTime() -
-                      new Date(betA.createdAt).getTime()
-                  );
+                <Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
+              </div>
+            </MenuItem>
+            {activeSeason &&
+              activeSeason.leagues &&
+              activeSeason.leagues.map((l) => (
+                <MenuItem
+                  sx={{ ml: -0.5, minWidth: '6.5rem' }}
+                  key={l.id}
+                  value={l.displayNameRu}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Avatar
+                      variant="square"
+                      sx={{ width: 27, height: 27 }}
+                      alt="league_logo"
+                      src={pathToLogoImage(l.displayNameEn)}
+                    />
+                    <Typography sx={{ mx: 1, fontSize: '1rem' }}>
+                      {l.shortNameRu}
+                    </Typography>
+                  </div>
+                </MenuItem>
+              ))}
+          </Select>
 
-                  return sortedBets.map((bet) => {
-                    const league = activeSeason.leagues.find((l) =>
-                      l.bets.some((betInLeague) => betInLeague.id === bet.id)
-                    );
-
-                    return (
-                      <Box key={bet.id}>
-                        {league && <BetCard bet={bet} league={league} />}
-                      </Box>
-                    );
-                  });
-                })()}
-            </Box>
-          </Box>
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-            }}
+          <Select
+            autoWidth
+            size="small"
+            sx={{ minWidth: '11.5rem', ml: 0.5 }}
+            labelId="player-title-label"
+            id="player-title-select"
+            value={selectedPlayerName}
+            onChange={handlePlayerChange}
           >
-            <Box>
-              {activeSeason &&
-                activeSeason.leagues &&
-                (() => {
-                  const allBets: Bet[] = [];
-                  activeSeason.leagues.forEach((l) => {
-                    allBets.push(
-                      ...l.bets.filter(
-                        (bet) =>
-                          bet.betStatus === 'WON' ||
-                          bet.betStatus === 'RETURNED' ||
-                          bet.betStatus === 'LOST' ||
-                          bet.betStatus === 'EMPTY'
-                      )
-                    );
-                  });
+            <MenuItem key="Все" sx={{ ml: -0.5, minWidth: '6.5rem' }} value="Все">
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <Avatar
+                  variant="square"
+                  sx={{ width: 27, height: 27 }}
+                  alt="league_logo"
+                  src="/upload/avatars/cool_man.jpg"
+                />
 
-                  const sortedBets = allBets.sort((betA, betB) => {
-                    const dateA = betA.betResultAddedAt
-                      ? new Date(betA.betResultAddedAt)
-                      : new Date(betA.createdAt);
-                    const dateB = betB.betResultAddedAt
-                      ? new Date(betB.betResultAddedAt)
-                      : new Date(betB.createdAt);
-                    return dateB.getTime() - dateA.getTime();
-                  });
+                <Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
+              </div>
+            </MenuItem>
+            {activeSeason &&
+              activeSeason.players.map((p) => (
+                <MenuItem
+                  key={p.id}
+                  sx={{ ml: -1, minWidth: '6.5rem' }}
+                  value={p.username}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Avatar
+                      sx={{ width: 27, height: 27 }}
+                      alt="user_avatar"
+                      src={pathToAvatarImage(p.avatar)}
+                    />
 
-                  return sortedBets.map((bet) => {
-                    const league = activeSeason.leagues.find((l) =>
-                      l.bets.some((betInLeague) => betInLeague.id === bet.id)
+                    <Typography sx={{ mx: 1, fontSize: '1rem' }}>
+                      {p.username}
+                    </Typography>
+                  </div>
+                </MenuItem>
+              ))}
+          </Select>
+        </Box>
+
+        <Box sx={{ mt: -2 }}>
+          <CustomTabPanel value={value} index={0}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <Box>
+                {activeSeason &&
+                  activeSeason.leagues &&
+                  (() => {
+                    const allBets: Bet[] = [];
+                    activeSeason.leagues.forEach((l) => {
+                      allBets.push(
+                        ...l.bets.filter((bet) => bet.betStatus === 'OPENED')
+                      );
+                    });
+
+                    // Применяем фильтрацию по выбранной лиге
+                    const filteredBetsByLeague =
+                      selectedLeagueName === 'Все'
+                        ? allBets
+                        : allBets.filter((bet) => {
+                            const league = activeSeason.leagues.find((l) =>
+                              l.bets.some((betInLeague) => betInLeague.id === bet.id)
+                            );
+                            return (
+                              league && league.displayNameRu === selectedLeagueName
+                            );
+                          });
+
+                    // Применяем фильтрацию по выбранному игроку
+                    const filteredBetsByPlayer =
+                      selectedPlayerName === 'Все'
+                        ? filteredBetsByLeague
+                        : filteredBetsByLeague.filter(
+                            (bet) => bet.player.username === selectedPlayerName
+                          );
+
+                    const sortedBets = filteredBetsByPlayer.sort(
+                      (betA, betB) =>
+                        new Date(betB.createdAt).getTime() -
+                        new Date(betA.createdAt).getTime()
                     );
 
-                    return (
-                      <Box key={bet.id}>
-                        {league &&
-                          (bet.betStatus === 'EMPTY' ? (
-                            <EmptyBetCard bet={bet} league={league} />
-                          ) : (
-                            <CompleteBetCard bet={bet} league={league} />
-                          ))}
-                      </Box>
-                    );
-                  });
-                })()}
+                    return sortedBets.map((bet) => {
+                      const league = activeSeason.leagues.find((l) =>
+                        l.bets.some((betInLeague) => betInLeague.id === bet.id)
+                      );
+
+                      return (
+                        <Box key={bet.id}>
+                          {league && <BetCard bet={bet} league={league} />}
+                        </Box>
+                      );
+                    });
+                  })()}
+              </Box>
             </Box>
-          </Box>
-        </CustomTabPanel>
+          </CustomTabPanel>
+
+          <CustomTabPanel value={value} index={1}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <Box>
+                {activeSeason &&
+                  activeSeason.leagues &&
+                  (() => {
+                    const allBets: Bet[] = [];
+                    activeSeason.leagues.forEach((l) => {
+                      allBets.push(
+                        ...l.bets.filter(
+                          (bet) =>
+                            bet.betStatus === 'WON' ||
+                            bet.betStatus === 'RETURNED' ||
+                            bet.betStatus === 'LOST' ||
+                            bet.betStatus === 'EMPTY'
+                        )
+                      );
+                    });
+
+                    // Применяем фильтрацию по выбранной лиге
+                    const filteredBetsByLeague =
+                      selectedLeagueName === 'Все'
+                        ? allBets
+                        : allBets.filter((bet) => {
+                            const league = activeSeason.leagues.find((l) =>
+                              l.bets.some((betInLeague) => betInLeague.id === bet.id)
+                            );
+                            return (
+                              league && league.displayNameRu === selectedLeagueName
+                            );
+                          });
+
+                    // Применяем фильтрацию по выбранному игроку
+                    const filteredBetsByPlayer =
+                      selectedPlayerName === 'Все'
+                        ? filteredBetsByLeague
+                        : filteredBetsByLeague.filter(
+                            (bet) => bet.player.username === selectedPlayerName
+                          );
+
+                    const sortedBets = filteredBetsByPlayer.sort((betA, betB) => {
+                      const dateA = betA.betResultAddedAt
+                        ? new Date(betA.betResultAddedAt)
+                        : new Date(betA.createdAt);
+                      const dateB = betB.betResultAddedAt
+                        ? new Date(betB.betResultAddedAt)
+                        : new Date(betB.createdAt);
+                      return dateB.getTime() - dateA.getTime();
+                    });
+
+                    return sortedBets.map((bet) => {
+                      const league = activeSeason.leagues.find((l) =>
+                        l.bets.some((betInLeague) => betInLeague.id === bet.id)
+                      );
+
+                      return (
+                        <Box key={bet.id}>
+                          {league &&
+                            (bet.betStatus === 'EMPTY' ? (
+                              <EmptyBetCard bet={bet} league={league} />
+                            ) : (
+                              <CompleteBetCard bet={bet} league={league} />
+                            ))}
+                        </Box>
+                      );
+                    });
+                  })()}
+              </Box>
+            </Box>
+          </CustomTabPanel>
+        </Box>
       </Box>
     </Box>
   );
