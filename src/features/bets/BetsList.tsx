@@ -293,6 +293,7 @@ export default function BetsList(): JSX.Element {
               </Box>
             </Box>
           </CustomTabPanel>
+
           <CustomTabPanel value={value} index={1}>
             <Box
               sx={{
