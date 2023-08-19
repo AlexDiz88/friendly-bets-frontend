@@ -58,6 +58,7 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
         </TableCell>
         <TableCell align="center" sx={{ px: 0.5 }}>
           {pStats.betCount}
+          {/* если надо добавить общее число сделанных ставок ({pStats.totalBets}) */}
         </TableCell>
         <TableCell align="center" sx={{ px: 0.5 }}>
           {pStats.winRate.toFixed(0)}

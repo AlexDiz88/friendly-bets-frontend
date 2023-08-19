@@ -37,7 +37,7 @@ export default function BetInputTitle({
     };
 
   return (
-    <Box sx={{ mt: 1.5, textAlign: 'center' }}>
+    <Box sx={{ mt: 1.5, textAlign: 'center', maxWidth: '20rem' }}>
       <Typography sx={{ textAlign: 'left', mx: 1, mt: 1, fontWeight: '600' }}>
         Ставка
       </Typography>

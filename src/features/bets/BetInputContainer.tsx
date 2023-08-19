@@ -58,6 +58,7 @@ export default function BetInputContainer(): JSX.Element {
   const [selectedBetTitle, setSelectedBetTitle] = useState<string>('');
   const [selectedBetOdds, setSelectedBetOdds] = useState<string>('');
   const [selectedBetSize, setSelectedBetSize] = useState<string>('');
+  const [showSendButton, setShowSendButton] = useState<boolean>(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<
     'success' | 'error' | 'warning' | 'info'
@@ -200,10 +201,14 @@ export default function BetInputContainer(): JSX.Element {
 
   const handleBetCancel = (): void => {
     setSelectedBetTitle('');
+    setSelectedBetOdds('');
+    setShowSendButton(false);
   };
 
   const handleBetTitleSelection = (betTitle: string): void => {
     setSelectedBetTitle(betTitle);
+    setShowSendButton(true);
+    scrollDown();
   };
 
   const handleOddsSelection = (betOdds: string, betSize: string): void => {
@@ -247,6 +252,16 @@ export default function BetInputContainer(): JSX.Element {
   const handleCloseSnackbar = (): void => {
     setOpenSnackbar(false);
   };
+
+  const scrollDown = (): void => {
+    const currentScrollY = window.scrollY || window.pageYOffset;
+    const targetScrollY = currentScrollY + 100;
+    window.scrollTo({ top: targetScrollY, behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    dispatch(getActiveSeason());
+  }, [dispatch]);
 
   useEffect(() => {
     if (season && selectedLeague) {
@@ -296,7 +311,15 @@ export default function BetInputContainer(): JSX.Element {
   }
 
   return (
-    <Box sx={{ m: 1 }}>
+    <Box
+      sx={{
+        m: 1,
+        mb: 10,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
       <Typography sx={{ textAlign: 'center', borderBottom: 2, pb: 1, mx: 2 }}>
         Добавление ставок
       </Typography>
@@ -338,25 +361,31 @@ export default function BetInputContainer(): JSX.Element {
           )}
           {selectedBetTitle && (
             <Box sx={{ my: 2, width: '18.2rem' }}>
-              <Box sx={{ display: 'flex' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
                 <Typography
                   sx={{
+                    ml: 1,
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
                     fontSize: '0.85rem',
-                    width: '17rem',
-                    height: '2.3rem',
+                    width: '19rem',
+                    height: '2.4rem',
                     border: '1px solid rgba(0, 0, 0, 0.23)',
                     borderRadius: '4px',
                   }}
                 >
                   {selectedBetTitle}
                 </Typography>
-                <IconButton onClick={handleBetCancel}>
+                <IconButton sx={{ p: 0 }} onClick={handleBetCancel}>
                   <Dangerous
                     color="error"
-                    sx={{ mt: -1.75, ml: -1.5, fontSize: '3rem' }}
+                    sx={{ p: 0, mt: -0.75, ml: -0.5, mr: 0.5, fontSize: '3rem' }}
                   />
                 </IconButton>
               </Box>
@@ -370,9 +399,13 @@ export default function BetInputContainer(): JSX.Element {
             </Box>
           )}
           {selectedBetTitle && (
-            <BetInputOdds defaultBetOdds="" defaultBetSize="10" onOddsSelect={handleOddsSelection} />
+            <BetInputOdds
+              defaultBetOdds=""
+              defaultBetSize="10"
+              onOddsSelect={handleOddsSelection}
+            />
           )}
-          {selectedBetOdds && selectedBetSize && (
+          {showSendButton && selectedBetOdds && selectedBetSize && (
             <Button
               onClick={handleOpenDialog}
               sx={{ mt: 2, height: '2.5rem', px: 6.6 }}

@@ -3,6 +3,7 @@ import React from 'react';
 import User from '../auth/types/User';
 import League from '../admin/leagues/types/League';
 import Team from '../admin/teams/types/Team';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
 
 export default function BetSummaryInfo({
   message,
@@ -63,9 +64,7 @@ export default function BetSummaryInfo({
             variant="square"
             sx={{ px: 0.5, height: 27, width: 'auto' }}
             alt="league_logo"
-            src={`${process.env.PUBLIC_URL}/upload/logo/${homeTeam?.fullTitleEn
-              .toLowerCase()
-              .replace(/\s/g, '_')}.png`}
+            src={pathToLogoImage(homeTeam?.fullTitleEn)}
           />
           {homeTeam?.fullTitleRu} <br />
         </Box>
@@ -76,9 +75,7 @@ export default function BetSummaryInfo({
             variant="square"
             sx={{ px: 0.5, height: 27, width: 'auto' }}
             alt="league_logo"
-            src={`${process.env.PUBLIC_URL}/upload/logo/${awayTeam?.fullTitleEn
-              .toLowerCase()
-              .replace(/\s/g, '_')}.png`}
+            src={pathToLogoImage(awayTeam?.fullTitleEn)}
           />
           {awayTeam?.fullTitleRu} <br />
         </Box>
