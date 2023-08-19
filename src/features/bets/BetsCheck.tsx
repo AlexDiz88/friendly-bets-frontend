@@ -21,6 +21,8 @@ import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import { selectUser } from '../auth/selectors';
 import GameScoreValidation from '../../components/utils/GameScoreValidation';
 import BetGameResultInfo from './BetGameResultInfo';
+import Bet from './types/Bet';
+import TeamsInfo from '../../components/TeamsInfo';
 
 export default function BetsCheck(): JSX.Element {
   const activeSeason = useSelector(selectActiveSeason);
@@ -30,7 +32,7 @@ export default function BetsCheck(): JSX.Element {
   const [betLoseOpenDialog, setBetLoseOpenDialog] = useState(false);
   const [betReturnOpenDialog, setBetReturnOpenDialog] = useState(false);
   const [betWinOpenDialog, setBetWinOpenDialog] = useState(false);
-  const [selectedBetId, setSelectedBetId] = useState<string | undefined>(undefined);
+  const [selectedBet, setSelectedBet] = useState<Bet | undefined>(undefined);
   const [gameResult, setGameResult] = useState<string>('');
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
   const [selectedLeague, setSelectedLeague] = useState('Все');
@@ -45,11 +47,11 @@ export default function BetsCheck(): JSX.Element {
     async (betStatus: string) => {
       handleCloseDialog();
 
-      if (activeSeason && selectedBetId) {
+      if (activeSeason && selectedBet) {
         const dispatchResult = await dispatch(
           addBetResult({
             seasonId: activeSeason.id,
-            betId: selectedBetId,
+            betId: selectedBet.id,
             newGameResult: { gameResult, betStatus },
           })
         );
@@ -69,7 +71,7 @@ export default function BetsCheck(): JSX.Element {
         }
       }
     },
-    [activeSeason, dispatch, gameResult, selectedBetId]
+    [activeSeason, dispatch, gameResult, selectedBet]
   );
 
   // хэндлеры
@@ -92,24 +94,24 @@ export default function BetsCheck(): JSX.Element {
     }));
   };
 
-  const handleBetLoseOpenDialog = (betId: string, result: string): void => {
+  const handleBetLoseOpenDialog = (bet: Bet, result: string): void => {
     const res = GameScoreValidation(result);
     setGameResult(res);
-    setSelectedBetId(betId);
+    setSelectedBet(bet);
     setBetLoseOpenDialog(true);
   };
 
-  const handleBetReturnOpenDialog = (betId: string, result: string): void => {
+  const handleBetReturnOpenDialog = (bet: Bet, result: string): void => {
     const res = GameScoreValidation(result);
     setGameResult(res);
-    setSelectedBetId(betId);
+    setSelectedBet(bet);
     setBetReturnOpenDialog(true);
   };
 
-  const handleBetWinOpenDialog = (betId: string, result: string): void => {
+  const handleBetWinOpenDialog = (bet: Bet, result: string): void => {
     const res = GameScoreValidation(result);
     setGameResult(res);
-    setSelectedBetId(betId);
+    setSelectedBet(bet);
     setBetWinOpenDialog(true);
   };
 
@@ -283,7 +285,7 @@ export default function BetsCheck(): JSX.Element {
                               variant="contained"
                               color="error"
                               onClick={() =>
-                                handleBetLoseOpenDialog(bet.id, inputValues[bet.id])
+                                handleBetLoseOpenDialog(bet, inputValues[bet.id])
                               }
                             >
                               <Typography
@@ -299,10 +301,7 @@ export default function BetsCheck(): JSX.Element {
                               sx={{ mr: 1, bgcolor: 'yellow', color: 'black' }}
                               variant="contained"
                               onClick={() =>
-                                handleBetReturnOpenDialog(
-                                  bet.id,
-                                  inputValues[bet.id]
-                                )
+                                handleBetReturnOpenDialog(bet, inputValues[bet.id])
                               }
                             >
                               <Typography
@@ -319,7 +318,7 @@ export default function BetsCheck(): JSX.Element {
                               variant="contained"
                               color="success"
                               onClick={() =>
-                                handleBetWinOpenDialog(bet.id, inputValues[bet.id])
+                                handleBetWinOpenDialog(bet, inputValues[bet.id])
                               }
                             >
                               <Typography
@@ -346,6 +345,10 @@ export default function BetsCheck(): JSX.Element {
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
             <BetGameResultInfo gameResult={gameResult} />
           </DialogContentText>
+          <TeamsInfo
+            homeTeam={selectedBet?.homeTeam}
+            awayTeam={selectedBet?.awayTeam}
+          />
         </DialogContent>
         <DialogActions>
           <Button
@@ -386,6 +389,10 @@ export default function BetsCheck(): JSX.Element {
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
             <BetGameResultInfo gameResult={gameResult} />
           </DialogContentText>
+          <TeamsInfo
+            homeTeam={selectedBet?.homeTeam}
+            awayTeam={selectedBet?.awayTeam}
+          />
         </DialogContent>
         <DialogActions>
           <Button
@@ -427,6 +434,10 @@ export default function BetsCheck(): JSX.Element {
           <DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
             <BetGameResultInfo gameResult={gameResult} />
           </DialogContentText>
+          <TeamsInfo
+            homeTeam={selectedBet?.homeTeam}
+            awayTeam={selectedBet?.awayTeam}
+          />
         </DialogContent>
         <DialogActions>
           <Button

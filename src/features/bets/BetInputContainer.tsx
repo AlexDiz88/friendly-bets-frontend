@@ -58,6 +58,7 @@ export default function BetInputContainer(): JSX.Element {
   const [selectedBetTitle, setSelectedBetTitle] = useState<string>('');
   const [selectedBetOdds, setSelectedBetOdds] = useState<string>('');
   const [selectedBetSize, setSelectedBetSize] = useState<string>('');
+  const [showSendButton, setShowSendButton] = useState<boolean>(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState<
     'success' | 'error' | 'warning' | 'info'
@@ -200,10 +201,14 @@ export default function BetInputContainer(): JSX.Element {
 
   const handleBetCancel = (): void => {
     setSelectedBetTitle('');
+    setSelectedBetOdds('');
+    setShowSendButton(false);
   };
 
   const handleBetTitleSelection = (betTitle: string): void => {
     setSelectedBetTitle(betTitle);
+    setShowSendButton(true);
+    scrollDown();
   };
 
   const handleOddsSelection = (betOdds: string, betSize: string): void => {
@@ -247,6 +252,16 @@ export default function BetInputContainer(): JSX.Element {
   const handleCloseSnackbar = (): void => {
     setOpenSnackbar(false);
   };
+
+  const scrollDown = (): void => {
+    const currentScrollY = window.scrollY || window.pageYOffset;
+    const targetScrollY = currentScrollY + 100;
+    window.scrollTo({ top: targetScrollY, behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    dispatch(getActiveSeason());
+  }, [dispatch]);
 
   useEffect(() => {
     if (season && selectedLeague) {
@@ -296,7 +311,7 @@ export default function BetInputContainer(): JSX.Element {
   }
 
   return (
-    <Box sx={{ m: 1 }}>
+    <Box sx={{ m: 1, mb: 10 }}>
       <Typography sx={{ textAlign: 'center', borderBottom: 2, pb: 1, mx: 2 }}>
         Добавление ставок
       </Typography>
@@ -370,9 +385,13 @@ export default function BetInputContainer(): JSX.Element {
             </Box>
           )}
           {selectedBetTitle && (
-            <BetInputOdds defaultBetOdds="" defaultBetSize="10" onOddsSelect={handleOddsSelection} />
+            <BetInputOdds
+              defaultBetOdds=""
+              defaultBetSize="10"
+              onOddsSelect={handleOddsSelection}
+            />
           )}
-          {selectedBetOdds && selectedBetSize && (
+          {showSendButton && selectedBetOdds && selectedBetSize && (
             <Button
               onClick={handleOpenDialog}
               sx={{ mt: 2, height: '2.5rem', px: 6.6 }}
