@@ -205,30 +205,35 @@ export default function BetsList(): JSX.Element {
               </div>
             </MenuItem>
             {activeSeason &&
-              activeSeason.players.map((p) => (
-                <MenuItem
-                  key={p.id}
-                  sx={{ ml: -1, minWidth: '6.5rem' }}
-                  value={p.username}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
+              activeSeason.players
+                .slice()
+                .sort((a, b) =>
+                  a.username && b.username ? a.username.localeCompare(b.username) : 0
+                )
+                .map((p) => (
+                  <MenuItem
+                    key={p.id}
+                    sx={{ ml: -1, minWidth: '6.5rem' }}
+                    value={p.username}
                   >
-                    <Avatar
-                      sx={{ width: 27, height: 27 }}
-                      alt="user_avatar"
-                      src={pathToAvatarImage(p.avatar)}
-                    />
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Avatar
+                        sx={{ width: 27, height: 27 }}
+                        alt="user_avatar"
+                        src={pathToAvatarImage(p.avatar)}
+                      />
 
-                    <Typography sx={{ mx: 1, fontSize: '1rem' }}>
-                      {p.username}
-                    </Typography>
-                  </div>
-                </MenuItem>
-              ))}
+                      <Typography sx={{ mx: 1, fontSize: '1rem' }}>
+                        {p.username}
+                      </Typography>
+                    </div>
+                  </MenuItem>
+                ))}
           </Select>
         </Box>
 
