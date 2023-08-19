@@ -311,7 +311,15 @@ export default function BetInputContainer(): JSX.Element {
   }
 
   return (
-    <Box sx={{ m: 1, mb: 10 }}>
+    <Box
+      sx={{
+        m: 1,
+        mb: 10,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
       <Typography sx={{ textAlign: 'center', borderBottom: 2, pb: 1, mx: 2 }}>
         Добавление ставок
       </Typography>
@@ -353,25 +361,31 @@ export default function BetInputContainer(): JSX.Element {
           )}
           {selectedBetTitle && (
             <Box sx={{ my: 2, width: '18.2rem' }}>
-              <Box sx={{ display: 'flex' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
                 <Typography
                   sx={{
+                    ml: 1,
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
                     fontSize: '0.85rem',
-                    width: '17rem',
-                    height: '2.3rem',
+                    width: '19rem',
+                    height: '2.4rem',
                     border: '1px solid rgba(0, 0, 0, 0.23)',
                     borderRadius: '4px',
                   }}
                 >
                   {selectedBetTitle}
                 </Typography>
-                <IconButton onClick={handleBetCancel}>
+                <IconButton sx={{ p: 0 }} onClick={handleBetCancel}>
                   <Dangerous
                     color="error"
-                    sx={{ mt: -1.75, ml: -1.5, fontSize: '3rem' }}
+                    sx={{ p: 0, mt: -0.75, ml: -0.5, mr: 0.5, fontSize: '3rem' }}
                   />
                 </IconButton>
               </Box>
