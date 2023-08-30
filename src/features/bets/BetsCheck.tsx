@@ -349,6 +349,9 @@ export default function BetsCheck(): JSX.Element {
             homeTeam={selectedBet?.homeTeam}
             awayTeam={selectedBet?.awayTeam}
           />
+          <Typography sx={{ fontSize: '0.9rem' }}>
+            <b>Ставка:</b> {selectedBet?.betTitle}
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button
@@ -393,6 +396,9 @@ export default function BetsCheck(): JSX.Element {
             homeTeam={selectedBet?.homeTeam}
             awayTeam={selectedBet?.awayTeam}
           />
+          <Typography sx={{ fontSize: '0.9rem' }}>
+            <b>Ставка:</b> {selectedBet?.betTitle}
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button
@@ -438,6 +444,9 @@ export default function BetsCheck(): JSX.Element {
             homeTeam={selectedBet?.homeTeam}
             awayTeam={selectedBet?.awayTeam}
           />
+          <Typography sx={{ fontSize: '0.9rem' }}>
+            <b>Ставка:</b> {selectedBet?.betTitle}
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button

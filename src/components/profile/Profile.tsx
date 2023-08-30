@@ -488,14 +488,14 @@ export default function Profile(): JSX.Element {
           </Button>
         </Box>
       )}
-      <Box sx={{ mt: 3 }}>
+      {/* <Box sx={{ mt: 3 }}>
         <Typography sx={{ pb: 1, px: 7, mx: 2, borderBottom: 2 }}>
           Текущий сезон:
         </Typography>
         <Typography sx={{ mt: 1, mx: 2, fontWeight: 600, color: 'brown' }}>
           Контент в разработке
         </Typography>
-      </Box>
+      </Box> */}
       <Box textAlign="center">
         <NotificationSnackbar
           open={openSnackbar}

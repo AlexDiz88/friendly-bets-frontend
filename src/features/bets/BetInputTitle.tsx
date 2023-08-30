@@ -480,446 +480,6 @@ export default function BetInputTitle({
         </AccordionDetails>
       </Accordion>
 
-      {/* Тоталы */}
-      <Accordion
-        expanded={expandedAccordion === 'Тоталы'}
-        onChange={handleAccordionChange('Тоталы')}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel-goalsAmount-content"
-          id="panel-goalsAmount-header"
-        >
-          <Typography>Тоталы</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {/* Тотал голов */}
-          <Accordion
-            expanded={expandedNestedAccordion === 'Тотал голов'}
-            onChange={handleNestedAccordionChange('Тотал голов')}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-goalsAmount-goalsTotalAmount-content"
-              id="panel-goalsAmount-goalsTotalAmount-header"
-            >
-              <Typography>Тотал голов</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.goalsAmount.goalsTotalAmount.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 0,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '5.5rem',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Хозяева - Индивидуальный тотал голов */}
-          <Accordion
-            expanded={
-              expandedNestedAccordion === 'Хозяева - Индивидуальный тотал голов'
-            }
-            onChange={handleNestedAccordionChange(
-              'Хозяева - Индивидуальный тотал голов'
-            )}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-goalsAmount-homeTeamGoalsAmount-content"
-              id="panel-goalsAmount-homeTeamGoalsAmount-header"
-            >
-              <Typography sx={{ fontSize: '0.95rem' }}>
-                Хозяева - Индивидуальный тотал
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.goalsAmount.homeTeamGoalsAmount.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 0,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '5.5rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.88rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Гости - Индивидуальный тотал голов */}
-          <Accordion
-            expanded={
-              expandedNestedAccordion === 'Гости - Индивидуальный тотал голов'
-            }
-            onChange={handleNestedAccordionChange(
-              'Гости - Индивидуальный тотал голов'
-            )}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-goalsAmount-awayTeamGoalsAmount-content"
-              id="panel-goalsAmount-awayTeamGoalsAmount-header"
-            >
-              <Typography sx={{ fontSize: '0.95rem' }}>
-                Гости - Индивидуальный тотал
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.goalsAmount.awayTeamGoalsAmount.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 2,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '5.5rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.88rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-        </AccordionDetails>
-      </Accordion>
-
-      {/* Форы */}
-      <Accordion
-        expanded={expandedAccordion === 'Форы'}
-        onChange={handleAccordionChange('Форы')}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel-handicap-content"
-          id="panel-handicap-header"
-        >
-          <Typography>Форы</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {allBetsTitles.handicap.map((b) => (
-            <Button
-              key={b}
-              sx={{
-                px: 0,
-                m: 0.5,
-                bgcolor: '#525252',
-                height: '3rem',
-                width: '5.5rem',
-              }}
-              variant="contained"
-              onClick={() => handleButtonClick(b)}
-            >
-              <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
-                {b}
-              </Typography>
-            </Button>
-          ))}
-        </AccordionDetails>
-      </Accordion>
-
-      {/* Счёт матча */}
-      <Accordion
-        expanded={expandedAccordion === 'Счёт матча'}
-        onChange={handleAccordionChange('Счёт матча')}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel-gameScore-content"
-          id="panel-gameScore-header"
-        >
-          <Typography>Счёт матча</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {/* Счета от 0:0 до 3:3 */}
-          <Accordion
-            expanded={expandedNestedAccordion === 'Счета от 0:0 до 3:3'}
-            onChange={handleNestedAccordionChange('Счета от 0:0 до 3:3')}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-gameScore-normalGameScore-content"
-              id="panel-gameScore-normalGameScore-header"
-            >
-              <Typography>Счета от 0:0 до 3:3</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.gameScore.normalGameScore.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 2,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '4rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Прочие счета */}
-          <Accordion
-            expanded={expandedNestedAccordion === 'Прочие счета'}
-            onChange={handleNestedAccordionChange('Прочие счета')}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-gameScore-unusualGameScore-content"
-              id="panel-gameScore-unusualGameScore-header"
-            >
-              <Typography>Прочие счета</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.gameScore.unusualGameScore.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 2,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '4rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-        </AccordionDetails>
-      </Accordion>
-
-      {/* Голы */}
-      <Accordion
-        expanded={expandedAccordion === 'Голы'}
-        onChange={handleAccordionChange('Голы')}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel-goals-content"
-          id="panel-goals-header"
-        >
-          <Typography>Голы</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {/* Обе забьют */}
-          <Accordion
-            expanded={expandedNestedAccordion === 'Обе забьют'}
-            onChange={handleNestedAccordionChange('Обе забьют')}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-goals-bothTeamScore-content"
-              id="panel-goals-bothTeamScore-header"
-            >
-              <Typography>Обе забьют</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.goals.bothTeamScore.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 2,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '5.5rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Обе забьют (по таймам) */}
-          <Accordion
-            expanded={expandedNestedAccordion === 'Обе забьют (по таймам)'}
-            onChange={handleNestedAccordionChange('Обе забьют (по таймам)')}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-goals-bothTeamScore_Half-content"
-              id="panel-goals-bothTeamScore_Half-header"
-            >
-              <Typography>Обе забьют (по таймам)</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.goals.bothTeamScore_Half.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 0.5,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '8.5rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Результат матча + Обе забьют */}
-          <Accordion
-            expanded={expandedNestedAccordion === 'Результат матча + Обе забьют'}
-            onChange={handleNestedAccordionChange('Результат матча + Обе забьют')}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-goals-bothTeamScore_GameResult-content"
-              id="panel-goals-bothTeamScore_GameResult-header"
-            >
-              <Typography>Результат матча + Обе забьют</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.goals.bothTeamScore_GameResult.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 0.5,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '8.5rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Обе забьют + Тотал голов */}
-          <Accordion
-            expanded={expandedNestedAccordion === 'Обе забьют + Тотал голов'}
-            onChange={handleNestedAccordionChange('Обе забьют + Тотал голов')}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-goals-bothTeamScore_GoalsAmount-content"
-              id="panel-goals-bothTeamScore_GoalsAmount-header"
-            >
-              <Typography>Обе забьют + Тотал голов</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.goals.bothTeamScore_GoalsAmount.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 0.5,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '5.5rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Любая забьет больше Х голов */}
-          <Accordion
-            expanded={expandedNestedAccordion === 'Любая забьет больше Х голов'}
-            onChange={handleNestedAccordionChange('Любая забьет больше Х голов')}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-goals-anyTeamScoresMoreThan-content"
-              id="panel-goals-anyTeamScoresMoreThan-header"
-            >
-              <Typography>Любая забьет больше Х голов</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.goals.anyTeamScoresMoreThan.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 0,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '17rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.8rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-        </AccordionDetails>
-      </Accordion>
-
       {/* Таймы */}
       <Accordion
         expanded={expandedAccordion === 'Таймы'}
@@ -1055,7 +615,7 @@ export default function BetInputTitle({
                 <Button
                   key={b}
                   sx={{
-                    px: 2,
+                    px: 0.5,
                     m: 0.5,
                     bgcolor: '#525252',
                     height: '3rem',
@@ -1090,7 +650,7 @@ export default function BetInputTitle({
                 <Button
                   key={b}
                   sx={{
-                    px: 2,
+                    px: 0.5,
                     m: 0.5,
                     bgcolor: '#525252',
                     height: '3rem',
@@ -1595,6 +1155,446 @@ export default function BetInputTitle({
                   onClick={() => handleButtonClick(b)}
                 >
                   <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Тоталы */}
+      <Accordion
+        expanded={expandedAccordion === 'Тоталы'}
+        onChange={handleAccordionChange('Тоталы')}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel-goalsAmount-content"
+          id="panel-goalsAmount-header"
+        >
+          <Typography>Тоталы</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {/* Тотал голов */}
+          <Accordion
+            expanded={expandedNestedAccordion === 'Тотал голов'}
+            onChange={handleNestedAccordionChange('Тотал голов')}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-goalsAmount-goalsTotalAmount-content"
+              id="panel-goalsAmount-goalsTotalAmount-header"
+            >
+              <Typography>Тотал голов</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.goalsAmount.goalsTotalAmount.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 0,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '5.5rem',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+
+          {/* Хозяева - Индивидуальный тотал голов */}
+          <Accordion
+            expanded={
+              expandedNestedAccordion === 'Хозяева - Индивидуальный тотал голов'
+            }
+            onChange={handleNestedAccordionChange(
+              'Хозяева - Индивидуальный тотал голов'
+            )}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-goalsAmount-homeTeamGoalsAmount-content"
+              id="panel-goalsAmount-homeTeamGoalsAmount-header"
+            >
+              <Typography sx={{ fontSize: '0.95rem' }}>
+                Хозяева - Индивидуальный тотал
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.goalsAmount.homeTeamGoalsAmount.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 0,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '5.5rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.88rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+
+          {/* Гости - Индивидуальный тотал голов */}
+          <Accordion
+            expanded={
+              expandedNestedAccordion === 'Гости - Индивидуальный тотал голов'
+            }
+            onChange={handleNestedAccordionChange(
+              'Гости - Индивидуальный тотал голов'
+            )}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-goalsAmount-awayTeamGoalsAmount-content"
+              id="panel-goalsAmount-awayTeamGoalsAmount-header"
+            >
+              <Typography sx={{ fontSize: '0.95rem' }}>
+                Гости - Индивидуальный тотал
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.goalsAmount.awayTeamGoalsAmount.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 2,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '5.5rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.88rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Форы */}
+      <Accordion
+        expanded={expandedAccordion === 'Форы'}
+        onChange={handleAccordionChange('Форы')}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel-handicap-content"
+          id="panel-handicap-header"
+        >
+          <Typography>Форы</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {allBetsTitles.handicap.map((b) => (
+            <Button
+              key={b}
+              sx={{
+                px: 0,
+                m: 0.5,
+                bgcolor: '#525252',
+                height: '3rem',
+                width: '5.5rem',
+              }}
+              variant="contained"
+              onClick={() => handleButtonClick(b)}
+            >
+              <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                {b}
+              </Typography>
+            </Button>
+          ))}
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Счёт матча */}
+      <Accordion
+        expanded={expandedAccordion === 'Счёт матча'}
+        onChange={handleAccordionChange('Счёт матча')}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel-gameScore-content"
+          id="panel-gameScore-header"
+        >
+          <Typography>Счёт матча</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {/* Счета от 0:0 до 3:3 */}
+          <Accordion
+            expanded={expandedNestedAccordion === 'Счета от 0:0 до 3:3'}
+            onChange={handleNestedAccordionChange('Счета от 0:0 до 3:3')}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-gameScore-normalGameScore-content"
+              id="panel-gameScore-normalGameScore-header"
+            >
+              <Typography>Счета от 0:0 до 3:3</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.gameScore.normalGameScore.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 2,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '4rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+
+          {/* Прочие счета */}
+          <Accordion
+            expanded={expandedNestedAccordion === 'Прочие счета'}
+            onChange={handleNestedAccordionChange('Прочие счета')}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-gameScore-unusualGameScore-content"
+              id="panel-gameScore-unusualGameScore-header"
+            >
+              <Typography>Прочие счета</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.gameScore.unusualGameScore.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 2,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '4rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Голы */}
+      <Accordion
+        expanded={expandedAccordion === 'Голы'}
+        onChange={handleAccordionChange('Голы')}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel-goals-content"
+          id="panel-goals-header"
+        >
+          <Typography>Голы</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {/* Обе забьют */}
+          <Accordion
+            expanded={expandedNestedAccordion === 'Обе забьют'}
+            onChange={handleNestedAccordionChange('Обе забьют')}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-goals-bothTeamScore-content"
+              id="panel-goals-bothTeamScore-header"
+            >
+              <Typography>Обе забьют</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.goals.bothTeamScore.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 2,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '5.5rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+
+          {/* Обе забьют (по таймам) */}
+          <Accordion
+            expanded={expandedNestedAccordion === 'Обе забьют (по таймам)'}
+            onChange={handleNestedAccordionChange('Обе забьют (по таймам)')}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-goals-bothTeamScore_Half-content"
+              id="panel-goals-bothTeamScore_Half-header"
+            >
+              <Typography>Обе забьют (по таймам)</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.goals.bothTeamScore_Half.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 0.5,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '8.5rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+
+          {/* Результат матча + Обе забьют */}
+          <Accordion
+            expanded={expandedNestedAccordion === 'Результат матча + Обе забьют'}
+            onChange={handleNestedAccordionChange('Результат матча + Обе забьют')}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-goals-bothTeamScore_GameResult-content"
+              id="panel-goals-bothTeamScore_GameResult-header"
+            >
+              <Typography>Результат матча + Обе забьют</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.goals.bothTeamScore_GameResult.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 0.5,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '8.5rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+
+          {/* Обе забьют + Тотал голов */}
+          <Accordion
+            expanded={expandedNestedAccordion === 'Обе забьют + Тотал голов'}
+            onChange={handleNestedAccordionChange('Обе забьют + Тотал голов')}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-goals-bothTeamScore_GoalsAmount-content"
+              id="panel-goals-bothTeamScore_GoalsAmount-header"
+            >
+              <Typography>Обе забьют + Тотал голов</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.goals.bothTeamScore_GoalsAmount.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 0.5,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '5.5rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+
+          {/* Любая забьет больше Х голов */}
+          <Accordion
+            expanded={expandedNestedAccordion === 'Любая забьет больше Х голов'}
+            onChange={handleNestedAccordionChange('Любая забьет больше Х голов')}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-goals-anyTeamScoresMoreThan-content"
+              id="panel-goals-anyTeamScoresMoreThan-header"
+            >
+              <Typography>Любая забьет больше Х голов</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.goals.anyTeamScoresMoreThan.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 0,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '17rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.8rem' }}>
                     {b}
                   </Typography>
                 </Button>

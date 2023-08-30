@@ -6,7 +6,7 @@ import { useAppDispatch } from '../store';
 import { getPlayersStatsBySeason } from '../features/stats/statsSlice';
 import { selectActiveSeason } from '../features/admin/seasons/selectors';
 import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
-import MainTable from './MainTable';
+import StatsTable from './StatsTable';
 
 export default function Homepage(): JSX.Element {
   const activeSeason = useSelector(selectActiveSeason);
@@ -35,7 +35,7 @@ export default function Homepage(): JSX.Element {
         boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
       }}
     >
-      <MainTable playersStats={sortedPlayersStats} />
+      <StatsTable playersStats={sortedPlayersStats} />
     </Box>
   );
 }

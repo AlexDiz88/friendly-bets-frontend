@@ -1,3 +1,4 @@
+import LeagueStats from './types/LeagueStats';
 import PlayerStats from './types/PlayerStats';
 
 export async function getPlayersStatsBySeason(
@@ -6,6 +7,21 @@ export async function getPlayersStatsBySeason(
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/season/${seasonId}/stats`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
     url = `/api/users/season/${seasonId}/stats`;
+  }
+  const result = await fetch(`${url}`);
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
+  return result.json();
+}
+
+export async function getPlayersStatsByLeagues(
+  seasonId: string
+): Promise<{ playersStatsByLeagues: LeagueStats[] }> {
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/season/${seasonId}/leagues/stats`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = `/api/users/season/${seasonId}/leagues/stats`;
   }
   const result = await fetch(`${url}`);
   if (result.status >= 400) {
