@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import {
   Avatar,
   Box,
+  Button,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -62,15 +63,26 @@ export default function BetsList(): JSX.Element {
   const [value, setValue] = useState(0);
   const [selectedLeagueName, setSelectedLeagueName] = useState<string>('Все');
   const [selectedPlayerName, setSelectedPlayerName] = useState<string>('Все');
+  const [visibleBets, setVisibleBets] = useState(14);
+
+  const showMoreBets = (): void => {
+    if (selectedLeagueName === 'Все' && selectedPlayerName === 'Все') {
+      setVisibleBets((prevVisibleBets) => prevVisibleBets + 28);
+    } else {
+      setVisibleBets((prevVisibleBets) => prevVisibleBets + 14);
+    }
+  };
 
   const handleLeagueChange = (event: SelectChangeEvent): void => {
     const leagueName = event.target.value;
     setSelectedLeagueName(leagueName);
+    setVisibleBets(14);
   };
 
   const handlePlayerChange = (event: SelectChangeEvent): void => {
     const playerName = event.target.value;
     setSelectedPlayerName(playerName);
+    setVisibleBets(14);
   };
 
   const handleBetsTypeChange = (
@@ -84,6 +96,7 @@ export default function BetsList(): JSX.Element {
 
   useEffect(() => {
     dispatch(getActiveSeason());
+    setVisibleBets(28);
   }, [dispatch, value]);
 
   return (
@@ -354,22 +367,44 @@ export default function BetsList(): JSX.Element {
                       return dateB.getTime() - dateA.getTime();
                     });
 
-                    return sortedBets.map((bet) => {
-                      const league = activeSeason.leagues.find((l) =>
-                        l.bets.some((betInLeague) => betInLeague.id === bet.id)
-                      );
+                    return (
+                      <div>
+                        {sortedBets.slice(0, visibleBets).map((bet) => {
+                          const league = activeSeason.leagues.find((l) =>
+                            l.bets.some((betInLeague) => betInLeague.id === bet.id)
+                          );
 
-                      return (
-                        <Box key={bet.id}>
-                          {league &&
-                            (bet.betStatus === 'EMPTY' ? (
-                              <EmptyBetCard bet={bet} league={league} />
-                            ) : (
-                              <CompleteBetCard bet={bet} league={league} />
-                            ))}
-                        </Box>
-                      );
-                    });
+                          return (
+                            <Box key={bet.id}>
+                              {league &&
+                                (bet.betStatus === 'EMPTY' ? (
+                                  <EmptyBetCard bet={bet} league={league} />
+                                ) : (
+                                  <CompleteBetCard bet={bet} league={league} />
+                                ))}
+                            </Box>
+                          );
+                        })}
+                        {visibleBets < sortedBets.length && (
+                          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={showMoreBets}
+                            >
+                              <Typography
+                                variant="button"
+                                fontWeight="600"
+                                fontSize="0.9rem"
+                                fontFamily="Shantell Sans"
+                              >
+                                Показать еще
+                              </Typography>
+                            </Button>
+                          </Box>
+                        )}
+                      </div>
+                    );
                   })()}
               </Box>
             </Box>

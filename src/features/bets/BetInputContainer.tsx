@@ -64,6 +64,7 @@ export default function BetInputContainer(): JSX.Element {
     'success' | 'error' | 'warning' | 'info'
   >('info');
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarDuration, setSnackbarDuration] = useState(3000);
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialogEmptyBet, setOpenDialogEmptyBet] = useState(false);
   const [openDialogTwoEmptyBet, setOpenDialogTwoEmptyBet] = useState(false);
@@ -95,6 +96,7 @@ export default function BetInputContainer(): JSX.Element {
         setOpenSnackbar(true);
         setSnackbarSeverity('success');
         setSnackbarMessage('Ставка успешно добавлена');
+        setSnackbarDuration(1000);
         setResetTeams(!resetTeams);
         setSelectedHomeTeam(undefined);
         setSelectedAwayTeam(undefined);
@@ -610,7 +612,7 @@ export default function BetInputContainer(): JSX.Element {
           onClose={handleCloseSnackbar}
           severity={snackbarSeverity}
           message={snackbarMessage}
-          duration={3000}
+          duration={snackbarDuration}
         />
       </Box>
     </Box>

@@ -18,8 +18,8 @@ import pathToAvatarImage from '../utils/pathToAvatarImage';
 const adminSettings = [
   'Внести ставку',
   'Подвести итоги',
+  'Редактирование ставок',
   'Админ кабинет',
-  'Удалить ставку',
   'Выйти',
 ];
 const moderSettings = [

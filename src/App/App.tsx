@@ -17,6 +17,8 @@ import BetsCheck from '../features/bets/BetsCheck';
 import EmptyPage from '../components/EmptyPage';
 import News from '../components/News';
 import BetEditList from '../features/bets/BetEditList';
+import LeaguesStatsPage from '../components/LeaguesStatsPage';
+import TeamsStatsPage from '../components/TeamsStatsPage';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -43,6 +45,8 @@ function App(): JSX.Element {
           <Route path="/in-progress" element={<EmptyPage />} />
           <Route path="/news" element={<News />} />
           <Route path="/bets/edit" element={<BetEditList />} />
+          <Route path="/stats/leagues" element={<LeaguesStatsPage />} />
+          <Route path="/stats/teams" element={<TeamsStatsPage />} />
         </Route>
       </Routes>
     </HashRouter>

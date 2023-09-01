@@ -14,3 +14,4 @@ export default interface League {
 }
 
 export type LeagueId = League['id'];
+export type LeagueDisplayNameRu = League['displayNameRu'];

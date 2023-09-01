@@ -1,22 +1,75 @@
 import React from 'react';
 import {
-  TableRow,
-  TableCell,
-  IconButton,
-  Collapse,
-  Box,
-  Typography,
+  TableContainer,
+  Paper,
   Table,
   TableHead,
+  TableRow,
+  TableCell,
   TableBody,
-  Paper,
-  TableContainer,
   Avatar,
+  Box,
+  Collapse,
+  IconButton,
+  Typography,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import PlayerStats from '../features/stats/types/PlayerStats';
 import pathToAvatarImage from './utils/pathToAvatarImage';
+
+export default function StatsTable({
+  playersStats,
+}: {
+  playersStats: PlayerStats[];
+}): JSX.Element {
+  return (
+    <TableContainer component={Paper}>
+      <Table aria-label="collapsible table">
+        <TableHead sx={{ bgcolor: '#2d2d32', border: 2 }}>
+          <TableRow>
+            <TableCell />
+            <TableCell
+              align="left"
+              sx={{ color: 'white', fontWeight: 600, py: 0.5 }}
+            >
+              Имя
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                fontSize: '0.75rem',
+                color: 'white',
+                fontWeight: 600,
+                px: 0,
+                py: 0.5,
+              }}
+            >
+              Ставок
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{ color: 'white', fontWeight: 600, px: 0.5, py: 0.5 }}
+            >
+              %
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{ color: 'white', fontWeight: 600, py: 0.5 }}
+            >
+              Баланс
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody sx={{ border: 2 }}>
+          {playersStats.map((pStats) => (
+            <Row key={pStats.username} pStats={pStats} />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
 
 function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
   const [open, setOpen] = React.useState(false);
@@ -140,58 +193,5 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
         </TableCell>
       </TableRow>
     </>
-  );
-}
-
-export default function MainTable({
-  playersStats,
-}: {
-  playersStats: PlayerStats[];
-}): JSX.Element {
-  return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead sx={{ bgcolor: '#2d2d32', border: 2 }}>
-          <TableRow>
-            <TableCell />
-            <TableCell
-              align="left"
-              sx={{ color: 'white', fontWeight: 600, py: 0.5 }}
-            >
-              Имя
-            </TableCell>
-            <TableCell
-              align="center"
-              sx={{
-                fontSize: '0.75rem',
-                color: 'white',
-                fontWeight: 600,
-                px: 0,
-                py: 0.5,
-              }}
-            >
-              Ставок
-            </TableCell>
-            <TableCell
-              align="center"
-              sx={{ color: 'white', fontWeight: 600, px: 0.5, py: 0.5 }}
-            >
-              %
-            </TableCell>
-            <TableCell
-              align="center"
-              sx={{ color: 'white', fontWeight: 600, py: 0.5 }}
-            >
-              Баланс
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody sx={{ border: 2 }}>
-          {playersStats.map((pStats) => (
-            <Row key={pStats.username} pStats={pStats} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
   );
 }

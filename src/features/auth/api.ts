@@ -65,14 +65,14 @@ export async function logout(): Promise<void> {
   });
 }
 
-export async function editEmail(email: string): Promise<User> {
+export async function editEmail({ newEmail }: { newEmail: string }): Promise<User> {
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/email`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
     url = '/api/users/my/profile/email';
   }
   const result = await fetch(`${url}`, {
     method: 'PUT',
-    body: email,
+    body: JSON.stringify({ newEmail }),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -109,14 +109,18 @@ export async function editPassword({
   return result.json();
 }
 
-export async function editUsername(username: string): Promise<User> {
+export async function editUsername({
+  newUsername,
+}: {
+  newUsername: string;
+}): Promise<User> {
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/username`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
     url = '/api/users/my/profile/username';
   }
   const result = await fetch(`${url}`, {
     method: 'PUT',
-    body: username,
+    body: JSON.stringify({ newUsername }),
     headers: {
       'Content-Type': 'application/json',
     },
