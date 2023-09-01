@@ -40,11 +40,11 @@ export const logout = createAsyncThunk('logout', api.logout);
 
 export const editEmail = createAsyncThunk(
   'api/users/my/profile/editEmail',
-  async ({ email }: { email: string }) => {
-    if (!email.trim()) {
+  async ({ newEmail }: { newEmail: string }) => {
+    if (!newEmail.trim()) {
       throw new Error('Email не может быть пустым');
     }
-    return api.editEmail(email);
+    return api.editEmail({ newEmail });
   }
 );
 
@@ -71,11 +71,11 @@ export const editPassword = createAsyncThunk(
 
 export const editUsername = createAsyncThunk(
   'api/users/my/profile/editUsername',
-  async ({ username }: { username: string }) => {
-    if (!username.trim()) {
+  async ({ newUsername }: { newUsername: string }) => {
+    if (!newUsername.trim()) {
       throw new Error('Имя не может быть пустым');
     }
-    return api.editUsername(username);
+    return api.editUsername({ newUsername });
   }
 );
 

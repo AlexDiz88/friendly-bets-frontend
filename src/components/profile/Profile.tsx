@@ -90,7 +90,7 @@ export default function Profile(): JSX.Element {
 
   // сохраняем email
   const handleSaveEmail = React.useCallback(async () => {
-    const dispatchResult = await dispatch(editEmail({ email: newEmail }));
+    const dispatchResult = await dispatch(editEmail({ newEmail }));
     if (editEmail.fulfilled.match(dispatchResult)) {
       setOpenSnackbar(true);
       setSnackbarSeverity('success');
@@ -133,7 +133,7 @@ export default function Profile(): JSX.Element {
 
   // сохраняем имя
   const handleSaveName = React.useCallback(async () => {
-    const dispatchResult = await dispatch(editUsername({ username: newName }));
+    const dispatchResult = await dispatch(editUsername({ newUsername: newName }));
     if (editUsername.fulfilled.match(dispatchResult)) {
       setOpenSnackbar(true);
       setSnackbarSeverity('success');
