@@ -8,6 +8,7 @@ import NewGameResult from '../../bets/types/NewGameResult';
 const initialState: SeasonsState = {
   seasons: [],
   statuses: [],
+  activeSeasonId: undefined,
   activeSeason: null,
   scheduledSeason: null,
   error: undefined,
@@ -50,6 +51,11 @@ export const changeSeasonStatus = createAsyncThunk(
 export const getActiveSeason = createAsyncThunk(
   'seasons/getActiveSeason',
   async () => api.getActiveSeason()
+);
+
+export const getActiveSeasonId = createAsyncThunk(
+  'seasons/getActiveSeasonId',
+  async () => api.getActiveSeasonId()
 );
 
 export const getScheduledSeason = createAsyncThunk(
@@ -223,6 +229,12 @@ const seasonsSlice = createSlice({
       .addCase(getActiveSeason.rejected, (state, action) => {
         state.error = action.error.message;
       })
+      .addCase(getActiveSeasonId.fulfilled, (state, action) => {
+        state.activeSeasonId = action.payload.value;
+      })
+      .addCase(getActiveSeasonId.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
       .addCase(getScheduledSeason.fulfilled, (state, action) => {
         state.scheduledSeason = action.payload;
       })
@@ -245,34 +257,68 @@ const seasonsSlice = createSlice({
       .addCase(addLeagueToSeason.rejected, (state, action) => {
         state.error = action.error.message;
       })
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .addCase(addTeamToLeagueInSeason.fulfilled, (state, action) => {
-        state.seasons = state.seasons.map((season) =>
-          season.id === action.payload.id ? action.payload : season
-        );
+        //   state.seasons = state.seasons.map((season) =>
+        //     season.id === action.payload.id ? action.payload : season
+        //   );
       })
       .addCase(addTeamToLeagueInSeason.rejected, (state, action) => {
         state.error = action.error.message;
       })
       .addCase(addBetToLeagueInSeason.fulfilled, (state, action) => {
-        state.seasons = state.seasons.map((season) =>
-          season.id === action.payload.id ? action.payload : season
+        const addedBet = action.payload;
+        const targetSeason = state.seasons.find(
+          (season) => season.id === addedBet.seasonId
         );
+        if (targetSeason) {
+          const targetLeague = targetSeason.leagues.find(
+            (league) => league.id === addedBet.leagueId
+          );
+          if (targetLeague) {
+            targetLeague.bets = targetLeague.bets.map((bet) =>
+              bet.id === addedBet.id ? addedBet : bet
+            );
+          }
+        }
       })
       .addCase(addBetToLeagueInSeason.rejected, (state, action) => {
         state.error = action.error.message;
       })
       .addCase(addEmptyBetToLeagueInSeason.fulfilled, (state, action) => {
-        state.seasons = state.seasons.map((season) =>
-          season.id === action.payload.id ? action.payload : season
+        const addedBet = action.payload;
+        const targetSeason = state.seasons.find(
+          (season) => season.id === addedBet.seasonId
         );
+        if (targetSeason) {
+          const targetLeague = targetSeason.leagues.find(
+            (league) => league.id === addedBet.leagueId
+          );
+          if (targetLeague) {
+            targetLeague.bets = targetLeague.bets.map((bet) =>
+              bet.id === addedBet.id ? addedBet : bet
+            );
+          }
+        }
       })
       .addCase(addEmptyBetToLeagueInSeason.rejected, (state, action) => {
         state.error = action.error.message;
       })
       .addCase(addBetResult.fulfilled, (state, action) => {
-        state.seasons = state.seasons.map((season) =>
-          season.id === action.payload.id ? action.payload : season
+        const addedBet = action.payload;
+        const targetSeason = state.seasons.find(
+          (season) => season.id === addedBet.seasonId
         );
+        if (targetSeason) {
+          const targetLeague = targetSeason.leagues.find(
+            (league) => league.id === addedBet.leagueId
+          );
+          if (targetLeague) {
+            targetLeague.bets = targetLeague.bets.map((bet) =>
+              bet.id === addedBet.id ? addedBet : bet
+            );
+          }
+        }
       })
       .addCase(addBetResult.rejected, (state, action) => {
         state.error = action.error.message;

@@ -3,13 +3,16 @@ import { useSelector } from 'react-redux';
 import { Box } from '@mui/material';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { useAppDispatch } from '../store';
-import { getPlayersStatsBySeason } from '../features/stats/statsSlice';
-import { selectActiveSeason } from '../features/admin/seasons/selectors';
-import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
+import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
+import {
+  getActiveSeason,
+  getActiveSeasonId,
+} from '../features/admin/seasons/seasonsSlice';
+import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
 import StatsTable from './StatsTable';
 
 export default function Homepage(): JSX.Element {
-  const activeSeason = useSelector(selectActiveSeason);
+  const activeSeasonId = useSelector(selectActiveSeasonId);
   const playersStats = useSelector(selectPlayersStats);
   const dispatch = useAppDispatch();
 
@@ -18,14 +21,15 @@ export default function Homepage(): JSX.Element {
   );
 
   useEffect(() => {
+    dispatch(getActiveSeasonId());
     dispatch(getActiveSeason());
   }, [dispatch]);
 
   useEffect(() => {
-    if (activeSeason) {
-      dispatch(getPlayersStatsBySeason(activeSeason.id));
+    if (activeSeasonId) {
+      dispatch(getAllPlayersStatsBySeason(activeSeasonId));
     }
-  }, [activeSeason, dispatch]);
+  }, [activeSeasonId, dispatch]);
 
   return (
     <Box

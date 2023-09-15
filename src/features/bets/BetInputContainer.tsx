@@ -81,6 +81,8 @@ export default function BetInputContainer(): JSX.Element {
           seasonId: season.id,
           leagueId: selectedLeagueId,
           newBet: {
+            seasonId: season.id,
+            leagueId: selectedLeagueId,
             userId: selectedUser?.id,
             matchDay: selectedMatchDay,
             homeTeamId: selectedHomeTeam?.id,
@@ -139,6 +141,8 @@ export default function BetInputContainer(): JSX.Element {
           seasonId: season.id,
           leagueId: selectedLeagueId,
           newEmptyBet: {
+            seasonId: season.id,
+            leagueId: selectedLeagueId,
             userId: selectedUser.id,
             matchDay: selectedMatchDay,
             betSize: Number(selectedEmptyBetSize),
@@ -263,7 +267,7 @@ export default function BetInputContainer(): JSX.Element {
 
   useEffect(() => {
     dispatch(getActiveSeason());
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     if (season && selectedLeague) {

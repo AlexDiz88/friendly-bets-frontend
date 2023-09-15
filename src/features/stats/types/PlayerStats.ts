@@ -11,6 +11,4 @@ export default interface PlayerStats {
   averageOdds: number;
   averageWonBetOdds: number;
   actualBalance: number;
-  sumOfOdds: number;
-  sumOfWonOdds: number;
 }

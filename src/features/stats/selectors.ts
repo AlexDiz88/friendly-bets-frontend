@@ -7,4 +7,4 @@ export const selectPlayersStats = (state: RootState): PlayerStats[] =>
 export const selectPlayersStatsByLeagues = (state: RootState): LeagueStats[] =>
   state.playersStats.playersStatsByLeague;
 export const selectError = (state: RootState): string | undefined =>
-  state.bets.error;
+  state.playersStats.error;

@@ -114,21 +114,33 @@ export default function BetEditList(): JSX.Element {
                   {league && bet.betStatus === 'OPENED' ? (
                     <>
                       <BetCard bet={bet} league={league} />
-                      <BetEditButtons bet={bet} league={league} />
+                      <BetEditButtons
+                        bet={bet}
+                        seasonId={season.id}
+                        league={league}
+                      />
                     </>
                   ) : (
                     <Box>
                       {league && bet.betStatus === 'EMPTY' ? (
                         <>
                           <EmptyBetCard bet={bet} league={league} />
-                          <BetEditButtons bet={bet} league={league} />
+                          <BetEditButtons
+                            bet={bet}
+                            seasonId={season.id}
+                            league={league}
+                          />
                         </>
                       ) : (
                         <Box>
                           {league && (
                             <>
                               <CompleteBetCard bet={bet} league={league} />
-                              <BetEditButtons bet={bet} league={league} />
+                              <BetEditButtons
+                                bet={bet}
+                                seasonId={season.id}
+                                league={league}
+                              />
                             </>
                           )}
                         </Box>
@@ -151,19 +163,31 @@ export default function BetEditList(): JSX.Element {
                   {bet.betStatus === 'OPENED' ? (
                     <Box>
                       <BetCard bet={bet} league={league} />
-                      <BetEditButtons bet={bet} league={league} />
+                      <BetEditButtons
+                        bet={bet}
+                        seasonId={season.id}
+                        league={league}
+                      />
                     </Box>
                   ) : (
                     <Box>
                       {bet.betStatus === 'EMPTY' ? (
                         <Box>
                           <EmptyBetCard bet={bet} league={league} />
-                          <BetEditButtons bet={bet} league={league} />
+                          <BetEditButtons
+                            bet={bet}
+                            seasonId={season.id}
+                            league={league}
+                          />
                         </Box>
                       ) : (
                         <Box>
                           <CompleteBetCard bet={bet} league={league} />
-                          <BetEditButtons bet={bet} league={league} />
+                          <BetEditButtons
+                            bet={bet}
+                            seasonId={season.id}
+                            league={league}
+                          />
                         </Box>
                       )}
                     </Box>

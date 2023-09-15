@@ -11,15 +11,15 @@ import {
 } from '@mui/material';
 import { selectPlayersStatsByLeagues } from '../features/stats/selectors';
 import { useAppDispatch } from '../store';
-import { getPlayersStatsByLeagues } from '../features/stats/statsSlice';
-import { selectActiveSeason } from '../features/admin/seasons/selectors';
-import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
+import { getAllPlayersStatsByLeagues } from '../features/stats/statsSlice';
+import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
+import { getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
 import LeagueStats from '../features/stats/types/LeagueStats';
 import pathToLogoImage from './utils/pathToLogoImage';
 import StatsTable from './StatsTable';
 
 export default function LeaguesStatsPage(): JSX.Element {
-  const activeSeason = useSelector(selectActiveSeason);
+  const activeSeasonId = useSelector(selectActiveSeasonId);
   const statsByLeagues: LeagueStats[] = useSelector(selectPlayersStatsByLeagues);
   const dispatch = useAppDispatch();
   const [selectedLeague, setSelectedLeague] = useState<LeagueStats | undefined>(
@@ -38,18 +38,20 @@ export default function LeaguesStatsPage(): JSX.Element {
 
   const handleLeagueChange = (event: SelectChangeEvent): void => {
     const leagueName = event.target.value;
-    const league = statsByLeagues.find((l) => l.league.displayNameRu === leagueName);
+    const league = statsByLeagues.find(
+      (l) => l.simpleLeague.displayNameRu === leagueName
+    );
     setSelectedLeagueName(leagueName);
     setSelectedLeague(league || undefined);
   };
 
   useEffect(() => {
-    dispatch(getActiveSeason());
+    dispatch(getActiveSeasonId());
   }, [dispatch]);
 
   useEffect(() => {
-    if (activeSeason) {
-      dispatch(getPlayersStatsByLeagues(activeSeason.id))
+    if (activeSeasonId) {
+      dispatch(getAllPlayersStatsByLeagues(activeSeasonId))
         .then(() => {
           setLoading(false);
         })
@@ -58,7 +60,7 @@ export default function LeaguesStatsPage(): JSX.Element {
           setLoading(false);
         });
     }
-  }, [activeSeason, dispatch]);
+  }, [activeSeasonId, dispatch]);
 
   return (
     <Box>
@@ -114,8 +116,8 @@ export default function LeaguesStatsPage(): JSX.Element {
               >
                 {statsByLeagues.map((stats) => (
                   <MenuItem
-                    key={stats.league.displayNameRu}
-                    value={stats.league.displayNameRu}
+                    key={stats.simpleLeague.displayNameRu}
+                    value={stats.simpleLeague.displayNameRu}
                     sx={{ ml: -0.5, minWidth: '11rem' }}
                   >
                     <div
@@ -128,10 +130,10 @@ export default function LeaguesStatsPage(): JSX.Element {
                         variant="square"
                         sx={{ width: 27, height: 27 }}
                         alt="league_logo"
-                        src={pathToLogoImage(stats.league.displayNameEn)}
+                        src={pathToLogoImage(stats.simpleLeague.displayNameEn)}
                       />
                       <Typography sx={{ mx: 1, fontSize: '1rem' }}>
-                        {stats.league.displayNameRu}
+                        {stats.simpleLeague.displayNameRu}
                       </Typography>
                     </div>
                   </MenuItem>

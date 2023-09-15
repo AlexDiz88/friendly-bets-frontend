@@ -1,6 +1,8 @@
+import Bet from '../../bets/types/Bet';
 import NewBet from '../../bets/types/NewBet';
 import NewEmptyBet from '../../bets/types/NewEmptyBet';
 import NewGameResult from '../../bets/types/NewGameResult';
+import League from '../leagues/types/League';
 import Season from './types/Season';
 
 export async function addSeason(
@@ -77,6 +79,20 @@ export async function getActiveSeason(): Promise<Season> {
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/active`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
     url = '/api/seasons/active';
+  }
+  const result = await fetch(`${url}`);
+
+  if (result.status >= 400) {
+    const { message } = await result.json();
+    throw new Error(message);
+  }
+  return result.json();
+}
+
+export async function getActiveSeasonId(): Promise<{ value: string }> {
+  let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/active/id`;
+  if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+    url = '/api/seasons/active/id';
   }
   const result = await fetch(`${url}`);
 
@@ -166,7 +182,7 @@ export async function addTeamToLeagueInSeason(
   seasonId: string,
   leagueId: string,
   teamId: string
-): Promise<Season> {
+): Promise<League> {
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
     url = `/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`;
@@ -188,7 +204,7 @@ export async function addBetToLeagueInSeason(
   seasonId: string,
   leagueId: string,
   newBet: NewBet
-): Promise<Season> {
+): Promise<Bet> {
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/bets`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
     url = `/api/seasons/${seasonId}/leagues/${leagueId}/bets`;
@@ -211,7 +227,7 @@ export async function addEmptyBetToLeagueInSeason(
   seasonId: string,
   leagueId: string,
   newEmptyBet: NewEmptyBet
-): Promise<Season> {
+): Promise<Bet> {
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
     url = `/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`;
@@ -234,7 +250,7 @@ export async function addBetResult(
   seasonId: string,
   betId: string,
   newGameResult: NewGameResult
-): Promise<Season> {
+): Promise<Bet> {
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/bets/${betId}`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
     url = `/api/seasons/${seasonId}/bets/${betId}`;

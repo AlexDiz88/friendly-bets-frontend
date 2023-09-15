@@ -35,10 +35,12 @@ const statuses = ['WON', 'RETURNED', 'LOST'];
 
 export default function BetEditForm({
   bet,
+  seasonId,
   league,
   handleEditBet,
 }: {
   bet: Bet;
+  seasonId: string;
   league: League;
   handleEditBet: (showEditForm: boolean) => void;
 }): JSX.Element {
@@ -82,6 +84,8 @@ export default function BetEditForm({
       updateBet({
         betId: bet.id,
         newBet: {
+          seasonId,
+          leagueId: league.id,
           userId: updatedUser.id,
           matchDay: updatedMatchDay,
           homeTeamId: updatedHomeTeam.id,
@@ -116,19 +120,21 @@ export default function BetEditForm({
       }
     }
   }, [
+    updatedBetOdds,
     dispatch,
-    handleEditBet,
-    isNot,
-    updatedBetTitle,
     bet.id,
+    seasonId,
+    league.id,
     updatedUser.id,
     updatedMatchDay,
     updatedHomeTeam.id,
     updatedAwayTeam.id,
+    isNot,
+    updatedBetTitle,
     updatedBetSize,
     updatedBetStatus,
-    updatedBetOdds,
     updatedGameResult,
+    handleEditBet,
   ]);
   // конец добавления ставки
 

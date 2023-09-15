@@ -11,14 +11,19 @@ const initialState: PlayersStatsState = {
 // TODO добавить GET методы на getAllByLeagueInSeason,
 // TODO getAllBySeason, getAllByPlayerInSeason, getAllByPlayerByLeagueInSeason
 
-export const getPlayersStatsBySeason = createAsyncThunk(
-  'stats/getPlayersStatsBySeason',
-  async (seasonId: string) => api.getPlayersStatsBySeason(seasonId)
+export const getAllPlayersStatsBySeason = createAsyncThunk(
+  'stats/getAllPlayersStatsBySeason',
+  async (seasonId: string) => api.getAllPlayersStatsBySeason(seasonId)
 );
 
-export const getPlayersStatsByLeagues = createAsyncThunk(
+export const getAllPlayersStatsByLeagues = createAsyncThunk(
   'stats/getPlayersStatsByLeagues',
-  async (seasonId: string) => api.getPlayersStatsByLeagues(seasonId)
+  async (seasonId: string) => api.getAllPlayersStatsByLeagues(seasonId)
+);
+
+export const playersStatsFullRecalculation = createAsyncThunk(
+  'stats/playersStatsFullRecalculation',
+  async (seasonId: string) => api.playersStatsFullRecalculation(seasonId)
 );
 
 const statsSlice = createSlice({
@@ -31,16 +36,22 @@ const statsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getPlayersStatsBySeason.fulfilled, (state, action) => {
+      .addCase(getAllPlayersStatsBySeason.fulfilled, (state, action) => {
         state.playersStats = action.payload.playersStats;
       })
-      .addCase(getPlayersStatsBySeason.rejected, (state, action) => {
+      .addCase(getAllPlayersStatsBySeason.rejected, (state, action) => {
         state.error = action.error.message;
       })
-      .addCase(getPlayersStatsByLeagues.fulfilled, (state, action) => {
+      .addCase(getAllPlayersStatsByLeagues.fulfilled, (state, action) => {
         state.playersStatsByLeague = action.payload.playersStatsByLeagues;
       })
-      .addCase(getPlayersStatsByLeagues.rejected, (state, action) => {
+      .addCase(getAllPlayersStatsByLeagues.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(playersStatsFullRecalculation.fulfilled, (state, action) => {
+        state.playersStats = action.payload.playersStats;
+      })
+      .addCase(playersStatsFullRecalculation.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },
