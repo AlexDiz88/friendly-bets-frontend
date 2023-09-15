@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
 
-const pages = ['Новости', 'По турнирам', 'По командам', 'По месяцам', 'Правила'];
+const pages = ['Новости', 'По лигам', 'По командам', 'По месяцам', 'Правила'];
 
 export default function MenuPages(): JSX.Element {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function MenuPages(): JSX.Element {
       navigate('/news');
     } else if (page === 'По турам') {
       navigate('/in-progress');
-    } else if (page === 'По турнирам') {
+    } else if (page === 'По лигам') {
       navigate('/stats/leagues');
     } else if (page === 'По командам') {
       navigate('/stats/teams');

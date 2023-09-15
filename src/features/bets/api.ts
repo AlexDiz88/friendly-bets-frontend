@@ -46,13 +46,21 @@ export async function updateBet(betId: string, newBet: NewBet): Promise<Bet> {
   return result.json();
 }
 
-export async function deleteBet(betId: BetId): Promise<Bet> {
+export async function deleteBet(
+  betId: BetId,
+  seasonId: string,
+  leagueId: string
+): Promise<Bet> {
   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/bets/${betId}`;
   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
     url = `/api/bets/${betId}`;
   }
   const result = await fetch(`${url}`, {
     method: 'DELETE',
+    body: JSON.stringify({ seasonId, leagueId }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
   if (result.status >= 400) {
     const { message } = await result.json();

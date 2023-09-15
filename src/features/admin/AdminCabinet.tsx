@@ -5,6 +5,7 @@ import { Box, CircularProgress, Typography } from '@mui/material';
 import Seasons from './seasons/Seasons';
 import { selectUser } from '../auth/selectors';
 import { useAppDispatch } from '../../store';
+import AllStatsRecalculating from '../../components/AllStatsRecalculating';
 
 export default function AdminCabinet(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -60,6 +61,7 @@ export default function AdminCabinet(): JSX.Element {
     <Box sx={{ textAlign: 'center', mx: 2, mb: 10 }}>
       <Typography sx={{ borderBottom: 2, pb: 1, mx: 2 }}>AdminCabinet</Typography>
       <Seasons />
+      <AllStatsRecalculating />
     </Box>
   );
 }

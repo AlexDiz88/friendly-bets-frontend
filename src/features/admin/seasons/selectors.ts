@@ -5,6 +5,8 @@ export const selectSeasons = (state: RootState): Season[] => state.seasons.seaso
 export const selectStatuses = (state: RootState): string[] => state.seasons.statuses;
 export const selectActiveSeason = (state: RootState): Season | null =>
   state.seasons.activeSeason;
+export const selectActiveSeasonId = (state: RootState): string | undefined =>
+  state.seasons.activeSeasonId;
 export const selectScheduledSeason = (state: RootState): Season | null =>
   state.seasons.scheduledSeason;
 export const selectError = (state: RootState): string | undefined =>

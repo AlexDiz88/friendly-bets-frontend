@@ -528,76 +528,6 @@ export default function BetInputTitle({
             </AccordionDetails>
           </Accordion>
 
-          {/* Тайм / Матч */}
-          <Accordion
-            expanded={expandedNestedAccordion === 'Тайм / Матч'}
-            onChange={handleNestedAccordionChange('Тайм / Матч')}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-half-firstHalf_gameResult-content"
-              id="panel-half-firstHalf_gameResult-header"
-            >
-              <Typography>Тайм / Матч</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.half.firstHalf_gameResult.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 0,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '5.5rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-
-          {/* 1й Тайм / 2й Тайм */}
-          <Accordion
-            expanded={expandedNestedAccordion === '1й Тайм / 2й Тайм'}
-            onChange={handleNestedAccordionChange('1й Тайм / 2й Тайм')}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel-half-firstHalf_secondHalf-content"
-              id="panel-half-firstHalf_secondHalf-header"
-            >
-              <Typography>1й Тайм / 2й Тайм</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {allBetsTitles.half.firstHalf_secondHalf.map((b) => (
-                <Button
-                  key={b}
-                  sx={{
-                    px: 0,
-                    m: 0.5,
-                    bgcolor: '#525252',
-                    height: '3rem',
-                    width: '5.5rem',
-                    textTransform: 'none',
-                  }}
-                  variant="contained"
-                  onClick={() => handleButtonClick(b)}
-                >
-                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
-                    {b}
-                  </Typography>
-                </Button>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-
           {/* Счёт 1й тайм */}
           <Accordion
             expanded={expandedNestedAccordion === 'Счёт 1й тайм'}
@@ -661,6 +591,76 @@ export default function BetInputTitle({
                   onClick={() => handleButtonClick(b)}
                 >
                   <Typography sx={{ fontWeight: 600, fontSize: '0.88rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+
+          {/* Тайм / Матч */}
+          <Accordion
+            expanded={expandedNestedAccordion === 'Тайм / Матч'}
+            onChange={handleNestedAccordionChange('Тайм / Матч')}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-half-firstHalf_gameResult-content"
+              id="panel-half-firstHalf_gameResult-header"
+            >
+              <Typography>Тайм / Матч</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.half.firstHalf_gameResult.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 0,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '5.5rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                    {b}
+                  </Typography>
+                </Button>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+
+          {/* 1й Тайм / 2й Тайм */}
+          <Accordion
+            expanded={expandedNestedAccordion === '1й Тайм / 2й Тайм'}
+            onChange={handleNestedAccordionChange('1й Тайм / 2й Тайм')}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel-half-firstHalf_secondHalf-content"
+              id="panel-half-firstHalf_secondHalf-header"
+            >
+              <Typography>1й Тайм / 2й Тайм</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {allBetsTitles.half.firstHalf_secondHalf.map((b) => (
+                <Button
+                  key={b}
+                  sx={{
+                    px: 0,
+                    m: 0.5,
+                    bgcolor: '#525252',
+                    height: '3rem',
+                    width: '5.5rem',
+                    textTransform: 'none',
+                  }}
+                  variant="contained"
+                  onClick={() => handleButtonClick(b)}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
                     {b}
                   </Typography>
                 </Button>

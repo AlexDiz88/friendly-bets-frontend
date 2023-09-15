@@ -158,16 +158,6 @@ export default function Seasons(): JSX.Element {
             </Typography>
           </Button>
         </Box>
-
-        <Box textAlign="center">
-          <NotificationSnackbar
-            open={openSnackbar}
-            onClose={handleCloseSnackbar}
-            severity={snackbarSeverity}
-            message={snackbarMessage}
-            duration={3000}
-          />
-        </Box>
       </FormControl>
 
       <Box sx={{ mb: 2, borderBottom: 2 }}>
@@ -301,6 +291,16 @@ export default function Seasons(): JSX.Element {
           )}
         </Box>
       )}
+
+      <Box textAlign="center">
+        <NotificationSnackbar
+          open={openSnackbar}
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          message={snackbarMessage}
+          duration={3000}
+        />
+      </Box>
     </Box>
   );
 }

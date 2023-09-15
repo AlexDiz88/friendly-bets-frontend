@@ -1,7 +1,7 @@
-import League from '../../admin/leagues/types/League';
+import SimpleLeague from '../../admin/leagues/types/SimpleLeague';
 import PlayerStats from './PlayerStats';
 
 export default interface LeagueStats {
-  league: League;
+  simpleLeague: SimpleLeague;
   playersStats: PlayerStats[];
 }

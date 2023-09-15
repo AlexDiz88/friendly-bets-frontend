@@ -3,6 +3,8 @@ import User from '../../auth/types/User';
 
 export default interface Bet {
   id: string;
+  seasonId: string;
+  leagueId: string;
   createdAt: Date;
   player: User;
   matchDay: string;

@@ -26,11 +26,19 @@ export const updateBet = createAsyncThunk(
 
 export const deleteBet = createAsyncThunk(
   'bets/deleteBet',
-  async ({ betId }: { betId: string }) => {
+  async ({
+    betId,
+    seasonId,
+    leagueId,
+  }: {
+    betId: string;
+    seasonId: string;
+    leagueId: string;
+  }) => {
     if (!betId) {
       throw new Error('Отсутствует ID ставки');
     }
-    return api.deleteBet(betId);
+    return api.deleteBet(betId, seasonId, leagueId);
   }
 );
 

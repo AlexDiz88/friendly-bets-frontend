@@ -18,9 +18,11 @@ import { deleteBet } from './betsSlice';
 
 export default function BetEditButtons({
   bet,
+  seasonId,
   league,
 }: {
   bet: Bet;
+  seasonId: string;
   league: League;
 }): JSX.Element {
   const dispatch = useAppDispatch();
@@ -35,7 +37,9 @@ export default function BetEditButtons({
 
   const handleBetDeleteSave = React.useCallback(async () => {
     setOpenDeleteDialog(false);
-    const dispatchResult = await dispatch(deleteBet({ betId: bet.id }));
+    const dispatchResult = await dispatch(
+      deleteBet({ betId: bet.id, seasonId, leagueId: league.id })
+    );
 
     if (deleteBet.fulfilled.match(dispatchResult)) {
       setOpenSnackbar(true);
@@ -51,7 +55,7 @@ export default function BetEditButtons({
         setSnackbarMessage(dispatchResult.error.message);
       }
     }
-  }, [dispatch, bet.id]);
+  }, [dispatch, bet.id, seasonId, league.id]);
   // конец добавления ставки
 
   const handleEditBet = (): void => {
@@ -104,7 +108,12 @@ export default function BetEditButtons({
         </Button>
       </Box>
       {showEditForm && bet.betStatus !== 'EMPTY' && (
-        <BetEditForm bet={bet} league={league} handleEditBet={handleEditBet} />
+        <BetEditForm
+          bet={bet}
+          seasonId={seasonId}
+          league={league}
+          handleEditBet={handleEditBet}
+        />
       )}
       {/* // TODO сделать отдельную форму для пустой ставки ? */}
       {showEditForm && bet.betStatus === 'EMPTY' && (
