@@ -95,6 +95,12 @@ export default function BetsList(): JSX.Element {
   };
 
   useEffect(() => {
+    if (value === 0) {
+      // dispatch(getAllOpenedBets())
+    }
+    if (value === 1) {
+      // dispatch(getAllCompletedBets())
+    }
     dispatch(getActiveSeason());
     setVisibleBets(28);
   }, [dispatch, value]);
