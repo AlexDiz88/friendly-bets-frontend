@@ -5,7 +5,6 @@ import Login from './features/auth/Login';
 import Register from './features/auth/Register';
 import { getProfile } from './features/auth/authSlice';
 import { useAppDispatch } from './app/hooks';
-import Tasks from './features/tasks/Tasks';
 import AdminCabinet from './features/admin/AdminCabinet';
 import Profile from './components/profile/Profile';
 import BetsList from './features/bets/BetsList';
@@ -31,7 +30,6 @@ function App(): JSX.Element {
 		<Routes>
 			<Route path="/" element={<Layout />}>
 				<Route path="/" element={<Homepage />} />
-				<Route path="/tasks" element={<Tasks />} />
 				<Route path="/auth/login" element={<Login />} />
 				<Route path="/auth/register" element={<Register />} />
 				<Route path="/admin/cabinet" element={<AdminCabinet />} />
