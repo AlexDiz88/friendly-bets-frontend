@@ -1,5 +1,5 @@
-import { Routes, Route, HashRouter } from 'react-router-dom';
 import { useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Login from './features/auth/Login';
 import Register from './features/auth/Register';
@@ -28,28 +28,26 @@ function App(): JSX.Element {
 	}, [dispatch]);
 
 	return (
-		<HashRouter>
-			<Routes>
-				<Route path="/" element={<Layout />}>
-					<Route path="/" element={<Homepage />} />
-					<Route path="/tasks" element={<Tasks />} />
-					<Route path="/auth/login" element={<Login />} />
-					<Route path="/auth/register" element={<Register />} />
-					<Route path="/admin/cabinet" element={<AdminCabinet />} />
-					<Route path="/my/profile" element={<Profile />} />
-					<Route path="/bets" element={<BetsList />} />
-					<Route path="/bet-input" element={<BetInputContainer />} />
-					<Route path="/my/stats" element={<MyStats />} />
-					<Route path="/season/register" element={<SeasonRegister />} />
-					<Route path="/bets/check" element={<BetsCheck />} />
-					<Route path="/in-progress" element={<EmptyPage />} />
-					<Route path="/news" element={<News />} />
-					<Route path="/bets/edit" element={<BetEditList />} />
-					<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
-					<Route path="/stats/teams" element={<TeamsStatsPage />} />
-				</Route>
-			</Routes>
-		</HashRouter>
+		<Routes>
+			<Route path="/" element={<Layout />}>
+				<Route path="/" element={<Homepage />} />
+				<Route path="/tasks" element={<Tasks />} />
+				<Route path="/auth/login" element={<Login />} />
+				<Route path="/auth/register" element={<Register />} />
+				<Route path="/admin/cabinet" element={<AdminCabinet />} />
+				<Route path="/my/profile" element={<Profile />} />
+				<Route path="/bets" element={<BetsList />} />
+				<Route path="/bet-input" element={<BetInputContainer />} />
+				<Route path="/my/stats" element={<MyStats />} />
+				<Route path="/season/register" element={<SeasonRegister />} />
+				<Route path="/bets/check" element={<BetsCheck />} />
+				<Route path="/in-progress" element={<EmptyPage />} />
+				<Route path="/news" element={<News />} />
+				<Route path="/bets/edit" element={<BetEditList />} />
+				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
+				<Route path="/stats/teams" element={<TeamsStatsPage />} />
+			</Route>
+		</Routes>
 	);
 }
 

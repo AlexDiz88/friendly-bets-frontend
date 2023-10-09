@@ -1,5 +1,5 @@
 export default function pathToLogoImage(logo: string | undefined): string {
-	const avatarBasePath = `${process.env.PUBLIC_URL || ''}/upload/logo/`;
+	const avatarBasePath = `/upload/logo/`;
 	if (!logo) {
 		return `${avatarBasePath}no_image.png`;
 	}
