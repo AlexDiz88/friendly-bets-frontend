@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 export default function pathToAvatarImage(avatarName: string | undefined): string {
 	const avatarBasePath = `/upload/avatars/`;
 	if (!avatarName) {
