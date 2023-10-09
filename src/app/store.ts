@@ -1,5 +1,4 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import tasksSlice from '../features/tasks/tasksSlice';
 import authSlice from '../features/auth/authSlice';
 import seasonsSlice from '../features/admin/seasons/seasonsSlice';
 import teamsSlice from '../features/admin/teams/teamsSlice';
@@ -11,7 +10,6 @@ export const store = configureStore({
 		auth: authSlice,
 		seasons: seasonsSlice,
 		teams: teamsSlice,
-		tasks: tasksSlice,
 		bets: betsSlice,
 		playersStats: statsSlice,
 	},
