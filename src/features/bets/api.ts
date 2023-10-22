@@ -3,8 +3,8 @@ import Bet, { BetId } from './types/Bet';
 import NewBet from './types/NewBet';
 
 export async function getUserBets(): Promise<{ bets: Bet[] }> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/my/bets`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/my/bets`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/my/bets';
 	}
 	const result = await fetch(`${url}`);
@@ -29,8 +29,8 @@ export async function getAllBets(): Promise<{ bets: Bet[] }> {
 }
 
 export async function updateBet(betId: string, newBet: NewBet): Promise<Bet> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/bets/${betId}`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/${betId}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/${betId}`;
 	}
 	const result = await fetch(`${url}`, {
@@ -48,8 +48,8 @@ export async function updateBet(betId: string, newBet: NewBet): Promise<Bet> {
 }
 
 export async function deleteBet(betId: BetId, seasonId: string, leagueId: string): Promise<Bet> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/bets/${betId}`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/${betId}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/${betId}`;
 	}
 	const result = await fetch(`${url}`, {

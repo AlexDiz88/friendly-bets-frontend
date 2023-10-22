@@ -5,8 +5,8 @@ export async function createTeam(
 	fullTitleEn: string,
 	country: string
 ): Promise<Team> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER || ''}/api/teams`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/teams`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/teams';
 	}
 	const result = await fetch(`${url}`, {
@@ -24,8 +24,8 @@ export async function createTeam(
 }
 
 export async function getAllTeams(): Promise<{ teams: Team[] }> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER || ''}/api/teams`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/teams`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/teams';
 	}
 	const result = await fetch(`${url}`);

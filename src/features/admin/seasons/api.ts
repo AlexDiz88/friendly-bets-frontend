@@ -7,8 +7,8 @@ import League from '../leagues/types/League';
 import Season from './types/Season';
 
 export async function addSeason(title: string, betCountPerMatchDay: number): Promise<Season> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons';
 	}
 	const result = await fetch(`${url}`, {
@@ -26,8 +26,8 @@ export async function addSeason(title: string, betCountPerMatchDay: number): Pro
 }
 
 export async function getSeasons(): Promise<{ seasons: Season[] }> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons';
 	}
 	const result = await fetch(`${url}`);
@@ -39,8 +39,8 @@ export async function getSeasons(): Promise<{ seasons: Season[] }> {
 }
 
 export async function getSeasonStatusList(): Promise<string[]> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/statuses`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/statuses`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/statuses';
 	}
 	const result = await fetch(`${url}`);
@@ -52,8 +52,8 @@ export async function getSeasonStatusList(): Promise<string[]> {
 }
 
 export async function changeSeasonStatus(id: string, status: string): Promise<Season> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${id}`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/${id}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${id}`;
 	}
 	const result = await fetch(`${url}`, {
@@ -71,7 +71,7 @@ export async function changeSeasonStatus(id: string, status: string): Promise<Se
 }
 
 export async function getActiveSeason(): Promise<Season> {
-	let url = `/api/seasons/active`;
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/active`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/active';
 	}
@@ -85,7 +85,7 @@ export async function getActiveSeason(): Promise<Season> {
 }
 
 export async function getActiveSeasonId(): Promise<{ value: string }> {
-	let url = `backend/api/seasons/active/id`;
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/active/id`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/active/id';
 	}
@@ -99,8 +99,8 @@ export async function getActiveSeasonId(): Promise<{ value: string }> {
 }
 
 export async function getScheduledSeason(): Promise<Season> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/scheduled`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/scheduled`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/scheduled';
 	}
 	const result = await fetch(`${url}`);
@@ -113,8 +113,8 @@ export async function getScheduledSeason(): Promise<Season> {
 }
 
 export async function registrationInSeason(seasonId: string): Promise<Season> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/registration/${seasonId}`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/registration/${seasonId}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/registration/${seasonId}`;
 	}
 	const result = await fetch(`${url}`, {
@@ -131,8 +131,8 @@ export async function registrationInSeason(seasonId: string): Promise<Season> {
 }
 
 // export async function getLeaguesBySeason(seasonId: string): Promise<Season> {
-//   let url = `${process.env.REACT_APP_PRODUCT_SERVER}/login`;
-//   if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+//   let url = `${import.meta.env.VITE_PRODUCT_SERVER}/login`;
+//   if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 //     url = '/login';
 //   }
 //   const result = await fetch(`/api/seasons/${seasonId}/leagues`);
@@ -150,8 +150,8 @@ export async function addLeagueToSeason(
 	shortNameRu: string,
 	shortNameEn: string
 ): Promise<Season> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER || ''}/api/seasons/${seasonId}/leagues`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/seasons/${seasonId}/leagues`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${seasonId}/leagues`;
 	}
 	const result = await fetch(`${url}`, {
@@ -179,9 +179,9 @@ export async function addTeamToLeagueInSeason(
 	teamId: string
 ): Promise<League> {
 	let url = `${
-		process.env.REACT_APP_PRODUCT_SERVER || ''
+		import.meta.env.VITE_PRODUCT_SERVER || ''
 	}/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`;
 	}
 	const result = await fetch(`${url}`, {
@@ -202,8 +202,10 @@ export async function addBetToLeagueInSeason(
 	leagueId: string,
 	newBet: NewBet
 ): Promise<Bet> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/bets`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${
+		import.meta.env.VITE_PRODUCT_SERVER
+	}/api/seasons/${seasonId}/leagues/${leagueId}/bets`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${seasonId}/leagues/${leagueId}/bets`;
 	}
 	const result = await fetch(`${url}`, {
@@ -225,8 +227,10 @@ export async function addEmptyBetToLeagueInSeason(
 	leagueId: string,
 	newEmptyBet: NewEmptyBet
 ): Promise<Bet> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${
+		import.meta.env.VITE_PRODUCT_SERVER
+	}/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`;
 	}
 	const result = await fetch(`${url}`, {
@@ -248,8 +252,8 @@ export async function addBetResult(
 	betId: string,
 	newGameResult: NewGameResult
 ): Promise<Bet> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/${seasonId}/bets/${betId}`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/${seasonId}/bets/${betId}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${seasonId}/bets/${betId}`;
 	}
 	const result = await fetch(`${url}`, {

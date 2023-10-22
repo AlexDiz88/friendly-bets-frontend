@@ -4,8 +4,8 @@ import RegisterData from './types/RegisterData';
 import User from './types/User';
 
 export async function getProfile(): Promise<User> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/users/my/profile`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/users/my/profile';
 	}
 	const result = await fetch(`${url}`);
@@ -17,8 +17,8 @@ export async function getProfile(): Promise<User> {
 }
 
 export async function login(credentials: Credentials): Promise<User> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/login`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/login`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/login';
 	}
 	const result = await fetch(`${url}`, {
@@ -38,8 +38,8 @@ export async function login(credentials: Credentials): Promise<User> {
 }
 
 export async function register(data: RegisterData): Promise<User> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/register`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/register`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/register';
 	}
 	const result = await fetch(`${url}`, {
@@ -57,8 +57,8 @@ export async function register(data: RegisterData): Promise<User> {
 }
 
 export async function logout(): Promise<void> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/logout`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/logout`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/logout';
 	}
 	await fetch(`${url}`, {
@@ -67,8 +67,8 @@ export async function logout(): Promise<void> {
 }
 
 export async function editEmail({ newEmail }: { newEmail: string }): Promise<User> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/email`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/users/my/profile/email`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/users/my/profile/email';
 	}
 	const result = await fetch(`${url}`, {
@@ -92,8 +92,8 @@ export async function editPassword({
 	currentPassword: string;
 	newPassword: string;
 }): Promise<User> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/password`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/users/my/profile/password`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/users/my/profile/password';
 	}
 	const result = await fetch(`${url}`, {
@@ -111,8 +111,8 @@ export async function editPassword({
 }
 
 export async function editUsername({ newUsername }: { newUsername: string }): Promise<User> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/users/my/profile/username`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/users/my/profile/username`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/users/my/profile/username';
 	}
 	const result = await fetch(`${url}`, {

@@ -35,8 +35,8 @@ export async function getAllPlayersStatsByLeagues(
 export async function playersStatsFullRecalculation(
 	seasonId: string
 ): Promise<{ playersStats: PlayerStats[] }> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/stats/season/${seasonId}/recalculation`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/stats/season/${seasonId}/recalculation`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}/recalculation`;
 	}
 	const result = await fetch(`${url}`);
@@ -51,8 +51,8 @@ export async function playersStatsFullRecalculation(
 export async function getAllPlayersStats(): Promise<{
 	playersStats: PlayerStats[];
 }> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/my/bets`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/my/bets`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/my/bets';
 	}
 	const result = await fetch(`${url}`);
