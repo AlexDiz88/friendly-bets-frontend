@@ -17,9 +17,9 @@ export async function getProfile(): Promise<User> {
 }
 
 export async function login(credentials: Credentials): Promise<User> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/login`;
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/login`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = '/login';
+		url = '/api/login';
 	}
 	const result = await fetch(`${url}`, {
 		method: 'POST',
@@ -57,9 +57,9 @@ export async function register(data: RegisterData): Promise<User> {
 }
 
 export async function logout(): Promise<void> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/logout`;
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/logout`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = '/logout';
+		url = '/api/logout';
 	}
 	await fetch(`${url}`, {
 		method: 'PUT',

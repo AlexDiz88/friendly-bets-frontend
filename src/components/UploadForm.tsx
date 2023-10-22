@@ -29,7 +29,7 @@ function UploadForm({ onClose }: UploadFormProps): JSX.Element {
 		try {
 			const formData = new FormData();
 			formData.append('image', image);
-			let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/files/upload/avatars`;
+			let url = `${(import.meta.env.VITE_PRODUCT_SERVER as string) || ''}/api/files/upload/avatars`;
 			if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 				url = '/api/files/upload/avatars';
 			}
