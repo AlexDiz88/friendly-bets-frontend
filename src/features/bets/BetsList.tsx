@@ -159,7 +159,8 @@ export default function BetsList(): JSX.Element {
 									variant="square"
 									sx={{ width: 27, height: 27 }}
 									alt="league_logo"
-									src={`${process.env.PUBLIC_URL || ''}/upload/logo/total.png`}
+									// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+									src={`${import.meta.env.PUBLIC_URL || ''}/upload/logo/total.png`}
 								/>
 
 								<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>

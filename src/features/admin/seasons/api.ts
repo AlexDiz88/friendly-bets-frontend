@@ -71,8 +71,8 @@ export async function changeSeasonStatus(id: string, status: string): Promise<Se
 }
 
 export async function getActiveSeason(): Promise<Season> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/active`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/active`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/active';
 	}
 	const result = await fetch(`${url}`);
@@ -85,8 +85,8 @@ export async function getActiveSeason(): Promise<Season> {
 }
 
 export async function getActiveSeasonId(): Promise<{ value: string }> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/seasons/active/id`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/active/id`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/active/id';
 	}
 	const result = await fetch(`${url}`);

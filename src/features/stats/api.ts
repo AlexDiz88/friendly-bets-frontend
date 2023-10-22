@@ -5,8 +5,8 @@ import PlayerStats from './types/PlayerStats';
 export async function getAllPlayersStatsBySeason(
 	seasonId: string
 ): Promise<{ playersStats: PlayerStats[] }> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/stats/season/${seasonId}`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/stats/season/${seasonId}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}`;
 	}
 	const result = await fetch(`${url}`);
@@ -20,8 +20,8 @@ export async function getAllPlayersStatsBySeason(
 export async function getAllPlayersStatsByLeagues(
 	seasonId: string
 ): Promise<{ playersStatsByLeagues: LeagueStats[] }> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/stats/season/${seasonId}/leagues`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/stats/season/${seasonId}/leagues`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}/leagues`;
 	}
 	const result = await fetch(`${url}`);

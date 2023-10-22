@@ -16,8 +16,8 @@ export async function getUserBets(): Promise<{ bets: Bet[] }> {
 }
 
 export async function getAllBets(): Promise<{ bets: Bet[] }> {
-	let url = `${process.env.REACT_APP_PRODUCT_SERVER}/api/bets`;
-	if (process.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
+	let url = `${import.meta.env.REACT_APP_PRODUCT_SERVER}/api/bets`;
+	if (import.meta.env.REACT_APP_PRODUCT_SERVER === 'localhost') {
 		url = '/api/bets';
 	}
 	const result = await fetch(`${url}`);
