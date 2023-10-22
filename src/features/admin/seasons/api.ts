@@ -71,7 +71,7 @@ export async function changeSeasonStatus(id: string, status: string): Promise<Se
 }
 
 export async function getActiveSeason(): Promise<Season> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/active`;
+	let url = `/api/seasons/active`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/active';
 	}
@@ -85,7 +85,7 @@ export async function getActiveSeason(): Promise<Season> {
 }
 
 export async function getActiveSeasonId(): Promise<{ value: string }> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/active/id`;
+	let url = `backend/api/seasons/active/id`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/active/id';
 	}
