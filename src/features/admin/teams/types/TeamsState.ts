@@ -1,6 +1,6 @@
 import Team from './Team';
 
 export default interface TeamsState {
-  teams: Team[];
-  error?: string;
+	teams: Team[];
+	error?: string;
 }

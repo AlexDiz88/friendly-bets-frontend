@@ -1,201 +1,217 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
-import { useAppDispatch } from '../../store';
-import { getActiveSeason } from '../admin/seasons/seasonsSlice';
-import { selectActiveSeason } from '../admin/seasons/selectors';
+import { Box, Button, CircularProgress, Stack, Typography } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import BetCard from './BetCard';
 import EmptyBetCard from './EmptyBetCard';
 import CompleteBetCard from './CompleteBetCard';
 import BetEditButtons from './BetEditButtons';
 import { selectUser } from '../auth/selectors';
-import Bet from './types/Bet';
+import { selectAllBets, selectTotalPages } from './selectors';
+import { getAllBets } from './betsSlice';
 
 export default function BetEditList(): JSX.Element {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const user = useSelector(selectUser);
-  const [showMessage, setShowMessage] = useState(false);
-  const season = useSelector(selectActiveSeason);
+	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
+	const user = useAppSelector(selectUser);
+	const activeSeasonId = useAppSelector(selectActiveSeasonId);
+	const allBets = useAppSelector(selectAllBets);
+	const [showMessage, setShowMessage] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [loadingError, setLoadingError] = useState(false);
+	const [page, setPage] = useState<number>(1);
+	const totalPages = useAppSelector(selectTotalPages);
 
-  const scrollToTop = (): void => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+	const handlePageChange = (pageNumber: number): void => {
+		setPage(pageNumber);
+	};
 
-  useEffect(() => {
-    dispatch(getActiveSeason());
-    scrollToTop();
-  }, [dispatch]);
+	useEffect(() => {
+		dispatch(getActiveSeasonId());
+	}, []);
 
-  // редирект неавторизованных пользователей
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!user) {
-        navigate('/');
-      } else if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
-        navigate('/');
-      }
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [navigate, user, season]);
+	useEffect(() => {
+		if (activeSeasonId) {
+			dispatch(getAllBets({ seasonId: activeSeasonId, pageNumber: page - 1 }))
+				.then(() => {
+					setLoading(false);
+				})
+				.catch(() => {
+					setLoadingError(true);
+					setLoading(false);
+				});
+		}
+	}, [activeSeasonId, page]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowMessage(true);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+	// редирект неавторизованных пользователей
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			if (!user) {
+				navigate('/');
+			} else if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
+				navigate('/');
+			}
+		}, 3000);
+		return () => clearTimeout(timer);
+	}, [navigate, user]);
 
-  if (!user || (user && user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
-    return (
-      <Box
-        sx={{
-          p: 5,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '70vh',
-        }}
-      >
-        {showMessage && (
-          <Box sx={{ textAlign: 'center', my: 3, fontWeight: 600, color: 'brown' }}>
-            Проверка авторизации на доступ к панели модератора
-          </Box>
-        )}
-        <CircularProgress size={100} color="primary" />
-      </Box>
-    );
-  }
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setShowMessage(true);
+		}, 1500);
+		return () => clearTimeout(timer);
+	}, []);
 
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <Box sx={{ borderBottom: 1, textAlign: 'center', mx: 3, pb: 0.5, mb: 1.5 }}>
-        Редактирование ставок
-      </Box>
-      <Box>
-        {season &&
-          season.leagues &&
-          (() => {
-            const allBets: Bet[] = [];
-            season.leagues.forEach((l) => {
-              allBets.push(...l.bets.filter((bet) => bet.betStatus !== 'DELETED'));
-            });
+	if (!user || (user && user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
+		return (
+			<Box
+				sx={{
+					p: 5,
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'center',
+					alignItems: 'center',
+					height: '70vh',
+				}}
+			>
+				{showMessage && (
+					<Box sx={{ textAlign: 'center', my: 3, fontWeight: 600, color: 'brown' }}>
+						Проверка авторизации на доступ к панели модератора
+					</Box>
+				)}
+				<CircularProgress size={100} color="primary" />
+			</Box>
+		);
+	}
 
-            const sortedBets = allBets.sort((betA, betB) => {
-              const dateA = betA.updatedAt
-                ? new Date(betA.updatedAt)
-                : betA.betResultAddedAt
-                ? new Date(betA.betResultAddedAt)
-                : new Date(betA.createdAt);
-              const dateB = betB.updatedAt
-                ? new Date(betB.updatedAt)
-                : betB.betResultAddedAt
-                ? new Date(betB.betResultAddedAt)
-                : new Date(betB.createdAt);
+	return (
+		<Box
+			sx={{
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+			}}
+		>
+			<Box sx={{ borderBottom: 1, textAlign: 'center', mx: 3, pb: 0.5, mb: 1.5 }}>
+				Редактирование ставок
+			</Box>
 
-              return dateB.getTime() - dateA.getTime();
-            });
+			{loading ? (
+				<Box
+					sx={{
+						height: '70vh',
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center',
+					}}
+				>
+					<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
+				</Box>
+			) : (
+				<Box>
+					{loadingError ? (
+						<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
+							Ошибка загрузки. Попробуйте обновить страницу
+						</Box>
+					) : (
+						<Box>
+							<Box>
+								{allBets &&
+									(() => {
+										const sortedBets = [...allBets].sort((betA, betB) => {
+											const dateA = betA.updatedAt
+												? new Date(betA.updatedAt)
+												: betA.betResultAddedAt
+												? new Date(betA.betResultAddedAt)
+												: new Date(betA.createdAt);
+											const dateB = betB.updatedAt
+												? new Date(betB.updatedAt)
+												: betB.betResultAddedAt
+												? new Date(betB.betResultAddedAt)
+												: new Date(betB.createdAt);
 
-            return sortedBets.map((bet) => {
-              const league = season.leagues.find((l) =>
-                l.bets.some((betInLeague) => betInLeague.id === bet.id)
-              );
+											return dateB.getTime() - dateA.getTime();
+										});
 
-              return (
-                <Box key={bet.id}>
-                  {league && bet.betStatus === 'OPENED' ? (
-                    <>
-                      <BetCard bet={bet} league={league} />
-                      <BetEditButtons
-                        bet={bet}
-                        seasonId={season.id}
-                        league={league}
-                      />
-                    </>
-                  ) : (
-                    <Box>
-                      {league && bet.betStatus === 'EMPTY' ? (
-                        <>
-                          <EmptyBetCard bet={bet} league={league} />
-                          <BetEditButtons
-                            bet={bet}
-                            seasonId={season.id}
-                            league={league}
-                          />
-                        </>
-                      ) : (
-                        <Box>
-                          {league && (
-                            <>
-                              <CompleteBetCard bet={bet} league={league} />
-                              <BetEditButtons
-                                bet={bet}
-                                seasonId={season.id}
-                                league={league}
-                              />
-                            </>
-                          )}
-                        </Box>
-                      )}
-                    </Box>
-                  )}
-                </Box>
-              );
-            });
-          })()}
-      </Box>
-      {season &&
-        season.leagues.slice().map((league) => (
-          <Box key={league.id}>
-            {league.bets
-              .filter((bet) => bet.betStatus !== 'DELETED')
-              .reverse()
-              .map((bet) => (
-                <Box key={bet.id}>
-                  {bet.betStatus === 'OPENED' ? (
-                    <Box>
-                      <BetCard bet={bet} league={league} />
-                      <BetEditButtons
-                        bet={bet}
-                        seasonId={season.id}
-                        league={league}
-                      />
-                    </Box>
-                  ) : (
-                    <Box>
-                      {bet.betStatus === 'EMPTY' ? (
-                        <Box>
-                          <EmptyBetCard bet={bet} league={league} />
-                          <BetEditButtons
-                            bet={bet}
-                            seasonId={season.id}
-                            league={league}
-                          />
-                        </Box>
-                      ) : (
-                        <Box>
-                          <CompleteBetCard bet={bet} league={league} />
-                          <BetEditButtons
-                            bet={bet}
-                            seasonId={season.id}
-                            league={league}
-                          />
-                        </Box>
-                      )}
-                    </Box>
-                  )}
-                </Box>
-              ))}
-          </Box>
-        ))}
-    </Box>
-  );
+										return sortedBets.map((bet) => {
+											return (
+												<Box key={bet.id}>
+													{bet.betStatus === 'OPENED' ? (
+														<>
+															<BetCard bet={bet} />
+															<BetEditButtons bet={bet} />
+														</>
+													) : (
+														<Box>
+															{bet.betStatus === 'EMPTY' ? (
+																<>
+																	<EmptyBetCard bet={bet} />
+																	<BetEditButtons bet={bet} />
+																</>
+															) : (
+																<Box>
+																	<CompleteBetCard bet={bet} />
+																	<BetEditButtons bet={bet} />
+																</Box>
+															)}
+														</Box>
+													)}
+												</Box>
+											);
+										});
+									})()}
+							</Box>
+						</Box>
+					)}
+					<Stack
+						sx={{
+							marginTop: 2,
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+						}}
+					>
+						<Button
+							sx={{
+								width: 60,
+								padding: '10px 50px',
+								backgroundColor: '#e2e7fd',
+								color: 'black',
+							}}
+							variant="contained"
+							disabled={page === 1}
+							onClick={() => handlePageChange(page - 1)}
+						>
+							<Typography sx={{ fontSize: 20 }}>&lt;</Typography>
+						</Button>
+						<Button
+							sx={{ width: 60, padding: '10px 50px', backgroundColor: '#afafaf' }}
+							variant="contained"
+							onClick={() => handlePageChange(page)}
+						>
+							<Typography sx={{ fontSize: 20, fontWeight: 600, fontFamily: 'Exo 2' }}>
+								{page}
+							</Typography>
+						</Button>
+						<Button
+							sx={{
+								width: 60,
+								padding: '10px 50px',
+								backgroundColor: '#e2e7fd',
+								color: 'black',
+							}}
+							variant="contained"
+							disabled={page === totalPages}
+							onClick={() => handlePageChange(page + 1)}
+						>
+							<Typography sx={{ fontSize: 20 }}>&gt;</Typography>
+						</Button>
+					</Stack>
+				</Box>
+			)}
+		</Box>
+	);
 }

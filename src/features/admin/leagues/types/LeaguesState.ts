@@ -1,6 +1,6 @@
 import League from './League';
 
 export default interface LeaguesState {
-  leagues: League[];
-  error?: string;
+	leagues: League[];
+	error?: string;
 }
