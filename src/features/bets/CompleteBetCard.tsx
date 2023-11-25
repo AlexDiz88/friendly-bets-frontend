@@ -1,17 +1,13 @@
 import { Avatar, Box } from '@mui/material';
 import { GppGood, RestorePage, GppBad } from '@mui/icons-material';
 import Bet from './types/Bet';
-import League from '../admin/leagues/types/League';
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
 
-export default function CompleteBetCard({
-	bet,
-	league,
-}: {
-	bet: Bet;
-	league: League;
-}): JSX.Element {
+export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 	const {
+		leagueShortNameEn,
+		leagueShortNameRu,
 		player,
 		homeTeam,
 		awayTeam,
@@ -64,11 +60,9 @@ export default function CompleteBetCard({
 					<Avatar
 						sx={{ mr: 0.5, width: 25, height: 25 }}
 						alt="team_logo"
-						src={`${process.env.PUBLIC_URL || ''}/upload/logo/${league.displayNameEn
-							.toLowerCase()
-							.replace(/\s/g, '_')}.png`}
+						src={pathToLogoImage(leagueShortNameEn)}
 					/>
-					{league.shortNameRu} - {matchDay}й
+					{leagueShortNameRu} - {matchDay}й
 				</Box>
 			</Box>
 			<Box sx={{ fontSize: '0.9rem' }}>
@@ -76,17 +70,13 @@ export default function CompleteBetCard({
 					<Avatar
 						sx={{ mr: 0.5, width: 25, height: 25 }}
 						alt="team_logo"
-						src={`${process.env.PUBLIC_URL || ''}/upload/logo/${homeTeam.fullTitleEn
-							.toLowerCase()
-							.replace(/\s/g, '_')}.png`}
+						src={pathToLogoImage(homeTeam.fullTitleEn)}
 					/>
 					{homeTeam.fullTitleRu}
 					<Avatar
 						sx={{ mr: 0.5, ml: 1, width: 25, height: 25 }}
 						alt="team_logo"
-						src={`${process.env.PUBLIC_URL || ''}/upload/logo/${awayTeam.fullTitleEn
-							.toLowerCase()
-							.replace(/\s/g, '_')}.png`}
+						src={pathToLogoImage(awayTeam.fullTitleEn)}
 					/>
 					{awayTeam.fullTitleRu}
 				</Box>

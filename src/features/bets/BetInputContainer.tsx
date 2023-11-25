@@ -24,17 +24,14 @@ import BetInputTitle from './BetInputTitle';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import { useAppDispatch } from '../../app/hooks';
-import {
-	addBetToLeagueInSeason,
-	addEmptyBetToLeagueInSeason,
-	getActiveSeason,
-} from '../admin/seasons/seasonsSlice';
+import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectUser } from '../auth/selectors';
 import MatchDayForm from '../../components/MatchDayForm';
 import League from '../admin/leagues/types/League';
 import User from '../auth/types/User';
 import Team from '../admin/teams/types/Team';
 import BetSummaryInfo from './BetSummaryInfo';
+import { addBet, addEmptyBet } from './betsSlice';
 
 export default function BetInputContainer(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -73,9 +70,7 @@ export default function BetInputContainer(): JSX.Element {
 			const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
 			// TODO добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
 			const dispatchResult = await dispatch(
-				addBetToLeagueInSeason({
-					seasonId: season.id,
-					leagueId: selectedLeagueId,
+				addBet({
 					newBet: {
 						seasonId: season.id,
 						leagueId: selectedLeagueId,
@@ -90,7 +85,7 @@ export default function BetInputContainer(): JSX.Element {
 				})
 			);
 
-			if (addBetToLeagueInSeason.fulfilled.match(dispatchResult)) {
+			if (addBet.fulfilled.match(dispatchResult)) {
 				setOpenSnackbar(true);
 				setSnackbarSeverity('success');
 				setSnackbarMessage('Ставка успешно добавлена');
@@ -103,7 +98,7 @@ export default function BetInputContainer(): JSX.Element {
 				setIsNot(false);
 				await dispatch(getActiveSeason());
 			}
-			if (addBetToLeagueInSeason.rejected.match(dispatchResult)) {
+			if (addBet.rejected.match(dispatchResult)) {
 				setOpenSnackbar(true);
 				setSnackbarSeverity('error');
 				if (dispatchResult.error.message) {
@@ -133,9 +128,7 @@ export default function BetInputContainer(): JSX.Element {
 	const handleSaveEmptyBetClick = useCallback(async () => {
 		if (season && selectedUser) {
 			const dispatchResult = await dispatch(
-				addEmptyBetToLeagueInSeason({
-					seasonId: season.id,
-					leagueId: selectedLeagueId,
+				addEmptyBet({
 					newEmptyBet: {
 						seasonId: season.id,
 						leagueId: selectedLeagueId,
@@ -146,7 +139,7 @@ export default function BetInputContainer(): JSX.Element {
 				})
 			);
 
-			if (addEmptyBetToLeagueInSeason.fulfilled.match(dispatchResult)) {
+			if (addEmptyBet.fulfilled.match(dispatchResult)) {
 				setOpenSnackbar(true);
 				setSnackbarSeverity('success');
 				if (openDialogEmptyBet) {
@@ -155,7 +148,7 @@ export default function BetInputContainer(): JSX.Element {
 					setSnackbarMessage('2 пустые ставки успешно добавлены');
 				}
 			}
-			if (addEmptyBetToLeagueInSeason.rejected.match(dispatchResult)) {
+			if (addEmptyBet.rejected.match(dispatchResult)) {
 				setOpenSnackbar(true);
 				setSnackbarSeverity('error');
 				if (dispatchResult.error.message) {

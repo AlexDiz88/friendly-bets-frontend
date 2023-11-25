@@ -4,6 +4,7 @@ import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
 
 export default function BetInputTeams({
 	defaultHomeTeamName,
@@ -93,9 +94,7 @@ export default function BetInputTeams({
 										<Avatar
 											sx={{ width: 27, height: 27 }}
 											alt="team_logo"
-											src={`${process.env.PUBLIC_URL || ''}/upload/logo/${t.fullTitleEn
-												.toLowerCase()
-												.replace(/\s/g, '_')}.png`}
+											src={pathToLogoImage(t.fullTitleEn)}
 										/>
 
 										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t.fullTitleRu}</Typography>
@@ -132,9 +131,7 @@ export default function BetInputTeams({
 										<Avatar
 											sx={{ width: 27, height: 27 }}
 											alt="team_logo"
-											src={`${process.env.PUBLIC_URL || ''}/upload/logo/${t.fullTitleEn
-												.toLowerCase()
-												.replace(/\s/g, '_')}.png`}
+											src={pathToLogoImage(t.fullTitleEn)}
 										/>
 
 										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t.fullTitleRu}</Typography>

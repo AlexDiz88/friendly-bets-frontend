@@ -1,10 +1,19 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import Bet from '../../bets/types/Bet';
-import NewBet from '../../bets/types/NewBet';
-import NewEmptyBet from '../../bets/types/NewEmptyBet';
-import NewGameResult from '../../bets/types/NewGameResult';
 import League from '../leagues/types/League';
 import Season from './types/Season';
+
+export async function dbRework(): Promise<{ seasons: Season[] }> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/db-rework`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = '/api/seasons/db-rework';
+	}
+	const result = await fetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
 
 export async function addSeason(title: string, betCountPerMatchDay: number): Promise<Season> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons`;
@@ -186,79 +195,6 @@ export async function addTeamToLeagueInSeason(
 	}
 	const result = await fetch(`${url}`, {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
-}
-
-export async function addBetToLeagueInSeason(
-	seasonId: string,
-	leagueId: string,
-	newBet: NewBet
-): Promise<Bet> {
-	let url = `${
-		import.meta.env.VITE_PRODUCT_SERVER
-	}/api/seasons/${seasonId}/leagues/${leagueId}/bets`;
-	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = `/api/seasons/${seasonId}/leagues/${leagueId}/bets`;
-	}
-	const result = await fetch(`${url}`, {
-		method: 'POST',
-		body: JSON.stringify(newBet),
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
-}
-
-export async function addEmptyBetToLeagueInSeason(
-	seasonId: string,
-	leagueId: string,
-	newEmptyBet: NewEmptyBet
-): Promise<Bet> {
-	let url = `${
-		import.meta.env.VITE_PRODUCT_SERVER
-	}/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`;
-	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = `/api/seasons/${seasonId}/leagues/${leagueId}/bets/empty`;
-	}
-	const result = await fetch(`${url}`, {
-		method: 'POST',
-		body: JSON.stringify(newEmptyBet),
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
-}
-
-export async function addBetResult(
-	seasonId: string,
-	betId: string,
-	newGameResult: NewGameResult
-): Promise<Bet> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/${seasonId}/bets/${betId}`;
-	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = `/api/seasons/${seasonId}/bets/${betId}`;
-	}
-	const result = await fetch(`${url}`, {
-		method: 'POST',
-		body: JSON.stringify(newGameResult),
 		headers: {
 			'Content-Type': 'application/json',
 		},

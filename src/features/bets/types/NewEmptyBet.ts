@@ -1,7 +1,7 @@
 export default interface NewEmptyBet {
+	userId: string;
 	seasonId: string;
 	leagueId: string;
-	userId: string;
 	matchDay: string;
 	betSize: number;
 }

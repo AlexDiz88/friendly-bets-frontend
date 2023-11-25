@@ -5,6 +5,10 @@ export default interface Bet {
 	id: string;
 	seasonId: string;
 	leagueId: string;
+	leagueDisplayNameEn: string;
+	leagueDisplayNameRu: string;
+	leagueShortNameEn: string;
+	leagueShortNameRu: string;
 	createdAt: Date;
 	player: User;
 	matchDay: string;

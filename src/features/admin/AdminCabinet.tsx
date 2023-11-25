@@ -5,6 +5,7 @@ import Seasons from './seasons/Seasons';
 import { selectUser } from '../auth/selectors';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import AllStatsRecalculating from '../../components/AllStatsRecalculating';
+import DatabaseUpdate from '../../components/DatabaseUpdate';
 
 export default function AdminCabinet(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -61,6 +62,7 @@ export default function AdminCabinet(): JSX.Element {
 			<Typography sx={{ borderBottom: 2, pb: 1, mx: 2 }}>AdminCabinet</Typography>
 			<Seasons />
 			<AllStatsRecalculating />
+			<DatabaseUpdate />
 		</Box>
 	);
 }

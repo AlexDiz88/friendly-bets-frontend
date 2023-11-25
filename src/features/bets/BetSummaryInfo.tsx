@@ -7,7 +7,8 @@ import pathToLogoImage from '../../components/utils/pathToLogoImage';
 export default function BetSummaryInfo({
 	message,
 	player,
-	league,
+	leagueShortNameEn,
+	leagueDisplayNameRu,
 	matchDay,
 	homeTeam,
 	awayTeam,
@@ -20,7 +21,8 @@ export default function BetSummaryInfo({
 }: {
 	message: string;
 	player: User | undefined;
-	league: League | undefined;
+	leagueShortNameEn: string;
+	leagueDisplayNameRu: string;
 	matchDay: string;
 	homeTeam: Team | undefined;
 	awayTeam: Team | undefined;
@@ -46,11 +48,9 @@ export default function BetSummaryInfo({
 						variant="square"
 						sx={{ px: 0.5, height: 27, width: 'auto' }}
 						alt="league_logo"
-						src={`${process.env.PUBLIC_URL || ''}/upload/logo/${
-							league?.displayNameEn.toLowerCase().replace(/\s/g, '_') || ''
-						}.png`}
+						src={pathToLogoImage(leagueShortNameEn)}
 					/>
-					{league?.displayNameRu} <br />
+					{leagueDisplayNameRu} <br />
 				</Box>
 				<b>Тур:</b> {matchDay} <br />
 				<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>

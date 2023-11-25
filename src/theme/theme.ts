@@ -59,6 +59,30 @@ const theme = createTheme({
 				},
 			},
 		},
+		MuiPaginationItem: {
+			styleOverrides: {
+				root: {
+					// стили для контента аккордеона
+					backgroundColor: '#cad1ee',
+					color: 'black',
+					padding: 0,
+					margin: 2,
+					height: 35,
+					width: 35,
+					fontSize: '1.1rem',
+				},
+				page: {
+					// стили для контента аккордеона
+					backgroundColor: '#446bc4',
+					color: 'whitesmoke',
+					padding: 0,
+					margin: 2,
+					height: 35,
+					width: 35,
+					fontSize: '1.1rem',
+				},
+			},
+		},
 	},
 });
 export default theme;

@@ -10,21 +10,12 @@ import {
 } from '@mui/material';
 import Bet from './types/Bet';
 import BetEditForm from './BetEditForm';
-import League from '../admin/leagues/types/League';
 import { useAppDispatch } from '../../app/hooks';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import { deleteBet } from './betsSlice';
 
-export default function BetEditButtons({
-	bet,
-	seasonId,
-	league,
-}: {
-	bet: Bet;
-	seasonId: string;
-	league: League;
-}): JSX.Element {
+export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	const dispatch = useAppDispatch();
 	const [showEditForm, setShowEditForm] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -38,7 +29,7 @@ export default function BetEditButtons({
 	const handleBetDeleteSave = useCallback(async () => {
 		setOpenDeleteDialog(false);
 		const dispatchResult = await dispatch(
-			deleteBet({ betId: bet.id, seasonId, leagueId: league.id })
+			deleteBet({ betId: bet.id, seasonId: bet.seasonId, leagueId: bet.leagueId })
 		);
 
 		if (deleteBet.fulfilled.match(dispatchResult)) {
@@ -55,7 +46,7 @@ export default function BetEditButtons({
 				setSnackbarMessage(dispatchResult.error.message);
 			}
 		}
-	}, [dispatch, bet.id, seasonId, league.id]);
+	}, [dispatch, bet.id, bet.seasonId, bet.leagueId]);
 	// конец добавления ставки
 
 	const handleEditBet = (): void => {
@@ -99,7 +90,7 @@ export default function BetEditButtons({
 				</Button>
 			</Box>
 			{showEditForm && bet.betStatus !== 'EMPTY' && (
-				<BetEditForm bet={bet} seasonId={seasonId} league={league} handleEditBet={handleEditBet} />
+				<BetEditForm bet={bet} handleEditBet={handleEditBet} />
 			)}
 			{/* // TODO сделать отдельную форму для пустой ставки ? */}
 			{showEditForm && bet.betStatus === 'EMPTY' && (

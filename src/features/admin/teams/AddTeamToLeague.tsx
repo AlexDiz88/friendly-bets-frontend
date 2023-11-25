@@ -18,6 +18,7 @@ import { selectTeams } from './selectors';
 import { getAllTeams } from './teamsSlice';
 import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
 import Team from './types/Team';
+import pathToLogoImage from '../../../components/utils/pathToLogoImage';
 
 export default function AddTeamToLeague({
 	closeAddTeamToLeague,
@@ -153,9 +154,7 @@ export default function AddTeamToLeague({
 									<Avatar
 										sx={{ mr: 1 }}
 										alt="league_logo"
-										src={`${process.env.PUBLIC_URL || ''}/upload/logo/${league.displayNameEn
-											.toLowerCase()
-											.replace(/\s/g, '_')}.png`}
+										src={pathToLogoImage(league.displayNameEn)}
 									/>
 
 									<Typography sx={{ fontSize: '0.85rem' }}>{league.name}</Typography>
@@ -180,9 +179,7 @@ export default function AddTeamToLeague({
 										<Avatar
 											sx={{ mr: 1, width: 25, height: 25 }}
 											alt="team_logo"
-											src={`${process.env.PUBLIC_URL || ''}/upload/logo/${team.fullTitleEn
-												.toLowerCase()
-												.replace(/\s/g, '_')}.png`}
+											src={pathToLogoImage(team.fullTitleEn)}
 										/>
 										<Typography sx={{ fontSize: '0.9rem' }}>{team.fullTitleRu}</Typography>
 									</ListItem>
@@ -226,9 +223,7 @@ export default function AddTeamToLeague({
 										<Avatar
 											sx={{ mr: 1 }}
 											alt="team_logo"
-											src={`${process.env.PUBLIC_URL || ''}/upload/logo/${team.fullTitleEn
-												.toLowerCase()
-												.replace(/\s/g, '_')}.png`}
+											src={pathToLogoImage(team.fullTitleEn)}
 										/>
 										<Typography>{team.fullTitleRu}</Typography>
 									</div>

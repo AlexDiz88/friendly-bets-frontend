@@ -1,9 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import SeasonsState from './types/SeasonsState';
 import * as api from './api';
-import NewBet from '../../bets/types/NewBet';
-import NewEmptyBet from '../../bets/types/NewEmptyBet';
-import NewGameResult from '../../bets/types/NewGameResult';
 
 const initialState: SeasonsState = {
 	seasons: [],
@@ -13,6 +10,8 @@ const initialState: SeasonsState = {
 	scheduledSeason: null,
 	error: undefined,
 };
+
+export const dbRework = createAsyncThunk('seasons/dbRework', async () => api.dbRework());
 
 export const addSeason = createAsyncThunk(
 	'seasons/addSeason',
@@ -91,76 +90,6 @@ export const addTeamToLeagueInSeason = createAsyncThunk(
 		api.addTeamToLeagueInSeason(seasonId, leagueId, teamId)
 );
 
-export const addBetToLeagueInSeason = createAsyncThunk(
-	'bets/addBetToLeagueInSeason',
-	async ({
-		seasonId,
-		leagueId,
-		newBet,
-	}: {
-		seasonId: string;
-		leagueId: string;
-		newBet: NewBet;
-	}) => {
-		if (!newBet.betTitle) {
-			throw new Error('Отсутствует ставка');
-		}
-		// TODO доделать проверки
-		return api.addBetToLeagueInSeason(seasonId, leagueId, newBet);
-	}
-);
-
-export const addEmptyBetToLeagueInSeason = createAsyncThunk(
-	'bets/addEmptyBetToLeagueInSeason',
-	async ({
-		seasonId,
-		leagueId,
-		newEmptyBet,
-	}: {
-		seasonId: string;
-		leagueId: string;
-		newEmptyBet: NewEmptyBet;
-	}) => {
-		if (!seasonId) {
-			throw new Error('Не выбран сезон');
-		}
-		if (!leagueId) {
-			throw new Error('Не выбрана лига');
-		}
-		if (newEmptyBet.betSize < 1) {
-			throw new Error('Размер ставки не может быть меньше 1');
-		}
-		return api.addEmptyBetToLeagueInSeason(seasonId, leagueId, newEmptyBet);
-	}
-);
-
-export const addBetResult = createAsyncThunk(
-	'bets/addBetResult',
-	async ({
-		seasonId,
-		betId,
-		newGameResult,
-	}: {
-		seasonId: string;
-		betId: string;
-		newGameResult: NewGameResult;
-	}) => {
-		if (!seasonId) {
-			throw new Error('Не выбран сезон');
-		}
-		if (!newGameResult.gameResult) {
-			throw new Error('Отсутствует результат матча');
-		}
-		if (!betId) {
-			throw new Error('Не выбрана ставка');
-		}
-		if (!newGameResult.betStatus) {
-			throw new Error('Отсутствует статус ставки');
-		}
-		return api.addBetResult(seasonId, betId, newGameResult);
-	}
-);
-
 const seasonsSlice = createSlice({
 	name: 'seasons',
 	initialState,
@@ -171,6 +100,9 @@ const seasonsSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
+			.addCase(dbRework.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
 			.addCase(addSeason.fulfilled, (state, action) => {
 				state.seasons.push(action.payload);
 			})
@@ -231,64 +163,12 @@ const seasonsSlice = createSlice({
 			.addCase(addLeagueToSeason.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			.addCase(addTeamToLeagueInSeason.fulfilled, (state, action) => {
 				//   state.seasons = state.seasons.map((season) =>
 				//     season.id === action.payload.id ? action.payload : season
 				//   );
 			})
 			.addCase(addTeamToLeagueInSeason.rejected, (state, action) => {
-				state.error = action.error.message;
-			})
-			.addCase(addBetToLeagueInSeason.fulfilled, (state, action) => {
-				const addedBet = action.payload;
-				const targetSeason = state.seasons.find((season) => season.id === addedBet.seasonId);
-				if (targetSeason) {
-					const targetLeague = targetSeason.leagues.find(
-						(league) => league.id === addedBet.leagueId
-					);
-					if (targetLeague) {
-						targetLeague.bets = targetLeague.bets.map((bet) =>
-							bet.id === addedBet.id ? addedBet : bet
-						);
-					}
-				}
-			})
-			.addCase(addBetToLeagueInSeason.rejected, (state, action) => {
-				state.error = action.error.message;
-			})
-			.addCase(addEmptyBetToLeagueInSeason.fulfilled, (state, action) => {
-				const addedBet = action.payload;
-				const targetSeason = state.seasons.find((season) => season.id === addedBet.seasonId);
-				if (targetSeason) {
-					const targetLeague = targetSeason.leagues.find(
-						(league) => league.id === addedBet.leagueId
-					);
-					if (targetLeague) {
-						targetLeague.bets = targetLeague.bets.map((bet) =>
-							bet.id === addedBet.id ? addedBet : bet
-						);
-					}
-				}
-			})
-			.addCase(addEmptyBetToLeagueInSeason.rejected, (state, action) => {
-				state.error = action.error.message;
-			})
-			.addCase(addBetResult.fulfilled, (state, action) => {
-				const addedBet = action.payload;
-				const targetSeason = state.seasons.find((season) => season.id === addedBet.seasonId);
-				if (targetSeason) {
-					const targetLeague = targetSeason.leagues.find(
-						(league) => league.id === addedBet.leagueId
-					);
-					if (targetLeague) {
-						targetLeague.bets = targetLeague.bets.map((bet) =>
-							bet.id === addedBet.id ? addedBet : bet
-						);
-					}
-				}
-			})
-			.addCase(addBetResult.rejected, (state, action) => {
 				state.error = action.error.message;
 			});
 	},

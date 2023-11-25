@@ -49,6 +49,7 @@ export default function AllStatsRecalculating(): JSX.Element {
 	return (
 		<Box sx={{ mb: 1, mt: 0.5, pb: 1.5 }}>
 			<Button
+				disabled
 				onClick={handleSubmit}
 				sx={{ height: '2.5rem', px: 5 }}
 				variant="contained"

@@ -19,29 +19,23 @@ import Bet from './types/Bet';
 import BetInputPlayer from './BetInputPlayer';
 import MatchDayForm from '../../components/MatchDayForm';
 import BetInputTeams from './BetInputTeams';
-import League from '../admin/leagues/types/League';
 import BetInputOdds from './BetInputOdds';
 import BetInputTitle from './BetInputTitle';
 import GameScoreValidation from '../../components/utils/GameScoreValidation';
 import { useAppDispatch } from '../../app/hooks';
-import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import User from '../auth/types/User';
 import Team from '../admin/teams/types/Team';
 import BetSummaryInfo from './BetSummaryInfo';
-import { updateBet } from './betsSlice';
+import { getAllBets, updateBet } from './betsSlice';
 
 const statuses = ['WON', 'RETURNED', 'LOST'];
 
 export default function BetEditForm({
 	bet,
-	seasonId,
-	league,
 	handleEditBet,
 }: {
 	bet: Bet;
-	seasonId: string;
-	league: League;
 	handleEditBet: (showEditForm: boolean) => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -78,8 +72,8 @@ export default function BetEditForm({
 			updateBet({
 				betId: bet.id,
 				newBet: {
-					seasonId,
-					leagueId: league.id,
+					seasonId: bet.seasonId,
+					leagueId: bet.leagueId,
 					userId: updatedUser.id,
 					matchDay: updatedMatchDay,
 					homeTeamId: updatedHomeTeam.id,
@@ -99,7 +93,7 @@ export default function BetEditForm({
 			setSnackbarMessage('Ставка успешно отредактирована');
 			setTimeout(async () => {
 				handleEditBet(false);
-				await dispatch(getActiveSeason());
+				await dispatch(getAllBets({ seasonId: bet.seasonId }));
 			}, 1500);
 			setTimeout(() => {
 				scrollToTop();
@@ -117,8 +111,8 @@ export default function BetEditForm({
 		updatedBetOdds,
 		dispatch,
 		bet.id,
-		seasonId,
-		league.id,
+		bet.seasonId,
+		bet.leagueId,
 		updatedUser.id,
 		updatedMatchDay,
 		updatedHomeTeam.id,
@@ -213,7 +207,7 @@ export default function BetEditForm({
 				defaultAwayTeamName={bet.awayTeam.fullTitleRu}
 				onHomeTeamSelect={handleHomeTeamSelection}
 				onAwayTeamSelect={handleAwayTeamSelection}
-				leagueId={league.id}
+				leagueId={bet.leagueId}
 				resetTeams={false}
 			/>
 
@@ -351,7 +345,8 @@ export default function BetEditForm({
 						<BetSummaryInfo
 							message="Изменить ставку"
 							player={updatedUser}
-							league={league}
+							leagueShortNameEn={bet.leagueShortNameEn}
+							leagueDisplayNameRu={bet.leagueDisplayNameRu}
 							matchDay={updatedMatchDay}
 							homeTeam={updatedHomeTeam}
 							awayTeam={updatedAwayTeam}

@@ -1,4 +1,3 @@
-import Bet from '../../../bets/types/Bet';
 import Team from '../../teams/types/Team';
 
 export default interface League {
@@ -10,7 +9,6 @@ export default interface League {
 	shortNameEn: string;
 	currentMatchDay: string;
 	teams: Team[];
-	bets: Bet[];
 }
 
 export type LeagueId = League['id'];

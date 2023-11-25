@@ -4,6 +4,7 @@ import { selectActiveSeason } from '../admin/seasons/selectors';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import League from '../admin/leagues/types/League';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
 
 export default function BetInputLeague({
 	onLeagueSelect,
@@ -52,9 +53,7 @@ export default function BetInputLeague({
 								<Avatar
 									sx={{ width: 27, height: 27 }}
 									alt="league_logo"
-									src={`${process.env.PUBLIC_URL || ''}/upload/logo/${l.displayNameEn
-										.toLowerCase()
-										.replace(/\s/g, '_')}.png`}
+									src={pathToLogoImage(l.displayNameEn)}
 								/>
 
 								<Typography sx={{ mx: 1, fontSize: '1rem' }}>{l.displayNameRu}</Typography>
