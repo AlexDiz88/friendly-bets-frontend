@@ -1,6 +1,5 @@
 import { Avatar, Box, Typography } from '@mui/material';
 import User from '../auth/types/User';
-import League from '../admin/leagues/types/League';
 import Team from '../admin/teams/types/Team';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 

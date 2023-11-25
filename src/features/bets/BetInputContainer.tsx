@@ -466,7 +466,8 @@ export default function BetInputContainer(): JSX.Element {
 						<BetSummaryInfo
 							message="Добавить ставку"
 							player={selectedUser}
-							league={selectedLeague}
+							leagueShortNameEn={selectedLeague?.shortNameEn || ''}
+							leagueDisplayNameRu={selectedLeague?.displayNameRu || ''}
 							matchDay={selectedMatchDay}
 							homeTeam={selectedHomeTeam}
 							awayTeam={selectedAwayTeam}
