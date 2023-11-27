@@ -33,6 +33,7 @@ export default function BetEditList(): JSX.Element {
 	}, []);
 
 	useEffect(() => {
+		setLoading(true);
 		if (activeSeasonId) {
 			dispatch(getAllBets({ seasonId: activeSeasonId, pageNumber: page - 1 }))
 				.then(() => {
@@ -171,7 +172,7 @@ export default function BetEditList(): JSX.Element {
 							marginTop: 2,
 							display: 'flex',
 							flexDirection: 'row',
-							justifyContent: 'space-between',
+							justifyContent: 'center',
 						}}
 					>
 						<Button
@@ -188,7 +189,7 @@ export default function BetEditList(): JSX.Element {
 							<Typography sx={{ fontSize: 20 }}>&lt;</Typography>
 						</Button>
 						<Button
-							sx={{ width: 60, padding: '10px 50px', backgroundColor: '#afafaf' }}
+							sx={{ width: 60, padding: '10px 50px', margin: '0 15px', backgroundColor: '#afafaf' }}
 							variant="contained"
 							onClick={() => handlePageChange(page)}
 						>
