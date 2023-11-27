@@ -64,6 +64,7 @@ export default function BetsList(): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const openedBets = useAppSelector(selectOpenedBets);
 	const completedBets = useAppSelector(selectCompletedBets);
+	const [filteredBets, setFilteredBets] = useState(openedBets);
 	const totalPages = useAppSelector(selectTotalPages);
 	const dispatch = useAppDispatch();
 	const [value, setValue] = useState(0);
@@ -79,17 +80,26 @@ export default function BetsList(): JSX.Element {
 	const handleLeagueChange = (event: SelectChangeEvent): void => {
 		const leagueName = event.target.value;
 		setSelectedLeagueName(leagueName);
-		setPage(1);
-		if (activeSeason) {
-			const selectedLeague = activeSeason.leagues.find(
-				(league) => league.displayNameRu === leagueName
-			);
-
-			if (selectedLeague) {
-				const leagueId = selectedLeague.id;
-				setSelectedLeagueId(leagueId);
+		if (value === 0) {
+			if (leagueName === 'Все') {
+				setFilteredBets(openedBets);
 			} else {
-				setSelectedLeagueId('');
+				const filtered = openedBets.filter((bet) => bet.leagueDisplayNameRu === leagueName);
+				setFilteredBets(filtered);
+			}
+		} else {
+			setPage(1);
+			if (activeSeason) {
+				const selectedLeague = activeSeason.leagues.find(
+					(league) => league.displayNameRu === leagueName
+				);
+
+				if (selectedLeague) {
+					const leagueId = selectedLeague.id;
+					setSelectedLeagueId(leagueId);
+				} else {
+					setSelectedLeagueId('');
+				}
 			}
 		}
 	};
@@ -97,15 +107,25 @@ export default function BetsList(): JSX.Element {
 	const handlePlayerChange = (event: SelectChangeEvent): void => {
 		const playerName = event.target.value;
 		setSelectedPlayerName(playerName);
-		setPage(1);
-		if (activeSeason) {
-			const selectedPlayer = activeSeason.players.find((player) => player.username === playerName);
-
-			if (selectedPlayer) {
-				const playerId = selectedPlayer.id;
-				setSelectedPlayerId(playerId);
+		if (value === 0) {
+			if (playerName === 'Все') {
+				setFilteredBets(openedBets);
 			} else {
-				setSelectedPlayerId('');
+				const filtered = openedBets.filter((bet) => bet.player.username === playerName);
+				setFilteredBets(filtered);
+			}
+		} else {
+			setPage(1);
+			if (activeSeason) {
+				const selectedPlayer = activeSeason.players.find(
+					(player) => player.username === playerName
+				);
+				if (selectedPlayer) {
+					const playerId = selectedPlayer.id;
+					setSelectedPlayerId(playerId);
+				} else {
+					setSelectedPlayerId('');
+				}
 			}
 		}
 	};
@@ -141,6 +161,7 @@ export default function BetsList(): JSX.Element {
 						setLoading(false);
 					});
 			}
+			setLoading(true);
 			setPage(1);
 		}
 		if (value === 1) {
@@ -345,10 +366,10 @@ export default function BetsList(): JSX.Element {
 												flexDirection: 'column',
 											}}
 										>
-											{openedBets &&
-												Array.isArray(openedBets) &&
-												openedBets.length > 0 &&
-												openedBets.map((bet) => (
+											{filteredBets &&
+												Array.isArray(filteredBets) &&
+												filteredBets.length > 0 &&
+												filteredBets.map((bet) => (
 													<Box key={bet.id}>
 														<BetCard bet={bet} />
 													</Box>
@@ -382,7 +403,7 @@ export default function BetsList(): JSX.Element {
 												marginTop: 2,
 												display: 'flex',
 												flexDirection: 'row',
-												justifyContent: 'space-between',
+												justifyContent: 'center',
 											}}
 										>
 											<Button
@@ -399,7 +420,12 @@ export default function BetsList(): JSX.Element {
 												<Typography sx={{ fontSize: 20 }}>&lt;</Typography>
 											</Button>
 											<Button
-												sx={{ width: 60, padding: '10px 50px', backgroundColor: '#afafaf' }}
+												sx={{
+													width: 60,
+													padding: '10px 50px',
+													margin: '0 15px',
+													backgroundColor: '#afafaf',
+												}}
 												variant="contained"
 												onClick={() => handlePageChange(page)}
 											>
