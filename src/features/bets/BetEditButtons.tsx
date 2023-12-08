@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
 	Box,
 	Button,
@@ -10,13 +11,13 @@ import {
 } from '@mui/material';
 import Bet from './types/Bet';
 import BetEditForm from './BetEditForm';
-import { useAppDispatch } from '../../app/hooks';
-import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
-import { deleteBet } from './betsSlice';
+import { deleteBet, getOpenedBets } from './betsSlice';
+import { selectActiveSeasonId } from '../admin/seasons/selectors';
 
 export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	const dispatch = useAppDispatch();
+	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const [showEditForm, setShowEditForm] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -36,7 +37,9 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('success');
 			setSnackbarMessage('Ставка успешно аннулирована');
-			await dispatch(getActiveSeason());
+			if (activeSeasonId) {
+				dispatch(getOpenedBets({ seasonId: activeSeasonId }));
+			}
 		}
 		if (deleteBet.rejected.match(dispatchResult)) {
 			setOpenSnackbar(true);
@@ -47,7 +50,6 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 			}
 		}
 	}, [dispatch, bet.id, bet.seasonId, bet.leagueId]);
-	// конец добавления ставки
 
 	const handleEditBet = (): void => {
 		setShowEditForm(!showEditForm);

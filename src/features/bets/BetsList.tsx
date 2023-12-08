@@ -77,17 +77,29 @@ export default function BetsList(): JSX.Element {
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 
+	const filterOpenedBets = (leagueName: string, playerName: string): void => {
+		let filtered = openedBets;
+		if (playerName === 'Все' && leagueName !== 'Все') {
+			filtered = openedBets.filter((bet) => bet.leagueDisplayNameRu === leagueName);
+		}
+		if (playerName !== 'Все' && leagueName === 'Все') {
+			filtered = openedBets.filter((bet) => bet.player.username === playerName);
+		}
+		if (playerName !== 'Все' && leagueName !== 'Все') {
+			filtered = openedBets.filter(
+				(bet) => bet.leagueDisplayNameRu === leagueName && bet.player.username === playerName
+			);
+		}
+		setFilteredBets(filtered);
+	};
+
 	const handleLeagueChange = (event: SelectChangeEvent): void => {
 		const leagueName = event.target.value;
 		setSelectedLeagueName(leagueName);
 		if (value === 0) {
-			if (leagueName === 'Все') {
-				setFilteredBets(openedBets);
-			} else {
-				const filtered = openedBets.filter((bet) => bet.leagueDisplayNameRu === leagueName);
-				setFilteredBets(filtered);
-			}
-		} else {
+			filterOpenedBets(leagueName, selectedPlayerName);
+		}
+		if (value === 1) {
 			setPage(1);
 			if (activeSeason) {
 				const selectedLeague = activeSeason.leagues.find(
@@ -108,18 +120,12 @@ export default function BetsList(): JSX.Element {
 		const playerName = event.target.value;
 		setSelectedPlayerName(playerName);
 		if (value === 0) {
-			if (playerName === 'Все') {
-				setFilteredBets(openedBets);
-			} else {
-				const filtered = openedBets.filter((bet) => bet.player.username === playerName);
-				setFilteredBets(filtered);
-			}
-		} else {
+			filterOpenedBets(selectedLeagueName, playerName);
+		}
+		if (value === 1) {
 			setPage(1);
 			if (activeSeason) {
-				const selectedPlayer = activeSeason.players.find(
-					(player) => player.username === playerName
-				);
+				const selectedPlayer = activeSeason.players.find((p) => p.username === playerName);
 				if (selectedPlayer) {
 					const playerId = selectedPlayer.id;
 					setSelectedPlayerId(playerId);
@@ -144,6 +150,10 @@ export default function BetsList(): JSX.Element {
 	};
 
 	useEffect(() => {
+		setFilteredBets(openedBets);
+	}, [openedBets]);
+
+	useEffect(() => {
 		dispatch(getActiveSeasonId());
 		dispatch(getActiveSeason());
 	}, []);
@@ -164,6 +174,9 @@ export default function BetsList(): JSX.Element {
 			setLoading(true);
 			setPage(1);
 		}
+	}, [dispatch, value, activeSeasonId]);
+
+	useEffect(() => {
 		if (value === 1) {
 			let pageSize = '28';
 			if (selectedPlayerName === 'Все' && selectedLeagueName !== 'Все') {
@@ -367,8 +380,6 @@ export default function BetsList(): JSX.Element {
 											}}
 										>
 											{filteredBets &&
-												Array.isArray(filteredBets) &&
-												filteredBets.length > 0 &&
 												filteredBets.map((bet) => (
 													<Box key={bet.id}>
 														<BetCard bet={bet} />
