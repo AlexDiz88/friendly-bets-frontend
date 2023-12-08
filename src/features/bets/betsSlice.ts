@@ -103,6 +103,7 @@ const betsSlice = createSlice({
 			})
 			.addCase(setBetResult.fulfilled, (state, action) => {
 				state.bet = action.payload;
+				state.openedBets = state.openedBets.filter((bet) => bet !== action.payload);
 			})
 			.addCase(setBetResult.rejected, (state, action) => {
 				state.error = action.error.message;
