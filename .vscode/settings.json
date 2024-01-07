@@ -9,7 +9,7 @@
 	"prettier.printWidth": 100,
 	"editor.tabSize": 2,
 	"editor.codeActionsOnSave": {
-		"source.formatDocument": true,
-		"source.fixAll.eslint": true
+		"source.formatDocument": "explicit",
+		"source.fixAll.eslint": "explicit"
 	}
 }

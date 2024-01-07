@@ -246,106 +246,6 @@ export default function BetsList(): JSX.Element {
 				</Tabs>
 			</Box>
 
-			<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-				<Select
-					autoWidth
-					size="small"
-					sx={{ minWidth: '7rem', ml: -0.2 }}
-					labelId="league-title-label"
-					id="league-title-select"
-					value={selectedLeagueName}
-					onChange={handleLeagueChange}
-				>
-					<MenuItem key="Все" sx={{ ml: -0.5, minWidth: '6.5rem' }} value="Все">
-						<div
-							style={{
-								display: 'flex',
-								alignItems: 'center',
-							}}
-						>
-							<Avatar
-								variant="square"
-								sx={{ width: 27, height: 27 }}
-								alt="league_logo"
-								// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-								src={`${import.meta.env.PUBLIC_URL || ''}/upload/logo/total.png`}
-							/>
-
-							<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
-						</div>
-					</MenuItem>
-					{activeSeason &&
-						activeSeason.leagues &&
-						activeSeason.leagues.map((l) => (
-							<MenuItem sx={{ ml: -0.5, minWidth: '6.5rem' }} key={l.id} value={l.displayNameRu}>
-								<div
-									style={{
-										display: 'flex',
-										alignItems: 'center',
-									}}
-								>
-									<Avatar
-										variant="square"
-										sx={{ width: 27, height: 27 }}
-										alt="league_logo"
-										src={pathToLogoImage(l.displayNameEn)}
-									/>
-									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{l.shortNameRu}</Typography>
-								</div>
-							</MenuItem>
-						))}
-				</Select>
-
-				<Select
-					autoWidth
-					size="small"
-					sx={{ minWidth: '11.5rem', ml: 0.5 }}
-					labelId="player-title-label"
-					id="player-title-select"
-					value={selectedPlayerName}
-					onChange={handlePlayerChange}
-				>
-					<MenuItem key="Все" sx={{ ml: -0.5, minWidth: '11rem' }} value="Все">
-						<div
-							style={{
-								display: 'flex',
-								alignItems: 'center',
-							}}
-						>
-							<Avatar
-								variant="square"
-								sx={{ width: 27, height: 27 }}
-								alt="league_logo"
-								src="/upload/avatars/cool_man.jpg"
-							/>
-
-							<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
-						</div>
-					</MenuItem>
-					{activeSeason &&
-						activeSeason.players
-							.slice()
-							.sort((a, b) => (a.username && b.username ? a.username.localeCompare(b.username) : 0))
-							.map((p) => (
-								<MenuItem key={p.id} sx={{ ml: -1, minWidth: '6.5rem' }} value={p.username}>
-									<div
-										style={{
-											display: 'flex',
-											alignItems: 'center',
-										}}
-									>
-										<Avatar
-											sx={{ width: 27, height: 27 }}
-											alt="user_avatar"
-											src={pathToAvatarImage(p.avatar)}
-										/>
-
-										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{p.username}</Typography>
-									</div>
-								</MenuItem>
-							))}
-				</Select>
-			</Box>
 			{loading ? (
 				<Box
 					sx={{
@@ -357,113 +257,221 @@ export default function BetsList(): JSX.Element {
 					}}
 				>
 					{/* <Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-						Подождите идёт загрузка данных
-					</Box> */}
+							Подождите идёт загрузка данных
+						</Box> */}
 					<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
 				</Box>
 			) : (
-				<Box>
-					{loadingError ? (
-						<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-							Ошибка загрузки. Попробуйте обновить страницу
-						</Box>
-					) : (
-						<Box>
-							<Box sx={{ width: '100%' }}>
-								<Box sx={{ mt: -2 }}>
-									<CustomTabPanel value={value} index={0}>
-										<Box
-											sx={{
-												display: 'flex',
-												alignItems: 'center',
-												flexDirection: 'column',
-											}}
-										>
-											{filteredBets &&
-												filteredBets.map((bet) => (
-													<Box key={bet.id}>
-														<BetCard bet={bet} />
-													</Box>
-												))}
-										</Box>
-									</CustomTabPanel>
+				<>
+					<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+						<Select
+							autoWidth
+							size="small"
+							sx={{ minWidth: '7rem', ml: -0.2 }}
+							labelId="league-title-label"
+							id="league-title-select"
+							value={selectedLeagueName}
+							onChange={handleLeagueChange}
+						>
+							<MenuItem key="Все" sx={{ ml: -0.5, minWidth: '6.5rem' }} value="Все">
+								<div
+									style={{
+										display: 'flex',
+										alignItems: 'center',
+									}}
+								>
+									<Avatar
+										variant="square"
+										sx={{ width: 27, height: 27 }}
+										alt="league_logo"
+										// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+										src={`${import.meta.env.PUBLIC_URL || ''}/upload/logo/total.png`}
+									/>
 
-									<CustomTabPanel value={value} index={1}>
-										<Box
-											sx={{
+									<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
+								</div>
+							</MenuItem>
+							{activeSeason &&
+								activeSeason.leagues &&
+								activeSeason.leagues.map((l) => (
+									<MenuItem
+										sx={{ ml: -0.5, minWidth: '6.5rem' }}
+										key={l.id}
+										value={l.displayNameRu}
+									>
+										<div
+											style={{
 												display: 'flex',
-												flexDirection: 'column',
 												alignItems: 'center',
 											}}
 										>
-											{completedBets &&
-												Array.isArray(completedBets) &&
-												completedBets.length > 0 &&
-												completedBets.map((bet) => (
-													<Box key={bet.id}>
-														{bet.betStatus === 'EMPTY' ? (
-															<EmptyBetCard bet={bet} />
-														) : (
-															<CompleteBetCard bet={bet} />
-														)}
-													</Box>
-												))}
-										</Box>
-										<Stack
-											sx={{
-												marginTop: 2,
-												display: 'flex',
-												flexDirection: 'row',
-												justifyContent: 'center',
-											}}
-										>
-											<Button
-												sx={{
-													width: 60,
-													padding: '10px 50px',
-													backgroundColor: '#e2e7fd',
-													color: 'black',
+											<Avatar
+												variant="square"
+												sx={{ width: 27, height: 27 }}
+												alt="league_logo"
+												src={pathToLogoImage(l.displayNameEn)}
+											/>
+											<Typography sx={{ mx: 1, fontSize: '1rem' }}>{l.shortNameRu}</Typography>
+										</div>
+									</MenuItem>
+								))}
+						</Select>
+
+						<Select
+							autoWidth
+							size="small"
+							sx={{ minWidth: '11.5rem', ml: 0.5 }}
+							labelId="player-title-label"
+							id="player-title-select"
+							value={selectedPlayerName}
+							onChange={handlePlayerChange}
+						>
+							<MenuItem key="Все" sx={{ ml: -0.5, minWidth: '11rem' }} value="Все">
+								<div
+									style={{
+										display: 'flex',
+										alignItems: 'center',
+									}}
+								>
+									<Avatar
+										variant="square"
+										sx={{ width: 27, height: 27 }}
+										alt="league_logo"
+										src="/upload/avatars/cool_man.jpg"
+									/>
+
+									<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
+								</div>
+							</MenuItem>
+							{activeSeason &&
+								activeSeason.players
+									.slice()
+									.sort((a, b) =>
+										a.username && b.username ? a.username.localeCompare(b.username) : 0
+									)
+									.map((p) => (
+										<MenuItem key={p.id} sx={{ ml: -1, minWidth: '6.5rem' }} value={p.username}>
+											<div
+												style={{
+													display: 'flex',
+													alignItems: 'center',
 												}}
-												variant="contained"
-												disabled={page === 1}
-												onClick={() => handlePageChange(page - 1)}
 											>
-												<Typography sx={{ fontSize: 20 }}>&lt;</Typography>
-											</Button>
-											<Button
+												<Avatar
+													sx={{ width: 27, height: 27 }}
+													alt="user_avatar"
+													src={pathToAvatarImage(p.avatar)}
+												/>
+
+												<Typography sx={{ mx: 1, fontSize: '1rem' }}>{p.username}</Typography>
+											</div>
+										</MenuItem>
+									))}
+						</Select>
+					</Box>
+					<Box>
+						{loadingError ? (
+							<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
+								Ошибка загрузки. Попробуйте обновить страницу
+							</Box>
+						) : (
+							<Box>
+								<Box sx={{ width: '100%' }}>
+									<Box sx={{ mt: -2 }}>
+										<CustomTabPanel value={value} index={0}>
+											<Box
 												sx={{
-													width: 60,
-													padding: '10px 50px',
-													margin: '0 15px',
-													backgroundColor: '#afafaf',
+													display: 'flex',
+													alignItems: 'center',
+													flexDirection: 'column',
 												}}
-												variant="contained"
-												onClick={() => handlePageChange(page)}
 											>
-												<Typography sx={{ fontSize: 20, fontWeight: 600, fontFamily: 'Exo 2' }}>
-													{page}
-												</Typography>
-											</Button>
-											<Button
+												{filteredBets &&
+													filteredBets.map((bet) => (
+														<Box key={bet.id}>
+															<BetCard bet={bet} />
+														</Box>
+													))}
+											</Box>
+										</CustomTabPanel>
+
+										<CustomTabPanel value={value} index={1}>
+											<Box
 												sx={{
-													width: 60,
-													padding: '10px 50px',
-													backgroundColor: '#e2e7fd',
-													color: 'black',
+													display: 'flex',
+													flexDirection: 'column',
+													alignItems: 'center',
 												}}
-												variant="contained"
-												disabled={page === totalPages}
-												onClick={() => handlePageChange(page + 1)}
 											>
-												<Typography sx={{ fontSize: 20 }}>&gt;</Typography>
-											</Button>
-										</Stack>
-									</CustomTabPanel>
+												{completedBets &&
+													Array.isArray(completedBets) &&
+													completedBets.length > 0 &&
+													completedBets.map((bet) => (
+														<Box key={bet.id}>
+															{bet.betStatus === 'EMPTY' ? (
+																<EmptyBetCard bet={bet} />
+															) : (
+																<CompleteBetCard bet={bet} />
+															)}
+														</Box>
+													))}
+											</Box>
+											<Stack
+												sx={{
+													marginTop: 2,
+													display: 'flex',
+													flexDirection: 'row',
+													justifyContent: 'center',
+												}}
+											>
+												<Button
+													sx={{
+														width: 60,
+														padding: '10px 50px',
+														backgroundColor: '#e2e7fd',
+														color: 'black',
+													}}
+													variant="contained"
+													disabled={page === 1}
+													onClick={() => handlePageChange(page - 1)}
+												>
+													<Typography sx={{ fontSize: 20 }}>&lt;</Typography>
+												</Button>
+												<Button
+													sx={{
+														width: 60,
+														padding: '10px 50px',
+														margin: '0 15px',
+														backgroundColor: '#afafaf',
+													}}
+													variant="contained"
+													onClick={() => handlePageChange(page)}
+												>
+													<Typography sx={{ fontSize: 20, fontWeight: 600, fontFamily: 'Exo 2' }}>
+														{page}
+													</Typography>
+												</Button>
+												<Button
+													sx={{
+														width: 60,
+														padding: '10px 50px',
+														backgroundColor: '#e2e7fd',
+														color: 'black',
+													}}
+													variant="contained"
+													disabled={page === totalPages}
+													onClick={() => handlePageChange(page + 1)}
+												>
+													<Typography sx={{ fontSize: 20 }}>&gt;</Typography>
+												</Button>
+											</Stack>
+										</CustomTabPanel>
+									</Box>
 								</Box>
 							</Box>
-						</Box>
-					)}
-				</Box>
+						)}
+					</Box>
+				</>
 			)}
 		</Box>
 	);
