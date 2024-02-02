@@ -1,16 +1,40 @@
 import { useEffect, useState } from 'react';
-import { Box, Select, MenuItem, Avatar, Typography, SelectChangeEvent } from '@mui/material';
+import {
+	Box,
+	Select,
+	MenuItem,
+	Avatar,
+	Typography,
+	SelectChangeEvent,
+	CircularProgress,
+} from '@mui/material';
 import pathToAvatarImage from './utils/pathToAvatarImage';
 import pathToLogoImage from './utils/pathToLogoImage';
 import { selectActiveSeason } from '../features/admin/seasons/selectors';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
+import { getAllStatsByTeamsInSeason } from '../features/stats/statsSlice';
+import { selectAllStatsByTeamsInSeason } from '../features/stats/selectors';
+import StatsTableByTeams from './StatsTableByTeams';
 
 export default function TeamsStatsPage(): JSX.Element {
 	const activeSeason = useAppSelector(selectActiveSeason);
+	const statsByTeams = useAppSelector(selectAllStatsByTeamsInSeason);
 	const dispatch = useAppDispatch();
-	const [selectedLeagueName, setSelectedLeagueName] = useState<string>('Все');
+	const [selectedLeagueName, setSelectedLeagueName] = useState<string>('АПЛ');
 	const [selectedPlayerName, setSelectedPlayerName] = useState<string>('Все');
+	const [loading, setLoading] = useState(true);
+	const [loadingError, setLoadingError] = useState(false);
+
+	const filteredStats =
+		selectedPlayerName === 'Все'
+			? statsByTeams.filter(
+					(stats) => stats.leagueStats && stats.leagueNameRu === selectedLeagueName
+			  )
+			: statsByTeams.filter(
+					(stats) =>
+						stats.username === selectedPlayerName && stats.leagueNameRu === selectedLeagueName
+			  );
 
 	const handleLeagueChange = (event: SelectChangeEvent): void => {
 		const leagueName = event.target.value;
@@ -23,109 +47,163 @@ export default function TeamsStatsPage(): JSX.Element {
 	};
 
 	useEffect(() => {
-		dispatch(getActiveSeason());
-	}, [dispatch]);
+		if (!activeSeason) {
+			dispatch(getActiveSeason());
+		}
+	}, []);
+
+	useEffect(() => {
+		if (activeSeason) {
+			dispatch(getAllStatsByTeamsInSeason(activeSeason.id))
+				.then(() => {
+					setLoading(false);
+				})
+				.catch(() => {
+					setLoadingError(true);
+					setLoading(false);
+				});
+		}
+	}, [activeSeason]);
 
 	return (
-		<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-			<Select
-				autoWidth
-				size="small"
-				sx={{ minWidth: '7rem', ml: -0.2 }}
-				labelId="league-title-label"
-				id="league-title-select"
-				value={selectedLeagueName}
-				onChange={handleLeagueChange}
-			>
-				<MenuItem key="Все" sx={{ ml: -0.5, minWidth: '6.5rem' }} value="Все">
-					<div
-						style={{
+		<Box>
+			<Box>
+				{loading ? (
+					<Box
+						sx={{
+							height: '70vh',
 							display: 'flex',
+							flexDirection: 'column',
+							justifyContent: 'center',
 							alignItems: 'center',
 						}}
 					>
-						<Avatar
-							variant="square"
-							sx={{ width: 27, height: 27 }}
-							alt="league_logo"
-							// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-							src={`${import.meta.env.PUBLIC_URL || ''}/upload/logo/total.png`}
-						/>
-
-						<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
-					</div>
-				</MenuItem>
-				{activeSeason &&
-					activeSeason.leagues &&
-					activeSeason.leagues.map((l) => (
-						<MenuItem sx={{ ml: -0.5, minWidth: '6.5rem' }} key={l.id} value={l.displayNameRu}>
-							<div
-								style={{
-									display: 'flex',
-									alignItems: 'center',
+						<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
+							Подождите идёт загрузка данных
+						</Box>
+						<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
+					</Box>
+				) : (
+					<Box>
+						{loadingError ? (
+							<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
+								Ошибка загрузки. Попробуйте обновить страницу
+							</Box>
+						) : (
+							<Box
+								sx={{
+									maxWidth: '25rem',
+									margin: '0 auto',
+									mt: -2,
+									pt: 2.5,
+									boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
 								}}
 							>
-								<Avatar
-									variant="square"
-									sx={{ width: 27, height: 27 }}
-									alt="league_logo"
-									src={pathToLogoImage(l.displayNameEn)}
-								/>
-								<Typography sx={{ mx: 1, fontSize: '1rem' }}>{l.shortNameRu}</Typography>
-							</div>
-						</MenuItem>
-					))}
-			</Select>
-
-			<Select
-				autoWidth
-				size="small"
-				sx={{ minWidth: '11.5rem', ml: 0.5 }}
-				labelId="player-title-label"
-				id="player-title-select"
-				value={selectedPlayerName}
-				onChange={handlePlayerChange}
-			>
-				<MenuItem key="Все" sx={{ ml: -0.5, minWidth: '11rem' }} value="Все">
-					<div
-						style={{
-							display: 'flex',
-							alignItems: 'center',
-						}}
-					>
-						<Avatar
-							variant="square"
-							sx={{ width: 27, height: 27 }}
-							alt="league_logo"
-							src="/upload/avatars/cool_man.jpg"
-						/>
-
-						<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
-					</div>
-				</MenuItem>
-				{activeSeason &&
-					activeSeason.players
-						.slice()
-						.sort((a, b) => (a.username && b.username ? a.username.localeCompare(b.username) : 0))
-						.map((p) => (
-							<MenuItem key={p.id} sx={{ ml: -1, minWidth: '6.5rem' }} value={p.username}>
-								<div
-									style={{
+								<Box
+									sx={{
 										display: 'flex',
-										alignItems: 'center',
+										justifyContent: 'center',
 									}}
 								>
-									<Avatar
-										sx={{ width: 27, height: 27 }}
-										alt="user_avatar"
-										src={pathToAvatarImage(p.avatar)}
-									/>
+									<Select
+										autoWidth
+										size="small"
+										sx={{ minWidth: '7rem', ml: -0.2 }}
+										labelId="league-title-label"
+										id="league-title-select"
+										value={selectedLeagueName}
+										onChange={handleLeagueChange}
+									>
+										{activeSeason &&
+											activeSeason.leagues &&
+											activeSeason.leagues.map((l) => (
+												<MenuItem
+													sx={{ ml: -0.5, minWidth: '6.5rem' }}
+													key={l.id}
+													value={l.displayNameRu}
+												>
+													<div
+														style={{
+															display: 'flex',
+															alignItems: 'center',
+														}}
+													>
+														<Avatar
+															variant="square"
+															sx={{ width: 27, height: 27 }}
+															alt="league_logo"
+															src={pathToLogoImage(l.displayNameEn)}
+														/>
+														<Typography sx={{ mx: 1, fontSize: '1rem' }}>
+															{l.shortNameRu}
+														</Typography>
+													</div>
+												</MenuItem>
+											))}
+									</Select>
 
-									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{p.username}</Typography>
-								</div>
-							</MenuItem>
-						))}
-			</Select>
+									<Select
+										autoWidth
+										size="small"
+										sx={{ minWidth: '11.5rem', ml: 0.5 }}
+										labelId="player-title-label"
+										id="player-title-select"
+										value={selectedPlayerName}
+										onChange={handlePlayerChange}
+									>
+										<MenuItem key="Все" sx={{ ml: -0.5, minWidth: '11rem' }} value="Все">
+											<div
+												style={{
+													display: 'flex',
+													alignItems: 'center',
+												}}
+											>
+												<Avatar
+													variant="square"
+													sx={{ width: 27, height: 27 }}
+													alt="league_logo"
+													src="/upload/avatars/cool_man.jpg"
+												/>
+
+												<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
+											</div>
+										</MenuItem>
+										{activeSeason &&
+											activeSeason.players
+												.slice()
+												.sort((a, b) =>
+													a.username && b.username ? a.username.localeCompare(b.username) : 0
+												)
+												.map((p) => (
+													<MenuItem
+														key={p.id}
+														sx={{ ml: -1, minWidth: '6.5rem' }}
+														value={p.username}
+													>
+														<div
+															style={{
+																display: 'flex',
+																alignItems: 'center',
+															}}
+														>
+															<Avatar
+																sx={{ width: 27, height: 27 }}
+																alt="user_avatar"
+																src={pathToAvatarImage(p.avatar)}
+															/>
+
+															<Typography sx={{ mx: 1, fontSize: '1rem' }}>{p.username}</Typography>
+														</div>
+													</MenuItem>
+												))}
+									</Select>
+								</Box>
+								<StatsTableByTeams playersStatsByTeams={filteredStats} />
+							</Box>
+						)}
+					</Box>
+				)}
+			</Box>
 		</Box>
 	);
 }

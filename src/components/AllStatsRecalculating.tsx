@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { useCallback, useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -15,7 +16,7 @@ export default function AllStatsRecalculating(): JSX.Element {
 	>('info');
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 
-	const handleSubmit = useCallback(
+	const handleSubmitFullRecalculation = useCallback(
 		async (event?: React.FormEvent) => {
 			event?.preventDefault();
 			if (activeSeasonId) {
@@ -38,27 +39,75 @@ export default function AllStatsRecalculating(): JSX.Element {
 		[dispatch, activeSeasonId]
 	);
 
+	const handleSubmitStatsByTeamsRecalculation = useCallback(
+		async (event?: React.FormEvent) => {
+			event?.preventDefault();
+			if (activeSeasonId) {
+				try {
+					let url = `${
+						import.meta.env.VITE_PRODUCT_SERVER
+					}/api/stats/season/${activeSeasonId}/recalculation/teams`;
+					if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+						url = `/api/stats/season/${activeSeasonId}/recalculation/teams`;
+					}
+					const response = await fetch(`${url}`);
+
+					if (response.ok) {
+						setOpenSnackbar(true);
+						setSnackbarSeverity('success');
+						setSnackbarMessage('Статистика успешно пересчитана');
+					} else {
+						const errorMessage = await response.text();
+						setOpenSnackbar(true);
+						setSnackbarSeverity('error');
+						setSnackbarMessage(errorMessage || 'Произошла ошибка при пересчете статистики');
+					}
+				} catch (error) {
+					setOpenSnackbar(true);
+					setSnackbarSeverity('error');
+					setSnackbarMessage('Произошла ошибка при пересчете статистики');
+				}
+			}
+		},
+		[dispatch, activeSeasonId]
+	);
+
 	const handleCloseSnackbar = (): void => {
 		setOpenSnackbar(false);
 	};
 
 	useEffect(() => {
-		dispatch(getActiveSeasonId());
+		if (!activeSeasonId) {
+			dispatch(getActiveSeasonId());
+		}
 	}, [dispatch]);
 
 	return (
 		<Box sx={{ mb: 1, mt: 0.5, pb: 1.5 }}>
 			<Button
 				disabled
-				onClick={handleSubmit}
-				sx={{ height: '2.5rem', px: 5 }}
+				onClick={handleSubmitFullRecalculation}
+				sx={{ height: '3.5rem', px: 5 }}
 				variant="contained"
 				type="submit"
 				color="secondary"
 				size="large"
 			>
 				<Typography variant="button" fontWeight="600" fontSize="0.9rem" fontFamily="Shantell Sans">
-					Пересчёт статистики
+					Пересчёт общей статистики
+				</Typography>
+			</Button>
+			<Button
+				// disabled
+				onClick={handleSubmitStatsByTeamsRecalculation}
+				sx={{ height: '3.5rem', px: 5, mt: 2 }}
+				variant="contained"
+				type="submit"
+				color="secondary"
+				size="large"
+			>
+				<Typography variant="button" fontWeight="600" fontSize="0.9rem" fontFamily="Shantell Sans">
+					Пересчёт статистики по командам
 				</Typography>
 			</Button>
 
