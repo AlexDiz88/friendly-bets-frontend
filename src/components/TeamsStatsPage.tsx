@@ -33,7 +33,9 @@ export default function TeamsStatsPage(): JSX.Element {
 			  )
 			: statsByTeams.filter(
 					(stats) =>
-						stats.username === selectedPlayerName && stats.leagueNameRu === selectedLeagueName
+						!stats.leagueStats &&
+						stats.username === selectedPlayerName &&
+						stats.leagueNameRu === selectedLeagueName
 			  );
 
 	const handleLeagueChange = (event: SelectChangeEvent): void => {
