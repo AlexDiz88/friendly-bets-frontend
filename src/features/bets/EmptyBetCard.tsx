@@ -50,7 +50,7 @@ export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 								alt="team_logo"
 								src={pathToLogoImage(leagueShortNameEn)}
 							/>
-							{leagueShortNameRu} - {matchDay}й
+							{matchDay.startsWith('1/') || matchDay === 'Финал' ? matchDay : matchDay + 'й'}
 						</Box>
 					</Box>
 					<Box sx={{ textAlign: 'left', ml: 0.5 }}>

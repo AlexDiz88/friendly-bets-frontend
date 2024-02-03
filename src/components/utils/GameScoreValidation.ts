@@ -1,5 +1,8 @@
 function isValidScore(matchScore: string): boolean {
 	const scoreRegex = /^(\d+):(\d+) \((\d+):(\d+)\)$/;
+	// const scoreRegex = /^(\d+):(\d+) \((\d+):(\d+)\) \[(\d+):(\d+)\] (\d+):(\d+)\)$/;
+	// const scoreRegex = /^(\d+):(\d+)\s+(\d+):(\d+)\s+(\d+):(\d+)\s+(\d+):(\d+)$/;
+
 	if (!scoreRegex.test(matchScore)) {
 		return false;
 	}
@@ -7,6 +10,7 @@ function isValidScore(matchScore: string): boolean {
 	if (!matchArray) {
 		return false;
 	}
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [p, fullTimeHome, fullTimeAway, halfTimeHome, halfTimeAway] = matchArray;
 	const fullTimeHomeGoals = parseInt(fullTimeHome, 10);
@@ -20,18 +24,34 @@ function isValidScore(matchScore: string): boolean {
 }
 
 // проверка корректности введенного счёта
-export default function GameScoreValidation(inputString: string): string {
+export default function GameScoreValidation(
+	inputString: string,
+	isOvertime = false,
+	isPenalty = false
+): string {
 	if (!inputString) {
 		return '';
 	}
-	const transformedString = inputString
+	let transformedString = inputString;
+	transformedString = transformedString
 		.trim()
 		.replace(/[$!"№%?(){}\]§&=]/g, '')
 		.replace(/[.*;_/-]/g, ':')
 		.replace(/:+/g, ':')
 		.replace(/[,]/g, ' ')
-		.replace(/\s+/g, ' ')
-		.replace(/([^\s]+)\s(.+)/, '$1 ($2)');
+		.replace(/\s+/g, ' ');
+
+	if (!isOvertime && !isPenalty) {
+		transformedString = transformedString.replace(/([^\s]+)\s(.+)/, '$1 ($2)');
+	} else if (isOvertime && !isPenalty) {
+		transformedString = transformedString.replace(/([^\s]+)\s{2}([^\s]+)\s(.+)/, '$1 ($2) [$3]');
+	} else if (isOvertime && isPenalty) {
+		transformedString = transformedString.replace(
+			/([^\s]+)\s{3}([^\s]+)\s(.+)/,
+			'$1 ($2) [от $3, пен.$3]'
+		);
+	}
+	console.log(transformedString);
 
 	if (!isValidScore(transformedString)) {
 		return 'Некорректный счёт матча!';
