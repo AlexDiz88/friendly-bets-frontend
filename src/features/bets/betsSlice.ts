@@ -102,8 +102,7 @@ const betsSlice = createSlice({
 				state.error = action.error.message;
 			})
 			.addCase(setBetResult.fulfilled, (state, action) => {
-				state.bet = action.payload;
-				state.openedBets = state.openedBets.filter((bet) => bet !== action.payload);
+				state.openedBets = state.openedBets.filter((bet) => bet.id !== action.payload.id);
 			})
 			.addCase(setBetResult.rejected, (state, action) => {
 				state.error = action.error.message;
@@ -129,13 +128,18 @@ const betsSlice = createSlice({
 				state.error = action.error.message;
 			})
 			.addCase(updateBet.fulfilled, (state, action) => {
-				state.bet = action.payload;
+				state.allBets = state.allBets.map((bet) => {
+					if (bet.id === action.payload.id) {
+						return action.payload;
+					}
+					return bet;
+				});
 			})
 			.addCase(updateBet.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
 			.addCase(deleteBet.fulfilled, (state, action) => {
-				state.bet = action.payload;
+				state.allBets = state.allBets.filter((bet) => bet.id !== action.payload.id);
 			})
 			.addCase(deleteBet.rejected, (state, action) => {
 				state.error = action.error.message;

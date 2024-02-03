@@ -51,7 +51,8 @@ export default function BetSummaryInfo({
 					/>
 					{leagueDisplayNameRu} <br />
 				</Box>
-				<b>Тур:</b> {matchDay} <br />
+				<b>Тур:</b> {matchDay.startsWith('1/') || matchDay === 'Финал' ? matchDay : matchDay + 'й'}{' '}
+				<br />
 				<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
 					<b>Хозяева:</b>
 					<Avatar

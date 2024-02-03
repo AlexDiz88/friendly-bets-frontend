@@ -82,9 +82,6 @@ export default function BetsCheck(): JSX.Element {
 						setSnackbarMessage(dispatchResult.error.message);
 					}
 				}
-				if (activeSeasonId) {
-					dispatch(getOpenedBets({ seasonId: activeSeasonId }));
-				}
 			}
 		},
 		[dispatch, gameResult, selectedBet, selectedLeague]
@@ -136,8 +133,12 @@ export default function BetsCheck(): JSX.Element {
 	};
 
 	useEffect(() => {
-		dispatch(getActiveSeasonId());
-		dispatch(getActiveSeason());
+		if (!activeSeasonId) {
+			dispatch(getActiveSeasonId());
+		}
+		if (!activeSeason) {
+			dispatch(getActiveSeason());
+		}
 	}, []);
 
 	useEffect(() => {
