@@ -91,13 +91,10 @@ export default function BetEditForm({
 			setOpenSnackbar(true);
 			setSnackbarSeverity('success');
 			setSnackbarMessage('Ставка успешно отредактирована');
-			setTimeout(async () => {
-				handleEditBet(false);
-				await dispatch(getAllBets({ seasonId: bet.seasonId }));
-			}, 1500);
+			handleEditBet(false);
 			setTimeout(() => {
 				scrollToTop();
-			}, 3000);
+			}, 200);
 		}
 		if (updateBet.rejected.match(dispatchResult)) {
 			setOpenSnackbar(true);

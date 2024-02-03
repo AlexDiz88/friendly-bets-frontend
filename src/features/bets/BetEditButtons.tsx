@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useAppDispatch } from '../../app/hooks';
 import {
 	Box,
 	Button,
@@ -12,12 +12,10 @@ import {
 import Bet from './types/Bet';
 import BetEditForm from './BetEditForm';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
-import { deleteBet, getOpenedBets } from './betsSlice';
-import { selectActiveSeasonId } from '../admin/seasons/selectors';
+import { deleteBet } from './betsSlice';
 
 export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	const dispatch = useAppDispatch();
-	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const [showEditForm, setShowEditForm] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -37,9 +35,6 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('success');
 			setSnackbarMessage('Ставка успешно аннулирована');
-			if (activeSeasonId) {
-				dispatch(getOpenedBets({ seasonId: activeSeasonId }));
-			}
 		}
 		if (deleteBet.rejected.match(dispatchResult)) {
 			setOpenSnackbar(true);

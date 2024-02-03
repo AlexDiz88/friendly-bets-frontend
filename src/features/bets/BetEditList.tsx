@@ -29,7 +29,9 @@ export default function BetEditList(): JSX.Element {
 	};
 
 	useEffect(() => {
-		dispatch(getActiveSeasonId());
+		if (!activeSeasonId) {
+			dispatch(getActiveSeasonId());
+		}
 	}, []);
 
 	useEffect(() => {

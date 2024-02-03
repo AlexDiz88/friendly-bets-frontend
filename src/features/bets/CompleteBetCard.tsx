@@ -62,7 +62,8 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 						alt="team_logo"
 						src={pathToLogoImage(leagueShortNameEn)}
 					/>
-					{leagueShortNameRu} - {matchDay}й
+					{leagueShortNameRu} -{' '}
+					{matchDay.startsWith('1/') || matchDay === 'Финал' ? matchDay : matchDay + 'й'}
 				</Box>
 			</Box>
 			<Box sx={{ fontSize: '0.9rem' }}>
