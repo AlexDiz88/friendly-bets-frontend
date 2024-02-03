@@ -85,7 +85,6 @@ export default function AllStatsRecalculating(): JSX.Element {
 	return (
 		<Box sx={{ mb: 1, mt: 0.5, pb: 1.5 }}>
 			<Button
-				disabled
 				onClick={handleSubmitFullRecalculation}
 				sx={{ height: '3.5rem', px: 5 }}
 				variant="contained"
