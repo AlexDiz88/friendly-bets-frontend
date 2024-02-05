@@ -27,7 +27,7 @@ import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import User from '../auth/types/User';
 import Team from '../admin/teams/types/Team';
 import BetSummaryInfo from './BetSummaryInfo';
-import { getAllBets, updateBet } from './betsSlice';
+import { updateBet } from './betsSlice';
 
 const statuses = ['WON', 'RETURNED', 'LOST'];
 
