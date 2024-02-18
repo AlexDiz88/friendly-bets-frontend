@@ -3,8 +3,22 @@ import { GppGood, RestorePage, GppBad } from '@mui/icons-material';
 import Bet from './types/Bet';
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import { useEffect, useState } from 'react';
+import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
 
 export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
+	const [matchDayTitle, setMatchDayTitle] = useState<string>('');
+
+	useEffect(() => {
+		setMatchDayTitle(
+			MatchDayTitleTransform({
+				isPlayoff: bet.isPlayoff,
+				matchDay: bet.matchDay,
+				playoffRound: bet.playoffRound,
+			})
+		);
+	}, [bet]);
+
 	const {
 		leagueShortNameEn,
 		leagueShortNameRu,
@@ -17,7 +31,6 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 		gameResult,
 		betStatus,
 		balanceChange,
-		matchDay,
 	} = bet;
 
 	return (
@@ -62,8 +75,7 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 						alt="team_logo"
 						src={pathToLogoImage(leagueShortNameEn)}
 					/>
-					{leagueShortNameRu} -{' '}
-					{matchDay.startsWith('1/') || matchDay === 'Финал' ? matchDay : matchDay + 'й'}
+					{leagueShortNameRu} - {matchDayTitle}
 				</Box>
 			</Box>
 			<Box sx={{ fontSize: '0.9rem' }}>

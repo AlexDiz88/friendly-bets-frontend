@@ -11,7 +11,9 @@ export default interface Bet {
 	leagueShortNameRu: string;
 	createdAt: Date;
 	player: User;
+	isPlayoff: boolean;
 	matchDay: string;
+	playoffRound: string;
 	gameId?: string;
 	gameDate?: string;
 	homeTeam: Team;

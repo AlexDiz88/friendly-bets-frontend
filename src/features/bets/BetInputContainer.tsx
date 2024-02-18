@@ -26,12 +26,13 @@ import { selectActiveSeason } from '../admin/seasons/selectors';
 import { useAppDispatch } from '../../app/hooks';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectUser } from '../auth/selectors';
-import MatchDayForm from '../../components/MatchDayForm';
+import MatchDayForm from './MatchDayForm';
 import League from '../admin/leagues/types/League';
 import User from '../auth/types/User';
 import Team from '../admin/teams/types/Team';
 import BetSummaryInfo from './BetSummaryInfo';
 import { addBet, addEmptyBet } from './betsSlice';
+import MatchDayInfo from './types/MatchDayInfo';
 
 export default function BetInputContainer(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -42,7 +43,11 @@ export default function BetInputContainer(): JSX.Element {
 	const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
 	const [selectedLeague, setSelectedLeague] = useState<League>();
 	const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
-	const [selectedMatchDay, setSelectedMatchDay] = useState<string>('');
+	const [matchDayInfo, setMatchDayInfo] = useState<MatchDayInfo>({
+		isPlayoff: false,
+		matchDay: '1',
+		playoffRound: '',
+	});
 	const [selectedHomeTeam, setSelectedHomeTeam] = useState<Team | undefined>(undefined);
 	const [selectedAwayTeam, setSelectedAwayTeam] = useState<Team | undefined>(undefined);
 	const [selectedEmptyBetSize, setSelectedEmptyBetSize] = useState<string>('10');
@@ -63,6 +68,10 @@ export default function BetInputContainer(): JSX.Element {
 	const [openDialogTwoEmptyBet, setOpenDialogTwoEmptyBet] = useState(false);
 	const [isNot, setIsNot] = useState(false);
 
+	const scrollToBottom = (): void => {
+		window.scrollTo({ top: 100, behavior: 'smooth' });
+	};
+
 	// добавление ставки
 	const handleSaveClick = useCallback(async () => {
 		setOpenDialog(false);
@@ -75,7 +84,9 @@ export default function BetInputContainer(): JSX.Element {
 						seasonId: season.id,
 						leagueId: selectedLeagueId,
 						userId: selectedUser?.id,
-						matchDay: selectedMatchDay,
+						isPlayoff: matchDayInfo.isPlayoff,
+						matchDay: matchDayInfo.matchDay,
+						playoffRound: matchDayInfo.playoffRound,
 						homeTeamId: selectedHomeTeam?.id,
 						awayTeamId: selectedAwayTeam?.id,
 						betTitle: isNot ? `${selectedBetTitle} - нет` : selectedBetTitle,
@@ -120,7 +131,7 @@ export default function BetInputContainer(): JSX.Element {
 		selectedBetTitle,
 		selectedHomeTeam,
 		selectedLeagueId,
-		selectedMatchDay,
+		matchDayInfo,
 		selectedUser,
 	]);
 
@@ -133,7 +144,9 @@ export default function BetInputContainer(): JSX.Element {
 						seasonId: season.id,
 						leagueId: selectedLeagueId,
 						userId: selectedUser.id,
-						matchDay: selectedMatchDay,
+						isPlayoff: matchDayInfo.isPlayoff,
+						matchDay: matchDayInfo.matchDay,
+						playoffRound: matchDayInfo.playoffRound,
 						betSize: Number(selectedEmptyBetSize),
 					},
 				})
@@ -164,7 +177,7 @@ export default function BetInputContainer(): JSX.Element {
 		season,
 		selectedEmptyBetSize,
 		selectedLeagueId,
-		selectedMatchDay,
+		matchDayInfo,
 		selectedUser,
 	]);
 
@@ -182,8 +195,8 @@ export default function BetInputContainer(): JSX.Element {
 		setSelectedLeagueId(league.id);
 	};
 
-	const handleMatchDaySelection = (matchDay: string): void => {
-		setSelectedMatchDay(matchDay);
+	const handleMatchDayInfo = (info: MatchDayInfo): void => {
+		setMatchDayInfo(info);
 	};
 
 	const handleHomeTeamSelection = (homeTeam: Team): void => {
@@ -200,16 +213,10 @@ export default function BetInputContainer(): JSX.Element {
 		setShowSendButton(false);
 	};
 
-	const scrollDown = (): void => {
-		const currentScrollY = window.scrollY || window.pageYOffset;
-		const targetScrollY = currentScrollY + 100;
-		window.scrollTo({ top: targetScrollY, behavior: 'smooth' });
-	};
-
 	const handleBetTitleSelection = (betTitle: string): void => {
 		setSelectedBetTitle(betTitle);
 		setShowSendButton(true);
-		scrollDown();
+		scrollToBottom();
 	};
 
 	const handleOddsSelection = (betOdds: string, betSize: string): void => {
@@ -257,12 +264,6 @@ export default function BetInputContainer(): JSX.Element {
 	useEffect(() => {
 		dispatch(getActiveSeason());
 	}, []);
-
-	useEffect(() => {
-		if (season && selectedLeague) {
-			setSelectedMatchDay(selectedLeague.currentMatchDay || '1');
-		}
-	}, [season, selectedLeague, openSnackbar]);
 
 	// редирект неавторизованных пользователей
 	useEffect(() => {
@@ -333,15 +334,19 @@ export default function BetInputContainer(): JSX.Element {
 					{selectedLeague && (
 						<MatchDayForm
 							key={selectedLeague.id}
-							defaultValue={selectedLeague ? selectedLeague.currentMatchDay : '1'}
-							onMatchDaySelect={handleMatchDaySelection}
+							matchDayInfo={{
+								isPlayoff: false,
+								matchDay: selectedLeague ? selectedLeague.currentMatchDay : '1',
+								playoffRound: '',
+							}}
+							onMatchDayInfo={handleMatchDayInfo}
 						/>
 					)}
 				</Box>
 			)}
 			{!isEmptyBet && (
 				<>
-					{selectedLeagueId && selectedMatchDay && (
+					{selectedLeagueId && matchDayInfo && (
 						<BetInputTeams
 							defaultHomeTeamName=""
 							defaultAwayTeamName=""
@@ -468,7 +473,7 @@ export default function BetInputContainer(): JSX.Element {
 							player={selectedUser}
 							leagueShortNameEn={selectedLeague?.shortNameEn || ''}
 							leagueDisplayNameRu={selectedLeague?.displayNameRu || ''}
-							matchDay={selectedMatchDay}
+							matchDayInfo={matchDayInfo}
 							homeTeam={selectedHomeTeam}
 							awayTeam={selectedAwayTeam}
 							isNot={isNot}

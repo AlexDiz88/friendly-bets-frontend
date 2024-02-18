@@ -13,11 +13,13 @@ import Bet from './types/Bet';
 import BetEditForm from './BetEditForm';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import { deleteBet } from './betsSlice';
+import { removeExtraLabels, transformGameResult } from '../../components/utils/GameScoreValidation';
 
 export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	const dispatch = useAppDispatch();
 	const [showEditForm, setShowEditForm] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+	const [transformedGameResult, setTransformedGameResult] = useState<string>('');
 	const [openSnackbar, setOpenSnackbar] = useState(false);
 	const [snackbarSeverity, setSnackbarSeverity] = useState<
 		'success' | 'error' | 'warning' | 'info'
@@ -48,6 +50,8 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 
 	const handleEditBet = (): void => {
 		setShowEditForm(!showEditForm);
+		const result = transformGameResult(removeExtraLabels(bet.gameResult || ''));
+		setTransformedGameResult(result);
 	};
 
 	const handleDeleteBetOpenDialog = (): void => {
@@ -87,7 +91,11 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 				</Button>
 			</Box>
 			{showEditForm && bet.betStatus !== 'EMPTY' && (
-				<BetEditForm bet={bet} handleEditBet={handleEditBet} />
+				<BetEditForm
+					bet={bet}
+					transformedGameResult={transformedGameResult}
+					handleEditBet={handleEditBet}
+				/>
 			)}
 			{/* // TODO сделать отдельную форму для пустой ставки ? */}
 			{showEditForm && bet.betStatus === 'EMPTY' && (

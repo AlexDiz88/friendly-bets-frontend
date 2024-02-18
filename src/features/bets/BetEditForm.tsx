@@ -17,7 +17,7 @@ import {
 import { Dangerous } from '@mui/icons-material';
 import Bet from './types/Bet';
 import BetInputPlayer from './BetInputPlayer';
-import MatchDayForm from '../../components/MatchDayForm';
+import MatchDayForm from './MatchDayForm';
 import BetInputTeams from './BetInputTeams';
 import BetInputOdds from './BetInputOdds';
 import BetInputTitle from './BetInputTitle';
@@ -28,19 +28,25 @@ import User from '../auth/types/User';
 import Team from '../admin/teams/types/Team';
 import BetSummaryInfo from './BetSummaryInfo';
 import { updateBet } from './betsSlice';
+import MatchDayInfo from './types/MatchDayInfo';
 
 const statuses = ['WON', 'RETURNED', 'LOST'];
 
 export default function BetEditForm({
 	bet,
+	transformedGameResult,
 	handleEditBet,
 }: {
 	bet: Bet;
+	transformedGameResult: string;
 	handleEditBet: (showEditForm: boolean) => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
 	const [updatedUser, setUpdatedUser] = useState<User>(bet.player);
+	const [updatedIsPlayoff, setUpdatedIsPlayoff] = useState<boolean>(bet.isPlayoff);
 	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(bet.matchDay);
+	const [updatedPlayoffRound, setUpdatedPlayoffRound] = useState<string>(bet.playoffRound);
+	// TODO передать/посчитать пробелы в transformedGameResult и передать в MatchdayForm
 	const [updatedHomeTeam, setUpdatedHomeTeam] = useState<Team>(bet.homeTeam);
 	const [updatedAwayTeam, setUpdatedAwayTeam] = useState<Team>(bet.awayTeam);
 	const [updatedBetTitle, setUpdatedBetTitle] = useState<string>(
@@ -51,7 +57,7 @@ export default function BetEditForm({
 	const [updatedBetSize, setUpdatedBetSize] = useState<string>(bet.betSize.toString());
 	const [updatedBetStatus, setUpdatedBetStatus] = useState<string>(bet.betStatus);
 	const [updatedGameResult, setUpdatedGameResult] = useState<string>(bet.gameResult || '');
-	const [inputGameResult, setInputGameResult] = useState<string>(bet.gameResult || '');
+	const [inputGameResult, setInputGameResult] = useState<string>(transformedGameResult);
 	const [betUpdateOpenDialog, setBetUpdateOpenDialog] = useState<boolean>(false);
 	const [openSnackbar, setOpenSnackbar] = useState(false);
 	const [snackbarSeverity, setSnackbarSeverity] = useState<
@@ -63,6 +69,7 @@ export default function BetEditForm({
 	const scrollToTop = (): void => {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
+	// TODO: исправить проблему в редактировании ставки при смене флага плейофф + общая проверка
 
 	const handleBetUpdateSave = useCallback(async () => {
 		setBetUpdateOpenDialog(false);
@@ -75,7 +82,9 @@ export default function BetEditForm({
 					seasonId: bet.seasonId,
 					leagueId: bet.leagueId,
 					userId: updatedUser.id,
+					isPlayoff: updatedIsPlayoff,
 					matchDay: updatedMatchDay,
+					playoffRound: updatedPlayoffRound,
 					homeTeamId: updatedHomeTeam.id,
 					awayTeamId: updatedAwayTeam.id,
 					betTitle: isNot ? `${updatedBetTitle} - нет` : updatedBetTitle,
@@ -111,7 +120,9 @@ export default function BetEditForm({
 		bet.seasonId,
 		bet.leagueId,
 		updatedUser.id,
+		updatedIsPlayoff,
 		updatedMatchDay,
+		updatedPlayoffRound,
 		updatedHomeTeam.id,
 		updatedAwayTeam.id,
 		isNot,
@@ -126,8 +137,11 @@ export default function BetEditForm({
 	const handleUserSelection = (selectedUser: User): void => {
 		setUpdatedUser(selectedUser);
 	};
-	const handleMatchDaySelection = (matchDay: string): void => {
-		setUpdatedMatchDay(matchDay);
+
+	const handleMatchDaySelection = (matchDayInfo: MatchDayInfo): void => {
+		setUpdatedIsPlayoff(matchDayInfo.isPlayoff);
+		setUpdatedMatchDay(matchDayInfo.matchDay);
+		setUpdatedPlayoffRound(matchDayInfo.playoffRound);
 	};
 
 	const handleHomeTeamSelection = (homeTeam: Team): void => {
@@ -157,8 +171,7 @@ export default function BetEditForm({
 	};
 
 	const handleBetStatusSelection = (event: SelectChangeEvent): void => {
-		const status = event.target.value;
-		setUpdatedBetStatus(status);
+		setUpdatedBetStatus(event.target.value);
 	};
 
 	const handleGameResultChange = (value: string): void => {
@@ -198,7 +211,14 @@ export default function BetEditForm({
 			}}
 		>
 			<BetInputPlayer defaultValue={bet.player} onUserSelect={handleUserSelection} />
-			<MatchDayForm defaultValue={bet.matchDay} onMatchDaySelect={handleMatchDaySelection} />
+			<MatchDayForm
+				matchDayInfo={{
+					isPlayoff: bet.isPlayoff,
+					matchDay: bet.matchDay,
+					playoffRound: bet.playoffRound,
+				}}
+				onMatchDayInfo={handleMatchDaySelection}
+			/>
 			<BetInputTeams
 				defaultHomeTeamName={bet.homeTeam.fullTitleRu}
 				defaultAwayTeamName={bet.awayTeam.fullTitleRu}
@@ -344,7 +364,11 @@ export default function BetEditForm({
 							player={updatedUser}
 							leagueShortNameEn={bet.leagueShortNameEn}
 							leagueDisplayNameRu={bet.leagueDisplayNameRu}
-							matchDay={updatedMatchDay}
+							matchDayInfo={{
+								isPlayoff: updatedIsPlayoff,
+								matchDay: updatedMatchDay,
+								playoffRound: updatedPlayoffRound,
+							}}
 							homeTeam={updatedHomeTeam}
 							awayTeam={updatedAwayTeam}
 							isNot={isNot}

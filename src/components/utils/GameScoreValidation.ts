@@ -1,7 +1,31 @@
-function isValidScore(matchScore: string): boolean {
-	const scoreRegex = /^(\d+):(\d+) \((\d+):(\d+)\)$/;
-	// const scoreRegex = /^(\d+):(\d+) \((\d+):(\d+)\) \[(\d+):(\d+)\] (\d+):(\d+)\)$/;
-	// const scoreRegex = /^(\d+):(\d+)\s+(\d+):(\d+)\s+(\d+):(\d+)\s+(\d+):(\d+)$/;
+export const transformGameResult = (str: string): string => {
+	str = str
+		.trim()
+		.replace(/[$!"№%?(){}\]§&+=]/g, '')
+		.replace(/[.*;_/-]/g, ':')
+		.replace(/:+/g, ':')
+		.replace(/[,]/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+	return str;
+};
+
+export const removeExtraLabels = (str: string): string => {
+	str = str
+		.trim()
+		.replace(/[$!"№%?{}§&+=\][(]/g, '')
+		.replace(/доп\.|пен\./g, '');
+	return str;
+};
+
+function isValidScore(matchScore: string, isOvertime: boolean, isPenalty: boolean): boolean {
+	let scoreRegex = /^(\d+):(\d+) \((\d+):(\d+)\)$/;
+	if (isOvertime && !isPenalty) {
+		scoreRegex = /^\d+:\d+ \(\d+:\d+\) \[доп\.\d+:\d+\]$/;
+	}
+	if (isOvertime && isPenalty) {
+		scoreRegex = /^\d+:\d+ \(\d+:\d+\) \[доп\.\d+:\d+, пен\.\d+:\d+\]$/;
+	}
 
 	if (!scoreRegex.test(matchScore)) {
 		return false;
@@ -24,36 +48,36 @@ function isValidScore(matchScore: string): boolean {
 }
 
 // проверка корректности введенного счёта
-export default function GameScoreValidation(
-	inputString: string,
-	isOvertime = false,
-	isPenalty = false
-): string {
+export default function GameScoreValidation(inputString: string): string {
 	if (!inputString) {
 		return '';
 	}
-	let transformedString = inputString;
-	transformedString = transformedString
-		.trim()
-		.replace(/[$!"№%?(){}\]§&=]/g, '')
-		.replace(/[.*;_/-]/g, ':')
-		.replace(/:+/g, ':')
-		.replace(/[,]/g, ' ')
-		.replace(/\s+/g, ' ');
+	let isOvertime = false;
+	let isPenalty = false;
+	let transformedString = transformGameResult(inputString);
+	console.log(transformedString);
+
+	const numberOfSpaces = transformedString.split(' ').length - 1;
+	if (numberOfSpaces === 2) {
+		isOvertime = true;
+	}
+	if (numberOfSpaces === 3) {
+		isOvertime = true;
+		isPenalty = true;
+	}
 
 	if (!isOvertime && !isPenalty) {
 		transformedString = transformedString.replace(/([^\s]+)\s(.+)/, '$1 ($2)');
 	} else if (isOvertime && !isPenalty) {
-		transformedString = transformedString.replace(/([^\s]+)\s{2}([^\s]+)\s(.+)/, '$1 ($2) [$3]');
+		transformedString = transformedString.replace(/([^\s]+)\s([^\s]+)\s(.+)/, '$1 ($2) [доп.$3]');
 	} else if (isOvertime && isPenalty) {
 		transformedString = transformedString.replace(
-			/([^\s]+)\s{3}([^\s]+)\s(.+)/,
-			'$1 ($2) [от $3, пен.$3]'
+			/([^\s]+)\s([^\s]+)\s([^\s]+)\s(.+)/,
+			'$1 ($2) [доп.$3, пен.$4]'
 		);
 	}
-	console.log(transformedString);
 
-	if (!isValidScore(transformedString)) {
+	if (!isValidScore(transformedString, isOvertime, isPenalty)) {
 		return 'Некорректный счёт матча!';
 	}
 
