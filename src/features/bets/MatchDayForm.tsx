@@ -56,19 +56,12 @@ export default function MatchDayForm({
 		'15': '',
 	};
 
-	const handleMatchDayInfo = (): void => {
-		console.log('updatedMatchDay:' + updatedMatchDay);
-		console.log('updatedPlayoffRound:' + updatedPlayoffRound);
-
+	useEffect(() => {
 		onMatchDayInfo({
 			isPlayoff: updatedIsPlayoff,
 			matchDay: updatedMatchDay,
 			playoffRound: updatedPlayoffRound,
 		});
-	};
-
-	useEffect(() => {
-		handleMatchDayInfo();
 	}, [updatedIsPlayoff, updatedMatchDay, updatedPlayoffRound]);
 
 	const handleIncrement = (): void => {
@@ -108,7 +101,7 @@ export default function MatchDayForm({
 
 		const matchDayTransform = flag
 			? playoffMappings[updatedMatchDay] || '1/8 финала'
-			: matchDayInfo.matchDay.includes('1/')
+			: matchDayInfo.matchDay.includes('1/') || matchDayInfo.matchDay === 'Финал'
 			? '1'
 			: matchDayInfo.matchDay;
 

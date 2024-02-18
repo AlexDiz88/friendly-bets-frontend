@@ -193,6 +193,10 @@ export default function BetInputContainer(): JSX.Element {
 	const handleLeagueSelection = (league: League): void => {
 		setSelectedLeague(league);
 		setSelectedLeagueId(league.id);
+		setSelectedHomeTeam(undefined);
+		setSelectedAwayTeam(undefined);
+		setSelectedBetTitle('');
+		setShowSendButton(false);
 	};
 
 	const handleMatchDayInfo = (info: MatchDayInfo): void => {

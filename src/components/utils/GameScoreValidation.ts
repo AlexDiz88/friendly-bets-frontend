@@ -55,7 +55,6 @@ export default function GameScoreValidation(inputString: string): string {
 	let isOvertime = false;
 	let isPenalty = false;
 	let transformedString = transformGameResult(inputString);
-	console.log(transformedString);
 
 	const numberOfSpaces = transformedString.split(' ').length - 1;
 	if (numberOfSpaces === 2) {
