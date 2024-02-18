@@ -2,13 +2,16 @@ import { Avatar, Box, Typography } from '@mui/material';
 import User from '../auth/types/User';
 import Team from '../admin/teams/types/Team';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import MatchDayInfo from './types/MatchDayInfo';
+import { useState } from 'react';
+import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
 
 export default function BetSummaryInfo({
 	message,
 	player,
 	leagueShortNameEn,
 	leagueDisplayNameRu,
-	matchDay,
+	matchDayInfo,
 	homeTeam,
 	awayTeam,
 	isNot,
@@ -22,7 +25,7 @@ export default function BetSummaryInfo({
 	player: User | undefined;
 	leagueShortNameEn: string;
 	leagueDisplayNameRu: string;
-	matchDay: string;
+	matchDayInfo: MatchDayInfo;
 	homeTeam: Team | undefined;
 	awayTeam: Team | undefined;
 	betTitle: string;
@@ -32,6 +35,8 @@ export default function BetSummaryInfo({
 	gameResult: string;
 	betStatus: string;
 }): JSX.Element {
+	const [matchDayTitle] = useState<string>(MatchDayTitleTransform(matchDayInfo));
+
 	return (
 		<>
 			<Typography component="span" sx={{ textAlign: 'center', borderBottom: 1, pb: 0.3 }}>
@@ -51,7 +56,7 @@ export default function BetSummaryInfo({
 					/>
 					{leagueDisplayNameRu} <br />
 				</Box>
-				<b>Тур:</b> {matchDay.startsWith('1/') || matchDay === 'Финал' ? matchDay : matchDay + 'й'}{' '}
+				<b>Тур:</b> {matchDayTitle}
 				<br />
 				<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
 					<b>Хозяева:</b>
