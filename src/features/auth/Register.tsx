@@ -17,6 +17,7 @@ import { VisibilityOff, Visibility } from '@mui/icons-material';
 import { register, login } from './authSlice';
 import { selectRegisterFormError } from './selectors';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { t } from 'i18next';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
 	<MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -92,134 +93,136 @@ function Register(): JSX.Element {
 	};
 
 	return (
-		<Box sx={{ margin: '0 auto', textAlign: 'center', width: '14rem' }}>
-			<FormControl>
-				<Box
-					sx={{
-						fontSize: 32,
-						fontWeight: 600,
-						textAlign: 'center',
-						mt: 3,
-						mb: 2,
-					}}
-				>
-					Register page
-				</Box>
-				<Box sx={{ my: 2 }}>
-					<TextField
-						fullWidth
-						required
-						id="email"
-						label="E-mail"
-						variant="outlined"
-						value={email}
-						onChange={handleNameChange}
-						onKeyDown={handleKeyDown}
-					/>
-				</Box>
-				<Box sx={{ my: 2 }}>
-					<TextField
-						fullWidth
-						required
-						id="password"
-						label="Password"
-						variant="outlined"
-						type={showPassword ? 'text' : 'password'}
-						value={password}
-						onChange={handlePasswordChange}
-						onKeyDown={handleKeyDown}
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position="end">
-									<IconButton
-										aria-label="toggle password visibility"
-										onClick={handleTogglePasswordVisibility}
-										edge="end"
-										tabIndex={-1}
-									>
-										{showPassword ? <VisibilityOff /> : <Visibility />}
-									</IconButton>
-								</InputAdornment>
-							),
+		<>
+			<Box sx={{ margin: '0 auto', textAlign: 'center', width: '14rem' }}>
+				<FormControl>
+					<Box
+						sx={{
+							fontSize: 32,
+							fontWeight: 600,
+							textAlign: 'center',
+							mt: 3,
+							mb: 2,
 						}}
-					/>
-				</Box>
-				<Box sx={{ my: 2 }}>
-					<TextField
-						fullWidth
-						required
-						id="password-repeat"
-						label="Repeat password"
-						variant="outlined"
-						type={showPassword ? 'text' : 'password'}
-						value={passwordRepeat}
-						onChange={handlePasswordRepeatChange}
-						onKeyDown={handleKeyDown}
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position="end">
-									<IconButton
-										aria-label="toggle password visibility"
-										onClick={handleTogglePasswordVisibility}
-										edge="end"
-										tabIndex={-1}
-									>
-										{showPassword ? <VisibilityOff /> : <Visibility />}
-									</IconButton>
-								</InputAdornment>
-							),
-						}}
-					/>
-				</Box>
-				<Box sx={{ my: 2 }}>
-					<Button
-						onClick={handleSubmit}
-						fullWidth
-						sx={{ height: '3rem' }}
-						variant="contained"
-						type="submit"
-						color="info"
-						size="large"
 					>
-						<Typography variant="button" fontWeight="600" fontSize="1.2rem" fontFamily="Exo">
-							Регистрация
-						</Typography>
-					</Button>
-				</Box>
-				<Box sx={{ fontSize: 16, mt: 3 }}>
-					<Link href="#/auth/login">Уже есть аккаунт? Войти</Link>
-				</Box>
+						{t('signUpPage')}
+					</Box>
+					<Box sx={{ my: 2 }}>
+						<TextField
+							fullWidth
+							required
+							id="email"
+							label="E-mail"
+							variant="outlined"
+							value={email}
+							onChange={handleNameChange}
+							onKeyDown={handleKeyDown}
+						/>
+					</Box>
+					<Box sx={{ my: 2 }}>
+						<TextField
+							fullWidth
+							required
+							id="password"
+							label={t('password')}
+							variant="outlined"
+							type={showPassword ? 'text' : 'password'}
+							value={password}
+							onChange={handlePasswordChange}
+							onKeyDown={handleKeyDown}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position="end">
+										<IconButton
+											aria-label="toggle password visibility"
+											onClick={handleTogglePasswordVisibility}
+											edge="end"
+											tabIndex={-1}
+										>
+											{showPassword ? <VisibilityOff /> : <Visibility />}
+										</IconButton>
+									</InputAdornment>
+								),
+							}}
+						/>
+					</Box>
+					<Box sx={{ my: 2 }}>
+						<TextField
+							fullWidth
+							required
+							id="password-repeat"
+							label={t('passwordRepeat')}
+							variant="outlined"
+							type={showPassword ? 'text' : 'password'}
+							value={passwordRepeat}
+							onChange={handlePasswordRepeatChange}
+							onKeyDown={handleKeyDown}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position="end">
+										<IconButton
+											aria-label="toggle password visibility"
+											onClick={handleTogglePasswordVisibility}
+											edge="end"
+											tabIndex={-1}
+										>
+											{showPassword ? <VisibilityOff /> : <Visibility />}
+										</IconButton>
+									</InputAdornment>
+								),
+							}}
+						/>
+					</Box>
+					<Box sx={{ my: 2 }}>
+						<Button
+							onClick={handleSubmit}
+							fullWidth
+							sx={{ height: '3rem' }}
+							variant="contained"
+							type="submit"
+							color="info"
+							size="large"
+						>
+							<Typography variant="button" fontWeight="600" fontSize="1.2rem" fontFamily="Exo">
+								{t('btn.signUp')}
+							</Typography>
+						</Button>
+					</Box>
 
-				<Snackbar
-					anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-					sx={{
-						justifyContent: 'center',
-						mb: 3,
-					}}
-					open={openSuccessSnackbar}
-					autoHideDuration={snackbarDuration}
-					onClose={handleSnackbarClose}
-				>
-					<Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '15rem' }}>
-						Успешная регистрация!
-					</Alert>
-				</Snackbar>
-				<Snackbar
-					anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-					sx={{
-						justifyContent: 'center',
-						mb: 3,
-					}}
-					open={openErrorSnackbar}
-					autoHideDuration={snackbarErrorDuration}
-					onClose={handleSnackbarClose}
-				>
-					<Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '15rem' }}>
-						{error && <Box>{error}</Box>}
-					</Alert>
-				</Snackbar>
-			</FormControl>
-		</Box>
+					<Snackbar
+						anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+						sx={{
+							justifyContent: 'center',
+							mb: 3,
+						}}
+						open={openSuccessSnackbar}
+						autoHideDuration={snackbarDuration}
+						onClose={handleSnackbarClose}
+					>
+						<Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '15rem' }}>
+							{t('msg.signUp.success')}
+						</Alert>
+					</Snackbar>
+					<Snackbar
+						anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+						sx={{
+							justifyContent: 'center',
+							mb: 3,
+						}}
+						open={openErrorSnackbar}
+						autoHideDuration={snackbarErrorDuration}
+						onClose={handleSnackbarClose}
+					>
+						<Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '15rem' }}>
+							{error && <Box>{error}</Box>}
+						</Alert>
+					</Snackbar>
+				</FormControl>
+			</Box>
+			<Box sx={{ fontSize: 16, mt: 3, textAlign: 'center' }}>
+				<Link href="#/auth/login">{t('haveLogin')}</Link>
+			</Box>
+		</>
 	);
 }
 

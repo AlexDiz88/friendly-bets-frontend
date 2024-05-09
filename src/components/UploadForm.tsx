@@ -3,6 +3,7 @@ import { Box, Button, FormControl, InputLabel, TextField, Typography } from '@mu
 import { getProfile } from '../features/auth/api';
 import { selectUser } from '../features/auth/selectors';
 import { useAppSelector } from '../app/hooks';
+import { t } from 'i18next';
 
 interface UploadFormProps {
 	onClose: () => void;
@@ -61,7 +62,9 @@ function UploadForm({ onClose }: UploadFormProps): JSX.Element {
 
 	return (
 		<Box>
-			<Typography sx={{ fontSize: '1.1rem', fontFamily: 'Literata' }}>Изменить фото</Typography>
+			<Typography sx={{ fontSize: '1.1rem', fontFamily: 'Literata' }}>
+				{t('changePhoto')}
+			</Typography>
 			<FormControl component="form" onSubmit={handleSubmit}>
 				<InputLabel htmlFor="imageInput" />
 				<TextField

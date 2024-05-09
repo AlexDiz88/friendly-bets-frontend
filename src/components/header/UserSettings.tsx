@@ -1,37 +1,38 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Tooltip, IconButton, Avatar, Typography, MenuItem, Menu } from '@mui/material';
+import { Box, IconButton, Avatar, Typography, MenuItem, Menu } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectUser } from '../../features/auth/selectors';
 import { getProfile, logout } from '../../features/auth/authSlice';
 import pathToAvatarImage from '../utils/pathToAvatarImage';
 import User from '../../features/auth/types/User';
-
-const adminSettings = [
-	'Внести ставку',
-	'Подвести итоги',
-	'Редактирование ставок',
-	'Админ кабинет',
-	'Выйти',
-];
-const moderSettings = [
-	'Внести ставку',
-	'Подвести итоги',
-	'Редактирование ставок',
-	'Мой профиль',
-	'Моя статистика',
-	'Регистрация на турнир',
-	'Выйти',
-];
-const authSettings = ['Мой профиль', 'Моя статистика', 'Регистрация на турнир', 'Выйти'];
-const notAuthSettings = ['Войти', 'Зарегистрироваться'];
-let settings: string[] = [];
+import { t } from 'i18next';
 
 export default function UserSettings(): JSX.Element {
 	const user: User | undefined = useAppSelector(selectUser);
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
+	const adminSettings = [
+		t('addBet'),
+		t('summaryResults'),
+		t('editBet'),
+		t('adminPanel'),
+		t('logout'),
+	];
+	const moderSettings = [
+		t('addBet'),
+		t('summaryResults'),
+		t('editBet'),
+		t('myProfile'),
+		t('myStats'),
+		t('seasonRegister'),
+		t('logout'),
+	];
+	const authSettings = [t('myProfile'), t('myStats'), t('seasonRegister'), t('logout')];
+	const notAuthSettings = [t('login'), t('signUp')];
+	let settings: string[] = [];
 
 	if (user === undefined) {
 		settings = notAuthSettings;
@@ -113,11 +114,9 @@ export default function UserSettings(): JSX.Element {
 				pl: { xs: 0, md: 3 },
 			}}
 		>
-			<Tooltip title="Open settings">
-				<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-					<Avatar alt="avatar" src={pathToAvatarImage(user?.avatar)} />
-				</IconButton>
-			</Tooltip>
+			<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+				<Avatar alt="avatar" src={pathToAvatarImage(user?.avatar)} />
+			</IconButton>
 			<Menu
 				sx={{ mt: '45px' }}
 				id="menu-appbar"
@@ -134,37 +133,37 @@ export default function UserSettings(): JSX.Element {
 				open={Boolean(anchorElUser)}
 				onClose={handleCloseUserMenu}
 			>
-				{settings.map((setting: string) => (
+				{settings.map((setting: string, index: number) => (
 					<MenuItem
-						key={setting}
+						key={index}
 						onClick={() => {
-							if (setting === 'Мой профиль') {
+							if (setting === t('myProfile')) {
 								handleMyProfile();
-							} else if (setting === 'Моя статистика') {
+							} else if (setting === t('myStats')) {
 								handleMyStatistic();
-							} else if (setting === 'Выйти') {
+							} else if (setting === t('logout')) {
 								handleLogout();
-							} else if (setting === 'Войти') {
+							} else if (setting === t('login')) {
 								handleLogin();
-							} else if (setting === 'Зарегистрироваться') {
+							} else if (setting === t('signUp')) {
 								handleRegister();
-							} else if (setting === 'Внести ставку') {
+							} else if (setting === t('addBet')) {
 								handleBetInput();
-							} else if (setting === 'Удалить ставку') {
+							} else if (setting === t('deleteBet')) {
 								handleBetDelete();
-							} else if (setting === 'Админ кабинет') {
+							} else if (setting === t('adminPanel')) {
 								handleAdminCabinet();
-							} else if (setting === 'Регистрация на турнир') {
+							} else if (setting === t('seasonRegister')) {
 								handleSeasonRegister();
-							} else if (setting === 'Подвести итоги') {
+							} else if (setting === t('summaryResults')) {
 								handleBetsCheck();
-							} else if (setting === 'Редактирование ставок') {
+							} else if (setting === t('editBet')) {
 								handleBetsEditList();
 							}
 							handleCloseUserMenu();
 						}}
 					>
-						<Typography textAlign="center">{setting}</Typography>
+						<Typography>{setting}</Typography>
 					</MenuItem>
 				))}
 			</Menu>

@@ -6,10 +6,13 @@ import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import { getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
 import StatsTable from './StatsTable';
+import { getCompletedBets } from '../features/bets/betsSlice';
+import { selectCompletedBets } from '../features/bets/selectors';
 
 export default function Homepage(): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const playersStats = useAppSelector(selectPlayersStats);
+	const completedBets = useAppSelector(selectCompletedBets);
 	const dispatch = useAppDispatch();
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
@@ -25,6 +28,18 @@ export default function Homepage(): JSX.Element {
 			dispatch(getAllPlayersStatsBySeason(activeSeasonId))
 				.then(() => {
 					setLoading(false);
+					// делаем предзагрузку на главной странице
+					// if (activeSeasonId && completedBets.length < 28) {
+					// 	dispatch(
+					// 		getCompletedBets({
+					// 			seasonId: activeSeasonId,
+					// 			playerId: undefined,
+					// 			leagueId: undefined,
+					// 			pageSize: '28',
+					// 			pageNumber: 0,
+					// 		})
+					// 	);
+					// }
 				})
 				.catch(() => {
 					setLoadingError(true);

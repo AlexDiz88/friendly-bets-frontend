@@ -18,6 +18,10 @@ import NotificationSnackbar from '../utils/NotificationSnackbar';
 import pathToAvatarImage from '../utils/pathToAvatarImage';
 import UploadForm from '../UploadForm';
 import User from '../../features/auth/types/User';
+import { t } from 'i18next';
+import CustomCancelButton from '../custom/btn/CustomCancelButton';
+import CustomButton from '../custom/btn/CustomButton';
+import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
 
 export default function Profile(): JSX.Element {
 	const user: User | undefined = useAppSelector(selectUser);
@@ -205,7 +209,7 @@ export default function Profile(): JSX.Element {
 				mb: 4,
 			}}
 		>
-			<Typography sx={{ borderBottom: 2, pb: 1, mx: 2, px: 7 }}>Личный кабинет</Typography>
+			<Typography sx={{ borderBottom: 2, pb: 1, mx: 2, px: 7 }}>{t('personalAccount')}</Typography>
 			<Box sx={{ p: 2 }}>
 				<Avatar
 					sx={{ mr: 1, height: '7rem', width: '7rem', border: 1 }}
@@ -213,22 +217,9 @@ export default function Profile(): JSX.Element {
 					src={pathToAvatarImage(user.avatar)}
 				/>
 			</Box>
-
+			{/* TODO: загрузка фото */}
 			{showUploadForm && (
-				<Button
-					sx={{ height: '1.8rem', px: 1 }}
-					variant="contained"
-					onClick={() => setShowUploadForm(true)}
-				>
-					<Typography
-						variant="button"
-						fontWeight="600"
-						fontSize="0.9rem"
-						fontFamily="Shantell Sans"
-					>
-						Изменить фото
-					</Typography>
-				</Button>
+				<CustomButton onClick={() => setShowUploadForm(true)} buttonText={t('changePhoto')} />
 			)}
 			{showUploadForm && <UploadForm onClose={() => setShowUploadForm(false)} />}
 
@@ -243,36 +234,10 @@ export default function Profile(): JSX.Element {
 						onChange={(e) => setNewEmail(e.target.value)}
 						sx={{ mr: 1, mb: 1.5 }}
 					/>
-					<Button
-						sx={{ height: '1.8rem', px: 1, mr: 1 }}
-						variant="contained"
-						color="error"
-						onClick={handleCancelEmail}
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button
-						onClick={handleSaveEmail}
-						sx={{ height: '1.8rem', px: 1 }}
-						variant="contained"
-						color="success"
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Изменить
-						</Typography>
-					</Button>
+					<Box>
+						<CustomCancelButton onClick={handleCancelEmail} />
+						<CustomSuccessButton onClick={handleSaveEmail} buttonText={t('btnText.change')} />
+					</Box>
 				</Box>
 			) : (
 				<Box sx={{ textAlign: 'center', mx: 2, mt: 1, mb: 2 }}>
@@ -283,7 +248,7 @@ export default function Profile(): JSX.Element {
 							fontSize="0.9rem"
 							fontFamily="Shantell Sans"
 						>
-							Изменить Email
+							{t('changeEmail')}
 						</Typography>
 					</Button>
 				</Box>
@@ -296,7 +261,7 @@ export default function Profile(): JSX.Element {
 						fullWidth
 						required
 						id="current-password"
-						label="Текущий пароль"
+						label={t('currentPassword')}
 						type={showCurrentPassword ? 'text' : 'password'}
 						value={currentPassword}
 						onChange={(e) => setCurrentPassword(e.target.value)}
@@ -321,7 +286,7 @@ export default function Profile(): JSX.Element {
 						fullWidth
 						required
 						id="new-password"
-						label="Новый пароль"
+						label={t('newPassword')}
 						type={showNewPassword ? 'text' : 'password'}
 						value={newPassword}
 						onChange={(e) => setNewPassword(e.target.value)}
@@ -346,7 +311,7 @@ export default function Profile(): JSX.Element {
 						fullWidth
 						required
 						id="new-password-repeat"
-						label="Новый пароль (еще раз)"
+						label={t('newPasswordRepeat')}
 						type={showNewPassword ? 'text' : 'password'}
 						value={newPasswordRepeat}
 						onChange={(e) => setNewPasswordRepeat(e.target.value)}
@@ -366,54 +331,19 @@ export default function Profile(): JSX.Element {
 							),
 						}}
 					/>
-					<Button
-						sx={{ height: '1.8rem', px: 1, mr: 1 }}
-						variant="contained"
-						color="error"
-						onClick={handleCancelPassword}
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button
-						onClick={handleSavePassword}
-						sx={{ height: '1.8rem', px: 1 }}
-						variant="contained"
-						color="success"
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Изменить
-						</Typography>
-					</Button>
+					<Box>
+						<CustomCancelButton onClick={handleCancelPassword} />
+						<CustomSuccessButton onClick={handleSavePassword} buttonText={t('btnText.change')} />
+					</Box>
 				</Box>
 			) : (
 				<Box sx={{ textAlign: 'center', mx: 2, mt: 1, mb: 2 }}>
-					<Button sx={{ height: '1.8rem', px: 2 }} variant="contained" onClick={handleEditPassword}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Изменить пароль
-						</Typography>
-					</Button>
+					<CustomButton onClick={handleEditPassword} buttonText={t('changePassword')} />
 				</Box>
 			)}
 
 			<Typography sx={{ textAlign: 'center', pt: 1, mx: 2 }}>
-				<b>Имя:</b> {user?.username}
+				<b>{t('username')}:</b> {user?.username}
 			</Typography>
 			{showNameInput ? (
 				<Box sx={{ textAlign: 'center', mx: 2, mt: 1, mb: 2 }}>
@@ -424,59 +354,22 @@ export default function Profile(): JSX.Element {
 						sx={{ mr: 1, mb: 1.5 }}
 					/>
 
-					<Button
-						sx={{ height: '1.8rem', px: 1, mr: 1 }}
-						variant="contained"
-						color="error"
-						onClick={handleCancelName}
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button
-						onClick={handleSaveName}
-						sx={{ height: '1.8rem', px: 1 }}
-						variant="contained"
-						color="success"
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Изменить
-						</Typography>
-					</Button>
+					<Box>
+						<CustomCancelButton onClick={handleCancelName} />
+						<CustomSuccessButton onClick={handleSaveName} buttonText={t('btnText.change')} />
+					</Box>
 				</Box>
 			) : (
 				<Box sx={{ textAlign: 'left', mx: 2, mt: 1, mb: 2 }}>
-					<Button sx={{ height: '1.8rem', px: 2 }} variant="contained" onClick={handleEditName}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Изменить имя
-						</Typography>
-					</Button>
+					<CustomButton onClick={handleEditName} buttonText={t('changeUsername')} />
 				</Box>
 			)}
-			{/* <Box sx={{ mt: 3 }}>
-        <Typography sx={{ pb: 1, px: 7, mx: 2, borderBottom: 2 }}>
-          Текущий сезон:
-        </Typography>
-        <Typography sx={{ mt: 1, mx: 2, fontWeight: 600, color: 'brown' }}>
-          Контент в разработке
-        </Typography>
-      </Box> */}
+			<Box sx={{ mt: 3 }}>
+				<Typography sx={{ pb: 1, px: 7, mx: 2, borderBottom: 2 }}>{t('actualSeason')}:</Typography>
+				<Typography sx={{ mt: 1, mx: 2, fontWeight: 600, color: 'brown' }}>
+					{t('contentInProgress')}
+				</Typography>
+			</Box>
 			<Box textAlign="center">
 				<NotificationSnackbar
 					open={openSnackbar}

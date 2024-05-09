@@ -22,7 +22,7 @@ export default function LeaguesStatsPage(): JSX.Element {
 	const statsByLeagues: LeagueStats[] = useAppSelector(selectPlayersStatsByLeagues);
 	const dispatch = useAppDispatch();
 	const [selectedLeague, setSelectedLeague] = useState<LeagueStats | undefined>(undefined);
-	const [selectedLeagueName, setSelectedLeagueName] = useState<string>('Выберите лигу');
+	const [selectedLeagueName, setSelectedLeagueName] = useState<string>('');
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 

@@ -9,6 +9,7 @@ import App from './App';
 import './index.css';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import theme from './theme/theme';
+import './i18n';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<>
