@@ -26,6 +26,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { changeSeasonStatus } from './seasonsSlice';
 import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
 import AddLeagueInSeason from './AddLeagueInSeason';
+import { t } from 'i18next';
 
 export default function SeasonInfo({
 	data: { id, title, status, leagues },
@@ -152,7 +153,7 @@ export default function SeasonInfo({
 								fontSize="0.9rem"
 								fontFamily="Shantell Sans"
 							>
-								Изменить статус
+								{t('changeStatus')}
 							</Typography>
 						</Button>
 						<Button

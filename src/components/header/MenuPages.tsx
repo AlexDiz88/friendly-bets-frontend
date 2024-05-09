@@ -6,25 +6,55 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
+import { KeyboardArrowRight } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import { Avatar } from '@mui/material';
 
-const pages = ['Новости', 'По лигам', 'По командам', 'По месяцам', 'Правила'];
+interface Language {
+	code: string;
+	name: string;
+	img: string;
+}
 
 export default function MenuPages(): JSX.Element {
 	const navigate = useNavigate();
+	const { t, i18n } = useTranslation();
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+	const [anchorElLang, setAnchorElLang] = useState<null | HTMLElement>(null);
+
+	const pages = [
+		t('news'),
+		t('byLeagues'),
+		t('byTeams'),
+		t('byMatchDay'),
+		t('byMonths'),
+		t('rules'),
+	];
+	const languages: Language[] = [
+		{ code: 'en', name: 'English', img: 'english.png' },
+		{ code: 'de', name: 'Deutsch', img: 'german.png' },
+		{ code: 'ru', name: 'Русский', img: 'russian.png' },
+	];
+
+	// window.onload = () => {
+	// 	const selectedLanguage = localStorage.getItem('selectedLanguage');
+	// 	if (selectedLanguage) {
+	// 		i18n.changeLanguage(selectedLanguage);
+	// 	}
+	// };
 
 	const handleNavigate = (page: string): void => {
-		if (page === 'Новости') {
+		if (page === t('news')) {
 			navigate('/news');
-		} else if (page === 'По турам') {
+		} else if (page === t('byMatchDay')) {
 			navigate('/in-progress');
-		} else if (page === 'По лигам') {
+		} else if (page === t('byLeagues')) {
 			navigate('/stats/leagues');
-		} else if (page === 'По командам') {
+		} else if (page === t('byTeams')) {
 			navigate('/stats/teams');
-		} else if (page === 'По месяцам') {
+		} else if (page === t('byMonths')) {
 			navigate('/in-progress');
-		} else if (page === 'Правила') {
+		} else if (page === t('rules')) {
 			navigate('/in-progress');
 		}
 	};
@@ -35,6 +65,22 @@ export default function MenuPages(): JSX.Element {
 
 	const handleCloseNavMenu = (): void => {
 		setAnchorElNav(null);
+	};
+
+	const handleOpenLangMenu = (event: React.MouseEvent<HTMLElement>): void => {
+		setAnchorElLang(event.currentTarget);
+	};
+
+	const handleCloseLangMenu = (): void => {
+		setAnchorElLang(null);
+	};
+
+	const handleLanguageSelect = (lang: Language): void => {
+		// localStorage.setItem('selectedLanguage', lang.code);
+		i18n.changeLanguage(lang.code);
+		handleCloseLangMenu();
+		handleCloseNavMenu();
+		// window.location.reload();
 	};
 
 	const scrollToTop = (): void => {
@@ -59,12 +105,12 @@ export default function MenuPages(): JSX.Element {
 					anchorEl={anchorElNav}
 					anchorOrigin={{
 						vertical: 'bottom',
-						horizontal: 'left',
+						horizontal: 'right',
 					}}
 					keepMounted
 					transformOrigin={{
 						vertical: 'top',
-						horizontal: 'left',
+						horizontal: 'right',
 					}}
 					open={Boolean(anchorElNav)}
 					onClose={handleCloseNavMenu}
@@ -80,11 +126,44 @@ export default function MenuPages(): JSX.Element {
 								handleNavigate(page);
 							}}
 						>
-							<Typography fontFamily="Exo 2" textAlign="center">
-								{page}
-							</Typography>
+							<Typography>{page}</Typography>
 						</MenuItem>
 					))}
+					<MenuItem
+						onClick={handleOpenLangMenu}
+						sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+					>
+						<Typography>{t('language')}</Typography>
+						<KeyboardArrowRight />
+					</MenuItem>
+					<Menu
+						id="language-menu"
+						anchorEl={anchorElLang}
+						anchorOrigin={{
+							vertical: 'top',
+							horizontal: 'right',
+						}}
+						transformOrigin={{
+							vertical: 'top',
+							horizontal: 'left',
+						}}
+						open={Boolean(anchorElLang)}
+						onClose={handleCloseLangMenu}
+					>
+						{languages.map((lang) => (
+							<MenuItem key={lang.code} onClick={() => handleLanguageSelect(lang)}>
+								<Box sx={{ mb: 0.8, ml: 0.5, display: 'flex', alignItems: 'center' }}>
+									<Avatar
+										sx={{ mr: 0.5, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
+										alt="language_flag"
+										// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+										src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${lang.img}`}
+									/>
+									{lang.name}
+								</Box>
+							</MenuItem>
+						))}
+					</Menu>
 				</Menu>
 			</Box>
 			<Box
@@ -103,7 +182,6 @@ export default function MenuPages(): JSX.Element {
 						px: { xs: 0, md: 0.5 },
 						my: 2,
 						mx: 1,
-						fontFamily: 'Exo 2',
 						fontWeight: 600,
 						fontSize: '1rem',
 						color: 'inherit',
@@ -113,7 +191,7 @@ export default function MenuPages(): JSX.Element {
 						},
 					}}
 				>
-					Таблица
+					{t('table')}
 				</Typography>
 				<Typography
 					variant="h5"
@@ -125,7 +203,6 @@ export default function MenuPages(): JSX.Element {
 						px: { xs: 0, md: 0.5 },
 						my: 2,
 						mx: 1,
-						fontFamily: 'Exo 2',
 						fontWeight: 600,
 						fontSize: '1rem',
 						color: 'inherit',
@@ -135,7 +212,7 @@ export default function MenuPages(): JSX.Element {
 						},
 					}}
 				>
-					Ставки
+					{t('bets')}
 				</Typography>
 				<Box
 					sx={{

@@ -29,6 +29,7 @@ import Team from '../admin/teams/types/Team';
 import BetSummaryInfo from './BetSummaryInfo';
 import { updateBet } from './betsSlice';
 import MatchDayInfo from './types/MatchDayInfo';
+import { t } from 'i18next';
 
 const statuses = ['WON', 'RETURNED', 'LOST'];
 
@@ -360,7 +361,7 @@ export default function BetEditForm({
 				<DialogContent>
 					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
 						<BetSummaryInfo
-							message="Изменить ставку"
+							message={t('changeBet')}
 							player={updatedUser}
 							leagueShortNameEn={bet.leagueShortNameEn}
 							leagueDisplayNameRu={bet.leagueDisplayNameRu}

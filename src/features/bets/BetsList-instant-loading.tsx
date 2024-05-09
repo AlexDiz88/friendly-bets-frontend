@@ -66,6 +66,7 @@ export default function BetsList(): JSX.Element {
 	const openedBets = useAppSelector(selectOpenedBets);
 	const completedBets = useAppSelector(selectCompletedBets);
 	const [filteredBets, setFilteredBets] = useState(openedBets);
+	const [completedBetsList, setCompletedBetsList] = useState(completedBets);
 	const totalPages = useAppSelector(selectTotalPages);
 	const dispatch = useAppDispatch();
 	const [value, setValue] = useState(0);
@@ -194,26 +195,49 @@ export default function BetsList(): JSX.Element {
 				pageSize = '4';
 			}
 			if (activeSeasonId) {
-				dispatch(
-					getCompletedBets({
-						seasonId: activeSeasonId,
-						playerId: selectedPlayerId,
-						leagueId: selectedLeagueId,
-						pageSize,
-						pageNumber: page - 1,
-					})
-				)
-					.then(() => {
-						setLoading(false);
-					})
-					.catch(() => {
-						setLoadingError(true);
-						setLoading(false);
-					});
+				if (completedBets === undefined || completedBets.length === 0) {
+					dispatch(
+						getCompletedBets({
+							seasonId: activeSeasonId,
+							playerId: selectedPlayerId,
+							leagueId: selectedLeagueId,
+							pageSize,
+							pageNumber: page - 1,
+						})
+					)
+						.then(() => {
+							setLoading(false);
+						})
+						.catch(() => {
+							setLoadingError(true);
+							setLoading(false);
+						});
+				} else {
+					setLoading(false);
+				}
 			}
-			setLoading(true);
+			if (completedBets.length === 0) {
+				setLoading(true);
+			} else {
+				setLoading(false);
+				if (activeSeasonId) {
+					dispatch(
+						getCompletedBets({
+							seasonId: activeSeasonId,
+							playerId: selectedPlayerId,
+							leagueId: selectedLeagueId,
+							pageSize,
+							pageNumber: page - 1,
+						})
+					);
+				}
+			}
 		}
 	}, [dispatch, value, selectedPlayerName, selectedLeagueName, activeSeasonId, page]);
+
+	useEffect(() => {
+		setCompletedBetsList(completedBets);
+	}, [completedBets]);
 
 	return (
 		<Box>
@@ -405,10 +429,10 @@ export default function BetsList(): JSX.Element {
 													alignItems: 'center',
 												}}
 											>
-												{completedBets &&
-													Array.isArray(completedBets) &&
-													completedBets.length > 0 &&
-													completedBets.map((bet) => (
+												{completedBetsList &&
+													Array.isArray(completedBetsList) &&
+													completedBetsList.length > 0 &&
+													completedBetsList.map((bet) => (
 														<Box key={bet.id}>
 															{bet.betStatus === 'EMPTY' ? (
 																<EmptyBetCard bet={bet} />

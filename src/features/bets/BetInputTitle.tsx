@@ -1553,6 +1553,39 @@ export default function BetInputTitle({
 							))}
 						</AccordionDetails>
 					</Accordion>
+
+					{/* События плей-офф */}
+					<Accordion
+						expanded={expandedNestedAccordion === 'События плей-офф'}
+						onChange={handleNestedAccordionChange('События плей-офф')}
+					>
+						<AccordionSummary
+							expandIcon={<ExpandMoreIcon />}
+							aria-controls="panel-special-playoff-content"
+							id="panel-special-playoff-header"
+						>
+							<Typography>События плей-офф</Typography>
+						</AccordionSummary>
+						<AccordionDetails>
+							{allBetsTitles.special.playoff.map((b) => (
+								<Button
+									key={b}
+									sx={{
+										px: 0.5,
+										m: 0.5,
+										bgcolor: '#525252',
+										height: '3rem',
+										width: '8.5rem',
+										textTransform: 'none',
+									}}
+									variant="contained"
+									onClick={() => handleButtonClick(b)}
+								>
+									<Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>{b}</Typography>
+								</Button>
+							))}
+						</AccordionDetails>
+					</Accordion>
 				</AccordionDetails>
 			</Accordion>
 		</Box>
