@@ -15,14 +15,14 @@ export default function UserSettings(): JSX.Element {
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
 	const adminSettings = [
-		t('addBet'),
+		t('inputBet'),
 		t('summaryResults'),
 		t('editBet'),
 		t('adminPanel'),
 		t('logout'),
 	];
 	const moderSettings = [
-		t('addBet'),
+		t('inputBet'),
 		t('summaryResults'),
 		t('editBet'),
 		t('myProfile'),
@@ -147,7 +147,7 @@ export default function UserSettings(): JSX.Element {
 								handleLogin();
 							} else if (setting === t('signUp')) {
 								handleRegister();
-							} else if (setting === t('addBet')) {
+							} else if (setting === t('inputBet')) {
 								handleBetInput();
 							} else if (setting === t('deleteBet')) {
 								handleBetDelete();

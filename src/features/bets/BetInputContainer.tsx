@@ -33,6 +33,9 @@ import Team from '../admin/teams/types/Team';
 import BetSummaryInfo from './BetSummaryInfo';
 import { addBet, addEmptyBet } from './betsSlice';
 import MatchDayInfo from './types/MatchDayInfo';
+import { t } from 'i18next';
+import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
+import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 
 export default function BetInputContainer(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -321,10 +324,10 @@ export default function BetInputContainer(): JSX.Element {
 			}}
 		>
 			<Typography sx={{ textAlign: 'center', borderBottom: 2, pb: 1, mx: 2 }}>
-				Добавление ставок
+				{t('addBets')}
 			</Typography>
 			<Typography sx={{ textAlign: 'left', mx: 1, mt: 1, fontWeight: '600' }}>
-				Пустая ставка?
+				{t('emptyBet')}?
 				<Switch
 					checked={isEmptyBet}
 					onChange={handleEmptyBet}
@@ -423,7 +426,7 @@ export default function BetInputContainer(): JSX.Element {
 								fontSize="0.9rem"
 								fontFamily="Shantell Sans"
 							>
-								Отправить ставку
+								{t('sendBet')}
 							</Typography>
 						</Button>
 					)}
@@ -431,8 +434,16 @@ export default function BetInputContainer(): JSX.Element {
 			)}
 			{selectedLeagueId && isEmptyBet && (
 				<>
-					<Box sx={{ mt: 2, display: 'flex', alignItems: 'center', textAlign: 'left' }}>
-						<Typography sx={{ ml: 2, mr: 0.5, fontWeight: '600' }}>Сумма</Typography>
+					<Box
+						sx={{
+							mt: 2,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							textAlign: 'left',
+						}}
+					>
+						<Typography sx={{ ml: 2, mr: 0.5, fontWeight: '600' }}> {t('amount')}</Typography>
 						<Box component="form" autoComplete="off" sx={{ width: '3rem', pt: 0 }}>
 							<TextField size="small" value={selectedEmptyBetSize} onChange={handleEmptyBetSize} />
 						</Box>
@@ -449,7 +460,7 @@ export default function BetInputContainer(): JSX.Element {
 							fontSize="0.9rem"
 							fontFamily="Shantell Sans"
 						>
-							Отправить пустую ставку
+							{t('sendEmptyBet')}
 						</Typography>
 					</Button>
 					<Button
@@ -464,16 +475,16 @@ export default function BetInputContainer(): JSX.Element {
 							fontSize="0.8rem"
 							fontFamily="Shantell Sans"
 						>
-							Отправить две пустые ставки
+							{t('sendTwoEmptyBet')}
 						</Typography>
 					</Button>
 				</>
 			)}
 			<Dialog open={openDialog} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontSize: '1rem' }}>
+					<DialogContentText sx={{ fontSize: '1rem', width: '14rem' }}>
 						<BetSummaryInfo
-							message="Добавить ставку"
+							message={t('addBet')}
 							player={selectedUser}
 							leagueShortNameEn={selectedLeague?.shortNameEn || ''}
 							leagueDisplayNameRu={selectedLeague?.displayNameRu || ''}
@@ -489,88 +500,43 @@ export default function BetInputContainer(): JSX.Element {
 						/>
 					</DialogContentText>
 				</DialogContent>
-				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="contained" color="error" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button variant="contained" color="success" onClick={handleSaveClick} autoFocus>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Подтвердить
-						</Typography>
-					</Button>
-				</DialogActions>
+				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+					<DialogActions>
+						<CustomCancelButton onClick={handleCloseDialog} />
+						<CustomSuccessButton onClick={handleSaveClick} buttonText={t('btnText.accept')} />
+					</DialogActions>
+				</Box>
 			</Dialog>
 
 			<Dialog open={openDialogEmptyBet} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						Добавить пустую ставку?
+					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>
+						{t('addEmptyBet')}
 					</DialogContentText>
 				</DialogContent>
-				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="contained" color="error" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button variant="contained" color="success" onClick={handleSaveEmptyBetClick} autoFocus>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Подтвердить
-						</Typography>
-					</Button>
-				</DialogActions>
+				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+					<DialogActions>
+						<CustomCancelButton onClick={handleCloseDialog} />
+						<CustomSuccessButton
+							onClick={handleSaveEmptyBetClick}
+							buttonText={t('btnText.accept')}
+						/>
+					</DialogActions>
+				</Box>
 			</Dialog>
 
 			<Dialog open={openDialogTwoEmptyBet} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						Добавить 2 пустые ставки?
+					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>
+						{t('addTwoEmptyBet')}
 					</DialogContentText>
 				</DialogContent>
-				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="contained" color="error" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button variant="contained" color="success" onClick={handleSaveTwoEmptyBet} autoFocus>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Подтвердить
-						</Typography>
-					</Button>
-				</DialogActions>
+				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+					<DialogActions>
+						<CustomCancelButton onClick={handleCloseDialog} />
+						<CustomSuccessButton onClick={handleSaveTwoEmptyBet} buttonText={t('btnText.accept')} />
+					</DialogActions>
+				</Box>
 			</Dialog>
 
 			<Box textAlign="center">

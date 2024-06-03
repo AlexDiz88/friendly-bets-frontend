@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import { t } from 'i18next';
 
 export default function BetInputTeams({
 	defaultHomeTeamName,
@@ -67,7 +68,7 @@ export default function BetInputTeams({
 	return (
 		<>
 			<Box sx={{ textAlign: 'left' }}>
-				<Typography sx={{ mx: 1, fontWeight: '600' }}>Хозяева</Typography>
+				<Typography sx={{ mx: 1, fontWeight: '600' }}>{t('homeTeam')}</Typography>
 				<Select
 					autoWidth
 					size="small"
@@ -83,8 +84,12 @@ export default function BetInputTeams({
 							.sort((a, b) =>
 								a.fullTitleRu && b.fullTitleRu ? a.fullTitleRu.localeCompare(b.fullTitleRu) : 0
 							)
-							.map((t) => (
-								<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={t.id} value={t.fullTitleRu}>
+							.map((team) => (
+								<MenuItem
+									sx={{ mx: 0, minWidth: '14.5rem' }}
+									key={team.id}
+									value={team.fullTitleRu}
+								>
 									<div
 										style={{
 											display: 'flex',
@@ -94,17 +99,17 @@ export default function BetInputTeams({
 										<Avatar
 											sx={{ width: 27, height: 27 }}
 											alt="team_logo"
-											src={pathToLogoImage(t.fullTitleEn)}
+											src={pathToLogoImage(team.fullTitleEn)}
 										/>
 
-										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t.fullTitleRu}</Typography>
+										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{team.fullTitleRu}</Typography>
 									</div>
 								</MenuItem>
 							))}
 				</Select>
 			</Box>
 			<Box sx={{ textAlign: 'left' }}>
-				<Typography sx={{ mx: 1, fontWeight: '600' }}>Гости</Typography>
+				<Typography sx={{ mx: 1, fontWeight: '600' }}>{t('awayTeam')}</Typography>
 				<Select
 					autoWidth
 					size="small"
@@ -120,8 +125,12 @@ export default function BetInputTeams({
 							.sort((a, b) =>
 								a.fullTitleRu && b.fullTitleRu ? a.fullTitleRu.localeCompare(b.fullTitleRu) : 0
 							)
-							.map((t) => (
-								<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={t.id} value={t.fullTitleRu}>
+							.map((team) => (
+								<MenuItem
+									sx={{ mx: 0, minWidth: '14.5rem' }}
+									key={team.id}
+									value={team.fullTitleRu}
+								>
 									<div
 										style={{
 											display: 'flex',
@@ -131,10 +140,10 @@ export default function BetInputTeams({
 										<Avatar
 											sx={{ width: 27, height: 27 }}
 											alt="team_logo"
-											src={pathToLogoImage(t.fullTitleEn)}
+											src={pathToLogoImage(team.fullTitleEn)}
 										/>
 
-										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t.fullTitleRu}</Typography>
+										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{team.fullTitleRu}</Typography>
 									</div>
 								</MenuItem>
 							))}

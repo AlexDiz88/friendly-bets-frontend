@@ -4,6 +4,7 @@ import { selectActiveSeason } from '../admin/seasons/selectors';
 import User from '../auth/types/User';
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import { useAppSelector } from '../../app/hooks';
+import { t } from 'i18next';
 
 export default function BetInputPlayer({
 	defaultValue,
@@ -27,7 +28,7 @@ export default function BetInputPlayer({
 
 	return (
 		<Box sx={{ textAlign: 'left' }}>
-			<Typography sx={{ mx: 1, mt: 1, fontWeight: '600' }}>Участник</Typography>
+			<Typography sx={{ mx: 1, mt: 1, fontWeight: '600' }}>{t('player')}</Typography>
 			<Select
 				autoWidth
 				size="small"

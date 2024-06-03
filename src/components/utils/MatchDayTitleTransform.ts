@@ -3,7 +3,9 @@ import MatchDayInfo from '../../features/bets/types/MatchDayInfo';
 export default function MatchDayTitleTransform(matchDayInfo: MatchDayInfo): string {
 	let result = matchDayInfo.matchDay;
 	if (!matchDayInfo.isPlayoff) {
-		return result + 'й';
+		// оптимизировать под разные языки?
+		// return result + 'й';
+		return result;
 	}
 	if (matchDayInfo.isPlayoff && matchDayInfo.matchDay === 'Финал') {
 		return result;

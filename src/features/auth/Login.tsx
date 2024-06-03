@@ -95,10 +95,20 @@ function Login(): JSX.Element {
 
 	return (
 		<>
-			<Box sx={{ margin: '0 auto', textAlign: 'center', width: '14rem' }}>
+			<Box
+				sx={{
+					margin: '0 auto',
+					textAlign: 'center',
+					width: '14rem',
+					display: 'flex',
+					justifyContent: 'center',
+				}}
+			>
 				<FormControl>
 					<Box
 						sx={{
+							display: 'flex',
+							justifyContent: 'center',
 							fontSize: 30,
 							fontWeight: 600,
 							textAlign: 'center',
@@ -125,7 +135,7 @@ function Login(): JSX.Element {
 							fullWidth
 							required
 							id="password"
-							label="Password"
+							label={t('password')}
 							variant="outlined"
 							type={showPassword ? 'text' : 'password'}
 							value={password}
@@ -157,7 +167,7 @@ function Login(): JSX.Element {
 							color="info"
 							size="large"
 						>
-							<Typography variant="button" fontWeight="600" fontSize="1.2rem" fontFamily="Exo">
+							<Typography variant="button" fontWeight="600" fontSize="1.1rem" fontFamily="Exo">
 								{t('login')}
 							</Typography>
 						</Button>
