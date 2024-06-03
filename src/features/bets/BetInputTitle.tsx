@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import allBetsTitles from './allBetsTitles';
+import { t } from 'i18next';
 
 export default function BetInputTitle({
 	onBetTitleSelect,
@@ -36,7 +37,9 @@ export default function BetInputTitle({
 
 	return (
 		<Box sx={{ mt: 1.5, textAlign: 'center', maxWidth: '20rem' }}>
-			<Typography sx={{ textAlign: 'left', mx: 1, mt: 1, fontWeight: '600' }}>Ставка</Typography>
+			<Typography sx={{ textAlign: 'left', mx: 1, mt: 1, fontWeight: '600' }}>
+				{t('bet')}
+			</Typography>
 			{/* Популярные */}
 			<Accordion
 				expanded={expandedAccordion === 'Популярные'}

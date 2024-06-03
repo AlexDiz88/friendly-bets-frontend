@@ -5,6 +5,7 @@ import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import MatchDayInfo from './types/MatchDayInfo';
 import { useState } from 'react';
 import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
+import { t } from 'i18next';
 
 export default function BetSummaryInfo({
 	message,
@@ -44,9 +45,9 @@ export default function BetSummaryInfo({
 				<br />
 			</Typography>
 			<Typography component="span" sx={{ fontSize: '0.9rem' }}>
-				<b>Участник:</b> {player?.username} <br />
+				<b>{t('player')}:</b> {player?.username} <br />
 				<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-					<b>Лига:</b>
+					<b>{t('league')}:</b>
 					<Avatar
 						component="span"
 						variant="square"
@@ -56,10 +57,10 @@ export default function BetSummaryInfo({
 					/>
 					{leagueDisplayNameRu} <br />
 				</Box>
-				<b>Тур:</b> {matchDayTitle}
+				<b>{t('matchday')}:</b> {matchDayTitle}
 				<br />
 				<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-					<b>Хозяева:</b>
+					<b>{t('homeTeam')}:</b>
 					<Avatar
 						component="span"
 						variant="square"
@@ -70,7 +71,7 @@ export default function BetSummaryInfo({
 					{homeTeam?.fullTitleRu} <br />
 				</Box>
 				<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-					<b>Гости:</b>
+					<b>{t('awayTeam')}:</b>
 					<Avatar
 						component="span"
 						variant="square"
@@ -80,15 +81,15 @@ export default function BetSummaryInfo({
 					/>
 					{awayTeam?.fullTitleRu} <br />
 				</Box>
-				<b>Ставка:</b> {betTitle}
+				<b>{t('bet')}:</b> {betTitle}
 				{isNot ? ' - нет' : ''} <br />
-				<b>Кэф:</b> {betOdds} <br />
-				<b>Сумма:</b> {betSize} <br />
+				<b>{t('coef')}:</b> {betOdds} <br />
+				<b>{t('amount')}:</b> {betSize} <br />
 				{betStatus && betStatus !== 'OPENED' && (
 					<>
-						<b>Статус ставки:</b> {betStatus}
+						<b>{t('betStatus')}:</b> {betStatus}
 						<br />
-						<b>Итовый счёт: </b>
+						<b>{t('finalScore')}: </b>
 						<Typography
 							component="span"
 							sx={{

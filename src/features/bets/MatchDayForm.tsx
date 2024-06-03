@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { RemoveCircle, AddCircle } from '@mui/icons-material';
 import MatchDayInfo from './types/MatchDayInfo';
+import { t } from 'i18next';
 
 export default function MatchDayForm({
 	matchDayInfo,
@@ -116,7 +117,7 @@ export default function MatchDayForm({
 	return (
 		<Box>
 			<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-				<Typography sx={{ mx: 1, fontWeight: '600' }}>Тур</Typography>
+				<Typography sx={{ mx: 1, fontWeight: '600' }}>{t('matchday')}</Typography>
 				<Typography sx={{ textAlign: 'left', mx: 0, mt: 0.8, fontWeight: '600' }}>
 					Play-off?
 					<Switch

@@ -94,11 +94,21 @@ function Register(): JSX.Element {
 
 	return (
 		<>
-			<Box sx={{ margin: '0 auto', textAlign: 'center', width: '14rem' }}>
+			<Box
+				sx={{
+					margin: '0 auto',
+					textAlign: 'center',
+					width: '14rem',
+					display: 'flex',
+					justifyContent: 'center',
+				}}
+			>
 				<FormControl>
 					<Box
 						sx={{
-							fontSize: 32,
+							display: 'flex',
+							justifyContent: 'center',
+							fontSize: 30,
 							fontWeight: 600,
 							textAlign: 'center',
 							mt: 3,
@@ -183,7 +193,7 @@ function Register(): JSX.Element {
 							color="info"
 							size="large"
 						>
-							<Typography variant="button" fontWeight="600" fontSize="1.2rem" fontFamily="Exo">
+							<Typography variant="button" fontWeight="600" fontSize="1.1rem" fontFamily="Exo">
 								{t('btn.signUp')}
 							</Typography>
 						</Button>

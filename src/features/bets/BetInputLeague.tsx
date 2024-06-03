@@ -5,6 +5,7 @@ import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import League from '../admin/leagues/types/League';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import { t } from 'i18next';
 
 export default function BetInputLeague({
 	onLeagueSelect,
@@ -31,7 +32,7 @@ export default function BetInputLeague({
 
 	return (
 		<Box sx={{ textAlign: 'left' }}>
-			<Typography sx={{ mx: 1, fontWeight: '600' }}>Лига</Typography>
+			<Typography sx={{ mx: 1, fontWeight: '600' }}>{t('league')}</Typography>
 			<Select
 				autoWidth
 				size="small"
