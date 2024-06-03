@@ -18,6 +18,7 @@ import News from './components/News';
 import BetEditList from './features/bets/BetEditList';
 import LeaguesStatsPage from './components/LeaguesStatsPage';
 import TeamsStatsPage from './components/TeamsStatsPage';
+import RulesPage from './components/RulesPage';
 
 function App(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -44,6 +45,7 @@ function App(): JSX.Element {
 				<Route path="/bets/edit" element={<BetEditList />} />
 				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
+				<Route path="/rules" element={<RulesPage />} />
 			</Route>
 		</Routes>
 	);

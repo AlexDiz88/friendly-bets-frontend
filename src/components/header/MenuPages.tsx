@@ -55,7 +55,7 @@ export default function MenuPages(): JSX.Element {
 		} else if (page === t('byMonths')) {
 			navigate('/in-progress');
 		} else if (page === t('rules')) {
-			navigate('/in-progress');
+			navigate('/rules');
 		}
 	};
 
