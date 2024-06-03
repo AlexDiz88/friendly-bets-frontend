@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import Team from './types/Team';
 
 export async function createTeam(
