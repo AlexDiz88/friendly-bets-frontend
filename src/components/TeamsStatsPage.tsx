@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
 	Box,
 	Select,
@@ -12,12 +13,14 @@ import pathToAvatarImage from './utils/pathToAvatarImage';
 import pathToLogoImage from './utils/pathToLogoImage';
 import { selectActiveSeason } from '../features/admin/seasons/selectors';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
+import { getActiveSeason, getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
 import { getAllStatsByTeamsInSeason } from '../features/stats/statsSlice';
 import { selectAllStatsByTeamsInSeason } from '../features/stats/selectors';
 import StatsTableByTeams from './StatsTableByTeams';
+import SeasonResponseError from '../features/admin/seasons/types/SeasonResponseError';
 
 export default function TeamsStatsPage(): JSX.Element {
+	const navigate = useNavigate();
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const statsByTeams = useAppSelector(selectAllStatsByTeamsInSeason);
 	const dispatch = useAppDispatch();
@@ -53,6 +56,24 @@ export default function TeamsStatsPage(): JSX.Element {
 			dispatch(getActiveSeason());
 		}
 	}, []);
+
+	useEffect(() => {
+		if (!activeSeason) {
+			dispatch(getActiveSeasonId())
+				.unwrap()
+				.then(() => {
+					setLoading(false);
+				})
+				.catch((error: SeasonResponseError) => {
+					if (error.message === 'Сезон со статусом ACTIVE не найден') {
+						navigate('/no-active-season');
+					} else {
+						setLoadingError(true);
+					}
+					setLoading(false);
+				});
+		}
+	}, [dispatch]);
 
 	useEffect(() => {
 		if (activeSeason) {

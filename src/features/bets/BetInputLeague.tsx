@@ -27,6 +27,13 @@ export default function BetInputLeague({
 	};
 
 	useEffect(() => {
+		if (leagues?.length === 1) {
+			setSelectedLeagueName(leagues[0].displayNameRu);
+			onLeagueSelect(leagues[0]);
+		}
+	}, [leagues]);
+
+	useEffect(() => {
 		dispatch(getActiveSeason());
 	}, [dispatch, selectedLeagueName]);
 

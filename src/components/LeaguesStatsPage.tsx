@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
 	Avatar,
 	Box,
@@ -16,8 +17,10 @@ import { getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
 import LeagueStats from '../features/stats/types/LeagueStats';
 import pathToLogoImage from './utils/pathToLogoImage';
 import StatsTable from './StatsTable';
+import SeasonResponseError from '../features/admin/seasons/types/SeasonResponseError';
 
 export default function LeaguesStatsPage(): JSX.Element {
+	const navigate = useNavigate();
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const statsByLeagues: LeagueStats[] = useAppSelector(selectPlayersStatsByLeagues);
 	const dispatch = useAppDispatch();
@@ -38,7 +41,28 @@ export default function LeaguesStatsPage(): JSX.Element {
 	};
 
 	useEffect(() => {
-		dispatch(getActiveSeasonId());
+		if (statsByLeagues?.length === 1) {
+			setSelectedLeagueName(statsByLeagues[0].simpleLeague.displayNameRu);
+			setSelectedLeague(statsByLeagues[0]);
+		}
+	}, [selectedLeague]);
+
+	useEffect(() => {
+		if (!activeSeasonId) {
+			dispatch(getActiveSeasonId())
+				.unwrap()
+				.then(() => {
+					setLoading(false);
+				})
+				.catch((error: SeasonResponseError) => {
+					if (error.message === 'Сезон со статусом ACTIVE не найден') {
+						navigate('/no-active-season');
+					} else {
+						setLoadingError(true);
+					}
+					setLoading(false);
+				});
+		}
 	}, [dispatch]);
 
 	useEffect(() => {

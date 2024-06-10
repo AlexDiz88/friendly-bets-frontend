@@ -19,6 +19,7 @@ import BetEditList from './features/bets/BetEditList';
 import LeaguesStatsPage from './components/LeaguesStatsPage';
 import TeamsStatsPage from './components/TeamsStatsPage';
 import RulesPage from './components/RulesPage';
+import NoActiveSeasonPage from './components/NoActiveSeasonPage';
 
 function App(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -46,6 +47,7 @@ function App(): JSX.Element {
 				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
 				<Route path="/rules" element={<RulesPage />} />
+				<Route path="/no-active-season" element={<NoActiveSeasonPage />} />
 			</Route>
 		</Routes>
 	);
