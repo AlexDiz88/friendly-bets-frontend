@@ -26,8 +26,8 @@ export default function MenuPages(): JSX.Element {
 		t('news'),
 		t('byLeagues'),
 		t('byTeams'),
-		t('byMatchDay'),
-		t('byMonths'),
+		// t('byMatchDay'),
+		// t('byMonths'),
 		t('archive'),
 		t('rules'),
 	];
