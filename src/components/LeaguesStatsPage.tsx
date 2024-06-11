@@ -45,7 +45,7 @@ export default function LeaguesStatsPage(): JSX.Element {
 			setSelectedLeagueName(statsByLeagues[0].simpleLeague.displayNameRu);
 			setSelectedLeague(statsByLeagues[0]);
 		}
-	}, [selectedLeague]);
+	}, [statsByLeagues]);
 
 	useEffect(() => {
 		if (!activeSeasonId) {
@@ -63,7 +63,7 @@ export default function LeaguesStatsPage(): JSX.Element {
 					setLoading(false);
 				});
 		}
-	}, [dispatch]);
+	}, []);
 
 	useEffect(() => {
 		if (activeSeasonId) {

@@ -24,7 +24,7 @@ export default function TeamsStatsPage(): JSX.Element {
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const statsByTeams = useAppSelector(selectAllStatsByTeamsInSeason);
 	const dispatch = useAppDispatch();
-	const [selectedLeagueName, setSelectedLeagueName] = useState<string>('АПЛ');
+	const [selectedLeagueName, setSelectedLeagueName] = useState<string>('');
 	const [selectedPlayerName, setSelectedPlayerName] = useState<string>('Все');
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
@@ -50,6 +50,12 @@ export default function TeamsStatsPage(): JSX.Element {
 		const playerName = event.target.value;
 		setSelectedPlayerName(playerName);
 	};
+
+	useEffect(() => {
+		if (statsByTeams && statsByTeams.length > 0) {
+			setSelectedLeagueName(statsByTeams[0].leagueNameRu || '');
+		}
+	}, [statsByTeams]);
 
 	useEffect(() => {
 		if (!activeSeason) {

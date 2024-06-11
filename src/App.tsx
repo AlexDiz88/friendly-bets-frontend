@@ -20,6 +20,7 @@ import LeaguesStatsPage from './components/LeaguesStatsPage';
 import TeamsStatsPage from './components/TeamsStatsPage';
 import RulesPage from './components/RulesPage';
 import NoActiveSeasonPage from './components/NoActiveSeasonPage';
+import Archive from './components/Archive';
 
 function App(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -47,6 +48,7 @@ function App(): JSX.Element {
 				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
 				<Route path="/rules" element={<RulesPage />} />
+				<Route path="/archive" element={<Archive />} />
 				<Route path="/no-active-season" element={<NoActiveSeasonPage />} />
 			</Route>
 		</Routes>

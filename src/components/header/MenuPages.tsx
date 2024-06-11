@@ -28,6 +28,7 @@ export default function MenuPages(): JSX.Element {
 		t('byTeams'),
 		t('byMatchDay'),
 		t('byMonths'),
+		t('archive'),
 		t('rules'),
 	];
 	const languages: Language[] = [
@@ -54,6 +55,8 @@ export default function MenuPages(): JSX.Element {
 			navigate('/stats/teams');
 		} else if (page === t('byMonths')) {
 			navigate('/in-progress');
+		} else if (page === t('archive')) {
+			navigate('/archive');
 		} else if (page === t('rules')) {
 			navigate('/rules');
 		}
