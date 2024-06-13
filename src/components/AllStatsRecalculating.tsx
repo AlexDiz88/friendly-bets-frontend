@@ -111,6 +111,7 @@ export default function AllStatsRecalculating(): JSX.Element {
 		<Box sx={{ mb: 1, mt: 0.5, pb: 1.5 }}>
 			<Box>
 				<Button
+					disabled
 					onClick={() => handleRecalculatePlayerStatsDialog()}
 					sx={{ height: '3.5rem', maxWidth: '14rem', px: 3 }}
 					variant="contained"
@@ -130,6 +131,7 @@ export default function AllStatsRecalculating(): JSX.Element {
 			</Box>
 			<Box>
 				<Button
+					disabled
 					onClick={() => handleRecalculateTeamStatsDialog()}
 					sx={{ height: '3.5rem', maxWidth: '14rem', px: 3, mt: 2 }}
 					variant="contained"

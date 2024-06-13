@@ -145,7 +145,7 @@ export default function LeaguesStatsPage(): JSX.Element {
 												variant="square"
 												sx={{ width: 27, height: 27 }}
 												alt="league_logo"
-												src={pathToLogoImage(stats.simpleLeague.displayNameEn)}
+												src={pathToLogoImage(stats.simpleLeague.shortNameEn)}
 											/>
 											<Typography sx={{ mx: 1, fontSize: '1rem' }}>
 												{stats.simpleLeague.displayNameRu}

@@ -161,7 +161,7 @@ export default function TeamsStatsPage(): JSX.Element {
 															variant="square"
 															sx={{ width: 27, height: 27 }}
 															alt="league_logo"
-															src={pathToLogoImage(l.displayNameEn)}
+															src={pathToLogoImage(l.shortNameEn)}
 														/>
 														<Typography sx={{ mx: 1, fontSize: '1rem' }}>
 															{l.shortNameRu}
