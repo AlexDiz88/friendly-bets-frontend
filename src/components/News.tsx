@@ -1,5 +1,6 @@
 import { Box, Container } from '@mui/material';
 import StartSeason2324 from './news/StartSeason2324';
+import ScheduleEuro2024 from './news/ScheduleEuro2024';
 
 export default function News(): JSX.Element {
 	return (
@@ -16,6 +17,7 @@ export default function News(): JSX.Element {
 			>
 				Новости сайта
 			</Box>
+			<ScheduleEuro2024 />
 			<StartSeason2324 />
 		</Container>
 	);
