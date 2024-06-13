@@ -11,6 +11,7 @@ import BetEditButtons from './BetEditButtons';
 import { selectUser } from '../auth/selectors';
 import { selectAllBets, selectTotalPages } from './selectors';
 import { getAllBets } from './betsSlice';
+import SeasonResponseError from '../admin/seasons/types/SeasonResponseError';
 
 export default function BetEditList(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -47,6 +48,24 @@ export default function BetEditList(): JSX.Element {
 				});
 		}
 	}, [activeSeasonId, page]);
+
+	useEffect(() => {
+		if (!activeSeasonId) {
+			dispatch(getActiveSeasonId())
+				.unwrap()
+				.then(() => {
+					setLoading(false);
+				})
+				.catch((error: SeasonResponseError) => {
+					if (error.message === 'Сезон со статусом ACTIVE не найден') {
+						navigate('/no-active-season');
+					} else {
+						setLoadingError(true);
+					}
+					setLoading(false);
+				});
+		}
+	}, [dispatch]);
 
 	// редирект неавторизованных пользователей
 	useEffect(() => {

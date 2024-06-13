@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -8,8 +9,10 @@ import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
 import StatsTable from './StatsTable';
 import { getCompletedBets } from '../features/bets/betsSlice';
 import { selectCompletedBets } from '../features/bets/selectors';
+import SeasonResponseError from '../features/admin/seasons/types/SeasonResponseError';
 
 export default function Homepage(): JSX.Element {
+	const navigate = useNavigate();
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const playersStats = useAppSelector(selectPlayersStats);
 	const completedBets = useAppSelector(selectCompletedBets);
@@ -20,7 +23,21 @@ export default function Homepage(): JSX.Element {
 	const sortedPlayersStats = [...playersStats].sort((a, b) => b.actualBalance - a.actualBalance);
 
 	useEffect(() => {
-		dispatch(getActiveSeasonId());
+		if (!activeSeasonId) {
+			dispatch(getActiveSeasonId())
+				.unwrap()
+				.then(() => {
+					setLoading(false);
+				})
+				.catch((error: SeasonResponseError) => {
+					if (error.message === 'Сезон со статусом ACTIVE не найден') {
+						navigate('/no-active-season');
+					} else {
+						setLoadingError(true);
+					}
+					setLoading(false);
+				});
+		}
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -60,15 +77,14 @@ export default function Homepage(): JSX.Element {
 						alignItems: 'center',
 					}}
 				>
-					{/* <Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-						Подождите идёт загрузка данных
-					</Box> */}
 					<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
 				</Box>
 			) : (
 				<Box>
 					{loadingError ? (
-						<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
+						<Box
+							sx={{ textAlign: 'center', fontWeight: 600, color: 'brown', pt: 10, fontSize: 20 }}
+						>
 							Ошибка загрузки. Попробуйте обновить страницу
 						</Box>
 					) : (

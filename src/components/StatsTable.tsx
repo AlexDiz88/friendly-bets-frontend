@@ -17,6 +17,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import PlayerStats from '../features/stats/types/PlayerStats';
 import pathToAvatarImage from './utils/pathToAvatarImage';
+import { t } from 'i18next';
 
 function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 	const [open, setOpen] = useState(false);
@@ -79,57 +80,57 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 					<Collapse in={open} timeout="auto" unmountOnExit>
 						<Box sx={{ margin: 0, textAlign: 'center' }}>
 							<Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 0.5 }} component="div">
-								Доп.статистика ({pStats.username})
+								{t('additionalStats')} ({pStats.username})
 							</Typography>
 							<Table size="small" aria-label="purchases">
 								<TableBody>
 									<TableRow>
-										<TableCell align="center">Всего ставок прислано:</TableCell>
+										<TableCell align="center">{t('totalBetsCount')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#ddd9c4', px: 1, py: 0.5 }}>
 											<b>{pStats.totalBets}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
-										<TableCell align="center">Ставок выиграно:</TableCell>
+										<TableCell align="center">{t('betsWonCount')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#e0f3e5', px: 1, py: 0.5 }}>
 											<b>{pStats.wonBetCount}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
-										<TableCell align="center">Ставок вернулось:</TableCell>
+										<TableCell align="center">{t('betsReturnedCount')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#f9f8d9', px: 1, py: 0.5 }}>
 											<b>{pStats.returnedBetCount}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
-										<TableCell align="center">Ставок проиграно:</TableCell>
+										<TableCell align="center">{t('betsLostCount')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#f9d9d9', px: 1, py: 0.5 }}>
 											<b>{pStats.lostBetCount}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
-										<TableCell align="center">Ставок пропущено:</TableCell>
+										<TableCell align="center">{t('emptyBetsCount')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#e0dfe4', px: 1, py: 0.5 }}>
 											<b>{pStats.emptyBetCount}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
 										<TableCell align="center" sx={{ p: 0, py: 0.5 }}>
-											Процент выигранных ставок:
+											{t('winPercentage')}:
 										</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#c3cdf0', px: 1, py: 0.5 }}>
 											<b>{pStats.winRate.toFixed(1)}%</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
-										<TableCell align="center">Средний кэф:</TableCell>
+										<TableCell align="center">{t('averageCoef')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#e0cde9', px: 1, py: 0.5 }}>
 											<b>{pStats.averageOdds.toFixed(2)}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
 										<TableCell align="center" sx={{ fontSize: '0.82rem', px: 0, py: 0.5 }}>
-											Средний кэф(выигранных ставок):
+											{t('averageWinCoef')}:
 										</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#d3edf2', px: 1, py: 0.5 }}>
 											<b>{pStats.averageWonBetOdds.toFixed(2)}</b>
@@ -156,7 +157,7 @@ export default function StatsTable({ playersStats }: { playersStats: PlayerStats
 							align="left"
 							sx={{ color: 'white', fontWeight: 600, py: 0.5, borderColor: 'black' }}
 						>
-							Имя
+							{t('playerName')}
 						</TableCell>
 						<TableCell
 							align="center"
@@ -168,13 +169,13 @@ export default function StatsTable({ playersStats }: { playersStats: PlayerStats
 								py: 0.5,
 							}}
 						>
-							Ставок
+							{t('totalBets')}
 						</TableCell>
 						<TableCell align="center" sx={{ color: 'white', fontWeight: 600, px: 0.5, py: 0.5 }}>
 							%
 						</TableCell>
 						<TableCell align="center" sx={{ color: 'white', fontWeight: 600, py: 0.5 }}>
-							Баланс
+							{t('balance')}
 						</TableCell>
 					</TableRow>
 				</TableHead>

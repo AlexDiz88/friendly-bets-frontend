@@ -13,6 +13,7 @@ import NotificationSnackbar from '../../../components/utils/NotificationSnackbar
 import { addLeagueToSeason } from './seasonsSlice';
 import { useAppDispatch } from '../../../app/hooks';
 import League from '../leagues/types/League';
+import pathToLogoImage from '../../../components/utils/pathToLogoImage';
 
 // TODO сделать короткое название лиги для удобного выбора и короткой записи
 
@@ -111,9 +112,7 @@ export default function AddLeagueInSeason({
 								<Avatar
 									sx={{ mr: 1, width: 30, height: 30 }}
 									alt="league_logo"
-									src={`${process.env.PUBLIC_URL || ''}/upload/logo/${item.displayNameEn
-										.toLowerCase()
-										.replace(/\s/g, '_')}.png`}
+									src={pathToLogoImage(item.displayNameEn)}
 								/>
 								<ListItemText primary={item.displayNameRu} />
 							</div>

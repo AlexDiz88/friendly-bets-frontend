@@ -84,6 +84,7 @@ export default function SeasonInfo({
 				setSnackbarMessage(dispatchResult.error.message);
 			}
 		}
+		window.location.reload();
 	}, [dispatch, id, seasonStatus]);
 
 	const handleCloseSnackbar = (): void => {
@@ -103,7 +104,6 @@ export default function SeasonInfo({
 			<ListItem
 				key={id}
 				secondaryAction={
-					// eslint-disable-next-line react/jsx-wrap-multilines
 					<>
 						{status === 'CREATED' && (
 							<IconButton>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
 	Avatar,
 	Box,
@@ -23,6 +24,7 @@ import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import { getCompletedBets, getOpenedBets } from './betsSlice';
 import { selectCompletedBets, selectOpenedBets, selectTotalPages } from './selectors';
 import { t } from 'i18next';
+import SeasonResponseError from '../admin/seasons/types/SeasonResponseError';
 
 interface TabPanelProps {
 	children?: React.ReactNode;
@@ -61,6 +63,7 @@ function a11yProps(index: number): { id: string; 'aria-controls': string } {
 }
 
 export default function BetsList(): JSX.Element {
+	const navigate = useNavigate();
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const openedBets = useAppSelector(selectOpenedBets);
@@ -156,6 +159,24 @@ export default function BetsList(): JSX.Element {
 
 	useEffect(() => {
 		if (!activeSeasonId) {
+			dispatch(getActiveSeasonId())
+				.unwrap()
+				.then(() => {
+					setLoading(false);
+				})
+				.catch((error: SeasonResponseError) => {
+					if (error.message === 'Сезон со статусом ACTIVE не найден') {
+						navigate('/no-active-season');
+					} else {
+						setLoadingError(true);
+					}
+					setLoading(false);
+				});
+		}
+	}, [dispatch]);
+
+	useEffect(() => {
+		if (!activeSeasonId) {
 			dispatch(getActiveSeasonId());
 		}
 		if (!activeSeason) {
@@ -183,9 +204,9 @@ export default function BetsList(): JSX.Element {
 
 	useEffect(() => {
 		if (value === 1) {
-			let pageSize = '28';
+			let pageSize = '14';
 			if (selectedPlayerName === 'Все' && selectedLeagueName !== 'Все') {
-				pageSize = '14';
+				pageSize = '7';
 			}
 			if (selectedPlayerName !== 'Все' && selectedLeagueName === 'Все') {
 				pageSize = '4';

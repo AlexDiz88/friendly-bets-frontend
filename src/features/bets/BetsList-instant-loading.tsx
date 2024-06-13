@@ -184,9 +184,9 @@ export default function BetsList(): JSX.Element {
 
 	useEffect(() => {
 		if (value === 1) {
-			let pageSize = '28';
+			let pageSize = '14';
 			if (selectedPlayerName === 'Все' && selectedLeagueName !== 'Все') {
-				pageSize = '14';
+				pageSize = '7';
 			}
 			if (selectedPlayerName !== 'Все' && selectedLeagueName === 'Все') {
 				pageSize = '4';
