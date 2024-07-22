@@ -1,23 +1,23 @@
+import {
+	Avatar,
+	Box,
+	CircularProgress,
+	MenuItem,
+	Select,
+	SelectChangeEvent,
+	Typography,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-	Box,
-	Select,
-	MenuItem,
-	Avatar,
-	Typography,
-	SelectChangeEvent,
-	CircularProgress,
-} from '@mui/material';
-import pathToAvatarImage from './utils/pathToAvatarImage';
-import pathToLogoImage from './utils/pathToLogoImage';
-import { selectActiveSeason } from '../features/admin/seasons/selectors';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { getActiveSeason, getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
-import { getAllStatsByTeamsInSeason } from '../features/stats/statsSlice';
-import { selectAllStatsByTeamsInSeason } from '../features/stats/selectors';
-import StatsTableByTeams from './StatsTableByTeams';
+import { selectActiveSeason } from '../features/admin/seasons/selectors';
 import SeasonResponseError from '../features/admin/seasons/types/SeasonResponseError';
+import { selectAllStatsByTeamsInSeason } from '../features/stats/selectors';
+import { getAllStatsByTeamsInSeason } from '../features/stats/statsSlice';
+import StatsTableByTeams from './StatsTableByTeams';
+import pathToAvatarImage from './utils/pathToAvatarImage';
+import pathToLogoImage from './utils/pathToLogoImage';
 
 export default function TeamsStatsPage(): JSX.Element {
 	const navigate = useNavigate();
