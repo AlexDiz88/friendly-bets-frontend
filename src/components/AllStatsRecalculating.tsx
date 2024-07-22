@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { useCallback, useEffect, useState } from 'react';
 import {
 	Box,
 	Button,
@@ -9,11 +8,12 @@ import {
 	DialogContentText,
 	Typography,
 } from '@mui/material';
+import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import NotificationSnackbar from './utils/NotificationSnackbar';
+import { getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import { playersStatsFullRecalculation } from '../features/stats/statsSlice';
-import { getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
+import NotificationSnackbar from './utils/NotificationSnackbar';
 
 export default function AllStatsRecalculating(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -108,10 +108,9 @@ export default function AllStatsRecalculating(): JSX.Element {
 	}, [dispatch]);
 
 	return (
-		<Box sx={{ mb: 1, mt: 0.5, pb: 1.5 }}>
+		<Box sx={{ mb: 1, mt: 0.5, py: 2, borderTop: 2 }}>
 			<Box>
 				<Button
-					disabled
 					onClick={() => handleRecalculatePlayerStatsDialog()}
 					sx={{ height: '3.5rem', maxWidth: '14rem', px: 3 }}
 					variant="contained"
@@ -131,7 +130,6 @@ export default function AllStatsRecalculating(): JSX.Element {
 			</Box>
 			<Box>
 				<Button
-					disabled
 					onClick={() => handleRecalculateTeamStatsDialog()}
 					sx={{ height: '3.5rem', maxWidth: '14rem', px: 3, mt: 2 }}
 					variant="contained"
