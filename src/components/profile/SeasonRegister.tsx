@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Close, DoubleArrow, SportsSoccer } from '@mui/icons-material';
 import {
 	Box,
 	Button,
@@ -8,25 +8,22 @@ import {
 	DialogContentText,
 	Fab,
 	Icon,
-	Link,
 	Typography,
 } from '@mui/material';
-import { Close, DoubleArrow, SportsSoccer } from '@mui/icons-material';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { t } from 'i18next';
+import { useCallback, useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
 	getScheduledSeason,
 	registrationInSeason,
 } from '../../features/admin/seasons/seasonsSlice';
-import NotificationSnackbar from '../utils/NotificationSnackbar';
-import { getProfile } from '../../features/auth/authSlice';
 import { selectScheduledSeason } from '../../features/admin/seasons/selectors';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { getProfile } from '../../features/auth/authSlice';
 import { selectUser } from '../../features/auth/selectors';
-import Rules from '../Rules';
-import { t } from 'i18next';
 import CustomCancelButton from '../custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
-import CustomButton from '../custom/btn/CustomButton';
+import Rules from '../Rules';
+import NotificationSnackbar from '../utils/NotificationSnackbar';
 
 export default function SeasonRegister(): JSX.Element {
 	const scheduledSeason = useAppSelector(selectScheduledSeason);

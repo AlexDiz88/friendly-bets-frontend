@@ -36,3 +36,16 @@ export async function getAllTeams(): Promise<{ teams: Team[] }> {
 	}
 	return result.json();
 }
+
+export async function getLeagueTeams(leagueId: string): Promise<{ teams: Team[] }> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/teams/${leagueId}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/teams/${leagueId}`;
+	}
+	const result = await fetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}

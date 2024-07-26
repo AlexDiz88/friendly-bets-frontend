@@ -60,6 +60,19 @@ export async function getSeasonStatusList(): Promise<string[]> {
 	return result.json();
 }
 
+export async function getLeagueCodeList(): Promise<string[]> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/leagues/codes`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = '/api/seasons/leagues/codes';
+	}
+	const result = await fetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 export async function changeSeasonStatus(id: string, status: string): Promise<Season> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/${id}`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
@@ -152,13 +165,7 @@ export async function registrationInSeason(seasonId: string): Promise<Season> {
 //   return result.json();
 // }
 
-export async function addLeagueToSeason(
-	seasonId: string,
-	displayNameRu: string,
-	displayNameEn: string,
-	shortNameRu: string,
-	shortNameEn: string
-): Promise<Season> {
+export async function addLeagueToSeason(seasonId: string, leagueCode: string): Promise<Season> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/seasons/${seasonId}/leagues`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${seasonId}/leagues`;
@@ -166,10 +173,7 @@ export async function addLeagueToSeason(
 	const result = await fetch(`${url}`, {
 		method: 'POST',
 		body: JSON.stringify({
-			displayNameRu,
-			displayNameEn,
-			shortNameRu,
-			shortNameEn,
+			leagueCode,
 		}),
 		headers: {
 			'Content-Type': 'application/json',

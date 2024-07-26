@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
 import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
-import { getActiveSeason } from '../admin/seasons/seasonsSlice';
+import { t } from 'i18next';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
-import pathToLogoImage from '../../components/utils/pathToLogoImage';
-import { t } from 'i18next';
 
 export default function BetInputTeams({
 	defaultHomeTeamName,
@@ -34,7 +34,7 @@ export default function BetInputTeams({
 		setSelectedHomeTeamName(teamName);
 		const selectedLeague = leagues?.find((l) => l.id === leagueId);
 		if (selectedLeague) {
-			const selectedTeam = selectedLeague.teams.find((team) => team.fullTitleRu === teamName);
+			const selectedTeam = selectedLeague.teams.find((team) => team.title === teamName);
 			if (selectedTeam) {
 				onHomeTeamSelect(selectedTeam);
 			}
@@ -46,7 +46,7 @@ export default function BetInputTeams({
 		setSelectedAwayTeamName(teamName);
 		const selectedLeague = leagues?.find((l) => l.id === leagueId);
 		if (selectedLeague) {
-			const selectedTeam = selectedLeague.teams.find((team) => team.fullTitleRu === teamName);
+			const selectedTeam = selectedLeague.teams.find((team) => team.title === teamName);
 			if (selectedTeam) {
 				onAwayTeamSelect(selectedTeam);
 			}
@@ -81,15 +81,9 @@ export default function BetInputTeams({
 					{league &&
 						league.teams
 							.slice()
-							.sort((a, b) =>
-								a.fullTitleRu && b.fullTitleRu ? a.fullTitleRu.localeCompare(b.fullTitleRu) : 0
-							)
+							.sort((a, b) => (a.title && b.title ? a.title.localeCompare(b.title) : 0))
 							.map((team) => (
-								<MenuItem
-									sx={{ mx: 0, minWidth: '14.5rem' }}
-									key={team.id}
-									value={team.fullTitleRu}
-								>
+								<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={team.id} value={team.title}>
 									<div
 										style={{
 											display: 'flex',
@@ -99,10 +93,10 @@ export default function BetInputTeams({
 										<Avatar
 											sx={{ width: 27, height: 27 }}
 											alt="team_logo"
-											src={pathToLogoImage(team.fullTitleEn)}
+											src={pathToLogoImage(team.title)}
 										/>
 
-										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{team.fullTitleRu}</Typography>
+										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{team.title}</Typography>
 									</div>
 								</MenuItem>
 							))}
@@ -122,15 +116,9 @@ export default function BetInputTeams({
 					{league &&
 						league.teams
 							.slice()
-							.sort((a, b) =>
-								a.fullTitleRu && b.fullTitleRu ? a.fullTitleRu.localeCompare(b.fullTitleRu) : 0
-							)
+							.sort((a, b) => (a.title && b.title ? a.title.localeCompare(b.title) : 0))
 							.map((team) => (
-								<MenuItem
-									sx={{ mx: 0, minWidth: '14.5rem' }}
-									key={team.id}
-									value={team.fullTitleRu}
-								>
+								<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={team.id} value={team.title}>
 									<div
 										style={{
 											display: 'flex',
@@ -140,10 +128,10 @@ export default function BetInputTeams({
 										<Avatar
 											sx={{ width: 27, height: 27 }}
 											alt="team_logo"
-											src={pathToLogoImage(team.fullTitleEn)}
+											src={pathToLogoImage(team.title)}
 										/>
 
-										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{team.fullTitleRu}</Typography>
+										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{team.title}</Typography>
 									</div>
 								</MenuItem>
 							))}

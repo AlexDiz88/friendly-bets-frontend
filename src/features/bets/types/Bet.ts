@@ -1,16 +1,13 @@
 import Team from '../../admin/teams/types/Team';
-import User from '../../auth/types/User';
+import SimpleUser from '../../auth/types/SimpleUser';
 
 export default interface Bet {
 	id: string;
 	seasonId: string;
 	leagueId: string;
-	leagueDisplayNameEn: string;
-	leagueDisplayNameRu: string;
-	leagueShortNameEn: string;
-	leagueShortNameRu: string;
+	leagueCode: string;
 	createdAt: Date;
-	player: User;
+	player: SimpleUser;
 	isPlayoff: boolean;
 	matchDay: string;
 	playoffRound: string;

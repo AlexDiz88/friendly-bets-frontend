@@ -1,20 +1,21 @@
-import { useState } from 'react';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
-	TableContainer,
-	Paper,
-	Table,
-	TableHead,
-	TableRow,
-	TableCell,
-	TableBody,
 	Avatar,
 	Box,
 	Collapse,
 	IconButton,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
 	Typography,
 } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { t } from 'i18next';
+import { useState } from 'react';
 import PlayerStatsByTeams from '../features/stats/types/PlayerStatsByTeams';
 import TeamStats from '../features/stats/types/TeamStats';
 import pathToLogoImage from './utils/pathToLogoImage';
@@ -55,8 +56,8 @@ function Row({ tStats }: RowProps): JSX.Element {
 				>
 					<Avatar
 						sx={{ mx: 0.5, width: 27, height: 27, border: 0 }}
-						alt="user_avatar"
-						src={pathToLogoImage(tStats.team.fullTitleEn)}
+						alt="team_logo"
+						src={pathToLogoImage(tStats.team.title)}
 					/>
 					<Box
 						sx={{
@@ -66,7 +67,7 @@ function Row({ tStats }: RowProps): JSX.Element {
 							textOverflow: 'hidden',
 						}}
 					>
-						{tStats.team.fullTitleRu}
+						{tStats.team.title}
 					</Box>
 				</TableCell>
 				<TableCell align="center" sx={{ px: 0, mx: 0 }}>
@@ -93,51 +94,51 @@ function Row({ tStats }: RowProps): JSX.Element {
 					<Collapse in={open} timeout="auto" unmountOnExit>
 						<Box sx={{ margin: 0, textAlign: 'center' }}>
 							<Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 0.5 }} component="div">
-								Доп.статистика ({tStats.team.fullTitleRu})
+								{t('additionalStats')} ({tStats.team.title})
 							</Typography>
 							<Table size="small" aria-label="purchases">
 								<TableBody>
 									<TableRow>
-										<TableCell align="center">Всего ставок сделано:</TableCell>
+										<TableCell align="center">{t('totalBetsCount')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#ddd9c4', px: 1, py: 0.5 }}>
 											<b>{tStats.betCount}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
-										<TableCell align="center">Ставок выиграно:</TableCell>
+										<TableCell align="center">{t('betsWonCount')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#e0f3e5', px: 1, py: 0.5 }}>
 											<b>{tStats.wonBetCount}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
-										<TableCell align="center">Ставок вернулось:</TableCell>
+										<TableCell align="center">{t('betsReturnedCount')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#f9f8d9', px: 1, py: 0.5 }}>
 											<b>{tStats.returnedBetCount}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
-										<TableCell align="center">Ставок проиграно:</TableCell>
+										<TableCell align="center">{t('betsLostCount')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#f9d9d9', px: 1, py: 0.5 }}>
 											<b>{tStats.lostBetCount}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
 										<TableCell align="center" sx={{ p: 0, py: 0.5 }}>
-											Процент выигранных ставок:
+											{t('winPercentage')}:
 										</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#c3cdf0', px: 1, py: 0.5 }}>
 											<b>{tStats.winRate.toFixed(1)}%</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
-										<TableCell align="center">Средний кэф:</TableCell>
+										<TableCell align="center">{t('averageCoef')}:</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#e0cde9', px: 1, py: 0.5 }}>
 											<b>{tStats.averageOdds.toFixed(2)}</b>
 										</TableCell>
 									</TableRow>
 									<TableRow>
 										<TableCell align="center" sx={{ fontSize: '0.82rem', px: 0, py: 0.5 }}>
-											Средний кэф(выигранных ставок):
+											{t('averageWinCoef')}:
 										</TableCell>
 										<TableCell align="center" sx={{ bgcolor: '#d3edf2', px: 1, py: 0.5 }}>
 											<b>{tStats.averageWonBetOdds.toFixed(2)}</b>
@@ -165,7 +166,7 @@ export default function StatsTableByTeams({
 					<TableRow>
 						<TableCell />
 						<TableCell align="left" sx={{ color: 'white', fontWeight: 600, py: 0.5 }}>
-							Команда
+							{t('team')}
 						</TableCell>
 						<TableCell
 							align="center"
@@ -177,13 +178,13 @@ export default function StatsTableByTeams({
 								py: 0.5,
 							}}
 						>
-							Ставки
+							{t('bets')}
 						</TableCell>
 						<TableCell align="center" sx={{ color: 'white', fontWeight: 600, px: 0.5, py: 0 }}>
 							%
 						</TableCell>
 						<TableCell align="center" sx={{ color: 'white', fontWeight: 600, py: 0.5, px: 0 }}>
-							Баланс
+							{t('balance')}
 						</TableCell>
 					</TableRow>
 				</TableHead>
@@ -192,7 +193,7 @@ export default function StatsTableByTeams({
 						pStats.teamStats
 							.slice()
 							.sort((a, b) => b.actualBalance - a.actualBalance)
-							.map((tStats) => <Row key={tStats.team.fullTitleRu} tStats={tStats} />)
+							.map((tStats) => <Row key={tStats.team.title} tStats={tStats} />)
 					)}
 				</TableBody>
 			</Table>

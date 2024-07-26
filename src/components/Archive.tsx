@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
 	Box,
 	CircularProgress,
@@ -7,13 +6,15 @@ import {
 	SelectChangeEvent,
 	Typography,
 } from '@mui/material';
-import { selectPlayersStats } from '../features/stats/selectors';
+import { t } from 'i18next';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { getSeasons } from '../features/admin/seasons/seasonsSlice';
 import { selectSeasons } from '../features/admin/seasons/selectors';
+import Season from '../features/admin/seasons/types/Season';
+import { selectPlayersStats } from '../features/stats/selectors';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
 import StatsTable from './StatsTable';
-import Season from '../features/admin/seasons/types/Season';
-import { getSeasons } from '../features/admin/seasons/seasonsSlice';
 
 export default function Archive(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -82,7 +83,7 @@ export default function Archive(): JSX.Element {
 						<Box
 							sx={{ textAlign: 'center', fontWeight: 600, color: 'brown', pt: 10, fontSize: 20 }}
 						>
-							Ошибка загрузки. Попробуйте обновить страницу
+							{t('downloadingError')}
 						</Box>
 					) : (
 						<Box
@@ -102,7 +103,7 @@ export default function Archive(): JSX.Element {
 									fontSize: '0.95rem',
 								}}
 							>
-								Выберите завершившийся сезон для просмотра статистики
+								{t('chooseFinishedSeasonForDetailedStatistik')}
 							</Box>
 							<Select
 								size="small"

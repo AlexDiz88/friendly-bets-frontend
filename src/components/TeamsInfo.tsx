@@ -1,6 +1,6 @@
-import { Box, Avatar } from '@mui/material';
-import pathToLogoImage from './utils/pathToLogoImage';
+import { Avatar, Box } from '@mui/material';
 import Team from '../features/admin/teams/types/Team';
+import pathToLogoImage from './utils/pathToLogoImage';
 
 export default function TeamsInfo({
 	homeTeam,
@@ -18,9 +18,9 @@ export default function TeamsInfo({
 					variant="square"
 					sx={{ px: 0.5, height: 27, width: 'auto' }}
 					alt="league_logo"
-					src={pathToLogoImage(homeTeam?.fullTitleEn)}
+					src={pathToLogoImage(homeTeam?.title)}
 				/>
-				{homeTeam?.fullTitleRu} <br />
+				{homeTeam?.title} <br />
 			</Box>
 			<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
 				<b>Гости:</b>
@@ -29,9 +29,9 @@ export default function TeamsInfo({
 					variant="square"
 					sx={{ px: 0.5, height: 27, width: 'auto' }}
 					alt="league_logo"
-					src={pathToLogoImage(awayTeam?.fullTitleEn)}
+					src={pathToLogoImage(awayTeam?.title)}
 				/>
-				{awayTeam?.fullTitleRu} <br />
+				{awayTeam?.title} <br />
 			</Box>
 		</Box>
 	);

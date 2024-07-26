@@ -1,28 +1,29 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import Archive from './components/Archive';
+import EmptyPage from './components/EmptyPage';
+import Homepage from './components/Homepage';
 import Layout from './components/Layout';
+import LeaguesStatsPage from './components/LeaguesStatsPage';
+import News from './components/News';
+import NoActiveSeasonPage from './components/NoActiveSeasonPage';
+import RulesPage from './components/RulesPage';
+import TeamsStatsPage from './components/TeamsStatsPage';
+import MyStats from './components/profile/MyStats';
+import Profile from './components/profile/Profile';
+import SeasonRegister from './components/profile/SeasonRegister';
+import AdminCabinet from './features/admin/AdminCabinet';
 import Login from './features/auth/Login';
 import Register from './features/auth/Register';
 import { getProfile } from './features/auth/authSlice';
-import { useAppDispatch } from './app/hooks';
-import AdminCabinet from './features/admin/AdminCabinet';
-import Profile from './components/profile/Profile';
-import BetsList from './features/bets/BetsList';
-import Homepage from './components/Homepage';
-import BetInputContainer from './features/bets/BetInputContainer';
-import MyStats from './components/profile/MyStats';
-import SeasonRegister from './components/profile/SeasonRegister';
-import BetsCheck from './features/bets/BetsCheck';
-import EmptyPage from './components/EmptyPage';
-import News from './components/News';
 import BetEditList from './features/bets/BetEditList';
-import LeaguesStatsPage from './components/LeaguesStatsPage';
-import TeamsStatsPage from './components/TeamsStatsPage';
-import RulesPage from './components/RulesPage';
-import NoActiveSeasonPage from './components/NoActiveSeasonPage';
-import Archive from './components/Archive';
+import BetInputContainer from './features/bets/BetInputContainer';
+import BetsCheck from './features/bets/BetsCheck';
+import BetsList from './features/bets/BetsList';
 
 function App(): JSX.Element {
+	useAppSelector((state) => state.language);
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {

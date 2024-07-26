@@ -3,7 +3,7 @@ import TeamStats from './TeamStats';
 export default interface PlayerStatsByTeams {
 	seasonId: string;
 	leagueId: string;
-	leagueNameRu: string;
+	leagueCode: string;
 	avatar: string;
 	username: string;
 	leagueStats: boolean;

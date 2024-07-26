@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import SeasonsState from './types/SeasonsState';
 import * as api from './api';
+import SeasonsState from './types/SeasonsState';
 
 const initialState: SeasonsState = {
 	seasons: [],
 	statuses: [],
+	leagueCodes: [],
 	activeSeasonId: undefined,
 	activeSeason: null,
 	scheduledSeason: null,
@@ -30,6 +31,10 @@ export const getSeasons = createAsyncThunk('seasons/getSeasons', async () => api
 
 export const getSeasonStatusList = createAsyncThunk('seasons/getSeasonStatusList', async () =>
 	api.getSeasonStatusList()
+);
+
+export const getLeagueCodeList = createAsyncThunk('seasons/getLeagueCodeList', async () =>
+	api.getLeagueCodeList()
 );
 
 export const changeSeasonStatus = createAsyncThunk(
@@ -61,26 +66,11 @@ export const registrationInSeason = createAsyncThunk(
 
 export const addLeagueToSeason = createAsyncThunk(
 	'seasons/addLeagueToSeason',
-	async ({
-		seasonId,
-		displayNameRu,
-		displayNameEn,
-		shortNameRu,
-		shortNameEn,
-	}: {
-		seasonId: string;
-		displayNameRu: string;
-		displayNameEn: string;
-		shortNameRu: string;
-		shortNameEn: string;
-	}) => {
-		if (!displayNameRu.trim() || !displayNameEn.trim()) {
+	async ({ seasonId, leagueCode }: { seasonId: string; leagueCode: string }) => {
+		if (!leagueCode.trim()) {
 			throw new Error('Название лиги не должно быть пустым');
 		}
-		if (!shortNameRu.trim() || !shortNameEn.trim()) {
-			throw new Error('Сокращенное имя лиги не должно быть пустым');
-		}
-		return api.addLeagueToSeason(seasonId, displayNameRu, displayNameEn, shortNameRu, shortNameEn);
+		return api.addLeagueToSeason(seasonId, leagueCode);
 	}
 );
 
@@ -119,6 +109,12 @@ const seasonsSlice = createSlice({
 				state.statuses = action.payload;
 			})
 			.addCase(getSeasonStatusList.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
+			.addCase(getLeagueCodeList.fulfilled, (state, action) => {
+				state.leagueCodes = action.payload;
+			})
+			.addCase(getLeagueCodeList.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
 			.addCase(changeSeasonStatus.fulfilled, (state, action) => {

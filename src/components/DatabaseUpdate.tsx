@@ -1,8 +1,12 @@
-import { useState, useCallback } from 'react';
+import { Box, Dialog, DialogActions, DialogContent, Typography } from '@mui/material';
+import { t } from 'i18next';
+import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../app/hooks';
-import { Box, Button, Dialog, DialogActions, DialogContent, Typography } from '@mui/material';
-import NotificationSnackbar from './utils/NotificationSnackbar';
 import { dbRework } from '../features/admin/seasons/seasonsSlice';
+import CustomButton from './custom/btn/CustomButton';
+import CustomCancelButton from './custom/btn/CustomCancelButton';
+import CustomSuccessButton from './custom/btn/CustomSuccessButton';
+import NotificationSnackbar from './utils/NotificationSnackbar';
 
 export default function DatabaseUpdate(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -48,48 +52,26 @@ export default function DatabaseUpdate(): JSX.Element {
 	};
 
 	return (
-		<Box sx={{ mb: 1, mt: 0.5, pb: 1.5 }}>
-			<Button
-				disabled
+		<Box sx={{ m: '0 auto', textAlign: 'center', width: '20rem', mb: 2, pb: 2, borderBottom: 2 }}>
+			<CustomButton
+				sx={{ backgroundColor: 'brown' }}
 				onClick={handleDbUpdate}
-				sx={{ height: '2.5rem', px: 5 }}
-				variant="contained"
-				type="submit"
-				color="warning"
-				size="large"
-			>
-				<Typography variant="button" fontWeight="600" fontSize="0.9rem" fontFamily="Shantell Sans">
-					Обновить базу данных
-				</Typography>
-			</Button>
-
+				buttonText={t('dbUpdate')}
+			/>
 			<Dialog open={openDialog} onClose={handleCloseDialog}>
 				<DialogContent>
-					<Typography sx={{ fontSize: '0.9rem' }}>
-						<b>Обновить базу данных?</b>
+					<Typography>
+						<Box>
+							<b>{t('dbUpdate')}?</b>
+						</Box>
+						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
+							{t('warning.thisActionCannotBeCanceled')}
+						</Box>
 					</Typography>
 				</DialogContent>
 				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="outlined" color="error" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button variant="contained" color="success" onClick={handleDbUpdateSubmit} autoFocus>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Подтвердить
-						</Typography>
-					</Button>
+					<CustomCancelButton onClick={handleCloseDialog} />
+					<CustomSuccessButton onClick={handleDbUpdateSubmit} />
 				</DialogActions>
 			</Dialog>
 

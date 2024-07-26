@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { KeyboardArrowRight } from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Avatar } from '@mui/material';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate } from 'react-router-dom';
-import { KeyboardArrowRight } from '@mui/icons-material';
+import Typography from '@mui/material/Typography';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Avatar } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { changeLanguageAsync } from '../utils/languageSlice';
 
 interface Language {
 	code: string;
@@ -17,8 +19,10 @@ interface Language {
 }
 
 export default function MenuPages(): JSX.Element {
+	const { t } = useTranslation();
+	useAppSelector((state) => state.language);
 	const navigate = useNavigate();
-	const { t, i18n } = useTranslation();
+	const dispatch = useAppDispatch();
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const [anchorElLang, setAnchorElLang] = useState<null | HTMLElement>(null);
 
@@ -37,28 +41,25 @@ export default function MenuPages(): JSX.Element {
 		{ code: 'ru', name: 'Русский', img: 'russian.png' },
 	];
 
-	// window.onload = () => {
-	// 	const selectedLanguage = localStorage.getItem('selectedLanguage');
-	// 	if (selectedLanguage) {
-	// 		i18n.changeLanguage(selectedLanguage);
-	// 	}
-	// };
-
 	const handleNavigate = (page: string): void => {
-		if (page === t('news')) {
-			navigate('/news');
-		} else if (page === t('byMatchDay')) {
-			navigate('/in-progress');
-		} else if (page === t('byLeagues')) {
-			navigate('/stats/leagues');
-		} else if (page === t('byTeams')) {
-			navigate('/stats/teams');
-		} else if (page === t('byMonths')) {
-			navigate('/in-progress');
-		} else if (page === t('archive')) {
-			navigate('/archive');
-		} else if (page === t('rules')) {
-			navigate('/rules');
+		switch (page) {
+			case t('news'):
+				navigate('/news');
+				break;
+			case t('byLeagues'):
+				navigate('/stats/leagues');
+				break;
+			case t('byTeams'):
+				navigate('/stats/teams');
+				break;
+			case t('archive'):
+				navigate('/archive');
+				break;
+			case t('rules'):
+				navigate('/rules');
+				break;
+			default:
+				break;
 		}
 	};
 
@@ -79,11 +80,9 @@ export default function MenuPages(): JSX.Element {
 	};
 
 	const handleLanguageSelect = (lang: Language): void => {
-		// localStorage.setItem('selectedLanguage', lang.code);
-		i18n.changeLanguage(lang.code);
+		dispatch(changeLanguageAsync(lang.code));
 		handleCloseLangMenu();
 		handleCloseNavMenu();
-		// window.location.reload();
 	};
 
 	const scrollToTop = (): void => {
@@ -96,7 +95,7 @@ export default function MenuPages(): JSX.Element {
 				<IconButton
 					size="large"
 					aria-label="account of current user"
-					aria-controls="menu-appbar"
+					aria-controls="menu-app-bar"
 					aria-haspopup="true"
 					onClick={handleOpenNavMenu}
 					color="inherit"
@@ -104,7 +103,7 @@ export default function MenuPages(): JSX.Element {
 					<MenuIcon />
 				</IconButton>
 				<Menu
-					id="menu-appbar"
+					id="menu-app-bar"
 					anchorEl={anchorElNav}
 					anchorOrigin={{
 						vertical: 'bottom',

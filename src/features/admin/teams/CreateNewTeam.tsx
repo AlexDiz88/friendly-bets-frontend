@@ -1,8 +1,11 @@
+import { Box, TextField } from '@mui/material';
+import { t } from 'i18next';
 import { useCallback, useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from '../../../app/hooks';
-import { createTeam } from './teamsSlice';
+import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
+import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
+import { createTeam } from './teamsSlice';
 
 export default function CreateNewTeam({
 	closeAddNewTeam,
@@ -95,37 +98,9 @@ export default function CreateNewTeam({
 					helperText="Сокращенное название страны из 3 символов (например ENG, GER...)"
 				/>
 			</Box>
-			<Box sx={{ my: 2 }}>
-				<Button
-					sx={{ height: '1.8rem', px: 1, mr: 1 }}
-					variant="contained"
-					color="error"
-					onClick={handleCancelClick}
-				>
-					<Typography
-						variant="button"
-						fontWeight="600"
-						fontSize="0.9rem"
-						fontFamily="Shantell Sans"
-					>
-						Отмена
-					</Typography>
-				</Button>
-				<Button
-					onClick={handleSaveClick}
-					sx={{ height: '1.8rem', px: 1 }}
-					variant="contained"
-					color="success"
-				>
-					<Typography
-						variant="button"
-						fontWeight="600"
-						fontSize="0.9rem"
-						fontFamily="Shantell Sans"
-					>
-						Создать
-					</Typography>
-				</Button>
+			<Box>
+				<CustomCancelButton onClick={handleCancelClick} />
+				<CustomSuccessButton onClick={handleSaveClick} buttonText={t('btnText.create')} />
 			</Box>
 			<Box textAlign="center">
 				<NotificationSnackbar

@@ -1,32 +1,23 @@
-import { useCallback, useState } from 'react';
 import {
 	AssistantPhoto,
 	EventNote,
-	PlaylistAddCircle,
-	PlayCircle,
-	PauseCircle,
 	NoteAdd,
+	PauseCircle,
+	PlayCircle,
+	PlaylistAddCircle,
 } from '@mui/icons-material';
-import {
-	Box,
-	ListItem,
-	IconButton,
-	ListItemAvatar,
-	ListItemText,
-	InputLabel,
-	Button,
-	Typography,
-	Select,
-	MenuItem,
-	SelectChangeEvent,
-} from '@mui/material';
-import Season from './types/Season';
-import { selectStatuses } from './selectors';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { changeSeasonStatus } from './seasonsSlice';
-import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
-import AddLeagueInSeason from './AddLeagueInSeason';
+import { Box, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
+import { useCallback, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import CustomButton from '../../../components/custom/btn/CustomButton';
+import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
+import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
+import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
+import AddLeagueInSeason from '../leagues/AddLeagueInSeason';
+import { changeSeasonStatus, getActiveSeason, getActiveSeasonId, getSeasons } from './seasonsSlice';
+import { selectStatuses } from './selectors';
+import Season from './types/Season';
 
 export default function SeasonInfo({
 	data: { id, title, status, leagues },
@@ -84,7 +75,9 @@ export default function SeasonInfo({
 				setSnackbarMessage(dispatchResult.error.message);
 			}
 		}
-		window.location.reload();
+		dispatch(getSeasons());
+		dispatch(getActiveSeasonId());
+		dispatch(getActiveSeason());
 	}, [dispatch, id, seasonStatus]);
 
 	const handleCloseSnackbar = (): void => {
@@ -94,83 +87,65 @@ export default function SeasonInfo({
 	return (
 		<Box
 			sx={{
-				border: 1,
+				border: 2,
 				borderRadius: 2,
 				mb: 2,
-				p: 1,
-				boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25), 0px 4px 8px rgba(0, 0, 0, 0.25)',
+				px: 1,
+				boxShadow: '0px 2px 18px rgba(0, 0, 0, 0.25), 0px 4px 18px rgba(0, 0, 0, 0.25)',
 			}}
 		>
-			<ListItem
-				key={id}
-				secondaryAction={
-					<>
-						{status === 'CREATED' && (
-							<IconButton>
-								<NoteAdd fontSize="large" color="disabled" />
-							</IconButton>
-						)}
-						{status === 'SCHEDULED' && (
-							<IconButton>
-								<PlaylistAddCircle fontSize="large" color="secondary" />
-							</IconButton>
-						)}
-						{status === 'ACTIVE' && (
-							<IconButton>
-								<PlayCircle fontSize="large" color="success" />
-							</IconButton>
-						)}
-						{status === 'PAUSED' && (
-							<IconButton>
-								<PauseCircle fontSize="large" color="warning" />
-							</IconButton>
-						)}
-						{status === 'FINISHED' && (
-							<IconButton>
-								<AssistantPhoto fontSize="large" color="error" />
-							</IconButton>
-						)}
-					</>
-				}
-			>
-				<ListItemAvatar>
-					<EventNote fontSize="large" color="info" />
-				</ListItemAvatar>
-				<ListItemText sx={{ ml: -2 }} primary={`Сезон: ${title}`} />
-			</ListItem>
+			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+				<EventNote sx={{ m: 1 }} fontSize="large" color="info" />
+				<b>{title}</b>
+				<Box>
+					{status === 'CREATED' && (
+						<IconButton>
+							<NoteAdd fontSize="large" color="disabled" />
+						</IconButton>
+					)}
+					{status === 'SCHEDULED' && (
+						<IconButton>
+							<PlaylistAddCircle fontSize="large" color="secondary" />
+						</IconButton>
+					)}
+					{status === 'ACTIVE' && (
+						<IconButton>
+							<PlayCircle fontSize="large" color="success" />
+						</IconButton>
+					)}
+					{status === 'PAUSED' && (
+						<IconButton>
+							<PauseCircle fontSize="large" color="warning" />
+						</IconButton>
+					)}
+					{status === 'FINISHED' && (
+						<IconButton>
+							<AssistantPhoto fontSize="large" color="error" />
+						</IconButton>
+					)}
+				</Box>
+			</Box>
 			<Box>
-				<InputLabel id="season-status-label">Текущий статус: {status}</InputLabel>
+				<InputLabel id="season-status-label">
+					{t('actualStatus')}: {status}
+				</InputLabel>
 				{!showStatusOptions && (
-					<>
-						<Button
-							sx={{ height: '1.8rem', px: 3, border: 3 }}
-							variant="outlined"
-							onClick={handleStatusChangeClick}
-						>
-							<Typography
-								variant="button"
-								fontWeight="600"
-								fontSize="0.9rem"
-								fontFamily="Shantell Sans"
-							>
-								{t('changeStatus')}
-							</Typography>
-						</Button>
-						<Button
-							sx={{ height: '1.8rem', px: 6.7, mt: 1 }}
-							variant="contained"
-							onClick={handleLeaguesClick}
-						>
-							<Typography
-								variant="button"
-								fontWeight="600"
-								fontSize="0.9rem"
-								fontFamily="Shantell Sans"
-							>
-								Список лиг
-							</Typography>
-						</Button>
-					</>
+					<Box sx={{ my: 1, display: 'flex', justifyContent: 'center' }}>
+						<CustomButton
+							sx={{ border: 2, mr: 0.5 }}
+							onClick={() => handleStatusChangeClick()}
+							buttonColor="info"
+							buttonVariant="outlined"
+							buttonSize="small"
+							buttonText={t('changeStatus')}
+						/>
+						<CustomButton
+							onClick={() => handleLeaguesClick()}
+							buttonColor="info"
+							buttonSize="small"
+							buttonText={t('leaguesList')}
+						/>
+					</Box>
 				)}
 				{showStatusOptions && (
 					<>
@@ -181,6 +156,7 @@ export default function SeasonInfo({
 							id="season-status-select"
 							value={seasonStatus}
 							onChange={handleStatusChange}
+							size="small"
 						>
 							{statuses.map((s) => (
 								<MenuItem key={s} value={s}>
@@ -188,36 +164,10 @@ export default function SeasonInfo({
 								</MenuItem>
 							))}
 						</Select>
-						<Button
-							sx={{ height: '1.8rem', px: 1, mr: 1 }}
-							variant="contained"
-							color="error"
-							onClick={handleCancelClick}
-						>
-							<Typography
-								variant="button"
-								fontWeight="600"
-								fontSize="0.9rem"
-								fontFamily="Shantell Sans"
-							>
-								Отмена
-							</Typography>
-						</Button>
-						<Button
-							onClick={handleSaveClick}
-							sx={{ height: '1.8rem', px: 1 }}
-							variant="contained"
-							color="success"
-						>
-							<Typography
-								variant="button"
-								fontWeight="600"
-								fontSize="0.9rem"
-								fontFamily="Shantell Sans"
-							>
-								Изменить
-							</Typography>
-						</Button>
+						<Box sx={{ pb: 1 }}>
+							<CustomCancelButton onClick={handleCancelClick} />
+							<CustomSuccessButton onClick={handleSaveClick} buttonText={t('btnText.change')} />
+						</Box>
 					</>
 				)}
 				{showLeaguesList && (

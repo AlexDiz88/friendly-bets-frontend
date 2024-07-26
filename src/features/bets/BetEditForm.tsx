@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { Dangerous } from '@mui/icons-material';
 import {
 	Box,
 	Button,
@@ -14,22 +14,22 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import { Dangerous } from '@mui/icons-material';
-import Bet from './types/Bet';
-import BetInputPlayer from './BetInputPlayer';
-import MatchDayForm from './MatchDayForm';
-import BetInputTeams from './BetInputTeams';
-import BetInputOdds from './BetInputOdds';
-import BetInputTitle from './BetInputTitle';
-import GameScoreValidation from '../../components/utils/GameScoreValidation';
-import { useAppDispatch } from '../../app/hooks';
-import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
-import User from '../auth/types/User';
-import Team from '../admin/teams/types/Team';
-import BetSummaryInfo from './BetSummaryInfo';
-import { updateBet } from './betsSlice';
-import MatchDayInfo from './types/MatchDayInfo';
 import { t } from 'i18next';
+import { useCallback, useState } from 'react';
+import { useAppDispatch } from '../../app/hooks';
+import GameScoreValidation from '../../components/utils/GameScoreValidation';
+import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
+import Team from '../admin/teams/types/Team';
+import SimpleUser from '../auth/types/SimpleUser';
+import BetInputOdds from './BetInputOdds';
+import BetInputPlayer from './BetInputPlayer';
+import BetInputTeams from './BetInputTeams';
+import BetInputTitle from './BetInputTitle';
+import BetSummaryInfo from './BetSummaryInfo';
+import MatchDayForm from './MatchDayForm';
+import { updateBet } from './betsSlice';
+import Bet from './types/Bet';
+import MatchDayInfo from './types/MatchDayInfo';
 
 const statuses = ['WON', 'RETURNED', 'LOST'];
 
@@ -43,7 +43,7 @@ export default function BetEditForm({
 	handleEditBet: (showEditForm: boolean) => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
-	const [updatedUser, setUpdatedUser] = useState<User>(bet.player);
+	const [updatedUser, setUpdatedUser] = useState<SimpleUser>(bet.player);
 	const [updatedIsPlayoff, setUpdatedIsPlayoff] = useState<boolean>(bet.isPlayoff);
 	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(bet.matchDay);
 	const [updatedPlayoffRound, setUpdatedPlayoffRound] = useState<string>(bet.playoffRound);
@@ -135,7 +135,7 @@ export default function BetEditForm({
 	]);
 	// конец добавления ставки
 
-	const handleUserSelection = (selectedUser: User): void => {
+	const handleUserSelection = (selectedUser: SimpleUser): void => {
 		setUpdatedUser(selectedUser);
 	};
 
@@ -221,8 +221,8 @@ export default function BetEditForm({
 				onMatchDayInfo={handleMatchDaySelection}
 			/>
 			<BetInputTeams
-				defaultHomeTeamName={bet.homeTeam.fullTitleRu}
-				defaultAwayTeamName={bet.awayTeam.fullTitleRu}
+				defaultHomeTeamName={bet.homeTeam.title}
+				defaultAwayTeamName={bet.awayTeam.title}
 				onHomeTeamSelect={handleHomeTeamSelection}
 				onAwayTeamSelect={handleAwayTeamSelection}
 				leagueId={bet.leagueId}
@@ -363,8 +363,7 @@ export default function BetEditForm({
 						<BetSummaryInfo
 							message={t('changeBet')}
 							player={updatedUser}
-							leagueShortNameEn={bet.leagueShortNameEn}
-							leagueDisplayNameRu={bet.leagueDisplayNameRu}
+							leagueCode={bet.leagueCode}
 							matchDayInfo={{
 								isPlayoff: updatedIsPlayoff,
 								matchDay: updatedMatchDay,

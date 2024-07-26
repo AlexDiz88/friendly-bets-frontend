@@ -7,6 +7,7 @@ import {
 	SelectChangeEvent,
 	Typography,
 } from '@mui/material';
+import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -31,14 +32,12 @@ export default function TeamsStatsPage(): JSX.Element {
 
 	const filteredStats =
 		selectedPlayerName === 'Все'
-			? statsByTeams.filter(
-					(stats) => stats.leagueStats && stats.leagueNameRu === selectedLeagueName
-			  )
+			? statsByTeams.filter((stats) => stats.leagueStats && stats.leagueCode === selectedLeagueName)
 			: statsByTeams.filter(
 					(stats) =>
 						!stats.leagueStats &&
 						stats.username === selectedPlayerName &&
-						stats.leagueNameRu === selectedLeagueName
+						stats.leagueCode === selectedLeagueName
 			  );
 
 	const handleLeagueChange = (event: SelectChangeEvent): void => {
@@ -53,7 +52,7 @@ export default function TeamsStatsPage(): JSX.Element {
 
 	useEffect(() => {
 		if (statsByTeams && statsByTeams.length > 0) {
-			setSelectedLeagueName(statsByTeams[0].leagueNameRu || '');
+			setSelectedLeagueName(statsByTeams[0].leagueCode || '');
 		}
 	}, [statsByTeams]);
 
@@ -107,16 +106,14 @@ export default function TeamsStatsPage(): JSX.Element {
 							alignItems: 'center',
 						}}
 					>
-						<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-							Подождите идёт загрузка данных
-						</Box>
+						<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>{t('loading')}</Box>
 						<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
 					</Box>
 				) : (
 					<Box>
 						{loadingError ? (
 							<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-								Ошибка загрузки. Попробуйте обновить страницу
+								{t('loading')}
 							</Box>
 						) : (
 							<Box
@@ -149,7 +146,7 @@ export default function TeamsStatsPage(): JSX.Element {
 												<MenuItem
 													sx={{ ml: -0.5, minWidth: '6.5rem' }}
 													key={l.id}
-													value={l.displayNameRu}
+													value={l.leagueCode}
 												>
 													<div
 														style={{
@@ -161,10 +158,10 @@ export default function TeamsStatsPage(): JSX.Element {
 															variant="square"
 															sx={{ width: 27, height: 27 }}
 															alt="league_logo"
-															src={pathToLogoImage(l.shortNameEn)}
+															src={pathToLogoImage(l.leagueCode)}
 														/>
 														<Typography sx={{ mx: 1, fontSize: '1rem' }}>
-															{l.shortNameRu}
+															{t(`leagueShortName.${l.leagueCode}`)}
 														</Typography>
 													</div>
 												</MenuItem>

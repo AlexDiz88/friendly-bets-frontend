@@ -1,18 +1,14 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import {
-	Box,
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	Typography,
-} from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
+import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import { playersStatsFullRecalculation } from '../features/stats/statsSlice';
+import CustomButton from './custom/btn/CustomButton';
+import CustomCancelButton from './custom/btn/CustomCancelButton';
+import CustomSuccessButton from './custom/btn/CustomSuccessButton';
 import NotificationSnackbar from './utils/NotificationSnackbar';
 
 export default function AllStatsRecalculating(): JSX.Element {
@@ -36,13 +32,13 @@ export default function AllStatsRecalculating(): JSX.Element {
 				if (playersStatsFullRecalculation.fulfilled.match(dispatchResult)) {
 					setOpenSnackbar(true);
 					setSnackbarSeverity('success');
-					setSnackbarMessage('Статистика успешно пересчитана');
+					setSnackbarMessage(t('statsWasSuccessfullyRecalculated'));
 				}
 				if (playersStatsFullRecalculation.rejected.match(dispatchResult)) {
 					setOpenSnackbar(true);
 					setSnackbarSeverity('error');
 					if (dispatchResult.error.message) {
-						setSnackbarMessage(dispatchResult.error.message);
+						setSnackbarMessage(dispatchResult.error.message || t('errorByStatsRecalculating'));
 					}
 				}
 			}
@@ -67,17 +63,17 @@ export default function AllStatsRecalculating(): JSX.Element {
 					if (response.ok) {
 						setOpenSnackbar(true);
 						setSnackbarSeverity('success');
-						setSnackbarMessage('Статистика успешно пересчитана');
+						setSnackbarMessage(t('statsWasSuccessfullyRecalculated'));
 					} else {
 						const errorMessage = await response.text();
 						setOpenSnackbar(true);
 						setSnackbarSeverity('error');
-						setSnackbarMessage(errorMessage || 'Произошла ошибка при пересчете статистики');
+						setSnackbarMessage(errorMessage || t('errorByStatsRecalculating'));
 					}
 				} catch (error) {
 					setOpenSnackbar(true);
 					setSnackbarSeverity('error');
-					setSnackbarMessage('Произошла ошибка при пересчете статистики');
+					setSnackbarMessage(t('errorByStatsRecalculating'));
 				}
 			}
 		},
@@ -108,120 +104,51 @@ export default function AllStatsRecalculating(): JSX.Element {
 	}, [dispatch]);
 
 	return (
-		<Box sx={{ mb: 1, mt: 0.5, py: 2, borderTop: 2 }}>
+		<Box sx={{ mt: 0, py: 2 }}>
+			<Box sx={{ fontSize: 22, fontWeight: 600, mb: 1.5 }}>{t('dbManagement')}</Box>
 			<Box>
-				<Button
-					onClick={() => handleRecalculatePlayerStatsDialog()}
-					sx={{ height: '3.5rem', maxWidth: '14rem', px: 3 }}
-					variant="contained"
-					type="submit"
-					color="secondary"
-					size="large"
-				>
-					<Typography
-						variant="button"
-						fontWeight="600"
-						fontSize="0.9rem"
-						fontFamily="Shantell Sans"
-					>
-						Пересчёт общей статистики
-					</Typography>
-				</Button>
+				<CustomButton
+					sx={{ mb: 2, backgroundColor: 'brown' }}
+					onClick={handleRecalculatePlayerStatsDialog}
+					buttonText={t('mainStatsRecalculating')}
+				/>
 			</Box>
 			<Box>
-				<Button
-					onClick={() => handleRecalculateTeamStatsDialog()}
-					sx={{ height: '3.5rem', maxWidth: '14rem', px: 3, mt: 2 }}
-					variant="contained"
-					type="submit"
-					color="secondary"
-					size="large"
-				>
-					<Typography
-						variant="button"
-						fontWeight="600"
-						fontSize="0.9rem"
-						fontFamily="Shantell Sans"
-					>
-						Пересчёт статистики по командам
-					</Typography>
-				</Button>
+				<CustomButton
+					sx={{ backgroundColor: 'brown' }}
+					onClick={handleRecalculateTeamStatsDialog}
+					buttonText={t('teamStatsRecalculating')}
+				/>
 			</Box>
 			<Dialog open={openRecalculatePlayerStatsDialog} onClose={handleCloseDialog}>
 				<DialogContent>
 					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						<Box component="span">Будет пересчитана статистика по всем участникам сезона</Box>
+						<Box component="span">{t('mainStatsWillBeRecalculated')}</Box>
 						<br />
 						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
-							Внимание!! Это действие нельзя откатить после подтверждения!
+							{t('warning.thisActionCannotBeCanceled')}
 						</Box>
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="contained" color="error" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button
-						variant="contained"
-						color="success"
-						onClick={handleSubmitFullRecalculation}
-						autoFocus
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Подтвердить
-						</Typography>
-					</Button>
+					<CustomCancelButton onClick={handleCloseDialog} />
+					<CustomSuccessButton onClick={handleSubmitFullRecalculation} />
 				</DialogActions>
 			</Dialog>
 
 			<Dialog open={openRecalculateTeamStatsDialog} onClose={handleCloseDialog}>
 				<DialogContent>
 					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						<Box component="span">Будет пересчитана статистика по всем командам сезона</Box>
+						<Box component="span">{t('teamStatsWillBeRecalculated')}</Box>
 						<br />
 						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
-							Внимание!! Это действие нельзя откатить после подтверждения!
+							{t('warning.thisActionCannotBeCanceled')}
 						</Box>
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="contained" color="error" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button
-						variant="contained"
-						color="success"
-						onClick={handleSubmitStatsByTeamsRecalculation}
-						autoFocus
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Подтвердить
-						</Typography>
-					</Button>
+					<CustomCancelButton onClick={handleCloseDialog} />
+					<CustomSuccessButton onClick={handleSubmitStatsByTeamsRecalculation} />
 				</DialogActions>
 			</Dialog>
 
