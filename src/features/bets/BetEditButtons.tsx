@@ -25,7 +25,7 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 		'success' | 'error' | 'warning' | 'info'
 	>('info');
 	const [snackbarMessage, setSnackbarMessage] = useState('');
-	const [snackbarDuration, setSnackbarduration] = useState(1500);
+	const [snackbarDuration, setSnackbarDuration] = useState(1500);
 
 	const handleBetDeleteSave = useCallback(async () => {
 		setOpenDeleteDialog(false);
@@ -40,7 +40,7 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 		}
 		if (deleteBet.rejected.match(dispatchResult)) {
 			setOpenSnackbar(true);
-			setSnackbarduration(3000);
+			setSnackbarDuration(3000);
 			setSnackbarSeverity('error');
 			if (dispatchResult.error.message) {
 				setSnackbarMessage(dispatchResult.error.message);

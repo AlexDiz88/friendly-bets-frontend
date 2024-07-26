@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import TeamsState from './types/TeamsState';
 import * as api from './api';
+import TeamsState from './types/TeamsState';
 
 const initialState: TeamsState = {
 	teams: [],
+	leagueTeams: [],
 	error: undefined,
 };
 
@@ -30,6 +31,11 @@ export const createTeam = createAsyncThunk(
 
 export const getAllTeams = createAsyncThunk('teams/getAllTeams', async () => api.getAllTeams());
 
+export const getLeagueTeams = createAsyncThunk(
+	'teams/getLeagueTeams',
+	async ({ leagueId }: { leagueId: string }) => api.getLeagueTeams(leagueId)
+);
+
 const teamsSlice = createSlice({
 	name: 'teams',
 	initialState,
@@ -50,6 +56,12 @@ const teamsSlice = createSlice({
 				state.teams = action.payload.teams;
 			})
 			.addCase(getAllTeams.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
+			.addCase(getLeagueTeams.fulfilled, (state, action) => {
+				state.leagueTeams = action.payload.teams;
+			})
+			.addCase(getLeagueTeams.rejected, (state, action) => {
 				state.error = action.error.message;
 			});
 	},

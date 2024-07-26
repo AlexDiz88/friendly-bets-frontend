@@ -12,6 +12,7 @@ import { selectUser } from '../auth/selectors';
 import { selectAllBets, selectTotalPages } from './selectors';
 import { getAllBets } from './betsSlice';
 import SeasonResponseError from '../admin/seasons/types/SeasonResponseError';
+import { t } from 'i18next';
 
 export default function BetEditList(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -136,7 +137,7 @@ export default function BetEditList(): JSX.Element {
 				<Box>
 					{loadingError ? (
 						<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-							Ошибка загрузки. Попробуйте обновить страницу
+							{t('downloadingError')}
 						</Box>
 					) : (
 						<Box>

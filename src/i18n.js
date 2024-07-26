@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import translationEN from '../i18n/en/translation.json';
 import translationDE from '../i18n/de/translation.json';
+import translationEN from '../i18n/en/translation.json';
 import translationRU from '../i18n/ru/translation.json';
 
 i18n.use(initReactI18next).init({
@@ -16,7 +16,7 @@ i18n.use(initReactI18next).init({
 			translation: translationRU,
 		},
 	},
-	debug: true,
+	debug: false,
 	fallbackLng: 'ru',
 	interpolation: {
 		escapeValue: false,

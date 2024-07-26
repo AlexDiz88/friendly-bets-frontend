@@ -1,14 +1,15 @@
-import { Avatar, Box } from '@mui/material';
 import { GppMaybe } from '@mui/icons-material';
-import Bet from './types/Bet';
-import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
-import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import { Avatar, Box } from '@mui/material';
+import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
+import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import Bet from './types/Bet';
 
 export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 	const [matchDayTitle, setMatchDayTitle] = useState<string>('');
-	const { leagueShortNameEn, leagueShortNameRu, player, balanceChange, betSize } = bet;
+	const { leagueCode, player, balanceChange, betSize } = bet;
 
 	useEffect(() => {
 		setMatchDayTitle(
@@ -62,9 +63,9 @@ export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 							<Avatar
 								sx={{ mr: 0.5, width: 25, height: 25 }}
 								alt="team_logo"
-								src={pathToLogoImage(leagueShortNameEn)}
+								src={pathToLogoImage(leagueCode)}
 							/>
-							{leagueShortNameRu} - {matchDayTitle}
+							{t(`leagueShortName.${leagueCode}`)}-{matchDayTitle}
 						</Box>
 					</Box>
 					<Box sx={{ textAlign: 'left', ml: 0.5 }}>

@@ -12,5 +12,16 @@
 		"source.formatDocument": "explicit",
 		"source.fixAll.eslint": "explicit"
 	},
-	"cSpell.words": ["бэке", "кэфам", "плей", "рекалькуляции", "юнит"]
+	"cSpell.words": [
+		"coef",
+		"matchday",
+		"russian",
+		"Shantell",
+		"UEFA",
+		"бэке",
+		"кэфам",
+		"плей",
+		"рекалькуляции",
+		"юнит"
+	]
 }

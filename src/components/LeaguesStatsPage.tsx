@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
 	Avatar,
 	Box,
@@ -9,15 +7,18 @@ import {
 	SelectChangeEvent,
 	Typography,
 } from '@mui/material';
-import { selectPlayersStatsByLeagues } from '../features/stats/selectors';
+import { t } from 'i18next';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { getAllPlayersStatsByLeagues } from '../features/stats/statsSlice';
-import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import { getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
-import LeagueStats from '../features/stats/types/LeagueStats';
-import pathToLogoImage from './utils/pathToLogoImage';
-import StatsTable from './StatsTable';
+import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import SeasonResponseError from '../features/admin/seasons/types/SeasonResponseError';
+import { selectPlayersStatsByLeagues } from '../features/stats/selectors';
+import { getAllPlayersStatsByLeagues } from '../features/stats/statsSlice';
+import LeagueStats from '../features/stats/types/LeagueStats';
+import StatsTable from './StatsTable';
+import pathToLogoImage from './utils/pathToLogoImage';
 
 export default function LeaguesStatsPage(): JSX.Element {
 	const navigate = useNavigate();
@@ -35,14 +36,14 @@ export default function LeaguesStatsPage(): JSX.Element {
 
 	const handleLeagueChange = (event: SelectChangeEvent): void => {
 		const leagueName = event.target.value;
-		const league = statsByLeagues.find((l) => l.simpleLeague.displayNameRu === leagueName);
+		const league = statsByLeagues.find((l) => l.simpleLeague.leagueCode === leagueName);
 		setSelectedLeagueName(leagueName);
 		setSelectedLeague(league || undefined);
 	};
 
 	useEffect(() => {
 		if (statsByLeagues?.length === 1) {
-			setSelectedLeagueName(statsByLeagues[0].simpleLeague.displayNameRu);
+			setSelectedLeagueName(statsByLeagues[0].simpleLeague.leagueCode);
 			setSelectedLeague(statsByLeagues[0]);
 		}
 	}, [statsByLeagues]);
@@ -90,16 +91,14 @@ export default function LeaguesStatsPage(): JSX.Element {
 						alignItems: 'center',
 					}}
 				>
-					<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-						Подождите идёт загрузка данных
-					</Box>
+					<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>{t('loading')}</Box>
 					<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
 				</Box>
 			) : (
 				<Box>
 					{loadingError ? (
 						<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-							Ошибка загрузки. Попробуйте обновить страницу
+							{t('downloadingError')}
 						</Box>
 					) : (
 						<Box
@@ -119,7 +118,7 @@ export default function LeaguesStatsPage(): JSX.Element {
 									fontSize: '0.95rem',
 								}}
 							>
-								Выберите лигу для просмотра детальной статистики по ней
+								{t('chooseLeagueForDetailedStatistik')}
 							</Box>
 							<Select
 								size="small"
@@ -131,8 +130,8 @@ export default function LeaguesStatsPage(): JSX.Element {
 							>
 								{statsByLeagues.map((stats) => (
 									<MenuItem
-										key={stats.simpleLeague.displayNameRu}
-										value={stats.simpleLeague.displayNameRu}
+										key={stats.simpleLeague.leagueCode}
+										value={stats.simpleLeague.leagueCode}
 										sx={{ ml: -0.5, minWidth: '11rem' }}
 									>
 										<div
@@ -145,10 +144,10 @@ export default function LeaguesStatsPage(): JSX.Element {
 												variant="square"
 												sx={{ width: 27, height: 27 }}
 												alt="league_logo"
-												src={pathToLogoImage(stats.simpleLeague.shortNameEn)}
+												src={pathToLogoImage(stats.simpleLeague.leagueCode)}
 											/>
 											<Typography sx={{ mx: 1, fontSize: '1rem' }}>
-												{stats.simpleLeague.displayNameRu}
+												{t(`leagueFullName.${stats.simpleLeague.leagueCode}`)}
 											</Typography>
 										</div>
 									</MenuItem>

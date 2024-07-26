@@ -5,18 +5,23 @@ const CustomButton = ({
 	onClick,
 	buttonColor = 'primary',
 	buttonVariant = 'contained',
+	buttonSize = 'medium',
 	buttonText,
+	sx,
 }: {
 	onClick(event: React.MouseEvent<HTMLButtonElement>): void;
 	buttonColor?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
 	buttonVariant?: 'text' | 'contained' | 'outlined';
+	buttonSize?: 'small' | 'medium' | 'large';
 	buttonText: string;
+	sx?: {};
 }): JSX.Element => {
 	return (
 		<Button
-			sx={{ height: '1.8rem', px: 1, mr: 1 }}
+			sx={{ ...sx }}
 			variant={buttonVariant}
 			color={buttonColor}
+			size={buttonSize}
 			onClick={onClick}
 		>
 			<Typography variant="button" fontWeight="600" fontSize="0.9rem" fontFamily="Shantell Sans">

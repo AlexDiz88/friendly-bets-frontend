@@ -1,17 +1,17 @@
-import { useState } from 'react';
 import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
-import { selectActiveSeason } from '../admin/seasons/selectors';
-import User from '../auth/types/User';
-import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
-import { useAppSelector } from '../../app/hooks';
 import { t } from 'i18next';
+import { useState } from 'react';
+import { useAppSelector } from '../../app/hooks';
+import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
+import { selectActiveSeason } from '../admin/seasons/selectors';
+import SimpleUser from '../auth/types/SimpleUser';
 
 export default function BetInputPlayer({
 	defaultValue,
 	onUserSelect,
 }: {
-	defaultValue: User | undefined;
-	onUserSelect: (user: User) => void;
+	defaultValue: SimpleUser | undefined;
+	onUserSelect: (user: SimpleUser) => void;
 }): JSX.Element {
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const players = activeSeason?.players;

@@ -1,15 +1,15 @@
+import { Box, CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
-import { selectPlayersStats } from '../features/stats/selectors';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import { getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
+import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
+import SeasonResponseError from '../features/admin/seasons/types/SeasonResponseError';
+import { selectCompletedBets } from '../features/bets/selectors';
+import { selectPlayersStats } from '../features/stats/selectors';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
 import StatsTable from './StatsTable';
-import { getCompletedBets } from '../features/bets/betsSlice';
-import { selectCompletedBets } from '../features/bets/selectors';
-import SeasonResponseError from '../features/admin/seasons/types/SeasonResponseError';
+import { t } from 'i18next';
 
 export default function Homepage(): JSX.Element {
 	const navigate = useNavigate();
@@ -85,7 +85,7 @@ export default function Homepage(): JSX.Element {
 						<Box
 							sx={{ textAlign: 'center', fontWeight: 600, color: 'brown', pt: 10, fontSize: 20 }}
 						>
-							Ошибка загрузки. Попробуйте обновить страницу
+							{t('downloadingError')}
 						</Box>
 					) : (
 						<Box

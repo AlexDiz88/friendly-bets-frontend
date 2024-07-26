@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
 	Avatar,
 	Box,
@@ -13,18 +11,20 @@ import {
 	Tabs,
 	Typography,
 } from '@mui/material';
-import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
+import { t } from 'i18next';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
+import SeasonResponseError from '../admin/seasons/types/SeasonResponseError';
 import BetCard from './BetCard';
+import { getCompletedBets, getOpenedBets } from './betsSlice';
 import CompleteBetCard from './CompleteBetCard';
 import EmptyBetCard from './EmptyBetCard';
-import pathToLogoImage from '../../components/utils/pathToLogoImage';
-import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
-import { getCompletedBets, getOpenedBets } from './betsSlice';
 import { selectCompletedBets, selectOpenedBets, selectTotalPages } from './selectors';
-import { t } from 'i18next';
-import SeasonResponseError from '../admin/seasons/types/SeasonResponseError';
 
 interface TabPanelProps {
 	children?: React.ReactNode;
@@ -84,14 +84,14 @@ export default function BetsList(): JSX.Element {
 	const filterOpenedBets = (leagueName: string, playerName: string): void => {
 		let filtered = openedBets;
 		if (playerName === 'Все' && leagueName !== 'Все') {
-			filtered = openedBets.filter((bet) => bet.leagueDisplayNameRu === leagueName);
+			filtered = openedBets.filter((bet) => bet.leagueCode === leagueName);
 		}
 		if (playerName !== 'Все' && leagueName === 'Все') {
 			filtered = openedBets.filter((bet) => bet.player.username === playerName);
 		}
 		if (playerName !== 'Все' && leagueName !== 'Все') {
 			filtered = openedBets.filter(
-				(bet) => bet.leagueDisplayNameRu === leagueName && bet.player.username === playerName
+				(bet) => bet.leagueCode === leagueName && bet.player.username === playerName
 			);
 		}
 		setFilteredBets(filtered);
@@ -107,7 +107,7 @@ export default function BetsList(): JSX.Element {
 			setPage(1);
 			if (activeSeason) {
 				const selectedLeague = activeSeason.leagues.find(
-					(league) => league.displayNameRu === leagueName
+					(league) => league.leagueCode === leagueName
 				);
 
 				if (selectedLeague) {
@@ -317,11 +317,7 @@ export default function BetsList(): JSX.Element {
 							{activeSeason &&
 								activeSeason.leagues &&
 								activeSeason.leagues.map((l) => (
-									<MenuItem
-										sx={{ ml: -0.5, minWidth: '6.5rem' }}
-										key={l.id}
-										value={l.displayNameRu}
-									>
+									<MenuItem sx={{ ml: -0.5, minWidth: '6.5rem' }} key={l.id} value={l.leagueCode}>
 										<div
 											style={{
 												display: 'flex',
@@ -332,9 +328,11 @@ export default function BetsList(): JSX.Element {
 												variant="square"
 												sx={{ width: 27, height: 27 }}
 												alt="league_logo"
-												src={pathToLogoImage(l.displayNameEn)}
+												src={pathToLogoImage(l.leagueCode)}
 											/>
-											<Typography sx={{ mx: 1, fontSize: '1rem' }}>{l.shortNameRu}</Typography>
+											<Typography sx={{ mx: 1, fontSize: '1rem' }}>
+												{t(`leagueShortName.${l.leagueCode}`)}
+											</Typography>
 										</div>
 									</MenuItem>
 								))}
@@ -395,7 +393,7 @@ export default function BetsList(): JSX.Element {
 					<Box>
 						{loadingError ? (
 							<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-								Ошибка загрузки. Попробуйте обновить страницу
+								{t('downloadingError')}
 							</Box>
 						) : (
 							<Box>

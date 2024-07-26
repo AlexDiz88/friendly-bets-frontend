@@ -1,6 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Dangerous } from '@mui/icons-material';
 import {
 	Box,
 	Button,
@@ -15,27 +13,29 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import { Dangerous } from '@mui/icons-material';
-import BetInputPlayer from './BetInputPlayer';
-import BetInputLeague from './BetInputLeague';
-import BetInputTeams from './BetInputTeams';
-import BetInputOdds from './BetInputOdds';
-import BetInputTitle from './BetInputTitle';
-import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
-import { selectActiveSeason } from '../admin/seasons/selectors';
-import { useAppDispatch } from '../../app/hooks';
-import { getActiveSeason } from '../admin/seasons/seasonsSlice';
-import { selectUser } from '../auth/selectors';
-import MatchDayForm from './MatchDayForm';
-import League from '../admin/leagues/types/League';
-import User from '../auth/types/User';
-import Team from '../admin/teams/types/Team';
-import BetSummaryInfo from './BetSummaryInfo';
-import { addBet, addEmptyBet } from './betsSlice';
-import MatchDayInfo from './types/MatchDayInfo';
 import { t } from 'i18next';
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../app/hooks';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
+import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
+import League from '../admin/leagues/types/League';
+import { getActiveSeason } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeason } from '../admin/seasons/selectors';
+import Team from '../admin/teams/types/Team';
+import { selectUser } from '../auth/selectors';
+import SimpleUser from '../auth/types/SimpleUser';
+import BetInputLeague from './BetInputLeague';
+import BetInputOdds from './BetInputOdds';
+import BetInputPlayer from './BetInputPlayer';
+import BetInputTeams from './BetInputTeams';
+import BetInputTitle from './BetInputTitle';
+import BetSummaryInfo from './BetSummaryInfo';
+import MatchDayForm from './MatchDayForm';
+import { addBet, addEmptyBet } from './betsSlice';
+import MatchDayInfo from './types/MatchDayInfo';
 
 export default function BetInputContainer(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -43,7 +43,7 @@ export default function BetInputContainer(): JSX.Element {
 	const navigate = useNavigate();
 	const season = useSelector(selectActiveSeason);
 	const [showMessage, setShowMessage] = useState(false);
-	const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
+	const [selectedUser, setSelectedUser] = useState<SimpleUser | undefined>(undefined);
 	const [selectedLeague, setSelectedLeague] = useState<League>();
 	const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
 	const [matchDayInfo, setMatchDayInfo] = useState<MatchDayInfo>({
@@ -189,7 +189,7 @@ export default function BetInputContainer(): JSX.Element {
 		setIsEmptyBet(event.target.checked);
 	};
 
-	const handleUserSelection = (player: User): void => {
+	const handleUserSelection = (player: SimpleUser): void => {
 		setSelectedUser(player);
 	};
 
@@ -486,8 +486,7 @@ export default function BetInputContainer(): JSX.Element {
 						<BetSummaryInfo
 							message={t('addBet')}
 							player={selectedUser}
-							leagueShortNameEn={selectedLeague?.shortNameEn || ''}
-							leagueDisplayNameRu={selectedLeague?.displayNameRu || ''}
+							leagueCode={selectedLeague?.leagueCode || ''}
 							matchDayInfo={matchDayInfo}
 							homeTeam={selectedHomeTeam}
 							awayTeam={selectedAwayTeam}

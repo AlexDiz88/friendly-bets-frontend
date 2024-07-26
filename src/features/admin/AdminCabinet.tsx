@@ -1,11 +1,12 @@
+import { Box, CircularProgress, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, CircularProgress, Typography } from '@mui/material';
-import Seasons from './seasons/Seasons';
-import { selectUser } from '../auth/selectors';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import AllStatsRecalculating from '../../components/AllStatsRecalculating';
 import DatabaseUpdate from '../../components/DatabaseUpdate';
+import { selectUser } from '../auth/selectors';
+import SeasonsManagement from './seasons/SeasonsManagement';
+import TeamsManagement from './teams/TeamsManagement';
 
 export default function AdminCabinet(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -59,8 +60,9 @@ export default function AdminCabinet(): JSX.Element {
 
 	return (
 		<Box sx={{ textAlign: 'center', mx: 2, mb: 10 }}>
-			<Typography sx={{ borderBottom: 2, pb: 1, mx: 2 }}>AdminCabinet</Typography>
-			<Seasons />
+			<Typography sx={{ borderBottom: 1, pb: 1 }}>Admin Panel</Typography>
+			<SeasonsManagement />
+			<TeamsManagement />
 			<AllStatsRecalculating />
 			<DatabaseUpdate />
 		</Box>

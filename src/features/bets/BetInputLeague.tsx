@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
 import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
-import { selectActiveSeason } from '../admin/seasons/selectors';
-import { getActiveSeason } from '../admin/seasons/seasonsSlice';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import League from '../admin/leagues/types/League';
-import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import { t } from 'i18next';
+import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import League from '../admin/leagues/types/League';
+import { getActiveSeason } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeason } from '../admin/seasons/selectors';
 
 export default function BetInputLeague({
 	onLeagueSelect,
@@ -20,7 +20,7 @@ export default function BetInputLeague({
 	const handleSeasonChange = (event: SelectChangeEvent): void => {
 		const leagueName = event.target.value;
 		setSelectedLeagueName(leagueName);
-		const selectedLeague = leagues?.find((l) => l.displayNameRu === leagueName);
+		const selectedLeague = leagues?.find((l) => l.leagueCode === leagueName);
 		if (selectedLeague) {
 			onLeagueSelect(selectedLeague);
 		}
@@ -28,7 +28,7 @@ export default function BetInputLeague({
 
 	useEffect(() => {
 		if (leagues?.length === 1) {
-			setSelectedLeagueName(leagues[0].displayNameRu);
+			setSelectedLeagueName(leagues[0].leagueCode);
 			onLeagueSelect(leagues[0]);
 		}
 	}, [leagues]);
@@ -51,7 +51,7 @@ export default function BetInputLeague({
 			>
 				{leagues &&
 					leagues.map((l) => (
-						<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={l.id} value={l.displayNameRu}>
+						<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={l.id} value={l.leagueCode}>
 							<div
 								style={{
 									display: 'flex',
@@ -61,10 +61,12 @@ export default function BetInputLeague({
 								<Avatar
 									sx={{ width: 27, height: 27 }}
 									alt="league_logo"
-									src={pathToLogoImage(l.displayNameEn)}
+									src={pathToLogoImage(l.leagueCode)}
 								/>
 
-								<Typography sx={{ mx: 1, fontSize: '1rem' }}>{l.displayNameRu}</Typography>
+								<Typography sx={{ mx: 1, fontSize: '1rem' }}>
+									{t(`leagueFullName.${l.leagueCode}`)}
+								</Typography>
 							</div>
 						</MenuItem>
 					))}

@@ -1,6 +1,4 @@
 /* eslint-disable react/jsx-curly-newline */
-import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
 	Box,
 	Button,
@@ -12,18 +10,21 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
+import { t } from 'i18next';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
-import BetCard from './BetCard';
-import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
-import { selectUser } from '../auth/selectors';
-import GameScoreValidation from '../../components/utils/GameScoreValidation';
-import BetGameResultInfo from './BetGameResultInfo';
-import Bet from './types/Bet';
 import TeamsInfo from '../../components/TeamsInfo';
+import GameScoreValidation from '../../components/utils/GameScoreValidation';
+import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
+import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
+import { selectUser } from '../auth/selectors';
+import BetCard from './BetCard';
+import BetGameResultInfo from './BetGameResultInfo';
 import { getOpenedBets, setBetResult } from './betsSlice';
 import { selectOpenedBets } from './selectors';
+import Bet from './types/Bet';
 
 export default function BetsCheck(): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
@@ -229,17 +230,17 @@ export default function BetsCheck(): JSX.Element {
 							activeSeason.leagues.map((l) => (
 								<Box key={l.id} sx={{ mb: 1 }}>
 									<Button
-										key={l.shortNameRu}
+										key={l.leagueCode}
 										sx={{
 											borderRadius: 0,
-											borderBottom: selectedLeague === l.shortNameRu ? 1 : 0,
-											color: selectedLeague === l.shortNameRu ? 'brown' : 'black',
+											borderBottom: selectedLeague === l.leagueCode ? 1 : 0,
+											color: selectedLeague === l.leagueCode ? 'brown' : 'black',
 											fontFamily: 'Exo 2',
 											px: 0,
 											mr: 0.5,
-											fontWeight: selectedLeague === l.shortNameRu ? 'bold' : 'normal',
+											fontWeight: selectedLeague === l.leagueCode ? 'bold' : 'normal',
 										}}
-										onClick={() => handleLeagueChange(l.shortNameRu)}
+										onClick={() => handleLeagueChange(l.leagueCode)}
 									>
 										<Typography
 											variant="button"
@@ -247,7 +248,7 @@ export default function BetsCheck(): JSX.Element {
 											fontSize="0.9rem"
 											fontFamily="Shantell Sans"
 										>
-											{l.shortNameRu}
+											{t(`leagueShortName.${l.leagueCode}`)}
 										</Typography>
 									</Button>
 								</Box>
@@ -255,7 +256,7 @@ export default function BetsCheck(): JSX.Element {
 					</Box>
 
 					{openedBets.map((bet) => {
-						if (bet.leagueShortNameRu === selectedLeague) {
+						if (bet.leagueCode === selectedLeague) {
 							return (
 								<Box key={bet.id}>
 									<BetCard bet={bet} />

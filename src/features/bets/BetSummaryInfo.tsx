@@ -1,17 +1,16 @@
 import { Avatar, Box, Typography } from '@mui/material';
-import User from '../auth/types/User';
-import Team from '../admin/teams/types/Team';
-import pathToLogoImage from '../../components/utils/pathToLogoImage';
-import MatchDayInfo from './types/MatchDayInfo';
+import { t } from 'i18next';
 import { useState } from 'react';
 import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
-import { t } from 'i18next';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import Team from '../admin/teams/types/Team';
+import SimpleUser from '../auth/types/SimpleUser';
+import MatchDayInfo from './types/MatchDayInfo';
 
 export default function BetSummaryInfo({
 	message,
 	player,
-	leagueShortNameEn,
-	leagueDisplayNameRu,
+	leagueCode,
 	matchDayInfo,
 	homeTeam,
 	awayTeam,
@@ -23,9 +22,8 @@ export default function BetSummaryInfo({
 	gameResult,
 }: {
 	message: string;
-	player: User | undefined;
-	leagueShortNameEn: string;
-	leagueDisplayNameRu: string;
+	player: SimpleUser | undefined;
+	leagueCode: string;
 	matchDayInfo: MatchDayInfo;
 	homeTeam: Team | undefined;
 	awayTeam: Team | undefined;
@@ -53,9 +51,9 @@ export default function BetSummaryInfo({
 						variant="square"
 						sx={{ px: 0.5, height: 27, width: 'auto' }}
 						alt="league_logo"
-						src={pathToLogoImage(leagueShortNameEn)}
+						src={pathToLogoImage(leagueCode)}
 					/>
-					{leagueDisplayNameRu} <br />
+					{t(`leagueFullName.${leagueCode}`)} <br />
 				</Box>
 				<b>{t('matchday')}:</b> {matchDayTitle}
 				<br />
@@ -66,9 +64,9 @@ export default function BetSummaryInfo({
 						variant="square"
 						sx={{ px: 0.5, height: 27, width: 'auto' }}
 						alt="league_logo"
-						src={pathToLogoImage(homeTeam?.fullTitleEn)}
+						src={pathToLogoImage(homeTeam?.title)}
 					/>
-					{homeTeam?.fullTitleRu} <br />
+					{homeTeam?.title} <br />
 				</Box>
 				<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
 					<b>{t('awayTeam')}:</b>
@@ -77,9 +75,9 @@ export default function BetSummaryInfo({
 						variant="square"
 						sx={{ px: 0.5, height: 27, width: 'auto' }}
 						alt="league_logo"
-						src={pathToLogoImage(awayTeam?.fullTitleEn)}
+						src={pathToLogoImage(awayTeam?.title)}
 					/>
-					{awayTeam?.fullTitleRu} <br />
+					{awayTeam?.title} <br />
 				</Box>
 				<b>{t('bet')}:</b> {betTitle}
 				{isNot ? ' - нет' : ''} <br />
