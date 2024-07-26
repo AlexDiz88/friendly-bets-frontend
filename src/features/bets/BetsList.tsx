@@ -393,7 +393,7 @@ export default function BetsList(): JSX.Element {
 					<Box>
 						{loadingError ? (
 							<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-								{t('downloadingError')}
+								{t('loadingError')}
 							</Box>
 						) : (
 							<Box>

@@ -2,10 +2,10 @@
 import League from '../leagues/types/League';
 import Season from './types/Season';
 
-export async function dbRework(): Promise<{ seasons: Season[] }> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/db-rework`;
+export async function dbUpdate(): Promise<{ seasons: Season[] }> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/db-update`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = '/api/seasons/db-rework';
+		url = '/api/seasons/db-update';
 	}
 	const result = await fetch(`${url}`);
 	if (result.status >= 400) {

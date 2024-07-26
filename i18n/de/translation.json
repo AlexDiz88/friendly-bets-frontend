@@ -127,9 +127,9 @@
 	"newSeason": "Neue Saison",
 	"chooseFinishedSeasonForDetailedStatistik": "Wählen Sie abgeschlossene Saison aus, um die Statistiken anzusehen",
 	"loading": "Laden...",
-	"downloadingError": "Fehler beim Laden. Bitte versuchen Sie, die Seite neu zu laden",
+	"loadingError": "Fehler beim Laden! Bitte versuchen Sie, die Seite neu zu laden",
 	"chooseLeagueForDetailedStatistik": "Wählen Sie Liga aus, um detaillierte Statistiken anzusehen",
-	"statsWasSuccessfullyRecalculated": "__STRING_NOT_TRANSLATED__",
-	"seasonWasSuccessfullyCreated": "__STRING_NOT_TRANSLATED__",
-	"errorByStatsRecalculating": "__STRING_NOT_TRANSLATED__"
+	"statsWasSuccessfullyRecalculated": "Statistiken wurden erfolgreich neu berechnet",
+	"seasonWasSuccessfullyCreated": "Saison wurde erfolgreich erstellt",
+	"errorByStatsRecalculating": "Bei der Neuberechnung der Statistik ist ein Fehler aufgetreten"
 }

@@ -2,7 +2,7 @@ import { Box, Dialog, DialogActions, DialogContent, Typography } from '@mui/mate
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../app/hooks';
-import { dbRework } from '../features/admin/seasons/seasonsSlice';
+import { dbUpdate } from '../features/admin/seasons/seasonsSlice';
 import CustomButton from './custom/btn/CustomButton';
 import CustomCancelButton from './custom/btn/CustomCancelButton';
 import CustomSuccessButton from './custom/btn/CustomSuccessButton';
@@ -21,14 +21,14 @@ export default function DatabaseUpdate(): JSX.Element {
 		async (event?: React.FormEvent) => {
 			event?.preventDefault();
 			setOpenDialog(false);
-			const dispatchResult = await dispatch(dbRework());
+			const dispatchResult = await dispatch(dbUpdate());
 
-			if (dbRework.fulfilled.match(dispatchResult)) {
+			if (dbUpdate.fulfilled.match(dispatchResult)) {
 				setOpenSnackbar(true);
 				setSnackbarSeverity('success');
 				setSnackbarMessage('База данных успешно обновлена');
 			}
-			if (dbRework.rejected.match(dispatchResult)) {
+			if (dbUpdate.rejected.match(dispatchResult)) {
 				setOpenSnackbar(true);
 				setSnackbarSeverity('error');
 				if (dispatchResult.error.message) {

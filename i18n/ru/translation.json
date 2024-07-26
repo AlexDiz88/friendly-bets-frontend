@@ -127,9 +127,9 @@
 	"newSeason": "Новый сезон",
 	"chooseFinishedSeasonForDetailedStatistik": "Выберите завершившийся сезон для просмотра статистики",
 	"loading": "Подождите идёт загрузка данных",
-	"downloadingError": "Ошибка загрузки. Попробуйте обновить страницу",
+	"loadingError": "Ошибка загрузки! Попробуйте обновить страницу",
 	"chooseLeagueForDetailedStatistik": "Выберите лигу для просмотра детальной статистики по ней",
 	"statsWasSuccessfullyRecalculated": "Статистика успешно пересчитана",
 	"seasonWasSuccessfullyCreated": "Сезон был успешно создан",
-	"errorByStatsRecalculating": "__STRING_NOT_TRANSLATED__"
+	"errorByStatsRecalculating": "При пересчете статистики произошла ошибка"
 }
