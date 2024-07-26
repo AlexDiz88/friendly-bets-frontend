@@ -12,7 +12,7 @@ const initialState: SeasonsState = {
 	error: undefined,
 };
 
-export const dbRework = createAsyncThunk('seasons/dbRework', async () => api.dbRework());
+export const dbUpdate = createAsyncThunk('seasons/dbUpdate', async () => api.dbUpdate());
 
 export const addSeason = createAsyncThunk(
 	'seasons/addSeason',
@@ -90,7 +90,7 @@ const seasonsSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(dbRework.rejected, (state, action) => {
+			.addCase(dbUpdate.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
 			.addCase(addSeason.fulfilled, (state, action) => {

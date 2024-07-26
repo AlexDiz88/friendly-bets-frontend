@@ -85,7 +85,7 @@ export default function Homepage(): JSX.Element {
 						<Box
 							sx={{ textAlign: 'center', fontWeight: 600, color: 'brown', pt: 10, fontSize: 20 }}
 						>
-							{t('downloadingError')}
+							{t('loadingError')}
 						</Box>
 					) : (
 						<Box

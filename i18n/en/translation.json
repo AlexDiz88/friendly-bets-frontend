@@ -121,15 +121,15 @@
 	"teamStatsRecalculating": "Recalculation of statistics by teams",
 	"mainStatsWillBeRecalculated": "Statistics for all players of the season will be recalculated",
 	"warning.thisActionCannotBeCanceled": "Attention!! This action cannot be rolled back after confirmation!",
-	"teamStatsWillBeRecalculated": "Statistics for all teams of the season will be recalculated",
+	"teamStatsWillBeRecalculated": "Statistics for all teams of season will be recalculated",
 	"dbManagement": "Database management",
 	"dbUpdate": "Update database",
 	"newSeason": "New season",
-	"chooseFinishedSeasonForDetailedStatistik": "Select the completed season to view statistics",
+	"chooseFinishedSeasonForDetailedStatistik": "Select completed season to view statistics",
 	"loading": "Loading...",
-	"downloadingError": "__STRING_NOT_TRANSLATED__",
-	"chooseLeagueForDetailedStatistik": "__STRING_NOT_TRANSLATED__",
-	"statsWasSuccessfullyRecalculated": "__STRING_NOT_TRANSLATED__",
-	"seasonWasSuccessfullyCreated": "__STRING_NOT_TRANSLATED__",
-	"errorByStatsRecalculating": "__STRING_NOT_TRANSLATED__"
+	"loadingError": "Loading error! Try refreshing page",
+	"chooseLeagueForDetailedStatistik": "Select league to view detailed statistics",
+	"statsWasSuccessfullyRecalculated": "Statistics have been successfully recalculated",
+	"seasonWasSuccessfullyCreated": "Season has been successfully created",
+	"errorByStatsRecalculating": "An error occurred when recalculating statistics"
 }
