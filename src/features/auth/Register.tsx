@@ -1,6 +1,5 @@
 /* eslint-disable react/display-name */
-import { forwardRef, useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
 	Box,
 	Button,
@@ -13,11 +12,12 @@ import {
 	Typography,
 } from '@mui/material';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import { VisibilityOff, Visibility } from '@mui/icons-material';
-import { register, login } from './authSlice';
-import { selectRegisterFormError } from './selectors';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { t } from 'i18next';
+import { forwardRef, useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { login, register } from './authSlice';
+import { selectRegisterFormError } from './selectors';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
 	<MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -190,11 +190,15 @@ function Register(): JSX.Element {
 							sx={{ height: '3rem' }}
 							variant="contained"
 							type="submit"
-							color="info"
 							size="large"
 						>
-							<Typography variant="button" fontWeight="600" fontSize="1.1rem" fontFamily="Exo">
-								{t('btn.signUp')}
+							<Typography
+								variant="button"
+								fontWeight="600"
+								fontSize="1.1rem"
+								fontFamily="Shantell Sans"
+							>
+								{t('btnText.signUp')}
 							</Typography>
 						</Button>
 					</Box>
@@ -210,7 +214,7 @@ function Register(): JSX.Element {
 						onClose={handleSnackbarClose}
 					>
 						<Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '15rem' }}>
-							{t('msg.signUp.success')}
+							{t('signUpSuccess')}
 						</Alert>
 					</Snackbar>
 					<Snackbar
@@ -224,7 +228,11 @@ function Register(): JSX.Element {
 						onClose={handleSnackbarClose}
 					>
 						<Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '15rem' }}>
-							{error && <Box>{error}</Box>}
+							{error && (
+								<Box>
+									{t('signUpError')} {error}
+								</Box>
+							)}
 						</Alert>
 					</Snackbar>
 				</FormControl>

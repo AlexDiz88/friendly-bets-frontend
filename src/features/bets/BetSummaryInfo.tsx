@@ -1,4 +1,4 @@
-import { Avatar, Box, Typography } from '@mui/material';
+import { Avatar, Box, Container, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
 import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
@@ -37,7 +37,7 @@ export default function BetSummaryInfo({
 	const [matchDayTitle] = useState<string>(MatchDayTitleTransform(matchDayInfo));
 
 	return (
-		<>
+		<Container sx={{ minWidth: '15rem', m: 0, p: 0 }}>
 			<Typography component="span" sx={{ textAlign: 'center', borderBottom: 1, pb: 0.3 }}>
 				<b>{message}</b>
 				<br />
@@ -80,7 +80,7 @@ export default function BetSummaryInfo({
 					{awayTeam?.title} <br />
 				</Box>
 				<b>{t('bet')}:</b> {betTitle}
-				{isNot ? ' - нет' : ''} <br />
+				{isNot ? t('not') : ''} <br />
 				<b>{t('coef')}:</b> {betOdds} <br />
 				<b>{t('amount')}:</b> {betSize} <br />
 				{betStatus && betStatus !== 'OPENED' && (
@@ -92,18 +92,15 @@ export default function BetSummaryInfo({
 							component="span"
 							sx={{
 								color:
-									gameResult === 'Некорректный счёт матча!' || gameResult === ''
-										? 'brown'
-										: 'inherit',
-								fontWeight:
-									gameResult === 'Некорректный счёт матча!' || gameResult === '' ? 600 : 400,
+									gameResult === t('incorrectGameScore') || gameResult === '' ? 'brown' : 'inherit',
+								fontWeight: gameResult === t('incorrectGameScore') || gameResult === '' ? 600 : 400,
 							}}
 						>
-							{gameResult || 'Не указан!'}
+							{gameResult || t('notSpecified')}
 						</Typography>
 					</>
 				)}
 			</Typography>
-		</>
+		</Container>
 	);
 }

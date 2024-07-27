@@ -26,12 +26,12 @@ export default function TeamsStatsPage(): JSX.Element {
 	const statsByTeams = useAppSelector(selectAllStatsByTeamsInSeason);
 	const dispatch = useAppDispatch();
 	const [selectedLeagueName, setSelectedLeagueName] = useState<string>('');
-	const [selectedPlayerName, setSelectedPlayerName] = useState<string>('Все');
+	const [selectedPlayerName, setSelectedPlayerName] = useState<string>(t('all'));
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 
 	const filteredStats =
-		selectedPlayerName === 'Все'
+		selectedPlayerName === t('all')
 			? statsByTeams.filter((stats) => stats.leagueStats && stats.leagueCode === selectedLeagueName)
 			: statsByTeams.filter(
 					(stats) =>
@@ -177,7 +177,7 @@ export default function TeamsStatsPage(): JSX.Element {
 										value={selectedPlayerName}
 										onChange={handlePlayerChange}
 									>
-										<MenuItem key="Все" sx={{ ml: -0.5, minWidth: '11rem' }} value="Все">
+										<MenuItem key={t('all')} sx={{ ml: -0.5, minWidth: '11rem' }} value={t('all')}>
 											<div
 												style={{
 													display: 'flex',
@@ -191,7 +191,7 @@ export default function TeamsStatsPage(): JSX.Element {
 													src="/upload/avatars/cool_man.jpg"
 												/>
 
-												<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
+												<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t('all')}</Typography>
 											</div>
 										</MenuItem>
 										{activeSeason &&

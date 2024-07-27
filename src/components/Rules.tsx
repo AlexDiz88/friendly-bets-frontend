@@ -1,5 +1,5 @@
-import { Box, Container, Fab, Link, Typography } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { Box, Container, Fab, Link, Typography } from '@mui/material';
 
 export default function Rules(): JSX.Element {
 	const handleScrollToTop = (): void => {
@@ -32,8 +32,10 @@ export default function Rules(): JSX.Element {
 				</Typography>
 				<Typography sx={{ my: 1 }}>
 					<b>3. Размер/сумма ставки.</b> Она одинаковая для всех участников на каждый матч - 10 у.е.
-					Исключения: На матчи 1/2 финала ЛЧ и ЛЕ, а также Чемпионата Европы и Чемпионата мира - по
-					15 у.е. На Финалы - по 30 у.е.
+					<div>
+						<span style={{ color: 'brown', fontWeight: 600 }}>Исключения</span>: На Финалы ЛЧ и ЛЕ,
+						а также Чемпионата Европы и Чемпионата мира - 20 у.е.
+					</div>
 				</Typography>
 				<Box sx={{ my: 1 }}>
 					<b>4. Виды ставок.</b> Разрешены только те варианты ставок, которые можно рассчитать глядя

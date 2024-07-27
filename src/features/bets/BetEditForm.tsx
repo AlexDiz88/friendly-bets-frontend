@@ -1,7 +1,6 @@
 import { Dangerous } from '@mui/icons-material';
 import {
 	Box,
-	Button,
 	Checkbox,
 	Dialog,
 	DialogActions,
@@ -17,6 +16,9 @@ import {
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
+import CustomButton from '../../components/custom/btn/CustomButton';
+import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
+import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 import GameScoreValidation from '../../components/utils/GameScoreValidation';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import Team from '../admin/teams/types/Team';
@@ -51,9 +53,9 @@ export default function BetEditForm({
 	const [updatedHomeTeam, setUpdatedHomeTeam] = useState<Team>(bet.homeTeam);
 	const [updatedAwayTeam, setUpdatedAwayTeam] = useState<Team>(bet.awayTeam);
 	const [updatedBetTitle, setUpdatedBetTitle] = useState<string>(
-		bet.betTitle.endsWith(' - нет') ? bet.betTitle.split(' - нет')[0].trim() : bet.betTitle
+		bet.betTitle.endsWith(t('not')) ? bet.betTitle.split(t('not'))[0].trim() : bet.betTitle
 	);
-	const [isNot, setIsNot] = useState<boolean>(bet.betTitle.endsWith('- нет'));
+	const [isNot, setIsNot] = useState<boolean>(bet.betTitle.endsWith(t('not')));
 	const [updatedBetOdds, setUpdatedBetOdds] = useState<string>(bet.betOdds.toString());
 	const [updatedBetSize, setUpdatedBetSize] = useState<string>(bet.betSize.toString());
 	const [updatedBetStatus, setUpdatedBetStatus] = useState<string>(bet.betStatus);
@@ -65,7 +67,7 @@ export default function BetEditForm({
 		'success' | 'error' | 'warning' | 'info'
 	>('info');
 	const [snackbarMessage, setSnackbarMessage] = useState('');
-	const [snackbarDuration, setSnackbarduration] = useState(1500);
+	const [snackbarDuration, setSnackbarDuration] = useState(1500);
 
 	const scrollToTop = (): void => {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -88,7 +90,7 @@ export default function BetEditForm({
 					playoffRound: updatedPlayoffRound,
 					homeTeamId: updatedHomeTeam.id,
 					awayTeamId: updatedAwayTeam.id,
-					betTitle: isNot ? `${updatedBetTitle} - нет` : updatedBetTitle,
+					betTitle: isNot ? `${updatedBetTitle}${t('not')}` : updatedBetTitle,
 					betOdds: betOddsToNumber,
 					betSize: Number(updatedBetSize),
 					betStatus: updatedBetStatus,
@@ -100,15 +102,15 @@ export default function BetEditForm({
 		if (updateBet.fulfilled.match(dispatchResult)) {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('success');
-			setSnackbarMessage('Ставка успешно отредактирована');
-			handleEditBet(false);
+			setSnackbarMessage(t('betWasSuccessfullyEdited'));
 			setTimeout(() => {
+				handleEditBet(false);
 				scrollToTop();
-			}, 200);
+			}, 700);
 		}
 		if (updateBet.rejected.match(dispatchResult)) {
 			setOpenSnackbar(true);
-			setSnackbarduration(3000);
+			setSnackbarDuration(3000);
 			setSnackbarSeverity('error');
 			if (dispatchResult.error.message) {
 				setSnackbarMessage(dispatchResult.error.message);
@@ -257,7 +259,7 @@ export default function BetEditForm({
 						onChange={handleIsNotChange}
 						inputProps={{ 'aria-label': 'controlled' }}
 					/>
-					Нет
+					{t('not')}
 				</Box>
 			)}
 
@@ -321,7 +323,7 @@ export default function BetEditForm({
 							fullWidth
 							required
 							id={`gameResult-${bet.id}`}
-							label="Счёт матча"
+							label={t('gameScore')}
 							variant="outlined"
 							value={inputGameResult}
 							onChange={(event) => handleGameResultChange(event.target.value)}
@@ -330,31 +332,14 @@ export default function BetEditForm({
 				</Box>
 			)}
 
-			<Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5, mb: 1 }}>
-				<Button sx={{ mr: 1 }} variant="contained" color="error" onClick={handleCloseForm}>
-					<Typography
-						variant="button"
-						fontWeight="600"
-						fontSize="0.8rem"
-						fontFamily="Shantell Sans"
-					>
-						Отмена
-					</Typography>
-				</Button>
-				<Button
-					sx={{ mr: 1, bgcolor: 'purple' }}
-					variant="contained"
+			<Box sx={{ display: 'flex', justifyContent: 'center', mt: 2.5, mb: 1 }}>
+				<CustomCancelButton onClick={handleCloseForm} />
+				<CustomButton
+					sx={{ height: '2rem' }}
 					onClick={() => handleBetUpdateOpenDialog(inputGameResult)}
-				>
-					<Typography
-						variant="button"
-						fontWeight="600"
-						fontSize="0.8rem"
-						fontFamily="Shantell Sans"
-					>
-						Обновить
-					</Typography>
-				</Button>
+					buttonText={t('btnText.update')}
+					buttonColor="secondary"
+				/>
 			</Box>
 
 			<Dialog open={betUpdateOpenDialog} onClose={handleCloseDialog}>
@@ -381,26 +366,12 @@ export default function BetEditForm({
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="outlined" color="error" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button variant="contained" color="success" onClick={handleBetUpdateSave} autoFocus>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Обновить
-						</Typography>
-					</Button>
+					<CustomCancelButton onClick={handleCloseDialog} />
+					<CustomSuccessButton
+						sx={{ height: '2rem' }}
+						onClick={handleBetUpdateSave}
+						buttonText={t('btnText.update')}
+					/>
 				</DialogActions>
 			</Dialog>
 			<Box textAlign="center">

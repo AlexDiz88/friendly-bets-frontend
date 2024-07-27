@@ -1,6 +1,7 @@
 import { Box, Container } from '@mui/material';
 import StartSeason2324 from './news/StartSeason2324';
 import ScheduleEuro2024 from './news/ScheduleEuro2024';
+import { t } from 'i18next';
 
 export default function News(): JSX.Element {
 	return (
@@ -15,7 +16,7 @@ export default function News(): JSX.Element {
 					fontWeight: 600,
 				}}
 			>
-				Новости сайта
+				{t('websiteNews')}
 			</Box>
 			<ScheduleEuro2024 />
 			<StartSeason2324 />

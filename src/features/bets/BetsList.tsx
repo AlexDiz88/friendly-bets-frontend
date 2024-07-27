@@ -72,8 +72,8 @@ export default function BetsList(): JSX.Element {
 	const totalPages = useAppSelector(selectTotalPages);
 	const dispatch = useAppDispatch();
 	const [value, setValue] = useState(0);
-	const [selectedLeagueName, setSelectedLeagueName] = useState<string>('Все');
-	const [selectedPlayerName, setSelectedPlayerName] = useState<string>('Все');
+	const [selectedLeagueName, setSelectedLeagueName] = useState<string>(t('all'));
+	const [selectedPlayerName, setSelectedPlayerName] = useState<string>(t('all'));
 	const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
 	const [selectedPlayerId, setSelectedPlayerId] = useState<string>('');
 	const [page, setPage] = useState<number>(1);
@@ -83,13 +83,13 @@ export default function BetsList(): JSX.Element {
 
 	const filterOpenedBets = (leagueName: string, playerName: string): void => {
 		let filtered = openedBets;
-		if (playerName === 'Все' && leagueName !== 'Все') {
+		if (playerName === t('all') && leagueName !== t('all')) {
 			filtered = openedBets.filter((bet) => bet.leagueCode === leagueName);
 		}
-		if (playerName !== 'Все' && leagueName === 'Все') {
+		if (playerName !== t('all') && leagueName === t('all')) {
 			filtered = openedBets.filter((bet) => bet.player.username === playerName);
 		}
-		if (playerName !== 'Все' && leagueName !== 'Все') {
+		if (playerName !== t('all') && leagueName !== t('all')) {
 			filtered = openedBets.filter(
 				(bet) => bet.leagueCode === leagueName && bet.player.username === playerName
 			);
@@ -142,8 +142,8 @@ export default function BetsList(): JSX.Element {
 
 	const handleBetsTypeChange = (event: React.SyntheticEvent, newValue: number): void => {
 		setValue(newValue);
-		setSelectedLeagueName('Все');
-		setSelectedPlayerName('Все');
+		setSelectedLeagueName(t('all'));
+		setSelectedPlayerName(t('all'));
 		setSelectedLeagueId('');
 		setSelectedPlayerId('');
 		setPage(1);
@@ -205,13 +205,13 @@ export default function BetsList(): JSX.Element {
 	useEffect(() => {
 		if (value === 1) {
 			let pageSize = '14';
-			if (selectedPlayerName === 'Все' && selectedLeagueName !== 'Все') {
+			if (selectedPlayerName === t('all') && selectedLeagueName !== t('all')) {
 				pageSize = '7';
 			}
-			if (selectedPlayerName !== 'Все' && selectedLeagueName === 'Все') {
+			if (selectedPlayerName !== t('all') && selectedLeagueName === t('all')) {
 				pageSize = '4';
 			}
-			if (selectedPlayerName !== 'Все' && selectedLeagueName !== 'Все') {
+			if (selectedPlayerName !== t('all') && selectedLeagueName !== t('all')) {
 				pageSize = '4';
 			}
 			if (activeSeasonId) {
@@ -296,7 +296,7 @@ export default function BetsList(): JSX.Element {
 							value={selectedLeagueName}
 							onChange={handleLeagueChange}
 						>
-							<MenuItem key="Все" sx={{ ml: -0.5, minWidth: '6.5rem' }} value="Все">
+							<MenuItem key={t('all')} sx={{ ml: -0.5, minWidth: '6.5rem' }} value={t('all')}>
 								<div
 									style={{
 										display: 'flex',
@@ -311,7 +311,7 @@ export default function BetsList(): JSX.Element {
 										src={`${import.meta.env.PUBLIC_URL || ''}/upload/logo/total.png`}
 									/>
 
-									<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
+									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t('all')}</Typography>
 								</div>
 							</MenuItem>
 							{activeSeason &&
@@ -347,7 +347,7 @@ export default function BetsList(): JSX.Element {
 							value={selectedPlayerName}
 							onChange={handlePlayerChange}
 						>
-							<MenuItem key="Все" sx={{ ml: -0.5, minWidth: '11rem' }} value="Все">
+							<MenuItem key={t('all')} sx={{ ml: -0.5, minWidth: '11rem' }} value={t('all')}>
 								<div
 									style={{
 										display: 'flex',
@@ -361,7 +361,7 @@ export default function BetsList(): JSX.Element {
 										src="/upload/avatars/cool_man.jpg"
 									/>
 
-									<Typography sx={{ mx: 1, fontSize: '1rem' }}>Все</Typography>
+									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t('all')}</Typography>
 								</div>
 							</MenuItem>
 							{activeSeason &&

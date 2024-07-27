@@ -48,7 +48,7 @@ export default function AddLeagueInSeason({
 		if (addLeagueToSeason.fulfilled.match(dispatchResult)) {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('success');
-			setSnackbarMessage('Лига успешно добавлена в сезон');
+			setSnackbarMessage(t('leagueWasSuccessfullyAddedToSeason'));
 			setLeagueCode('');
 		}
 		if (addLeagueToSeason.rejected.match(dispatchResult)) {

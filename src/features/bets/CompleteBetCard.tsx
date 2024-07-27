@@ -63,13 +63,7 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 					/>
 					<b>{player.username}</b>
 				</Box>
-				<Box
-					sx={{
-						mr: 1,
-						display: 'flex',
-						alignItems: 'start',
-					}}
-				>
+				<Box sx={{ mr: 1, display: 'flex', alignItems: 'start' }}>
 					<Avatar
 						sx={{ mr: 0.5, width: 25, height: 25 }}
 						alt="team_logo"
@@ -96,18 +90,12 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 			</Box>
 			<Box sx={{ textAlign: 'center', fontSize: '1.4rem', fontWeight: 600 }}>{gameResult}</Box>
 			<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-				<b>Ставка:</b> {betTitle}
+				<b>{t('bet')}:</b> {betTitle}
 			</Box>
 			<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-				<b>Кэф:</b> {betOdds.toFixed(2)}, <b>Сумма:</b> {betSize}
+				<b>{t('coef')}:</b> {betOdds.toFixed(2)}, <b>{t('amount')}:</b> {betSize}
 			</Box>
-			<Box
-				sx={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-				}}
-			>
+			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<Box>
 					<Box
 						sx={{
@@ -127,10 +115,10 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 						)}
 
 						{betStatus === 'WON'
-							? 'Ставка сыграла'
+							? t('betWon')
 							: betStatus === 'RETURNED'
-							? 'Ставка вернулась'
-							: 'Ставка не сыграла'}
+							? t('betReturned')
+							: t('betLost')}
 					</Box>
 				</Box>
 				{balanceChange !== undefined && (

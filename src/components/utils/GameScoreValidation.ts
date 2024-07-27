@@ -1,3 +1,5 @@
+import { t } from 'i18next';
+
 export const transformGameResult = (str: string): string => {
 	str = str
 		.trim()
@@ -77,7 +79,7 @@ export default function GameScoreValidation(inputString: string): string {
 	}
 
 	if (!isValidScore(transformedString, isOvertime, isPenalty)) {
-		return 'Некорректный счёт матча!';
+		return t('incorrectGameScore');
 	}
 
 	return transformedString;

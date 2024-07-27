@@ -26,7 +26,7 @@ export default function DatabaseUpdate(): JSX.Element {
 			if (dbUpdate.fulfilled.match(dispatchResult)) {
 				setOpenSnackbar(true);
 				setSnackbarSeverity('success');
-				setSnackbarMessage('База данных успешно обновлена');
+				setSnackbarMessage(t('databaseWasSuccessfullyUpdated'));
 			}
 			if (dbUpdate.rejected.match(dispatchResult)) {
 				setOpenSnackbar(true);
@@ -65,7 +65,7 @@ export default function DatabaseUpdate(): JSX.Element {
 							<b>{t('dbUpdate')}?</b>
 						</Box>
 						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
-							{t('warning.thisActionCannotBeCanceled')}
+							{t('thisActionCannotBeCanceled')}
 						</Box>
 					</Typography>
 				</DialogContent>

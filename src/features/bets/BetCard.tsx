@@ -85,10 +85,10 @@ export default function BetCard({ bet }: { bet: Bet }): JSX.Element {
 						</Box>
 					</Box>
 					<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-						<b>Ставка:</b> {betTitle}
+						<b>{t('bet')}:</b> {betTitle}
 					</Box>
 					<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-						<b>Кэф:</b> {betOdds.toFixed(2)}, <b>Сумма:</b> {betSize}
+						<b>{t('coef')}:</b> {betOdds.toFixed(2)}, <b>{t('amount')}:</b> {betSize}
 					</Box>
 				</Box>
 			)}

@@ -126,7 +126,7 @@ export default function AllStatsRecalculating(): JSX.Element {
 						<Box component="span">{t('mainStatsWillBeRecalculated')}</Box>
 						<br />
 						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
-							{t('warning.thisActionCannotBeCanceled')}
+							{t('thisActionCannotBeCanceled')}
 						</Box>
 					</DialogContentText>
 				</DialogContent>
@@ -142,7 +142,7 @@ export default function AllStatsRecalculating(): JSX.Element {
 						<Box component="span">{t('teamStatsWillBeRecalculated')}</Box>
 						<br />
 						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
-							{t('warning.thisActionCannotBeCanceled')}
+							{t('thisActionCannotBeCanceled')}
 						</Box>
 					</DialogContentText>
 				</DialogContent>

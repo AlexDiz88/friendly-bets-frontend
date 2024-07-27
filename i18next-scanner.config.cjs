@@ -32,7 +32,7 @@ module.exports = {
 			},
 		},
 		lngs: ['ru', 'en', 'de'],
-		ns: ['translation'],
+		ns: ['translation', 'siteNews'],
 		defaultLng: 'ru',
 		defaultNs: 'translation',
 		defaultValue: '__STRING_NOT_TRANSLATED__',
@@ -42,8 +42,8 @@ module.exports = {
 			jsonIndent: 2,
 			lineEnding: '\n',
 		},
-		nsSeparator: false, // namespace separator
-		keySeparator: false, // key separator
+		nsSeparator: ':', // namespace separator
+		keySeparator: '.', // key separator
 		interpolation: {
 			prefix: '{{',
 			suffix: '}}',
@@ -55,12 +55,12 @@ module.exports = {
 		const content = fs.readFileSync(file.path, enc);
 		let count = 0;
 
-		parser.parseFuncFromString(content, { list: ['i18next._', 'i18next.__'] }, (key, options) => {
+		parser.parseFuncFromString(content, { list: ['i18next.t', 'i18n.t', 't'] }, (key, options) => {
 			parser.set(
 				key,
 				Object.assign({}, options, {
-					nsSeparator: false,
-					keySeparator: false,
+					nsSeparator: ':',
+					keySeparator: '.',
 				})
 			);
 			++count;

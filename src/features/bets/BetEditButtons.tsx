@@ -1,19 +1,14 @@
+import { Box, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
+import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
-import {
-	Box,
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	Typography,
-} from '@mui/material';
-import Bet from './types/Bet';
-import BetEditForm from './BetEditForm';
-import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
-import { deleteBet } from './betsSlice';
+import CustomButton from '../../components/custom/btn/CustomButton';
+import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import { removeExtraLabels, transformGameResult } from '../../components/utils/GameScoreValidation';
+import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
+import BetEditForm from './BetEditForm';
+import { deleteBet } from './betsSlice';
+import Bet from './types/Bet';
 
 export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -36,7 +31,7 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 		if (deleteBet.fulfilled.match(dispatchResult)) {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('success');
-			setSnackbarMessage('Ставка успешно аннулирована');
+			setSnackbarMessage(t('betWasSuccessfullyDeleted'));
 		}
 		if (deleteBet.rejected.match(dispatchResult)) {
 			setOpenSnackbar(true);
@@ -69,26 +64,17 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	return (
 		<Box>
 			<Box sx={{ mb: 1, display: 'flex', justifyContent: 'center' }}>
-				<Button sx={{ mr: 1 }} variant="contained" color="info" onClick={() => handleEditBet()}>
-					<Typography
-						variant="button"
-						fontWeight="600"
-						fontSize="0.8rem"
-						fontFamily="Shantell Sans"
-					>
-						Редактировать
-					</Typography>
-				</Button>
-				<Button variant="contained" color="warning" onClick={() => handleDeleteBetOpenDialog()}>
-					<Typography
-						variant="button"
-						fontWeight="600"
-						fontSize="0.8rem"
-						fontFamily="Shantell Sans"
-					>
-						Аннулировать
-					</Typography>
-				</Button>
+				<CustomButton
+					sx={{ height: '2rem', mr: 1 }}
+					onClick={handleEditBet}
+					buttonText={t('btnText.edit')}
+				/>
+				<CustomButton
+					sx={{ height: '2rem' }}
+					onClick={handleDeleteBetOpenDialog}
+					buttonColor="warning"
+					buttonText={t('btnText.delete')}
+				/>
 			</Box>
 			{showEditForm && bet.betStatus !== 'EMPTY' && (
 				<BetEditForm
@@ -99,43 +85,30 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 			)}
 			{/* // TODO сделать отдельную форму для пустой ставки ? */}
 			{showEditForm && bet.betStatus === 'EMPTY' && (
-				<Box sx={{ color: 'brown', fontWeight: 600, m: 1 }}>
-					Редактирование пустых ставок в разработке
+				<Box sx={{ color: 'brown', fontWeight: 600, m: 1, maxWidth: '18rem' }}>
+					{t('editEmptyBetsInProgress')}
 				</Box>
 			)}
 			<Dialog open={openDeleteDialog} onClose={handleCloseDialog}>
 				<DialogContent>
 					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						<Box component="span">
-							Ставка будет аннулирована и больше не будет доступна для просмотра и редактирования.
+						<Box sx={{ mb: 2 }} component="span">
+							{t('deleteBetInfo')}
 						</Box>
 						<br />
 						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
-							Внимание!! Это действие нельзя откатить после подтверждения!
+							{t('deleteBetAttention')}
 						</Box>
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="outlined" color="info" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button variant="contained" color="warning" onClick={handleBetDeleteSave} autoFocus>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Аннулировать
-						</Typography>
-					</Button>
+					<CustomCancelButton onClick={handleCloseDialog} />
+					<CustomButton
+						sx={{ height: '2rem' }}
+						onClick={handleBetDeleteSave}
+						buttonColor="warning"
+						buttonText={t('btnText.delete')}
+					/>
 				</DialogActions>
 			</Dialog>
 			<Box textAlign="center">

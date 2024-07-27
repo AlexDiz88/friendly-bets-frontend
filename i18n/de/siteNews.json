@@ -1,0 +1,47 @@
+{
+  "Season2324": {
+    "title": "Beginn der Saison 2023-2024",
+    "date": "11. August 2023",
+    "header": "Freue mich, den Beginn der neuen Fußballsaison bekannt zu geben! In diesem Jahr haben wir eine neue Website. Alle Details sind auf Knopfdruck verfügbar",
+    "topic": "Hauptmerkmale unserer neuen Website",
+    "paragraph": {
+      "1": "1. Autorisierung. Jeder Teilnehmer hat jetzt die Möglichkeit, sich auf der Website zu registrieren, sein persönliches Konto zu nutzen und seinen Anzeigenamen nach Belieben zu ändern. In naher Zukunft wird es auch möglich sein, Ihr Foto hochzuladen.",
+      "3": "3. Das gesamte Design der Website-Oberfläche basiert auf den Abstimmungspräferenzen aller Teilnehmer, um die Benutzerfreundlichkeit speziell auf Smartphones zu gewährleisten. Daher werden derzeit möglicherweise nicht alle Seiten der Website auf großen Monitorbildschirmen schön angezeigt. Es kann auch verschiedene kleinere Anzeigeprobleme auf sehr kleinen Smartphone-Bildschirmen geben. Wenn Sie auf schiefe Tabellen/Seiten stoßen, lassen Sie es mich privat wissen.",
+      "4": "4. Wir haben jetzt Website-Nachrichten (wie diese, die Sie gerade lesen :D). Sie werden selten sein, aber jetzt können Sie jederzeit zurückkommen und nützliche oder interessante Informationen über unsere Website, das Turnier oder irgendwelche Innovationen und Änderungen lesen.",
+      "5": "5. Wie Sie vielleicht bemerkt haben, sind viele Seiten der Website noch nicht verfügbar. In naher Zukunft werden viele verschiedene Tabellen, interessante Statistiken, Filter und Sortierungen für verschiedene Turniere, Teilnehmer usw. erscheinen, die immer auf dem neuesten Stand sind. Derzeit gibt es das notwendige Minimum in Form der Haupttabelle, der Wettliste, der Wettresultate und des persönlichen Kontos.",
+      "6": "6. Fast alle visuellen und technischen Änderungen der Website sind möglich. Wenn Sie also Vorschläge und Ideen haben, wie die Website verbessert werden könnte, zögern Sie nicht, mir oder im allgemeinen Chat zu schreiben. Wir werden alles besprechen und die interessantesten und nützlichsten Ideen umsetzen!",
+      "2a": "2. Die Verwaltung von Saisons und Wetten erfolgt jetzt direkt von der Website aus und nicht wie bisher in Excel- oder GoogleSheets-Tabellen. Alle Daten werden auf der offiziellen Website gespeichert",
+      "2b": "Das Hinzufügen und Verarbeiten von Wetten erfolgt jetzt online. Sobald eine Wette vom Moderator hinzugefügt oder verarbeitet wird, werden alle Ergebnisse, einschließlich der Haupttabelle, sofort in Echtzeit aktualisiert."
+    },
+    "text": {
+      "1": "Teilnehmeranforderungen",
+      "2": "Um am Turnier teilzunehmen, müssen Sie",
+      "3": "Registrieren Sie sich auf der Website. Klicken Sie dazu auf das Foto des Mannes mit Brille und wählen Sie die Option",
+      "4": "Registrieren",
+      "5": "Ihr Passwort muss mindestens 6 Zeichen lang sein.",
+      "6": "Gehen Sie dann in Ihr persönliches Konto (auch über diesen Mann) und wählen Sie die Option",
+      "7": "Mein Profil",
+      "8": "Klicken Sie dann auf",
+      "9": "Namen ändern",
+      "10": "und wählen Sie sich einen Spitznamen auf der Website. Schreiben Sie keine zu langen Namen. Im Namen können nur Buchstaben/Zahlen, Leerzeichen und Symbole verwendet werden",
+      "11": "Sie können Ihren Namen jederzeit später ändern.",
+      "12": "Wählen Sie erneut über den Mann",
+      "13": "Turnieranmeldung",
+      "14": "Klicken Sie im geöffneten Fenster auf die Registrierungs-Schaltfläche.",
+      "15": "Herzlichen Glückwunsch! Alles ist bereit :D",
+      "16": "Sicherheit der Website",
+      "17": "Die Website wurde unter Anwendung moderner Sicherheitstechnologien entwickelt. Die Übertragung aller Daten erfolgt über ein sicheres SSL-Zertifikat unter Verwendung einer https-Verbindung. Außerdem wird beispielsweise beim Eingeben eines Passworts eine sichere Tastatur verwendet, zusätzlich werden alle Passwörter mit einem zuverlässigen BCrypt-System verschlüsselt und in der Datenbank als Hash gespeichert. Ein solches Passwort zu knacken (d. h. zurückzucodieren), selbst bei Zugriff auf die Datenbank, ist physisch unmöglich. Daher können Sie bedenkenlos beliebige Passwörter für die Registrierung auf der Website verwenden und sicher sein, dass sie zuverlässig geschützt sind.",
+      "18": "Später wird die Möglichkeit hinzugefügt, sich mit einem Google-Konto auf der Website zu registrieren und anzumelden",
+      "19": "Das ist alles! Viel Erfolg allen bei unserem Wettbewerb!"
+    }
+  },
+  "ScheduleEuro2024": {
+    "title": "Spielplan der Gruppenphase der EURO 2024",
+    "date": "13. Juni 2024",
+    "header": "Hier können Sie die Daten und Startzeiten aller Gruppenspielen einsehen.",
+    "showSchedule": "Spielplan anzeigen",
+    "text": {
+      "1": "Viel Erfolg allen im Turnier!"
+    }
+  }
+}
