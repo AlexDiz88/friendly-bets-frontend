@@ -295,24 +295,12 @@ export default function BetEditForm({
 					>
 						{statuses &&
 							statuses.map((status) => (
-								<MenuItem
-									sx={{
-										mx: 0,
-										minWidth: '14.5rem',
-									}}
-									key={status}
-									value={status}
-								>
-									<div
-										style={{
-											display: 'flex',
-											alignItems: 'center',
-										}}
-									>
+								<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={status} value={status}>
+									<Box style={{ display: 'flex', alignItems: 'center' }}>
 										<Typography sx={{ mx: 1, fontSize: '1rem', fontWeight: 600 }}>
 											{status}
 										</Typography>
-									</div>
+									</Box>
 								</MenuItem>
 							))}
 					</Select>

@@ -1,23 +1,29 @@
 import { Avatar, Box } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import Bet from './types/Bet';
 
 export default function BetCard({ bet }: { bet: Bet }): JSX.Element {
+	const { i18n } = useTranslation();
+	const currentLanguage = i18n.language;
 	const [matchDayTitle, setMatchDayTitle] = useState<string>('');
 
 	useEffect(() => {
 		setMatchDayTitle(
-			MatchDayTitleTransform({
-				isPlayoff: bet.isPlayoff,
-				matchDay: bet.matchDay,
-				playoffRound: bet.playoffRound,
-			})
+			MatchDayTitleTransform(
+				{
+					isPlayoff: bet.isPlayoff,
+					matchDay: bet.matchDay,
+					playoffRound: bet.playoffRound,
+				},
+				currentLanguage
+			)
 		);
-	}, [bet]);
+	}, [bet, currentLanguage]);
 
 	const { leagueCode, player, homeTeam, awayTeam, betTitle, betOdds, betSize } = bet;
 
@@ -53,13 +59,7 @@ export default function BetCard({ bet }: { bet: Bet }): JSX.Element {
 							/>
 							<b>{player.username}</b>
 						</Box>
-						<Box
-							sx={{
-								mr: 1,
-								display: 'flex',
-								alignItems: 'start',
-							}}
-						>
+						<Box sx={{ mr: 1, display: 'flex', alignItems: 'start' }}>
 							<Avatar
 								sx={{ mr: 0.5, width: 'auto', height: 25 }}
 								alt="team_logo"

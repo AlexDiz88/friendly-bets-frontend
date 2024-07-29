@@ -6,20 +6,26 @@ import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransfor
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import Bet from './types/Bet';
+import { useTranslation } from 'react-i18next';
 
 export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
+	const { i18n } = useTranslation();
+	const currentLanguage = i18n.language;
 	const [matchDayTitle, setMatchDayTitle] = useState<string>('');
 	const { leagueCode, player, balanceChange, betSize } = bet;
 
 	useEffect(() => {
 		setMatchDayTitle(
-			MatchDayTitleTransform({
-				isPlayoff: bet.isPlayoff,
-				matchDay: bet.matchDay,
-				playoffRound: bet.playoffRound,
-			})
+			MatchDayTitleTransform(
+				{
+					isPlayoff: bet.isPlayoff,
+					matchDay: bet.matchDay,
+					playoffRound: bet.playoffRound,
+				},
+				currentLanguage
+			)
 		);
-	}, [bet]);
+	}, [bet, currentLanguage]);
 
 	return (
 		<>

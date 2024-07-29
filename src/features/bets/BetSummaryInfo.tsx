@@ -1,11 +1,11 @@
 import { Avatar, Box } from '@mui/material';
 import { t } from 'i18next';
-import { useState } from 'react';
-import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
+import { useTranslation } from 'react-i18next';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
 import MatchDayInfo from './types/MatchDayInfo';
+import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
 
 export default function BetSummaryInfo({
 	message,
@@ -34,7 +34,9 @@ export default function BetSummaryInfo({
 	gameResult: string;
 	betStatus: string;
 }): JSX.Element {
-	const [matchDayTitle] = useState<string>(MatchDayTitleTransform(matchDayInfo));
+	const { i18n } = useTranslation();
+	const currentLanguage = i18n.language;
+	const matchDayTitle = MatchDayTitleTransform(matchDayInfo, currentLanguage);
 
 	return (
 		<Box sx={{ minWidth: '15rem', m: 0, p: 0, fontWeight: 400 }}>

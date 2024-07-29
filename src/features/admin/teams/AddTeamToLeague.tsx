@@ -164,7 +164,11 @@ export default function AddTeamToLeague({
 						{leagueTeams && leagueTeams.length > 0 ? (
 							leagueTeams
 								.slice()
-								.sort((a, b) => a.title.localeCompare(b.title))
+								.sort((a, b) =>
+									a.title && b.title
+										? t(`teams:${a.title}`).localeCompare(t(`teams:${b.title}`))
+										: 0
+								)
 								.map((team) => (
 									<ListItem sx={{ py: 0 }} key={team.id}>
 										<Avatar
@@ -194,7 +198,9 @@ export default function AddTeamToLeague({
 					>
 						{allTeams
 							.slice()
-							.sort((a, b) => a.title.localeCompare(b.title))
+							.sort((a, b) =>
+								a.title && b.title ? t(`teams:${a.title}`).localeCompare(t(`teams:${b.title}`)) : 0
+							)
 							.map((team) => (
 								<MenuItem dense key={team.id} value={team.title}>
 									<Box sx={{ display: 'flex', alignItems: 'center' }}>

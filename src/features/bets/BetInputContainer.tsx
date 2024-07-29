@@ -79,7 +79,10 @@ export default function BetInputContainer(): JSX.Element {
 		setOpenDialog(false);
 		if (season && selectedUser && selectedHomeTeam && selectedAwayTeam) {
 			const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
-			// TODO добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
+			// TODO: добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
+			const matchDayCode =
+				matchDayInfo.matchDay === t('playoffRound.final') ? 'final' : matchDayInfo.matchDay;
+
 			const dispatchResult = await dispatch(
 				addBet({
 					newBet: {
@@ -87,7 +90,7 @@ export default function BetInputContainer(): JSX.Element {
 						leagueId: selectedLeagueId,
 						userId: selectedUser?.id,
 						isPlayoff: matchDayInfo.isPlayoff,
-						matchDay: matchDayInfo.matchDay,
+						matchDay: matchDayCode,
 						playoffRound: matchDayInfo.playoffRound,
 						homeTeamId: selectedHomeTeam?.id,
 						awayTeamId: selectedAwayTeam?.id,
@@ -140,6 +143,8 @@ export default function BetInputContainer(): JSX.Element {
 	// добавление пустой ставки
 	const handleSaveEmptyBetClick = useCallback(async () => {
 		if (season && selectedUser) {
+			const matchDayCode =
+				matchDayInfo.matchDay === t('playoffRound.final') ? 'final' : matchDayInfo.matchDay;
 			const dispatchResult = await dispatch(
 				addEmptyBet({
 					newEmptyBet: {
@@ -147,7 +152,7 @@ export default function BetInputContainer(): JSX.Element {
 						leagueId: selectedLeagueId,
 						userId: selectedUser.id,
 						isPlayoff: matchDayInfo.isPlayoff,
-						matchDay: matchDayInfo.matchDay,
+						matchDay: matchDayCode,
 						playoffRound: matchDayInfo.playoffRound,
 						betSize: Number(selectedEmptyBetSize),
 					},
