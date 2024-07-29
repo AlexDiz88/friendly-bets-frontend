@@ -2,6 +2,12 @@ import { t } from 'i18next';
 import MatchDayInfo from '../../features/bets/types/MatchDayInfo';
 
 const playoffMatchDayList: string[] = [
+	'1/32',
+	'1/16',
+	'1/8',
+	'1/4',
+	'1/2',
+	t(`playoffRound.1/32`),
 	t(`playoffRound.1/16`),
 	t(`playoffRound.1/8`),
 	t(`playoffRound.1/4`),
@@ -29,6 +35,7 @@ export default function MatchDayTitleTransform(
 	currentLanguage: string
 ): string {
 	const result = matchDayInfo.matchDay;
+	console.log(result);
 
 	if (!matchDayInfo.isPlayoff) {
 		if (currentLanguage === 'ru') {
@@ -40,17 +47,18 @@ export default function MatchDayTitleTransform(
 		if (currentLanguage === 'en') {
 			return getEnglishOrdinalSuffix(Number(result)).toString();
 		}
-		return result;
 	}
 
 	if (
 		(matchDayInfo.isPlayoff && matchDayInfo.matchDay === 'final') ||
 		matchDayInfo.matchDay === t(`playoffRound.final`)
 	) {
+		console.log(result);
 		return t(`playoffRound.final`);
 	}
 
 	if (matchDayInfo.isPlayoff && playoffMatchDayList.includes(result)) {
+		console.log(result);
 		// в меню добавления новой ставки можно добавить к 1/8 слово "финала" на разных языках
 		// но затем его нужно отсечь и правильно обработать а также сохранить в бд просто как 1/8
 		// const idx = result.indexOf(' ');
@@ -58,5 +66,5 @@ export default function MatchDayTitleTransform(
 		return result + ' [' + matchDayInfo.playoffRound + ']';
 	}
 
-	return '';
+	return result;
 }
