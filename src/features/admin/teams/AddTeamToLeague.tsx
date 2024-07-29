@@ -172,7 +172,7 @@ export default function AddTeamToLeague({
 											alt="team_logo"
 											src={pathToLogoImage(team.title)}
 										/>
-										<Typography sx={{ fontSize: '0.9rem' }}>{team.title}</Typography>
+										<Typography sx={{ fontSize: '0.9rem' }}>{t(`teams:${team.title}`)}</Typography>
 									</ListItem>
 								))
 						) : (
@@ -199,7 +199,7 @@ export default function AddTeamToLeague({
 								<MenuItem dense key={team.id} value={team.title}>
 									<Box sx={{ display: 'flex', alignItems: 'center' }}>
 										<Avatar sx={{ mr: 1 }} alt="team_logo" src={pathToLogoImage(team.title)} />
-										<Typography sx={{ fontSize: '0.9rem' }}>{team.title}</Typography>
+										<Typography sx={{ fontSize: '0.9rem' }}>{t(`teams:${team.title}`)}</Typography>
 									</Box>
 								</MenuItem>
 							))}

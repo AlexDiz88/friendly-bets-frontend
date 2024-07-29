@@ -96,7 +96,9 @@ export default function BetInputTeams({
 											src={pathToLogoImage(team.title)}
 										/>
 
-										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{team.title}</Typography>
+										<Typography sx={{ mx: 1, fontSize: '1rem' }}>
+											{t(`teams:${team.title}`)}
+										</Typography>
 									</div>
 								</MenuItem>
 							))}
@@ -131,7 +133,9 @@ export default function BetInputTeams({
 											src={pathToLogoImage(team.title)}
 										/>
 
-										<Typography sx={{ mx: 1, fontSize: '1rem' }}>{team.title}</Typography>
+										<Typography sx={{ mx: 1, fontSize: '1rem' }}>
+											{t(`teams:${team.title}`)}
+										</Typography>
 									</div>
 								</MenuItem>
 							))}

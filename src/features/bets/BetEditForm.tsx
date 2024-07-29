@@ -5,7 +5,6 @@ import {
 	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogContentText,
 	IconButton,
 	MenuItem,
 	Select,
@@ -271,7 +270,7 @@ export default function BetEditForm({
 
 			{bet.betStatus !== 'OPENED' && bet.betStatus !== 'EMPTY' && (
 				<Box sx={{ textAlign: 'left' }}>
-					<Typography sx={{ mx: 1, mt: 1, fontWeight: '600' }}>Статус ставки</Typography>
+					<Typography sx={{ mx: 1, mt: 1, fontWeight: '600' }}>{t('betStatus')}</Typography>
 					<Select
 						autoWidth
 						size="small"
@@ -344,7 +343,7 @@ export default function BetEditForm({
 
 			<Dialog open={betUpdateOpenDialog} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
+					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 						<BetSummaryInfo
 							message={t('changeBet')}
 							player={updatedUser}
@@ -363,7 +362,7 @@ export default function BetEditForm({
 							betStatus={updatedBetStatus}
 							gameResult={updatedGameResult}
 						/>
-					</DialogContentText>
+					</Box>
 				</DialogContent>
 				<DialogActions>
 					<CustomCancelButton onClick={handleCloseDialog} />

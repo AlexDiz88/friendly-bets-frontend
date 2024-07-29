@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { Box, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -122,13 +122,10 @@ export default function AllStatsRecalculating(): JSX.Element {
 			</Box>
 			<Dialog open={openRecalculatePlayerStatsDialog} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						<Box component="span">{t('mainStatsWillBeRecalculated')}</Box>
-						<br />
-						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
-							{t('thisActionCannotBeCanceled')}
-						</Box>
-					</DialogContentText>
+					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
+						{t('mainStatsWillBeRecalculated')}
+						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('thisActionCannotBeCanceled')}</Box>
+					</Box>
 				</DialogContent>
 				<DialogActions>
 					<CustomCancelButton onClick={handleCloseDialog} />
@@ -138,13 +135,10 @@ export default function AllStatsRecalculating(): JSX.Element {
 
 			<Dialog open={openRecalculateTeamStatsDialog} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						<Box component="span">{t('teamStatsWillBeRecalculated')}</Box>
-						<br />
-						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
-							{t('thisActionCannotBeCanceled')}
-						</Box>
-					</DialogContentText>
+					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
+						{t('teamStatsWillBeRecalculated')}
+						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('thisActionCannotBeCanceled')}</Box>
+					</Box>
 				</DialogContent>
 				<DialogActions>
 					<CustomCancelButton onClick={handleCloseDialog} />

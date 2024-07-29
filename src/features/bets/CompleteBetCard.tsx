@@ -79,13 +79,13 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 						alt="team_logo"
 						src={pathToLogoImage(homeTeam.title)}
 					/>
-					{homeTeam.title}
+					{t(`teams:${homeTeam.title}`)}
 					<Avatar
 						sx={{ mr: 0.5, ml: 1, width: 25, height: 25 }}
 						alt="team_logo"
 						src={pathToLogoImage(awayTeam.title)}
 					/>
-					{awayTeam.title}
+					{t(`teams:${awayTeam.title}`)}
 				</Box>
 			</Box>
 			<Box sx={{ textAlign: 'center', fontSize: '1.4rem', fontWeight: 600 }}>{gameResult}</Box>

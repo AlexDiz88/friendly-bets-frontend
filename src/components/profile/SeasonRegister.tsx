@@ -1,14 +1,5 @@
 import { Close, DoubleArrow, SportsSoccer } from '@mui/icons-material';
-import {
-	Box,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	Fab,
-	Icon,
-	Typography,
-} from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent, Fab, Icon, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -114,9 +105,7 @@ export default function SeasonRegister(): JSX.Element {
 
 					<Dialog open={openDialog} onClose={handleCloseDialog}>
 						<DialogContent>
-							<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-								{t('AreYouSureParticipate')}
-							</DialogContentText>
+							<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>{t('AreYouSureParticipate')}</Box>
 						</DialogContent>
 						<DialogActions>
 							<Box>

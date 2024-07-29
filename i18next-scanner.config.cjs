@@ -32,7 +32,7 @@ module.exports = {
 			},
 		},
 		lngs: ['ru', 'en', 'de'],
-		ns: ['translation', 'siteNews'],
+		ns: ['translation', 'siteNews', 'tournamentRules', 'teams'],
 		defaultLng: 'ru',
 		defaultNs: 'translation',
 		defaultValue: '__STRING_NOT_TRANSLATED__',

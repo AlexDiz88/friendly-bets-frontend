@@ -6,7 +6,6 @@ import {
 	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogContentText,
 	IconButton,
 	Switch,
 	TextField,
@@ -453,7 +452,7 @@ export default function BetInputContainer(): JSX.Element {
 			)}
 			<Dialog open={openDialog} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontSize: '1rem', width: '14rem' }}>
+					<Box sx={{ fontSize: '1rem', width: '14rem' }}>
 						<BetSummaryInfo
 							message={t('addBet')}
 							player={selectedUser}
@@ -468,7 +467,7 @@ export default function BetInputContainer(): JSX.Element {
 							gameResult=""
 							betStatus=""
 						/>
-					</DialogContentText>
+					</Box>
 				</DialogContent>
 				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 					<DialogActions>
@@ -480,9 +479,7 @@ export default function BetInputContainer(): JSX.Element {
 
 			<Dialog open={openDialogEmptyBet} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>
-						{t('addEmptyBet')}
-					</DialogContentText>
+					<Box sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>{t('addEmptyBet')}</Box>
 				</DialogContent>
 				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 					<DialogActions>
@@ -497,9 +494,9 @@ export default function BetInputContainer(): JSX.Element {
 
 			<Dialog open={openDialogTwoEmptyBet} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>
+					<Box sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>
 						{t('addTwoEmptyBet')}
-					</DialogContentText>
+					</Box>
 				</DialogContent>
 				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 					<DialogActions>

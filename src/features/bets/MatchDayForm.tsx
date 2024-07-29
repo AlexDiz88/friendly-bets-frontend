@@ -165,12 +165,7 @@ export default function MatchDayForm({
 					>
 						{playoffMatchDayList.map((value) => (
 							<MenuItem key={value} sx={{ ml: -0.5, minWidth: '6rem' }} value={value}>
-								<div
-									style={{
-										display: 'flex',
-										alignItems: 'center',
-									}}
-								>
+								<div style={{ display: 'flex', alignItems: 'center' }}>
 									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{value}</Typography>
 								</div>
 							</MenuItem>
@@ -187,12 +182,7 @@ export default function MatchDayForm({
 					>
 						{playoffRoundsList.map((value) => (
 							<MenuItem key={value} sx={{ ml: -0.5, minWidth: '6rem' }} value={value}>
-								<div
-									style={{
-										display: 'flex',
-										alignItems: 'center',
-									}}
-								>
+								<div style={{ display: 'flex', alignItems: 'center' }}>
 									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{value}</Typography>
 								</div>
 							</MenuItem>

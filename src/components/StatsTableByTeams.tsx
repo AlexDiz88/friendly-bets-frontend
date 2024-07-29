@@ -67,7 +67,7 @@ function Row({ tStats }: RowProps): JSX.Element {
 							textOverflow: 'hidden',
 						}}
 					>
-						{tStats.team.title}
+						{t(`teams:${tStats.team.title}`)}
 					</Box>
 				</TableCell>
 				<TableCell align="center" sx={{ px: 0, mx: 0 }}>

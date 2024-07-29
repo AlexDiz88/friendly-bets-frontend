@@ -21,7 +21,7 @@ export default function TeamsInfo({
 					alt="league_logo"
 					src={pathToLogoImage(homeTeam?.title)}
 				/>
-				{homeTeam?.title} <br />
+				{t(`teams:${homeTeam?.title || ''}`)} <br />
 			</Box>
 			<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
 				<b>{t('awayTeam')}:</b>
@@ -32,7 +32,7 @@ export default function TeamsInfo({
 					alt="league_logo"
 					src={pathToLogoImage(awayTeam?.title)}
 				/>
-				{awayTeam?.title} <br />
+				{t(`teams:${awayTeam?.title || ''}`)} <br />
 			</Box>
 		</Box>
 	);

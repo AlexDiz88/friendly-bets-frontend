@@ -61,10 +61,9 @@ export default function DatabaseUpdate(): JSX.Element {
 			<Dialog open={openDialog} onClose={handleCloseDialog}>
 				<DialogContent>
 					<Typography>
-						<Box>
-							<b>{t('dbUpdate')}?</b>
-						</Box>
+						<b>{t('dbUpdate')}?</b>
 						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
+							<br />
 							{t('thisActionCannotBeCanceled')}
 						</Box>
 					</Typography>

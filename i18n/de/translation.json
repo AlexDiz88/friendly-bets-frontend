@@ -141,12 +141,12 @@
 	"teamTitle": "Name des Teams",
 	"teamCountry": "Land des Teams",
 	"abbreviatedTeamCountry": "Abgekürzter Ländercode aus 3 Zeichen (z.B. ENG, GER, FRA…)",
-	"teamNameMustBeEqualLogoName": "Der Name des Fußballteams (EN) muss mit dem Dateinamen des Logos übereinstimmen (bis die Datei-Upload-Funktion bei der Erstellung implementiert ist)",
+	"teamNameMustBeEqualLogoName": "Der Name des Fußballteams (EN) darf keine Leerzeichen enthalten und muss mit dem Namen der Logodatei übereinstimmen (bis die Dateiupload-Funktion bei der Erstellung implementiert wird)",
 	"playoffRound": {
-		"1/16": "1/16 Finale",
-		"1/8": "1/8 Finale",
-		"1/4": "1/4 Finale",
-		"1/2": "1/2 Finale",
+		"1/16": "1/16",
+		"1/8": "1/8",
+		"1/4": "1/4",
+		"1/2": "1/2",
 		"final": "Finale"
 	},
 	"incorrectGameScore": "Ungültiger Spielstand!",
@@ -196,5 +196,6 @@
 	"noActiveSeasonWasFounded": "Saison mit dem Status AKTIVE nicht gefunden",
 	"moreDetails": "Mehr Details",
 	"collapse": "Einklappen",
-	"websiteNews": "Website Nachrichten"
+	"websiteNews": "Website Nachrichten",
+	"generalRules": "Allgemeine Regeln für alle Turniere"
 }

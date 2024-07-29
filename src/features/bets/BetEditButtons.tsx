@@ -1,4 +1,4 @@
-import { Box, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
@@ -91,15 +91,10 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 			)}
 			<Dialog open={openDeleteDialog} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						<Box sx={{ mb: 2 }} component="span">
-							{t('deleteBetInfo')}
-						</Box>
-						<br />
-						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
-							{t('deleteBetAttention')}
-						</Box>
-					</DialogContentText>
+					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
+						<Box sx={{ mb: 1.5 }}>{t('deleteBetInfo')}</Box>
+						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('deleteBetAttention')}</Box>
+					</Box>
 				</DialogContent>
 				<DialogActions>
 					<CustomCancelButton onClick={handleCloseDialog} />

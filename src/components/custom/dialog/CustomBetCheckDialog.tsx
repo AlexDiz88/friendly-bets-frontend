@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, Typography } from '@mui/material';
+import { Box, Dialog, DialogActions, DialogContent, Typography } from '@mui/material';
 import { t } from 'i18next';
 import BetGameResultInfo from '../../../features/bets/BetGameResultInfo';
 import Bet from '../../../features/bets/types/Bet';
@@ -30,9 +30,9 @@ export default function CustomBetCheckDialog({
 	return (
 		<Dialog open={open} onClose={onClose}>
 			<DialogContent>
-				<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
+				<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 					<BetGameResultInfo gameResult={gameResult} />
-				</DialogContentText>
+				</Box>
 				<TeamsInfo homeTeam={bet?.homeTeam} awayTeam={bet?.awayTeam} />
 				<Typography sx={{ fontSize: '0.9rem' }}>
 					<b>{t('bet')}:</b> {bet?.betTitle || ''}

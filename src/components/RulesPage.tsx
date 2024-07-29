@@ -1,4 +1,5 @@
 import { Box, Container } from '@mui/material';
+import { t } from 'i18next';
 import Rules from './Rules';
 
 export default function RulesPage(): JSX.Element {
@@ -14,7 +15,7 @@ export default function RulesPage(): JSX.Element {
 					fontWeight: 600,
 				}}
 			>
-				Общие правила для всех турниров
+				{t('generalRules')}
 			</Box>
 			<Rules />
 		</Container>

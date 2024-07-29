@@ -141,12 +141,12 @@
 	"teamTitle": "Team name",
 	"teamCountry": "Country of team",
 	"abbreviatedTeamCountry": "Abbreviated country code of 3 characters (e.g., ENG, GER, FRA…)",
-	"teamNameMustBeEqualLogoName": "The football team name (EN) must match the filename of the logo (until the file upload is implemented during creation)",
+	"teamNameMustBeEqualLogoName": "The name of the football team (EN) must not contain spaces and must match the logo file name (until the file upload feature is implemented during creation)",
 	"playoffRound": {
-		"1/16": "1/16 finals",
-		"1/8": "1/8 finals",
-		"1/4": "1/4 finals",
-		"1/2": "1/2 finals",
+		"1/16": "1/16",
+		"1/8": "1/8",
+		"1/4": "1/4",
+		"1/2": "1/2",
 		"final": "Final"
 	},
 	"incorrectGameScore": "Incorrect match score!",
@@ -196,5 +196,6 @@
 	"noActiveSeasonWasFounded": "Season with status ACTIVE not found",
 	"moreDetails": "More details",
 	"collapse": "Collapse",
-	"websiteNews": "Website news"
+	"websiteNews": "Website news",
+	"generalRules": "General rules for all tournaments"
 }
