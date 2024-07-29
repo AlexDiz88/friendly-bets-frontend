@@ -1,27 +1,19 @@
 /* eslint-disable react/jsx-curly-newline */
-import {
-	Box,
-	Button,
-	CircularProgress,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	TextField,
-	Typography,
-} from '@mui/material';
+import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import TeamsInfo from '../../components/TeamsInfo';
+import CustomButton from '../../components/custom/btn/CustomButton';
+import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
+import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
+import CustomBetCheckDialog from '../../components/custom/dialog/CustomBetCheckDialog';
 import GameScoreValidation from '../../components/utils/GameScoreValidation';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
 import { selectUser } from '../auth/selectors';
 import BetCard from './BetCard';
-import BetGameResultInfo from './BetGameResultInfo';
 import { getOpenedBets, setBetResult } from './betsSlice';
 import { selectOpenedBets } from './selectors';
 import Bet from './types/Bet';
@@ -33,13 +25,11 @@ export default function BetsCheck(): JSX.Element {
 	const user = useAppSelector(selectUser);
 	const navigate = useNavigate();
 	const openedBets = useAppSelector(selectOpenedBets);
-	const [betLoseOpenDialog, setBetLoseOpenDialog] = useState(false);
-	const [betReturnOpenDialog, setBetReturnOpenDialog] = useState(false);
-	const [betWinOpenDialog, setBetWinOpenDialog] = useState(false);
 	const [selectedBet, setSelectedBet] = useState<Bet | undefined>(undefined);
 	const [gameResult, setGameResult] = useState<string>('');
 	const [inputValues, setInputValues] = useState<Record<string, string>>({});
-	const [selectedLeague, setSelectedLeague] = useState('Все');
+	const [selectedLeague, setSelectedLeague] = useState(t('all'));
+	const [dialogType, setDialogType] = useState<'LOST' | 'RETURNED' | 'WON' | undefined>(undefined);
 	const [showMessage, setShowMessage] = useState(false);
 	const [openSnackbar, setOpenSnackbar] = useState(false);
 	const [snackbarSeverity, setSnackbarSeverity] = useState<
@@ -48,9 +38,7 @@ export default function BetsCheck(): JSX.Element {
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 
 	const handleCloseDialog = (): void => {
-		setBetWinOpenDialog(false);
-		setBetReturnOpenDialog(false);
-		setBetLoseOpenDialog(false);
+		setDialogType(undefined);
 	};
 
 	const handleLeagueChange = (leagueName: string): void => {
@@ -72,7 +60,7 @@ export default function BetsCheck(): JSX.Element {
 				if (setBetResult.fulfilled.match(dispatchResult)) {
 					setOpenSnackbar(true);
 					setSnackbarSeverity('info');
-					setSnackbarMessage('Ставка успешно обработана');
+					setSnackbarMessage(t('betWasSuccessfullyProcessed'));
 					setGameResult('');
 					handleLeagueChange(selectedLeague);
 				}
@@ -88,17 +76,8 @@ export default function BetsCheck(): JSX.Element {
 		[dispatch, gameResult, selectedBet, selectedLeague]
 	);
 
-	// хэндлеры
-	const handleBetLoseSave = (): void => {
-		handleSaveBetCheck('LOST');
-	};
-
-	const handleBetReturnSave = (): void => {
-		handleSaveBetCheck('RETURNED');
-	};
-
-	const handleBetWinSave = (): void => {
-		handleSaveBetCheck('WON');
+	const handleBetSave = (status: string): void => {
+		handleSaveBetCheck(status);
 	};
 
 	const handleGameResultChange = (betId: string, value: string): void => {
@@ -108,25 +87,11 @@ export default function BetsCheck(): JSX.Element {
 		}));
 	};
 
-	const handleBetLoseOpenDialog = (bet: Bet, result: string): void => {
+	const openDialog = (type: 'LOST' | 'RETURNED' | 'WON', bet: Bet, result: string): void => {
 		const res = GameScoreValidation(result);
 		setGameResult(res);
 		setSelectedBet(bet);
-		setBetLoseOpenDialog(true);
-	};
-
-	const handleBetReturnOpenDialog = (bet: Bet, result: string): void => {
-		const res = GameScoreValidation(result);
-		setGameResult(res);
-		setSelectedBet(bet);
-		setBetReturnOpenDialog(true);
-	};
-
-	const handleBetWinOpenDialog = (bet: Bet, result: string): void => {
-		const res = GameScoreValidation(result);
-		setGameResult(res);
-		setSelectedBet(bet);
-		setBetWinOpenDialog(true);
+		setDialogType(type);
 	};
 
 	const handleCloseSnackbar = (): void => {
@@ -190,16 +155,11 @@ export default function BetsCheck(): JSX.Element {
 	}
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				justifyContent: 'center',
-			}}
-		>
+		<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 			{activeSeason && (
 				<Box>
 					<Box sx={{ borderBottom: 2, textAlign: 'center', mx: 3, pb: 0.5, mb: 1.5 }}>
-						Проверка ставок
+						{t('betsCheck')}
 					</Box>
 
 					<Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -207,14 +167,14 @@ export default function BetsCheck(): JSX.Element {
 							<Button
 								sx={{
 									borderRadius: 0,
-									borderBottom: selectedLeague === 'Все' ? 1 : 0,
-									color: selectedLeague === 'Все' ? 'brown' : 'black',
+									borderBottom: selectedLeague === t('all') ? 1 : 0,
+									color: selectedLeague === t('all') ? 'brown' : 'black',
 									fontFamily: 'Exo 2',
 									px: 0,
 									mr: 0.5,
-									fontWeight: selectedLeague === 'Все' ? 'bold' : 'normal',
+									fontWeight: selectedLeague === t('all') ? 'bold' : 'normal',
 								}}
-								onClick={() => handleLeagueChange('Все')}
+								onClick={() => handleLeagueChange(t('all'))}
 							>
 								<Typography
 									variant="button"
@@ -222,7 +182,7 @@ export default function BetsCheck(): JSX.Element {
 									fontSize="0.9rem"
 									fontFamily="Shantell Sans"
 								>
-									Все
+									{t('all')}
 								</Typography>
 							</Button>
 						</Box>
@@ -256,153 +216,42 @@ export default function BetsCheck(): JSX.Element {
 					</Box>
 
 					{openedBets.map((bet) => {
-						if (bet.leagueCode === selectedLeague) {
+						if (bet.leagueCode === selectedLeague || selectedLeague === t('all')) {
 							return (
 								<Box key={bet.id}>
 									<BetCard bet={bet} />
-									<Box
-										sx={{
-											mb: 3,
-											mt: -0.5,
-											ml: 0.5,
-											display: 'flex',
-											flexWrap: 'nowrap',
-											justifyContent: 'center',
-										}}
-									>
+									<Box sx={{ mb: 3, mt: 0.5, ml: 0.5, display: 'flex', justifyContent: 'center' }}>
 										<Box>
 											<Box sx={{ mb: 0.5, px: 0.5 }}>
 												<TextField
 													fullWidth
 													required
 													id={`inputValues-${bet.id}`}
-													label="Счёт матча"
+													label={t('gameScore')}
 													variant="outlined"
 													value={inputValues[bet.id] || ''}
 													onChange={(event) => handleGameResultChange(bet.id, event.target.value)}
 												/>
 											</Box>
 											<Box>
-												<Button
-													sx={{ mr: 1 }}
-													variant="contained"
-													color="error"
-													onClick={() => handleBetLoseOpenDialog(bet, inputValues[bet.id])}
-												>
-													<Typography
-														variant="button"
-														fontWeight="600"
-														fontSize="0.8rem"
-														fontFamily="Shantell Sans"
-													>
-														Не зашла
-													</Typography>
-												</Button>
-												<Button
-													sx={{ mr: 1, bgcolor: 'yellow', color: 'black' }}
-													variant="contained"
-													onClick={() => handleBetReturnOpenDialog(bet, inputValues[bet.id])}
-												>
-													<Typography
-														variant="button"
-														fontWeight="600"
-														fontSize="0.8rem"
-														fontFamily="Shantell Sans"
-													>
-														Вернулась
-													</Typography>
-												</Button>
-												<Button
-													sx={{ mr: 1 }}
-													variant="contained"
-													color="success"
-													onClick={() => handleBetWinOpenDialog(bet, inputValues[bet.id])}
-												>
-													<Typography
-														variant="button"
-														fontWeight="600"
-														fontSize="0.8rem"
-														fontFamily="Shantell Sans"
-													>
-														Зашла
-													</Typography>
-												</Button>
-											</Box>
-										</Box>
-									</Box>
-								</Box>
-							);
-						} else if (selectedLeague === 'Все') {
-							return (
-								<Box key={bet.id}>
-									<BetCard bet={bet} />
-									<Box
-										sx={{
-											mb: 3,
-											mt: -0.5,
-											ml: 0.5,
-											display: 'flex',
-											flexWrap: 'nowrap',
-											justifyContent: 'center',
-										}}
-									>
-										<Box>
-											<Box sx={{ mb: 0.5, px: 0.5 }}>
-												<TextField
-													fullWidth
-													required
-													id={`inputValues-${bet.id}`}
-													label="Счёт матча"
-													variant="outlined"
-													value={inputValues[bet.id] || ''}
-													onChange={(event) => handleGameResultChange(bet.id, event.target.value)}
+												<CustomCancelButton
+													sx={{ px: 2 }}
+													onClick={() => openDialog('LOST', bet, inputValues[bet.id])}
+													buttonText={t('lost')}
+													textSize="0.8rem"
 												/>
-											</Box>
-											<Box>
-												<Button
-													sx={{ mr: 1 }}
-													variant="contained"
-													color="error"
-													onClick={() => handleBetLoseOpenDialog(bet, inputValues[bet.id])}
-												>
-													<Typography
-														variant="button"
-														fontWeight="600"
-														fontSize="0.8rem"
-														fontFamily="Shantell Sans"
-													>
-														Не зашла
-													</Typography>
-												</Button>
-												<Button
-													sx={{ mr: 1, bgcolor: 'yellow', color: 'black' }}
-													variant="contained"
-													onClick={() => handleBetReturnOpenDialog(bet, inputValues[bet.id])}
-												>
-													<Typography
-														variant="button"
-														fontWeight="600"
-														fontSize="0.8rem"
-														fontFamily="Shantell Sans"
-													>
-														Вернулась
-													</Typography>
-												</Button>
-												<Button
-													sx={{ mr: 1 }}
-													variant="contained"
-													color="success"
-													onClick={() => handleBetWinOpenDialog(bet, inputValues[bet.id])}
-												>
-													<Typography
-														variant="button"
-														fontWeight="600"
-														fontSize="0.8rem"
-														fontFamily="Shantell Sans"
-													>
-														Зашла
-													</Typography>
-												</Button>
+												<CustomButton
+													sx={{ height: '2rem', mr: 1, bgcolor: 'yellow', color: 'black', px: 2 }}
+													onClick={() => openDialog('RETURNED', bet, inputValues[bet.id])}
+													buttonText={t('returned')}
+													textSize="0.8rem"
+												/>
+												<CustomSuccessButton
+													sx={{ px: 2 }}
+													onClick={() => openDialog('WON', bet, inputValues[bet.id])}
+													buttonText={t('won')}
+													textSize="0.8rem"
+												/>
 											</Box>
 										</Box>
 									</Box>
@@ -413,113 +262,36 @@ export default function BetsCheck(): JSX.Element {
 				</Box>
 			)}
 
-			<Dialog open={betLoseOpenDialog} onClose={handleCloseDialog}>
-				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						<BetGameResultInfo gameResult={gameResult} />
-					</DialogContentText>
-					<TeamsInfo homeTeam={selectedBet?.homeTeam} awayTeam={selectedBet?.awayTeam} />
-					<Typography sx={{ fontSize: '0.9rem' }}>
-						<b>Ставка:</b> {selectedBet?.betTitle}
-					</Typography>
-				</DialogContent>
-				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="outlined" color="error" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button variant="contained" color="error" onClick={handleBetLoseSave} autoFocus>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Ставка не зашла
-						</Typography>
-					</Button>
-				</DialogActions>
-			</Dialog>
+			<CustomBetCheckDialog
+				open={dialogType === 'LOST'}
+				onClose={handleCloseDialog}
+				onSave={() => handleBetSave('LOST')}
+				gameResult={gameResult}
+				bet={selectedBet}
+				buttonColor="error"
+				buttonText={t('lost')}
+			/>
 
-			<Dialog open={betReturnOpenDialog} onClose={handleCloseDialog}>
-				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						<BetGameResultInfo gameResult={gameResult} />
-					</DialogContentText>
-					<TeamsInfo homeTeam={selectedBet?.homeTeam} awayTeam={selectedBet?.awayTeam} />
-					<Typography sx={{ fontSize: '0.9rem' }}>
-						<b>Ставка:</b> {selectedBet?.betTitle}
-					</Typography>
-				</DialogContent>
-				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="outlined" color="error" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button
-						sx={{ bgcolor: '#e6eb16' }}
-						variant="contained"
-						onClick={handleBetReturnSave}
-						autoFocus
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-							color="black"
-						>
-							Ставка вернулась
-						</Typography>
-					</Button>
-				</DialogActions>
-			</Dialog>
+			<CustomBetCheckDialog
+				open={dialogType === 'RETURNED'}
+				onClose={handleCloseDialog}
+				onSave={() => handleBetSave('RETURNED')}
+				gameResult={gameResult}
+				bet={selectedBet}
+				buttonText={t('returned')}
+				sx={{ bgcolor: '#e6eb16', color: 'black' }}
+			/>
 
-			<Dialog open={betWinOpenDialog} onClose={handleCloseDialog}>
-				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem' }}>
-						<BetGameResultInfo gameResult={gameResult} />
-					</DialogContentText>
-					<TeamsInfo homeTeam={selectedBet?.homeTeam} awayTeam={selectedBet?.awayTeam} />
-					<Typography sx={{ fontSize: '0.9rem' }}>
-						<b>Ставка:</b> {selectedBet?.betTitle}
-					</Typography>
-				</DialogContent>
-				<DialogActions>
-					<Button sx={{ mr: 1 }} variant="outlined" color="error" onClick={handleCloseDialog}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
-					<Button variant="contained" color="success" onClick={handleBetWinSave} autoFocus>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Ставка зашла
-						</Typography>
-					</Button>
-				</DialogActions>
-			</Dialog>
+			<CustomBetCheckDialog
+				open={dialogType === 'WON'}
+				onClose={handleCloseDialog}
+				onSave={() => handleBetSave('WON')}
+				gameResult={gameResult}
+				bet={selectedBet}
+				buttonColor="success"
+				buttonText={t('won')}
+			/>
+
 			<Box textAlign="center">
 				<NotificationSnackbar
 					open={openSnackbar}

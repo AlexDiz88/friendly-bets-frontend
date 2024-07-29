@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import {
 	Avatar,
 	Box,
@@ -12,10 +13,10 @@ import {
 	IconButtonProps,
 	Typography,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { green } from '@mui/material/colors';
+import { styled } from '@mui/material/styles';
+import { t } from 'i18next';
+import { useState } from 'react';
 
 interface ExpandMoreProps extends IconButtonProps {
 	expand: boolean;
@@ -59,8 +60,8 @@ export default function ScheduleEuro2024(): JSX.Element {
 							2
 						</Avatar>
 					}
-					title="Расписание группового этапа ЕВРО-2024"
-					subheader="13 Июня, 2024"
+					title={t('siteNews:ScheduleEuro2024.title')}
+					subheader={t('siteNews:ScheduleEuro2024.date')}
 				/>
 				<CardMedia
 					component="img"
@@ -70,21 +71,17 @@ export default function ScheduleEuro2024(): JSX.Element {
 				/>
 				<CardContent>
 					<Typography variant="body2" color="text.secondary">
-						Тут можно посмотреть даты и время начало всех матчей группового этапа.
+						{t('siteNews:ScheduleEuro2024.header')}
 					</Typography>
 				</CardContent>
 				<CardActions disableSpacing sx={{ display: 'flex', justifyContent: 'space-between' }}>
 					<IconButton aria-label="add to favorites" onClick={handleLikeToggle}>
 						<FavoriteIcon color={isLiked ? 'error' : 'inherit'} />
 					</IconButton>
-					<Box
-						sx={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							alignItems: 'center',
-						}}
-					>
-						<Typography sx={{ fontSize: '0.85rem' }}>Показать расписание</Typography>
+					<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+						<Typography sx={{ fontSize: '0.85rem' }}>
+							{t('siteNews:ScheduleEuro2024.showSchedule')}
+						</Typography>
 						<ExpandMore
 							expand={expanded}
 							onClick={handleExpandClick}
@@ -104,7 +101,7 @@ export default function ScheduleEuro2024(): JSX.Element {
 							content="contain"
 						/>
 						<Typography paragraph sx={{ px: 2, pt: 2 }}>
-							Расписание матчей плей-офф будет добавлено после определения всех его участников
+							{t('siteNews:ScheduleEuro2024.text.1')}
 						</Typography>
 						<CardActions disableSpacing sx={{ display: 'flex', justifyContent: 'end' }}>
 							<Box
@@ -113,7 +110,7 @@ export default function ScheduleEuro2024(): JSX.Element {
 									alignItems: 'center',
 								}}
 							>
-								<Typography sx={{ fontSize: '0.85rem' }}>Закрыть</Typography>
+								<Typography sx={{ fontSize: '0.85rem' }}>{t('close')}</Typography>
 								<ExpandMore
 									expand={expanded}
 									onClick={handleExpandClick}

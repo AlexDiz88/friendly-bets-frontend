@@ -1,13 +1,11 @@
 import { Dangerous } from '@mui/icons-material';
 import {
 	Box,
-	Button,
 	Checkbox,
 	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogContentText,
 	IconButton,
 	Switch,
 	TextField,
@@ -18,6 +16,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
+import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
@@ -80,7 +79,10 @@ export default function BetInputContainer(): JSX.Element {
 		setOpenDialog(false);
 		if (season && selectedUser && selectedHomeTeam && selectedAwayTeam) {
 			const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
-			// TODO добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
+			// TODO: добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
+			const matchDayCode =
+				matchDayInfo.matchDay === t('playoffRound.final') ? 'final' : matchDayInfo.matchDay;
+
 			const dispatchResult = await dispatch(
 				addBet({
 					newBet: {
@@ -88,11 +90,11 @@ export default function BetInputContainer(): JSX.Element {
 						leagueId: selectedLeagueId,
 						userId: selectedUser?.id,
 						isPlayoff: matchDayInfo.isPlayoff,
-						matchDay: matchDayInfo.matchDay,
+						matchDay: matchDayCode,
 						playoffRound: matchDayInfo.playoffRound,
 						homeTeamId: selectedHomeTeam?.id,
 						awayTeamId: selectedAwayTeam?.id,
-						betTitle: isNot ? `${selectedBetTitle} - нет` : selectedBetTitle,
+						betTitle: isNot ? `${selectedBetTitle}${t('not')}` : selectedBetTitle,
 						betOdds: betOddsToNumber,
 						betSize: Number(selectedBetSize),
 					},
@@ -102,7 +104,7 @@ export default function BetInputContainer(): JSX.Element {
 			if (addBet.fulfilled.match(dispatchResult)) {
 				setOpenSnackbar(true);
 				setSnackbarSeverity('success');
-				setSnackbarMessage('Ставка успешно добавлена');
+				setSnackbarMessage(t('betWasSuccessfullyAdded'));
 				setSnackbarDuration(1000);
 				setResetTeams(!resetTeams);
 				setSelectedHomeTeam(undefined);
@@ -141,6 +143,8 @@ export default function BetInputContainer(): JSX.Element {
 	// добавление пустой ставки
 	const handleSaveEmptyBetClick = useCallback(async () => {
 		if (season && selectedUser) {
+			const matchDayCode =
+				matchDayInfo.matchDay === t('playoffRound.final') ? 'final' : matchDayInfo.matchDay;
 			const dispatchResult = await dispatch(
 				addEmptyBet({
 					newEmptyBet: {
@@ -148,7 +152,7 @@ export default function BetInputContainer(): JSX.Element {
 						leagueId: selectedLeagueId,
 						userId: selectedUser.id,
 						isPlayoff: matchDayInfo.isPlayoff,
-						matchDay: matchDayInfo.matchDay,
+						matchDay: matchDayCode,
 						playoffRound: matchDayInfo.playoffRound,
 						betSize: Number(selectedEmptyBetSize),
 					},
@@ -159,9 +163,9 @@ export default function BetInputContainer(): JSX.Element {
 				setOpenSnackbar(true);
 				setSnackbarSeverity('success');
 				if (openDialogEmptyBet) {
-					setSnackbarMessage('Пустая ставка успешно добавлена');
+					setSnackbarMessage(t('emptyBetWasSuccessfullyDeleted'));
 				} else {
-					setSnackbarMessage('2 пустые ставки успешно добавлены');
+					setSnackbarMessage(t('twoEmptyBetsWasSuccessfullyDeleted'));
 				}
 			}
 			if (addEmptyBet.rejected.match(dispatchResult)) {
@@ -321,6 +325,7 @@ export default function BetInputContainer(): JSX.Element {
 				display: 'flex',
 				flexDirection: 'column',
 				alignItems: 'center',
+				minWidth: '15rem',
 			}}
 		>
 			<Typography sx={{ textAlign: 'center', borderBottom: 2, pb: 1, mx: 2 }}>
@@ -402,7 +407,7 @@ export default function BetInputContainer(): JSX.Element {
 								onChange={handleIsNotChange}
 								inputProps={{ 'aria-label': 'controlled' }}
 							/>
-							Нет
+							{t('not')}
 						</Box>
 					)}
 					{selectedBetTitle && (
@@ -413,22 +418,12 @@ export default function BetInputContainer(): JSX.Element {
 						/>
 					)}
 					{showSendButton && selectedBetOdds && selectedBetSize && (
-						<Button
+						<CustomButton
+							sx={{ mt: 3, height: '3rem', px: 6 }}
 							onClick={handleOpenDialog}
-							sx={{ mt: 2, height: '2.5rem', px: 6.6 }}
-							variant="contained"
-							color="secondary"
-							size="large"
-						>
-							<Typography
-								variant="button"
-								fontWeight="600"
-								fontSize="0.9rem"
-								fontFamily="Shantell Sans"
-							>
-								{t('sendBet')}
-							</Typography>
-						</Button>
+							buttonText={t('sendBet')}
+							buttonColor="secondary"
+						/>
 					)}
 				</>
 			)}
@@ -448,41 +443,21 @@ export default function BetInputContainer(): JSX.Element {
 							<TextField size="small" value={selectedEmptyBetSize} onChange={handleEmptyBetSize} />
 						</Box>
 					</Box>
-					<Button
-						onClick={handleOpenDialogEmptyBet}
+					<CustomButton
 						sx={{ mt: 2, height: '2.5rem', px: 2.1, bgcolor: '#525252' }}
-						variant="contained"
-						size="large"
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							{t('sendEmptyBet')}
-						</Typography>
-					</Button>
-					<Button
+						onClick={handleOpenDialogEmptyBet}
+						buttonText={t('sendEmptyBet')}
+					/>
+					<CustomButton
+						sx={{ mt: 2, height: '2.5rem', px: 2.1, bgcolor: '#525252' }}
 						onClick={handleOpenDialogTwoEmptyBet}
-						sx={{ mt: 3, height: '2.5rem', px: 1.6, bgcolor: '#525252' }}
-						variant="contained"
-						size="large"
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.8rem"
-							fontFamily="Shantell Sans"
-						>
-							{t('sendTwoEmptyBet')}
-						</Typography>
-					</Button>
+						buttonText={t('sendTwoEmptyBet')}
+					/>
 				</>
 			)}
 			<Dialog open={openDialog} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontSize: '1rem', width: '14rem' }}>
+					<Box sx={{ fontSize: '1rem', width: '14rem' }}>
 						<BetSummaryInfo
 							message={t('addBet')}
 							player={selectedUser}
@@ -497,7 +472,7 @@ export default function BetInputContainer(): JSX.Element {
 							gameResult=""
 							betStatus=""
 						/>
-					</DialogContentText>
+					</Box>
 				</DialogContent>
 				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 					<DialogActions>
@@ -509,9 +484,7 @@ export default function BetInputContainer(): JSX.Element {
 
 			<Dialog open={openDialogEmptyBet} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>
-						{t('addEmptyBet')}
-					</DialogContentText>
+					<Box sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>{t('addEmptyBet')}</Box>
 				</DialogContent>
 				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 					<DialogActions>
@@ -526,9 +499,9 @@ export default function BetInputContainer(): JSX.Element {
 
 			<Dialog open={openDialogTwoEmptyBet} onClose={handleCloseDialog}>
 				<DialogContent>
-					<DialogContentText sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>
+					<Box sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>
 						{t('addTwoEmptyBet')}
-					</DialogContentText>
+					</Box>
 				</DialogContent>
 				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 					<DialogActions>

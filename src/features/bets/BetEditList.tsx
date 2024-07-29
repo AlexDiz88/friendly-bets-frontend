@@ -1,18 +1,18 @@
+import { Box, Button, CircularProgress, Stack, Typography } from '@mui/material';
+import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, CircularProgress, Stack, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
-import BetCard from './BetCard';
-import EmptyBetCard from './EmptyBetCard';
-import CompleteBetCard from './CompleteBetCard';
-import BetEditButtons from './BetEditButtons';
-import { selectUser } from '../auth/selectors';
-import { selectAllBets, selectTotalPages } from './selectors';
-import { getAllBets } from './betsSlice';
 import SeasonResponseError from '../admin/seasons/types/SeasonResponseError';
-import { t } from 'i18next';
+import { selectUser } from '../auth/selectors';
+import BetCard from './BetCard';
+import BetEditButtons from './BetEditButtons';
+import { getAllBets } from './betsSlice';
+import CompleteBetCard from './CompleteBetCard';
+import EmptyBetCard from './EmptyBetCard';
+import { selectAllBets, selectTotalPages } from './selectors';
 
 export default function BetEditList(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -58,7 +58,7 @@ export default function BetEditList(): JSX.Element {
 					setLoading(false);
 				})
 				.catch((error: SeasonResponseError) => {
-					if (error.message === 'Сезон со статусом ACTIVE не найден') {
+					if (error.message === t('noActiveSeasonWasFounded')) {
 						navigate('/no-active-season');
 					} else {
 						setLoadingError(true);
@@ -110,15 +110,9 @@ export default function BetEditList(): JSX.Element {
 	}
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-			}}
-		>
+		<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 			<Box sx={{ borderBottom: 1, textAlign: 'center', mx: 3, pb: 0.5, mb: 1.5 }}>
-				Редактирование ставок
+				{t('editingBets')}
 			</Box>
 
 			{loading ? (

@@ -2,23 +2,29 @@ import { GppBad, GppGood, RestorePage } from '@mui/icons-material';
 import { Avatar, Box } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import Bet from './types/Bet';
 
 export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
+	const { i18n } = useTranslation();
+	const currentLanguage = i18n.language;
 	const [matchDayTitle, setMatchDayTitle] = useState<string>('');
 
 	useEffect(() => {
 		setMatchDayTitle(
-			MatchDayTitleTransform({
-				isPlayoff: bet.isPlayoff,
-				matchDay: bet.matchDay,
-				playoffRound: bet.playoffRound,
-			})
+			MatchDayTitleTransform(
+				{
+					isPlayoff: bet.isPlayoff,
+					matchDay: bet.matchDay,
+					playoffRound: bet.playoffRound,
+				},
+				currentLanguage
+			)
 		);
-	}, [bet]);
+	}, [bet, currentLanguage]);
 
 	const {
 		leagueCode,
@@ -63,13 +69,7 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 					/>
 					<b>{player.username}</b>
 				</Box>
-				<Box
-					sx={{
-						mr: 1,
-						display: 'flex',
-						alignItems: 'start',
-					}}
-				>
+				<Box sx={{ mr: 1, display: 'flex', alignItems: 'start' }}>
 					<Avatar
 						sx={{ mr: 0.5, width: 25, height: 25 }}
 						alt="team_logo"
@@ -85,29 +85,23 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 						alt="team_logo"
 						src={pathToLogoImage(homeTeam.title)}
 					/>
-					{homeTeam.title}
+					{t(`teams:${homeTeam.title}`)}
 					<Avatar
 						sx={{ mr: 0.5, ml: 1, width: 25, height: 25 }}
 						alt="team_logo"
 						src={pathToLogoImage(awayTeam.title)}
 					/>
-					{awayTeam.title}
+					{t(`teams:${awayTeam.title}`)}
 				</Box>
 			</Box>
 			<Box sx={{ textAlign: 'center', fontSize: '1.4rem', fontWeight: 600 }}>{gameResult}</Box>
 			<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-				<b>Ставка:</b> {betTitle}
+				<b>{t('bet')}:</b> {betTitle}
 			</Box>
 			<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-				<b>Кэф:</b> {betOdds.toFixed(2)}, <b>Сумма:</b> {betSize}
+				<b>{t('coef')}:</b> {betOdds.toFixed(2)}, <b>{t('amount')}:</b> {betSize}
 			</Box>
-			<Box
-				sx={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-				}}
-			>
+			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<Box>
 					<Box
 						sx={{
@@ -127,10 +121,10 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 						)}
 
 						{betStatus === 'WON'
-							? 'Ставка сыграла'
+							? t('betWon')
 							: betStatus === 'RETURNED'
-							? 'Ставка вернулась'
-							: 'Ставка не сыграла'}
+							? t('betReturned')
+							: t('betLost')}
 					</Box>
 				</Box>
 				{balanceChange !== undefined && (

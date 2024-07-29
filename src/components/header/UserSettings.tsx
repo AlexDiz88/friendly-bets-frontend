@@ -1,12 +1,12 @@
+import { Avatar, Box, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, IconButton, Avatar, Typography, MenuItem, Menu } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectUser } from '../../features/auth/selectors';
 import { getProfile, logout } from '../../features/auth/authSlice';
-import pathToAvatarImage from '../utils/pathToAvatarImage';
+import { selectUser } from '../../features/auth/selectors';
 import User from '../../features/auth/types/User';
-import { t } from 'i18next';
+import pathToAvatarImage from '../utils/pathToAvatarImage';
 
 export default function UserSettings(): JSX.Element {
 	const user: User | undefined = useAppSelector(selectUser);
@@ -26,7 +26,7 @@ export default function UserSettings(): JSX.Element {
 		t('summaryResults'),
 		t('editBet'),
 		t('myProfile'),
-		t('myStats'),
+		// t('myStats'),
 		t('seasonRegister'),
 		t('logout'),
 	];

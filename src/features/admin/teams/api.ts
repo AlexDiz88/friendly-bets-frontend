@@ -1,18 +1,14 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import Team from './types/Team';
 
-export async function createTeam(
-	fullTitleRu: string,
-	fullTitleEn: string,
-	country: string
-): Promise<Team> {
+export async function createTeam(title: string, country: string): Promise<Team> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/teams`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/teams';
 	}
 	const result = await fetch(`${url}`, {
 		method: 'POST',
-		body: JSON.stringify({ fullTitleRu, fullTitleEn, country }),
+		body: JSON.stringify({ title, country }),
 		headers: {
 			'Content-Type': 'application/json',
 		},

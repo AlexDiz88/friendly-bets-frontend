@@ -1,5 +1,4 @@
-import { forwardRef, useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
 	Box,
 	Button,
@@ -12,11 +11,12 @@ import {
 	Typography,
 } from '@mui/material';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import { VisibilityOff, Visibility } from '@mui/icons-material';
+import { t } from 'i18next';
+import { forwardRef, useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getProfile, login, resetLoginFormError } from './authSlice';
 import { selectLoginFormError } from './selectors';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { t } from 'i18next';
 
 // eslint-disable-next-line react/display-name
 const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => {
@@ -164,10 +164,14 @@ function Login(): JSX.Element {
 							sx={{ height: '3rem' }}
 							variant="contained"
 							type="submit"
-							color="info"
 							size="large"
 						>
-							<Typography variant="button" fontWeight="600" fontSize="1.1rem" fontFamily="Exo">
+							<Typography
+								variant="button"
+								fontWeight="600"
+								fontSize="1.2rem"
+								fontFamily="Shantell Sans"
+							>
 								{t('login')}
 							</Typography>
 						</Button>
@@ -184,7 +188,7 @@ function Login(): JSX.Element {
 						onClose={handleSnackbarClose}
 					>
 						<Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '15rem' }}>
-							Успешный вход!
+							{t('loginSuccess')}
 						</Alert>
 					</Snackbar>
 					<Snackbar
@@ -198,7 +202,7 @@ function Login(): JSX.Element {
 						onClose={handleSnackbarClose}
 					>
 						<Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '15rem' }}>
-							Login error!
+							{t('loginError')}
 							{error && <Box>{error}</Box>}
 						</Alert>
 					</Snackbar>

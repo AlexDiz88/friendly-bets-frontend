@@ -1,4 +1,4 @@
-import { Box, TextField } from '@mui/material';
+import { Box, FormControl, TextField } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
@@ -13,8 +13,7 @@ export default function CreateNewTeam({
 	closeAddNewTeam: (close: boolean) => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
-	const [fullTitleRu, setFullTitleRu] = useState<string>('');
-	const [fullTitleEn, setFullTitleEn] = useState<string>('');
+	const [title, setTitle] = useState<string>('');
 	const [country, setCountry] = useState<string>('');
 	const [openSnackbar, setOpenSnackbar] = useState(false);
 	const [snackbarSeverity, setSnackbarSeverity] = useState<
@@ -23,13 +22,12 @@ export default function CreateNewTeam({
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 
 	const handleSaveClick = useCallback(async () => {
-		const dispatchResult = await dispatch(createTeam({ fullTitleRu, fullTitleEn, country }));
+		const dispatchResult = await dispatch(createTeam({ title, country }));
 		if (createTeam.fulfilled.match(dispatchResult)) {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('success');
-			setSnackbarMessage('Команда успешно создана');
-			setFullTitleRu('');
-			setFullTitleEn('');
+			setSnackbarMessage(t('teamWasSuccessfullyCreated'));
+			setTitle('');
 			setCountry('');
 		}
 		if (createTeam.rejected.match(dispatchResult)) {
@@ -39,14 +37,10 @@ export default function CreateNewTeam({
 				setSnackbarMessage(dispatchResult.error.message);
 			}
 		}
-	}, [dispatch, country, fullTitleEn, fullTitleRu]);
+	}, [dispatch, country, title]);
 
-	const handleFullTitleRuChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-		setFullTitleRu(event.target.value);
-	};
-
-	const handleFullTitleEnChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-		setFullTitleEn(event.target.value);
+	const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+		setTitle(event.target.value);
 	};
 
 	const handleCountryChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -62,28 +56,17 @@ export default function CreateNewTeam({
 	};
 
 	return (
-		<Box>
-			<Box sx={{ my: 1 }}>
-				<TextField
-					fullWidth
-					required
-					id="team-name-ru"
-					label="Название команды(RU)"
-					variant="outlined"
-					value={fullTitleRu}
-					onChange={handleFullTitleRuChange}
-				/>
-			</Box>
+		<FormControl>
 			<Box sx={{ my: 1 }}>
 				<TextField
 					fullWidth
 					required
 					id="team-name-en"
-					label="Название команды(EN)"
+					label={t('teamTitle')}
 					variant="outlined"
-					value={fullTitleEn}
-					onChange={handleFullTitleEnChange}
-					helperText="Название команды (EN) должно совпадать с именем файла логотипа (до момента реализации загрузки файла при создании)"
+					value={title}
+					onChange={handleTitleChange}
+					helperText={t('teamNameMustBeEqualLogoName')}
 				/>
 			</Box>
 			<Box sx={{ my: 1 }}>
@@ -91,11 +74,11 @@ export default function CreateNewTeam({
 					fullWidth
 					required
 					id="team-country"
-					label="Страна команды"
+					label={t('teamCountry')}
 					variant="outlined"
 					value={country}
 					onChange={handleCountryChange}
-					helperText="Сокращенное название страны из 3 символов (например ENG, GER...)"
+					helperText={t('abbreviatedTeamCountry')}
 				/>
 			</Box>
 			<Box>
@@ -111,6 +94,6 @@ export default function CreateNewTeam({
 					duration={3000}
 				/>
 			</Box>
-		</Box>
+		</FormControl>
 	);
 }

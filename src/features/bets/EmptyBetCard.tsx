@@ -6,20 +6,26 @@ import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransfor
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import Bet from './types/Bet';
+import { useTranslation } from 'react-i18next';
 
 export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
+	const { i18n } = useTranslation();
+	const currentLanguage = i18n.language;
 	const [matchDayTitle, setMatchDayTitle] = useState<string>('');
 	const { leagueCode, player, balanceChange, betSize } = bet;
 
 	useEffect(() => {
 		setMatchDayTitle(
-			MatchDayTitleTransform({
-				isPlayoff: bet.isPlayoff,
-				matchDay: bet.matchDay,
-				playoffRound: bet.playoffRound,
-			})
+			MatchDayTitleTransform(
+				{
+					isPlayoff: bet.isPlayoff,
+					matchDay: bet.matchDay,
+					playoffRound: bet.playoffRound,
+				},
+				currentLanguage
+			)
 		);
-	}, [bet]);
+	}, [bet, currentLanguage]);
 
 	return (
 		<>
@@ -53,13 +59,7 @@ export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 							/>
 							<b>{player.username}</b>
 						</Box>
-						<Box
-							sx={{
-								mr: 1,
-								display: 'flex',
-								alignItems: 'start',
-							}}
-						>
+						<Box sx={{ mr: 1, display: 'flex', alignItems: 'start' }}>
 							<Avatar
 								sx={{ mr: 0.5, width: 25, height: 25 }}
 								alt="team_logo"
@@ -69,16 +69,10 @@ export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 						</Box>
 					</Box>
 					<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-						<b>Сумма:</b> {betSize}
+						<b>{t('amount')}:</b> {betSize}
 					</Box>
 
-					<Box
-						sx={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							alignItems: 'center',
-						}}
-					>
+					<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 						<Box>
 							<Box
 								sx={{
@@ -89,18 +83,12 @@ export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 									alignItems: 'center',
 								}}
 							>
-								<GppMaybe sx={{ color: '#8f2323' }} /> Ставка на тур не сделана
+								<GppMaybe sx={{ color: '#8f2323' }} />
+								{t('betNotPlaced')}
 							</Box>
 						</Box>
 						{balanceChange !== undefined && (
-							<Box
-								sx={{
-									pr: 1,
-									fontWeight: 600,
-									fontSize: '1.4rem',
-									color: 'brown',
-								}}
-							>
+							<Box sx={{ pr: 1, fontWeight: 600, fontSize: '1.4rem', color: 'brown' }}>
 								{balanceChange}€
 							</Box>
 						)}

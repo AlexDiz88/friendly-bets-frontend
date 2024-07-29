@@ -1,27 +1,26 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
 	Avatar,
 	Box,
-	Button,
 	CircularProgress,
 	IconButton,
 	InputAdornment,
 	TextField,
 	Typography,
 } from '@mui/material';
-import { VisibilityOff, Visibility } from '@mui/icons-material';
-import { selectUser } from '../../features/auth/selectors';
+import { t } from 'i18next';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { editEmail, editPassword, editUsername, getProfile } from '../../features/auth/authSlice';
+import { selectUser } from '../../features/auth/selectors';
+import User from '../../features/auth/types/User';
+import CustomButton from '../custom/btn/CustomButton';
+import CustomCancelButton from '../custom/btn/CustomCancelButton';
+import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
+import UploadForm from '../UploadForm';
 import NotificationSnackbar from '../utils/NotificationSnackbar';
 import pathToAvatarImage from '../utils/pathToAvatarImage';
-import UploadForm from '../UploadForm';
-import User from '../../features/auth/types/User';
-import { t } from 'i18next';
-import CustomCancelButton from '../custom/btn/CustomCancelButton';
-import CustomButton from '../custom/btn/CustomButton';
-import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
 
 export default function Profile(): JSX.Element {
 	const user: User | undefined = useAppSelector(selectUser);
@@ -44,7 +43,7 @@ export default function Profile(): JSX.Element {
 		'success' | 'error' | 'warning' | 'info'
 	>('info');
 	const [snackbarMessage, setSnackbarMessage] = useState('');
-	const [snackbarDuration, setSnackbarduration] = useState(2000);
+	const [snackbarDuration, setSnackbarDuration] = useState(2000);
 
 	const handleToggleCurrentPasswordVisibility = (): void => {
 		setShowCurrentPassword((prevShowPassword: boolean) => !prevShowPassword);
@@ -93,13 +92,13 @@ export default function Profile(): JSX.Element {
 		if (editEmail.fulfilled.match(dispatchResult)) {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('success');
-			setSnackbarMessage('Email успешно изменен');
+			setSnackbarMessage(t('emailWasSuccessfullyUpdated'));
 			setShowEmailInput(false);
 		}
 		if (editEmail.rejected.match(dispatchResult)) {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('error');
-			setSnackbarduration(3000);
+			setSnackbarDuration(3000);
 			if (dispatchResult.error.message) {
 				setSnackbarMessage(dispatchResult.error.message);
 			}
@@ -114,7 +113,7 @@ export default function Profile(): JSX.Element {
 		if (editPassword.fulfilled.match(dispatchResult)) {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('success');
-			setSnackbarMessage('Пароль успешно изменен');
+			setSnackbarMessage(t('passwordWasSuccessfullyUpdated'));
 			setCurrentPassword('');
 			setNewPassword('');
 			setNewPasswordRepeat('');
@@ -123,7 +122,7 @@ export default function Profile(): JSX.Element {
 		if (editPassword.rejected.match(dispatchResult)) {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('error');
-			setSnackbarduration(3000);
+			setSnackbarDuration(3000);
 			if (dispatchResult.error.message) {
 				setSnackbarMessage(dispatchResult.error.message);
 			}
@@ -136,13 +135,13 @@ export default function Profile(): JSX.Element {
 		if (editUsername.fulfilled.match(dispatchResult)) {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('success');
-			setSnackbarMessage('Имя успешно изменено');
+			setSnackbarMessage(t('usernameWasSuccessfullyUpdated'));
 			setShowNameInput(false);
 		}
 		if (editUsername.rejected.match(dispatchResult)) {
 			setOpenSnackbar(true);
 			setSnackbarSeverity('error');
-			setSnackbarduration(6000);
+			setSnackbarDuration(6000);
 			if (dispatchResult.error.message) {
 				setSnackbarMessage(dispatchResult.error.message);
 			}
@@ -241,16 +240,7 @@ export default function Profile(): JSX.Element {
 				</Box>
 			) : (
 				<Box sx={{ textAlign: 'center', mx: 2, mt: 1, mb: 2 }}>
-					<Button sx={{ height: '1.8rem', px: 2 }} variant="contained" onClick={handleEditEmail}>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							{t('changeEmail')}
-						</Typography>
-					</Button>
+					<CustomButton onClick={handleEditEmail} buttonText={t('changeEmail')} />
 				</Box>
 			)}
 

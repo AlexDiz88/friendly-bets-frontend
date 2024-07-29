@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import {
 	Avatar,
 	Box,
@@ -12,10 +13,10 @@ import {
 	IconButtonProps,
 	Typography,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { green } from '@mui/material/colors';
+import { styled } from '@mui/material/styles';
+import { t } from 'i18next';
+import { useState } from 'react';
 
 interface ExpandMoreProps extends IconButtonProps {
 	expand: boolean;
@@ -58,33 +59,26 @@ export default function StartSeason2324(): JSX.Element {
 							1
 						</Avatar>
 					}
-					title="Начало сезона 2023-2024"
-					subheader="11 Августа, 2023"
+					title={t('siteNews:Season2324.title')}
+					subheader={t('siteNews:Season2324.date')}
 				/>
 				<CardMedia
 					component="img"
 					height="194"
 					image="/upload/img/borussiya-dortmund-pered-nachalom-sezona-2023-2024.jpg"
-					alt="Paella dish"
+					alt="news photo"
 				/>
 				<CardContent>
 					<Typography variant="body2" color="text.secondary">
-						Рад сообщить о начале нового футбольного сезона! В этом году у нас новый сайт. Все
-						детали доступны по нажатию кнопки &quot;Подробнее&quot;
+						{t('siteNews:Season2324.header')} &quot;{t('moreDetails')}&quot;
 					</Typography>
 				</CardContent>
 				<CardActions disableSpacing sx={{ display: 'flex', justifyContent: 'space-between' }}>
 					<IconButton aria-label="add to favorites" onClick={handleLikeToggle}>
 						<FavoriteIcon color={isLiked ? 'error' : 'inherit'} />
 					</IconButton>
-					<Box
-						sx={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							alignItems: 'center',
-						}}
-					>
-						<Typography sx={{ fontSize: '0.85rem' }}>Подробнее</Typography>
+					<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+						<Typography sx={{ fontSize: '0.85rem' }}>{t('moreDetails')}</Typography>
 						<ExpandMore
 							expand={expanded}
 							onClick={handleExpandClick}
@@ -98,79 +92,60 @@ export default function StartSeason2324(): JSX.Element {
 				<Collapse in={expanded} timeout="auto" unmountOnExit>
 					<CardContent>
 						<Typography paragraph>
-							<b>Главные особенности нашего нового сайта:</b>
+							<b>{t('siteNews:Season2324.topic')}:</b>
 						</Typography>
 						<Typography paragraph>
-							1. Авторизация. У каждого участника теперь есть возможность зарегистрироваться на
-							сайте, пользоваться личным кабинетом, менять отображаемое имя по желанию. В ближайшее
-							время также добавится возможность загрузить вашу фотографию.
+							{t('siteNews:Season2324.paragraph.1')}
 							<br />
-							<br /> 2. Управление сезонами и ставками теперь осуществляется прямо из сайта, а не в
-							таблицах Excel или GoogleSheets как было раньше. Все данные хранятся на официальном
-							сайте <a href="https://cloud.mongodb.com">https://cloud.mongodb.com</a>. Добавление и
-							обработка ставок теперь проводятся в онлайн режиме. Как только любая ставка добавлена
-							или обработана модератором - моментально обновляются сразу все результаты, в том числе
-							главная таблица в режиме реального времени.
 							<br />
-							<br /> 3. Весь дизайн интерфейса сайта разработан на основе голосования предпочтений
-							всех участников, для удобства использования именно на смартфоне. Таким образом в
-							данный момент не все страницы сайта могут красиво отображаться на большом экране
-							монитора. Также возможны различные небольшие проблемы отображения на очень маленьких
-							экранах смартофнов. Если вы столкнулись с кривыми таблицами/страницами - сообщите мне
-							в личку.
+							{t('siteNews:Season2324.paragraph.2a')}{' '}
+							<a href="https://cloud.mongodb.com">https://cloud.mongodb.com</a>.{' '}
+							{t('siteNews:Season2324.paragraph.2b')}
 							<br />
-							<br /> 4. У нас теперь есть новости сайта (как вот эта, которую вы сейчас читаете :D).
-							Они будут редкими, но теперь всегда можно вернуться и почитать какую-либо полезную или
-							интересную информацию о нашем сайте, турнире или каких-то нововведениях/изменениях.
 							<br />
-							<br /> 5. Как вы возможно уже заметили - многие страницы сайта пока что недоступны. Я
-							вас уверяю, что в ближайшее время появится много разных таблиц, интересной статистики,
-							фильтров, сортировок по разным турнирам/участникам итд., которая всегда будет в
-							актульном состоянии. На данный момент есть необходимый минимум в виде главной таблицы,
-							списка ставок, результатов ставок и личного кабинета.
+							{t('siteNews:Season2324.paragraph.3')}
 							<br />
-							<br /> 6. Возможны практически любые, как визуальные так и технические изменения
-							сайта. Поэтому если у вас есть пожелания и предложения о том как можно было бы
-							улучшить сайт, не стесняйтесь, пишите мне или в общий чат. Всё обсудим и самые
-							интересные и полезные идеи реализуем!
+							<br />
+							{t('siteNews:Season2324.paragraph.4')}
+							<br />
+							<br />
+							{t('siteNews:Season2324.paragraph.5')}
+							<br />
+							<br />
+							{t('siteNews:Season2324.paragraph.6')}
 						</Typography>
 						<Typography paragraph>
-							<b>Требования к участникам:</b>
+							<b>{t('siteNews:Season2324.text.1')}:</b>
 						</Typography>
 						<Typography paragraph>
-							Для того чтобы участвовать в турнире вам необходимо:
+							{t('siteNews:Season2324.text.2')}:
 							<br />
-							<br /> - Зарегистрироваться на сайте. Для этого нажмите на фотографию мужичка в очках
-							и выберите пункт <i>&quot;Зарегистрироваться&quot;</i>. Ваш пароль должен состоять
-							минимум из 6 символов.
+							<br /> - {t('siteNews:Season2324.text.3')}{' '}
+							<i>&quot;{t('siteNews:Season2324.text.4')}&quot;</i>.{' '}
+							{t('siteNews:Season2324.text.5')}
 							<br />
-							<br /> - Далее зайдите в личный кабинет (также через этого мужичка) и выберите пункт{' '}
-							<i>&quot;Мой профиль&quot;</i>. Далее нажмите <i>&quot;Изменить имя&quot;</i> и
-							выберите себе никнейм на сайте. Не пишите слишком длинные имена. В имени можно
-							использовать только буквы/цифры, пробел и символы &quot;-&quot;, &quot;_&quot; Ваше
-							имя вы сможете поменять в любой момент позже.
+							<br /> - {t('siteNews:Season2324.text.6')}
+							<i>&quot;{t('siteNews:Season2324.text.7')}&quot;</i>.{' '}
+							{t('siteNews:Season2324.text.8')}
+							<i>&quot;{t('siteNews:Season2324.text.9')}&quot;</i>{' '}
+							{t('siteNews:Season2324.text.10')} &quot;-&quot;, &quot;_&quot;{' '}
+							{t('siteNews:Season2324.text.11')}
 							<br />
-							<br />- Снова через мужичка выберите <i>&quot;Регистрация на турнир&quot;</i>. В
-							открывшемся окне нажать на кнопку регистрации.
+							<br />- {t('siteNews:Season2324.text.12')}{' '}
+							<i>&quot;{t('siteNews:Season2324.text.13')}&quot;</i>.{' '}
+							{t('siteNews:Season2324.text.14')}
 							<br />
-							Поздравляю! Всё готово :D
+							{t('siteNews:Season2324.text.15')}
 						</Typography>
 						<Typography paragraph>
-							<b>Безопасность сайта:</b>
+							<b>{t('siteNews:Season2324.text.16')}:</b>
 						</Typography>
 						<Typography paragraph>
-							Сайт разработан с применением современных технологий по безопасности. Передача всех
-							данных осуществляется по защищенному сертификату SSL, используя https соединение.
-							Также, например при вводе пароля, используется защищенная клавиатура, помимо этого все
-							пароли шифруются c помощью надежной системы BCrypt и хранятся в базе данных в виде
-							хеша. Взломать(а именно раскодировать обратно) такой пароль даже при получении доступа
-							к базе данных - физически нереально. Поэтому Вы можете спокойно использовать любые
-							пароли для регистрации на сайте и быть уверены что они будут надежно защищены.
-							<br /> Позже будет добавлена возможность регистрации и входа на сайт с помощью
-							Google-аккаунта
+							{t('siteNews:Season2324.text.17')}
+							<br /> {t('siteNews:Season2324.text.18')}
 						</Typography>
 						<Typography paragraph>
-							<b>На этом всё! Всем успехов в нашем соревновании!</b>
+							<b>{t('siteNews:Season2324.text.19')}</b>
 						</Typography>
 						<CardActions disableSpacing sx={{ display: 'flex', justifyContent: 'end' }}>
 							<Box
@@ -179,7 +154,7 @@ export default function StartSeason2324(): JSX.Element {
 									alignItems: 'center',
 								}}
 							>
-								<Typography sx={{ fontSize: '0.85rem' }}>Свернуть</Typography>
+								<Typography sx={{ fontSize: '0.85rem' }}>{t('collapse')} </Typography>
 								<ExpandMore
 									expand={expanded}
 									onClick={handleExpandClick}

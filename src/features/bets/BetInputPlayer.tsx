@@ -44,12 +44,7 @@ export default function BetInputPlayer({
 						.sort((a, b) => (a.username && b.username ? a.username.localeCompare(b.username) : 0))
 						.map((p) => (
 							<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={p.id} value={p.username}>
-								<div
-									style={{
-										display: 'flex',
-										alignItems: 'center',
-									}}
-								>
+								<div style={{ display: 'flex', alignItems: 'center' }}>
 									<Avatar
 										sx={{ width: 27, height: 27 }}
 										alt="player_avatar"

@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
 import { Box, Button, FormControl, InputLabel, TextField, Typography } from '@mui/material';
+import { t } from 'i18next';
+import { useEffect, useState } from 'react';
+import { useAppSelector } from '../app/hooks';
 import { getProfile } from '../features/auth/api';
 import { selectUser } from '../features/auth/selectors';
-import { useAppSelector } from '../app/hooks';
-import { t } from 'i18next';
+import CustomCancelButton from './custom/btn/CustomCancelButton';
 
 interface UploadFormProps {
 	onClose: () => void;
@@ -74,21 +75,7 @@ function UploadForm({ onClose }: UploadFormProps): JSX.Element {
 					onChange={handleImageChange}
 				/>
 				<Box sx={{ mt: 1, mb: 1, mr: 1 }}>
-					<Button
-						sx={{ height: '1.8rem', px: 1, mr: 1 }}
-						variant="contained"
-						color="error"
-						onClick={handleCancel}
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							Отмена
-						</Typography>
-					</Button>
+					<CustomCancelButton onClick={handleCancel} />
 					<Button
 						type="submit"
 						sx={{ height: '1.8rem', px: 1 }}
@@ -101,7 +88,7 @@ function UploadForm({ onClose }: UploadFormProps): JSX.Element {
 							fontSize="0.9rem"
 							fontFamily="Shantell Sans"
 						>
-							Изменить
+							{t('btnText.change')}
 						</Typography>
 					</Button>
 				</Box>

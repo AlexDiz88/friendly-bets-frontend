@@ -1,0 +1,47 @@
+{
+  "Season2324": {
+    "title": "Start of the 2023-2024 Season",
+    "date": "August 11, 2023",
+    "header": "Happy to announce the start of the new football season! This year we have a new website. All details are available at the click of a button",
+    "topic": "Main features of our new website",
+    "paragraph": {
+      "1": "1. Authorization. Each participant now has the opportunity to register on the website, use their personal account, and change their display name at will. In the near future, you will also be able to upload your photo.",
+      "3": "3. The entire site interface design is based on the voting preferences of all participants for ease of use specifically on smartphones. Therefore, not all pages of the site may display beautifully on large monitor screens at the moment. There may also be various minor display issues on very small smartphone screens. If you encounter crooked tables/pages, let me know in private.",
+      "4": "4. We now have website news (like this one you are reading now :D). They will be rare, but now you can always come back and read some useful or interesting information about our website, tournament, or any innovations and changes.",
+      "5": "5. As you may have noticed, many site pages are still unavailable. In the near future, many different tables, interesting statistics, filters, and sorts for different tournaments, participants, etc., will appear, always up-to-date. At the moment, there is the necessary minimum in the form of the main table, bet list, bet results, and personal account.",
+      "6": "6. Almost any visual and technical changes to the site are possible. Therefore, if you have suggestions and ideas on how to improve the site, do not hesitate to write to me or in the general chat. We will discuss everything and implement the most interesting and useful ideas!",
+      "2a": "2. Managing seasons and bets is now done directly from the site, not in Excel or GoogleSheets tables as before. All data is stored on the official website",
+      "2b": "Adding and processing bets is now done online. As soon as any bet is added or processed by the moderator, all results, including the main table, are instantly updated in real time."
+    },
+    "text": {
+      "1": "Participant Requirements",
+      "2": "To participate in the tournament you need to",
+      "3": "Register on the website. To do this, click on the photo of the guy in glasses and select the option",
+      "4": "Register",
+      "5": "Your password must be at least 6 characters long.",
+      "6": "Then go to your personal account (also through this guy) and select the option",
+      "7": "My profile",
+      "8": "Then click",
+      "9": "Change name",
+      "10": "and choose a nickname on the site. Do not write too long names. Only letters/numbers, spaces, and symbols can be used in the name",
+      "11": "You can change your name at any time later.",
+      "12": "Again, through the guy, select",
+      "13": "Tournament registration",
+      "14": "In the opened window, click the registration button.",
+      "15": "Congratulations! Everything is ready :D",
+      "16": "Site Security",
+      "17": "The site is developed using modern security technologies. All data transmission is carried out through a secure SSL certificate using https connection. Also, for example, when entering a password, a secure keyboard is used, in addition, all passwords are encrypted using a reliable BCrypt system and stored in the database as a hash. It is physically impossible to hack (i.e., decode back) such a password even if access to the database is obtained. Therefore, you can safely use any passwords to register on the site and be sure that they will be reliably protected.",
+      "18": "Later, the ability to register and log in to the site using a Google account will be added",
+      "19": "That's all! Good luck to everyone in our competition!"
+    }
+  },
+  "ScheduleEuro2024": {
+    "title": "EURO 2024 Group Stage Schedule",
+    "date": "June 13, 2024",
+    "header": "Here you can see the dates and start times of all group stage matches.",
+    "showSchedule": "Show Schedule",
+    "text": {
+      "1": "Good luck to everyone in the tournament!"
+    }
+  }
+}

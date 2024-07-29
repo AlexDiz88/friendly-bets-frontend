@@ -10,22 +10,14 @@ const initialState: TeamsState = {
 
 export const createTeam = createAsyncThunk(
 	'teams/createTeam',
-	async ({
-		fullTitleRu,
-		fullTitleEn,
-		country,
-	}: {
-		fullTitleRu: string;
-		fullTitleEn: string;
-		country: string;
-	}) => {
-		if (!fullTitleRu.trim() || !fullTitleEn.trim()) {
-			throw new Error('Названия команды (RU/EN) не должны быть пустыми');
+	async ({ title, country }: { title: string; country: string }) => {
+		if (!title.trim()) {
+			throw new Error('Название команды не должно быть пустым');
 		}
 		if (!country.trim()) {
 			throw new Error('Страна команды не должна быть пустой');
 		}
-		return api.createTeam(fullTitleRu, fullTitleEn, country);
+		return api.createTeam(title, country);
 	}
 );
 

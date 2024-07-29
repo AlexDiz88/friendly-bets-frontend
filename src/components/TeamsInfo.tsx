@@ -1,4 +1,5 @@
 import { Avatar, Box } from '@mui/material';
+import { t } from 'i18next';
 import Team from '../features/admin/teams/types/Team';
 import pathToLogoImage from './utils/pathToLogoImage';
 
@@ -12,7 +13,7 @@ export default function TeamsInfo({
 	return (
 		<Box sx={{ fontSize: '0.9rem', mt: 1 }}>
 			<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-				<b>Хозяева:</b>
+				<b>{t('homeTeam')}:</b>
 				<Avatar
 					component="span"
 					variant="square"
@@ -20,10 +21,10 @@ export default function TeamsInfo({
 					alt="league_logo"
 					src={pathToLogoImage(homeTeam?.title)}
 				/>
-				{homeTeam?.title} <br />
+				{t(`teams:${homeTeam?.title || ''}`)} <br />
 			</Box>
 			<Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-				<b>Гости:</b>
+				<b>{t('awayTeam')}:</b>
 				<Avatar
 					component="span"
 					variant="square"
@@ -31,7 +32,7 @@ export default function TeamsInfo({
 					alt="league_logo"
 					src={pathToLogoImage(awayTeam?.title)}
 				/>
-				{awayTeam?.title} <br />
+				{t(`teams:${awayTeam?.title || ''}`)} <br />
 			</Box>
 		</Box>
 	);
