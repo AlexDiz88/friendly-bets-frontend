@@ -143,6 +143,7 @@
 	"abbreviatedTeamCountry": "Abgekürzter Ländercode aus 3 Zeichen (z.B. ENG, GER, FRA…)",
 	"teamNameMustBeEqualLogoName": "Der Name des Fußballteams (EN) darf keine Leerzeichen enthalten und muss mit dem Namen der Logodatei übereinstimmen (bis die Dateiupload-Funktion bei der Erstellung implementiert wird)",
 	"playoffRound": {
+		"1/32": "1/32",
 		"1/16": "1/16",
 		"1/8": "1/8",
 		"1/4": "1/4",
