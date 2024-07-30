@@ -1,23 +1,23 @@
-import { useState } from 'react';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
-	TableContainer,
-	Paper,
-	Table,
-	TableHead,
-	TableRow,
-	TableCell,
-	TableBody,
 	Avatar,
 	Box,
 	Collapse,
 	IconButton,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
 	Typography,
 } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import PlayerStats from '../features/stats/types/PlayerStats';
-import pathToAvatarImage from './utils/pathToAvatarImage';
 import { t } from 'i18next';
+import { useState } from 'react';
+import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
+import PlayerStats from './types/PlayerStats';
 
 function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 	const [open, setOpen] = useState(false);
@@ -146,7 +146,11 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 	);
 }
 
-export default function StatsTable({ playersStats }: { playersStats: PlayerStats[] }): JSX.Element {
+export default function PlayersStats({
+	playersStats,
+}: {
+	playersStats: PlayerStats[];
+}): JSX.Element {
 	return (
 		<TableContainer component={Paper}>
 			<Table aria-label="collapsible table">

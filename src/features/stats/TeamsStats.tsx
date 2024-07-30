@@ -16,9 +16,9 @@ import {
 } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
-import PlayerStatsByTeams from '../features/stats/types/PlayerStatsByTeams';
-import TeamStats from '../features/stats/types/TeamStats';
-import pathToLogoImage from './utils/pathToLogoImage';
+import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import PlayerStatsByTeams from './types/PlayerStatsByTeams';
+import TeamStats from './types/TeamStats';
 
 interface RowProps {
 	tStats: TeamStats;
@@ -154,7 +154,7 @@ function Row({ tStats }: RowProps): JSX.Element {
 	);
 }
 
-export default function StatsTableByTeams({
+export default function TeamsStats({
 	playersStatsByTeams,
 }: {
 	playersStatsByTeams: PlayerStatsByTeams[];

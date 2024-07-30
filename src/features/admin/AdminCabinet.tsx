@@ -2,9 +2,9 @@ import { Box, CircularProgress, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import AllStatsRecalculating from '../../components/AllStatsRecalculating';
 import DatabaseUpdate from '../../components/DatabaseUpdate';
 import { selectUser } from '../auth/selectors';
+import StatsRecalculating from '../stats/StatsRecalculating';
 import SeasonsManagement from './seasons/SeasonsManagement';
 import TeamsManagement from './teams/TeamsManagement';
 
@@ -63,7 +63,7 @@ export default function AdminCabinet(): JSX.Element {
 			<Typography sx={{ borderBottom: 1, pb: 1 }}>Admin Panel</Typography>
 			<SeasonsManagement />
 			<TeamsManagement />
-			<AllStatsRecalculating />
+			<StatsRecalculating />
 			<DatabaseUpdate />
 		</Box>
 	);

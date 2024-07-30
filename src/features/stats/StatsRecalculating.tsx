@@ -2,16 +2,16 @@
 import { Box, Dialog, DialogActions, DialogContent } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
-import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
-import { playersStatsFullRecalculation } from '../features/stats/statsSlice';
-import CustomButton from './custom/btn/CustomButton';
-import CustomCancelButton from './custom/btn/CustomCancelButton';
-import CustomSuccessButton from './custom/btn/CustomSuccessButton';
-import NotificationSnackbar from './utils/NotificationSnackbar';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import CustomButton from '../../components/custom/btn/CustomButton';
+import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
+import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
+import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
+import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeasonId } from '../admin/seasons/selectors';
+import { playersStatsFullRecalculation } from './statsSlice';
 
-export default function AllStatsRecalculating(): JSX.Element {
+export default function StatsRecalculating(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const [openRecalculatePlayerStatsDialog, setOpenRecalculatePlayerStatsDialog] = useState(false);

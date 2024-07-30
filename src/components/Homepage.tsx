@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import { selectCompletedBets } from '../features/bets/selectors';
+import PlayersStats from '../features/stats/PlayersStats';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
 import CustomLoading from './custom/loading/CustomLoading';
 import CustomLoadingError from './custom/loading/CustomLoadingError';
 import useFetchActiveSeason from './hooks/useFetchActiveSeason';
-import StatsTable from './StatsTable';
 
 export default function Homepage(): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
@@ -63,7 +63,7 @@ export default function Homepage(): JSX.Element {
 								boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
 							}}
 						>
-							<StatsTable playersStats={sortedPlayersStats} />
+							<PlayersStats playersStats={sortedPlayersStats} />
 						</Box>
 					)}
 				</Box>

@@ -1,17 +1,17 @@
 import { Box, SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { getActiveSeason, getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
-import { selectActiveSeason, selectActiveSeasonId } from '../features/admin/seasons/selectors';
-import { selectPlayersStatsByLeagues } from '../features/stats/selectors';
-import { getAllPlayersStatsByLeagues } from '../features/stats/statsSlice';
-import LeagueStats from '../features/stats/types/LeagueStats';
-import CustomLoading from './custom/loading/CustomLoading';
-import CustomLoadingError from './custom/loading/CustomLoadingError';
-import useFetchActiveSeason from './hooks/useFetchActiveSeason';
-import LeagueSelect from './selectors/LeagueSelect';
-import StatsTable from './StatsTable';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import CustomLoading from '../../components/custom/loading/CustomLoading';
+import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
+import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
+import LeagueSelect from '../../components/selectors/LeagueSelect';
+import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
+import PlayersStats from './PlayersStats';
+import { selectPlayersStatsByLeagues } from './selectors';
+import { getAllPlayersStatsByLeagues } from './statsSlice';
+import LeagueStats from './types/LeagueStats';
 
 export default function LeaguesStatsPage(): JSX.Element {
 	const activeSeason = useAppSelector(selectActiveSeason);
@@ -95,7 +95,7 @@ export default function LeaguesStatsPage(): JSX.Element {
 									fullLeagueNames
 								/>
 							</Box>
-							<StatsTable playersStats={sortedPlayersStats} />
+							<PlayersStats playersStats={sortedPlayersStats} />
 						</Box>
 					)}
 				</Box>

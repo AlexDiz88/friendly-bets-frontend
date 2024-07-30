@@ -5,9 +5,9 @@ import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { getSeasons } from '../features/admin/seasons/seasonsSlice';
 import { selectSeasons } from '../features/admin/seasons/selectors';
 import Season from '../features/admin/seasons/types/Season';
+import PlayersStats from '../features/stats/PlayersStats';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
-import StatsTable from './StatsTable';
 import CustomLoading from './custom/loading/CustomLoading';
 import CustomLoadingError from './custom/loading/CustomLoadingError';
 
@@ -106,7 +106,7 @@ export default function Archive(): JSX.Element {
 									</MenuItem>
 								))}
 							</Select>
-							<StatsTable playersStats={sortedPlayersStats} />
+							<PlayersStats playersStats={sortedPlayersStats} />
 						</Box>
 					)}
 				</Box>

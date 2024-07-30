@@ -5,11 +5,9 @@ import Archive from './components/Archive';
 import EmptyPage from './components/EmptyPage';
 import Homepage from './components/Homepage';
 import Layout from './components/Layout';
-import LeaguesStatsPage from './components/LeaguesStatsPage';
 import News from './components/News';
 import NoActiveSeasonPage from './components/NoActiveSeasonPage';
 import RulesPage from './components/RulesPage';
-import TeamsStatsPage from './components/TeamsStatsPage';
 import MyStats from './components/profile/MyStats';
 import Profile from './components/profile/Profile';
 import SeasonRegister from './components/profile/SeasonRegister';
@@ -23,6 +21,8 @@ import BetsCheck from './features/bets/BetsCheck';
 import BetsList from './features/bets/BetsList';
 import CompletedBetsList from './features/bets/CompletedBetsList';
 import OpenedBetsList from './features/bets/OpenedBetsList';
+import LeaguesStatsPage from './features/stats/LeaguesStatsPage';
+import TeamsStatsPage from './features/stats/TeamsStatsPage';
 
 function App(): JSX.Element {
 	useAppSelector((state) => state.language);

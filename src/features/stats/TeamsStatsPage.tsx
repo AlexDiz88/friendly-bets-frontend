@@ -1,18 +1,18 @@
 import { Box, SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
-import { selectActiveSeason } from '../features/admin/seasons/selectors';
-import { selectAllStatsByTeamsInSeason } from '../features/stats/selectors';
-import { getAllStatsByTeamsInSeason } from '../features/stats/statsSlice';
-import CustomLoading from './custom/loading/CustomLoading';
-import CustomLoadingError from './custom/loading/CustomLoadingError';
-import useFetchActiveSeason from './hooks/useFetchActiveSeason';
-import useFilterLanguageChange from './hooks/useFilterLanguageChange';
-import LeagueSelect from './selectors/LeagueSelect';
-import PlayerSelect from './selectors/PlayerSelect';
-import StatsTableByTeams from './StatsTableByTeams';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import CustomLoading from '../../components/custom/loading/CustomLoading';
+import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
+import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
+import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
+import LeagueSelect from '../../components/selectors/LeagueSelect';
+import PlayerSelect from '../../components/selectors/PlayerSelect';
+import { getActiveSeason } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeason } from '../admin/seasons/selectors';
+import { selectAllStatsByTeamsInSeason } from './selectors';
+import { getAllStatsByTeamsInSeason } from './statsSlice';
+import TeamsStats from './TeamsStats';
 
 export default function TeamsStatsPage(): JSX.Element {
 	const activeSeason = useAppSelector(selectActiveSeason);
@@ -103,7 +103,7 @@ export default function TeamsStatsPage(): JSX.Element {
 										players={activeSeason?.players}
 									/>
 								</Box>
-								<StatsTableByTeams playersStatsByTeams={filteredStats} />
+								<TeamsStats playersStatsByTeams={filteredStats} />
 							</Box>
 						)}
 					</Box>
