@@ -8,6 +8,7 @@ import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 import CustomBetCheckDialog from '../../components/custom/dialog/CustomBetCheckDialog';
+import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
 import GameScoreValidation from '../../components/utils/GameScoreValidation';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
@@ -36,6 +37,8 @@ export default function BetsCheck(): JSX.Element {
 		'success' | 'error' | 'warning' | 'info'
 	>('info');
 	const [snackbarMessage, setSnackbarMessage] = useState('');
+
+	useFilterLanguageChange(setSelectedLeague);
 
 	const handleCloseDialog = (): void => {
 		setDialogType(undefined);
