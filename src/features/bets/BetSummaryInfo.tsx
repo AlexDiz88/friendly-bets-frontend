@@ -1,11 +1,11 @@
 import { Avatar, Box } from '@mui/material';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
 import MatchDayInfo from './types/MatchDayInfo';
-import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
 
 export default function BetSummaryInfo({
 	message,
@@ -81,6 +81,7 @@ export default function BetSummaryInfo({
 			{betStatus && betStatus !== 'OPENED' && (
 				<Box>
 					<b>{t('betStatus')}:</b> {betStatus}
+					<br />
 					<b>{t('finalScore')}: </b>
 					<Box
 						sx={{

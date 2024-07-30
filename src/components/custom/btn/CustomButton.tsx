@@ -10,6 +10,7 @@ const CustomButton = ({
 	sx,
 	autoFocus,
 	textSize = '0.9rem',
+	fontFamily = 'Shantell Sans',
 }: {
 	onClick(event: React.MouseEvent<HTMLButtonElement>): void;
 	buttonColor?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
@@ -19,6 +20,7 @@ const CustomButton = ({
 	sx?: {};
 	autoFocus?: boolean | undefined;
 	textSize?: string;
+	fontFamily?: string;
 }): JSX.Element => {
 	return (
 		<Button
@@ -29,7 +31,7 @@ const CustomButton = ({
 			onClick={onClick}
 			autoFocus={autoFocus}
 		>
-			<Typography variant="button" fontWeight="600" fontSize={textSize} fontFamily="Shantell Sans">
+			<Typography fontWeight="600" fontSize={textSize} fontFamily={fontFamily}>
 				{buttonText}
 			</Typography>
 		</Button>

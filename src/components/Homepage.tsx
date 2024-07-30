@@ -1,18 +1,16 @@
-import { Box, CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
-import SeasonResponseError from '../features/admin/seasons/types/SeasonResponseError';
 import { selectCompletedBets } from '../features/bets/selectors';
+import PlayersStats from '../features/stats/PlayersStats';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
-import StatsTable from './StatsTable';
-import { t } from 'i18next';
+import CustomLoading from './custom/loading/CustomLoading';
+import CustomLoadingError from './custom/loading/CustomLoadingError';
+import useFetchActiveSeason from './hooks/useFetchActiveSeason';
 
 export default function Homepage(): JSX.Element {
-	const navigate = useNavigate();
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const playersStats = useAppSelector(selectPlayersStats);
 	const completedBets = useAppSelector(selectCompletedBets);
@@ -22,23 +20,7 @@ export default function Homepage(): JSX.Element {
 
 	const sortedPlayersStats = [...playersStats].sort((a, b) => b.actualBalance - a.actualBalance);
 
-	useEffect(() => {
-		if (!activeSeasonId) {
-			dispatch(getActiveSeasonId())
-				.unwrap()
-				.then(() => {
-					setLoading(false);
-				})
-				.catch((error: SeasonResponseError) => {
-					if (error.message === 'Сезон со статусом ACTIVE не найден') {
-						navigate('/no-active-season');
-					} else {
-						setLoadingError(true);
-					}
-					setLoading(false);
-				});
-		}
-	}, [dispatch]);
+	useFetchActiveSeason(activeSeasonId);
 
 	useEffect(() => {
 		if (activeSeasonId) {
@@ -63,30 +45,16 @@ export default function Homepage(): JSX.Element {
 					setLoading(false);
 				});
 		}
-	}, [activeSeasonId, dispatch]);
+	}, [activeSeasonId]);
 
 	return (
 		<Box>
 			{loading ? (
-				<Box
-					sx={{
-						height: '70vh',
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center',
-						alignItems: 'center',
-					}}
-				>
-					<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
-				</Box>
+				<CustomLoading />
 			) : (
 				<Box>
 					{loadingError ? (
-						<Box
-							sx={{ textAlign: 'center', fontWeight: 600, color: 'brown', pt: 10, fontSize: 20 }}
-						>
-							{t('loadingError')}
-						</Box>
+						<CustomLoadingError />
 					) : (
 						<Box
 							sx={{
@@ -95,7 +63,7 @@ export default function Homepage(): JSX.Element {
 								boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
 							}}
 						>
-							<StatsTable playersStats={sortedPlayersStats} />
+							<PlayersStats playersStats={sortedPlayersStats} />
 						</Box>
 					)}
 				</Box>

@@ -132,7 +132,7 @@
 	"dbUpdate": "Обновить базу данных",
 	"newSeason": "Новый сезон",
 	"chooseFinishedSeasonForDetailedStatistik": "Выберите завершившийся сезон для просмотра статистики",
-	"loading": "Подождите идёт загрузка данных",
+	"loading": "Загрузка...",
 	"loadingError": "Ошибка загрузки! Попробуйте обновить страницу",
 	"chooseLeagueForDetailedStatistik": "Выберите лигу для просмотра детальной статистики по ней",
 	"statsWasSuccessfullyRecalculated": "Статистика успешно пересчитана",
@@ -198,5 +198,6 @@
 	"moreDetails": "Подробнее",
 	"collapse": "Свернуть",
 	"websiteNews": "Новости сайта",
-	"generalRules": "Общие правила для всех турниров"
+	"generalRules": "Общие правила для всех турниров",
+	"noActiveSeasonsAtThisMoment": "В данный момент нет активных турниров"
 }
