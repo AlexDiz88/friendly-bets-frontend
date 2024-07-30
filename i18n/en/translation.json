@@ -198,5 +198,6 @@
 	"moreDetails": "More details",
 	"collapse": "Collapse",
 	"websiteNews": "Website news",
-	"generalRules": "General rules for all tournaments"
+	"generalRules": "General rules for all tournaments",
+	"noActiveSeasonsAtThisMoment": "There are currently no active tournaments"
 }

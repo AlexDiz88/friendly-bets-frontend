@@ -1,7 +1,7 @@
 import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { t } from 'i18next';
-import pathToLogoImage from '../../../components/utils/pathToLogoImage';
-import Team from './types/Team';
+import Team from '../../features/admin/teams/types/Team';
+import pathToLogoImage from '../utils/pathToLogoImage';
 
 interface TeamSelectProps {
 	label: string;

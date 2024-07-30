@@ -1,11 +1,4 @@
-import {
-	Box,
-	CircularProgress,
-	MenuItem,
-	Select,
-	SelectChangeEvent,
-	Typography,
-} from '@mui/material';
+import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -15,6 +8,8 @@ import Season from '../features/admin/seasons/types/Season';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
 import StatsTable from './StatsTable';
+import CustomLoading from './custom/loading/CustomLoading';
+import CustomLoadingError from './custom/loading/CustomLoadingError';
 
 export default function Archive(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -66,25 +61,11 @@ export default function Archive(): JSX.Element {
 	return (
 		<Box>
 			{loading ? (
-				<Box
-					sx={{
-						height: '70vh',
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center',
-						alignItems: 'center',
-					}}
-				>
-					<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
-				</Box>
+				<CustomLoading />
 			) : (
 				<Box>
 					{loadingError ? (
-						<Box
-							sx={{ textAlign: 'center', fontWeight: 600, color: 'brown', pt: 10, fontSize: 20 }}
-						>
-							{t('loadingError')}
-						</Box>
+						<CustomLoadingError />
 					) : (
 						<Box
 							sx={{
@@ -119,14 +100,9 @@ export default function Archive(): JSX.Element {
 										value={season.title}
 										sx={{ ml: -0.5, minWidth: '11rem' }}
 									>
-										<div
-											style={{
-												display: 'flex',
-												alignItems: 'center',
-											}}
-										>
+										<Box style={{ display: 'flex', alignItems: 'center' }}>
 											<Typography sx={{ mx: 1, fontSize: '1rem' }}>{season.title}</Typography>
-										</div>
+										</Box>
 									</MenuItem>
 								))}
 							</Select>

@@ -1,11 +1,14 @@
-import { Box, Button, CircularProgress, Stack, Typography } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import CustomButtonGroupPagination from '../../components/custom/btn/CustomButtonGroupPagination';
+import CustomLoading from '../../components/custom/loading/CustomLoading';
+import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
+import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
-import SeasonResponseError from '../admin/seasons/types/SeasonResponseError';
 import { selectUser } from '../auth/selectors';
 import BetCard from './BetCard';
 import BetEditButtons from './BetEditButtons';
@@ -25,6 +28,8 @@ export default function BetEditList(): JSX.Element {
 	const [loadingError, setLoadingError] = useState(false);
 	const [page, setPage] = useState<number>(1);
 	const totalPages = useAppSelector(selectTotalPages);
+
+	useFetchActiveSeason(activeSeasonId);
 
 	const handlePageChange = (pageNumber: number): void => {
 		setPage(pageNumber);
@@ -49,24 +54,6 @@ export default function BetEditList(): JSX.Element {
 				});
 		}
 	}, [activeSeasonId, page]);
-
-	useEffect(() => {
-		if (!activeSeasonId) {
-			dispatch(getActiveSeasonId())
-				.unwrap()
-				.then(() => {
-					setLoading(false);
-				})
-				.catch((error: SeasonResponseError) => {
-					if (error.message === t('noActiveSeasonWasFounded')) {
-						navigate('/no-active-season');
-					} else {
-						setLoadingError(true);
-					}
-					setLoading(false);
-				});
-		}
-	}, [dispatch]);
 
 	// редирект неавторизованных пользователей
 	useEffect(() => {
@@ -116,23 +103,11 @@ export default function BetEditList(): JSX.Element {
 			</Box>
 
 			{loading ? (
-				<Box
-					sx={{
-						height: '70vh',
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center',
-						alignItems: 'center',
-					}}
-				>
-					<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
-				</Box>
+				<CustomLoading />
 			) : (
 				<Box>
 					{loadingError ? (
-						<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-							{t('loadingError')}
-						</Box>
+						<CustomLoadingError />
 					) : (
 						<Box>
 							<Box>
@@ -183,50 +158,11 @@ export default function BetEditList(): JSX.Element {
 							</Box>
 						</Box>
 					)}
-					<Stack
-						sx={{
-							marginTop: 2,
-							display: 'flex',
-							flexDirection: 'row',
-							justifyContent: 'center',
-						}}
-					>
-						<Button
-							sx={{
-								width: 60,
-								padding: '10px 50px',
-								backgroundColor: '#e2e7fd',
-								color: 'black',
-							}}
-							variant="contained"
-							disabled={page === 1}
-							onClick={() => handlePageChange(page - 1)}
-						>
-							<Typography sx={{ fontSize: 20 }}>&lt;</Typography>
-						</Button>
-						<Button
-							sx={{ width: 60, padding: '10px 50px', margin: '0 15px', backgroundColor: '#afafaf' }}
-							variant="contained"
-							onClick={() => handlePageChange(page)}
-						>
-							<Typography sx={{ fontSize: 20, fontWeight: 600, fontFamily: 'Exo 2' }}>
-								{page}
-							</Typography>
-						</Button>
-						<Button
-							sx={{
-								width: 60,
-								padding: '10px 50px',
-								backgroundColor: '#e2e7fd',
-								color: 'black',
-							}}
-							variant="contained"
-							disabled={page === totalPages}
-							onClick={() => handlePageChange(page + 1)}
-						>
-							<Typography sx={{ fontSize: 20 }}>&gt;</Typography>
-						</Button>
-					</Stack>
+					<CustomButtonGroupPagination
+						page={page}
+						totalPages={totalPages}
+						handlePageChange={handlePageChange}
+					/>
 				</Box>
 			)}
 		</Box>

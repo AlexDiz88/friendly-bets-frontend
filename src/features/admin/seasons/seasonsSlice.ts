@@ -130,12 +130,16 @@ const seasonsSlice = createSlice({
 			})
 			.addCase(getActiveSeason.rejected, (state, action) => {
 				state.error = action.error.message;
+				state.activeSeason = null;
+				state.activeSeasonId = undefined;
 			})
 			.addCase(getActiveSeasonId.fulfilled, (state, action) => {
 				state.activeSeasonId = action.payload.value;
 			})
 			.addCase(getActiveSeasonId.rejected, (state, action) => {
 				state.error = action.error.message;
+				state.activeSeason = null;
+				state.activeSeasonId = undefined;
 			})
 			.addCase(getScheduledSeason.fulfilled, (state, action) => {
 				state.scheduledSeason = action.payload;

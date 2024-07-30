@@ -1,9 +1,9 @@
 import { SelectChangeEvent } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import TeamSelect from '../../components/selectors/TeamSelect';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
-import TeamSelect from '../admin/teams/TeamSelect';
 import Team from '../admin/teams/types/Team';
 
 export default function BetInputTeams({

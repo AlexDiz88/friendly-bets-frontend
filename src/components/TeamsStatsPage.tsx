@@ -1,84 +1,55 @@
-import {
-	Avatar,
-	Box,
-	CircularProgress,
-	MenuItem,
-	Select,
-	SelectChangeEvent,
-	Typography,
-} from '@mui/material';
+import { Box, SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { getActiveSeason, getActiveSeasonId } from '../features/admin/seasons/seasonsSlice';
+import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../features/admin/seasons/selectors';
-import SeasonResponseError from '../features/admin/seasons/types/SeasonResponseError';
 import { selectAllStatsByTeamsInSeason } from '../features/stats/selectors';
 import { getAllStatsByTeamsInSeason } from '../features/stats/statsSlice';
+import CustomLoading from './custom/loading/CustomLoading';
+import CustomLoadingError from './custom/loading/CustomLoadingError';
+import useFetchActiveSeason from './hooks/useFetchActiveSeason';
+import useFilterLanguageChange from './hooks/useFilterLanguageChange';
+import LeagueSelect from './selectors/LeagueSelect';
+import PlayerSelect from './selectors/PlayerSelect';
 import StatsTableByTeams from './StatsTableByTeams';
-import pathToAvatarImage from './utils/pathToAvatarImage';
-import pathToLogoImage from './utils/pathToLogoImage';
 
 export default function TeamsStatsPage(): JSX.Element {
-	const navigate = useNavigate();
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const statsByTeams = useAppSelector(selectAllStatsByTeamsInSeason);
 	const dispatch = useAppDispatch();
-	const [selectedLeagueName, setSelectedLeagueName] = useState<string>('');
+	const [selectedLeagueCode, setSelectedLeagueCode] = useState<string>('');
 	const [selectedPlayerName, setSelectedPlayerName] = useState<string>(t('all'));
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 
 	const filteredStats =
 		selectedPlayerName === t('all')
-			? statsByTeams.filter((stats) => stats.leagueStats && stats.leagueCode === selectedLeagueName)
+			? statsByTeams.filter((stats) => stats.leagueStats && stats.leagueCode === selectedLeagueCode)
 			: statsByTeams.filter(
 					(stats) =>
 						!stats.leagueStats &&
 						stats.username === selectedPlayerName &&
-						stats.leagueCode === selectedLeagueName
+						stats.leagueCode === selectedLeagueCode
 			  );
 
-	const handleLeagueChange = (event: SelectChangeEvent): void => {
-		const leagueName = event.target.value;
-		setSelectedLeagueName(leagueName);
+	useFilterLanguageChange(setSelectedPlayerName);
+	// TODO: переделать систему отлова загрузки и ошибок (React Query??)
+	useFetchActiveSeason(activeSeason?.id);
+
+	const handleLeagueChange = (e: SelectChangeEvent): void => {
+		setSelectedLeagueCode(e.target.value);
 	};
 
-	const handlePlayerChange = (event: SelectChangeEvent): void => {
-		const playerName = event.target.value;
-		setSelectedPlayerName(playerName);
+	const handlePlayerChange = (e: SelectChangeEvent): void => {
+		setSelectedPlayerName(e.target.value);
 	};
 
 	useEffect(() => {
 		if (statsByTeams && statsByTeams.length > 0) {
-			setSelectedLeagueName(statsByTeams[0].leagueCode || '');
+			setSelectedLeagueCode(statsByTeams[0].leagueCode || '');
 		}
 	}, [statsByTeams]);
-
-	useEffect(() => {
-		if (!activeSeason) {
-			dispatch(getActiveSeason());
-		}
-	}, []);
-
-	useEffect(() => {
-		if (!activeSeason) {
-			dispatch(getActiveSeasonId())
-				.unwrap()
-				.then(() => {
-					setLoading(false);
-				})
-				.catch((error: SeasonResponseError) => {
-					if (error.message === 'Сезон со статусом ACTIVE не найден') {
-						navigate('/no-active-season');
-					} else {
-						setLoadingError(true);
-					}
-					setLoading(false);
-				});
-		}
-	}, [dispatch]);
 
 	useEffect(() => {
 		if (activeSeason) {
@@ -93,136 +64,44 @@ export default function TeamsStatsPage(): JSX.Element {
 		}
 	}, [activeSeason]);
 
+	useEffect(() => {
+		if (!activeSeason) {
+			dispatch(getActiveSeason());
+		}
+	}, []);
+
 	return (
 		<Box>
 			<Box>
 				{loading ? (
-					<Box
-						sx={{
-							height: '70vh',
-							display: 'flex',
-							flexDirection: 'column',
-							justifyContent: 'center',
-							alignItems: 'center',
-						}}
-					>
-						<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>{t('loading')}</Box>
-						<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
-					</Box>
+					<CustomLoading />
 				) : (
 					<Box>
 						{loadingError ? (
-							<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown' }}>
-								{t('loading')}
-							</Box>
+							<CustomLoadingError />
 						) : (
 							<Box
 								sx={{
 									maxWidth: '25rem',
 									margin: '0 auto',
 									mt: -2,
-									pt: 2.5,
+									pt: 2,
 									boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
 								}}
 							>
-								<Box
-									sx={{
-										display: 'flex',
-										justifyContent: 'center',
-									}}
-								>
-									<Select
-										autoWidth
-										size="small"
-										sx={{ minWidth: '7rem', ml: -0.2 }}
-										labelId="league-title-label"
-										id="league-title-select"
-										value={selectedLeagueName}
+								<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+									<LeagueSelect
+										value={selectedLeagueCode}
 										onChange={handleLeagueChange}
-									>
-										{activeSeason &&
-											activeSeason.leagues &&
-											activeSeason.leagues.map((l) => (
-												<MenuItem
-													sx={{ ml: -0.5, minWidth: '6.5rem' }}
-													key={l.id}
-													value={l.leagueCode}
-												>
-													<div
-														style={{
-															display: 'flex',
-															alignItems: 'center',
-														}}
-													>
-														<Avatar
-															variant="square"
-															sx={{ width: 27, height: 27 }}
-															alt="league_logo"
-															src={pathToLogoImage(l.leagueCode)}
-														/>
-														<Typography sx={{ mx: 1, fontSize: '1rem' }}>
-															{t(`leagueShortName.${l.leagueCode}`)}
-														</Typography>
-													</div>
-												</MenuItem>
-											))}
-									</Select>
+										leagues={activeSeason?.leagues}
+										withoutAll
+									/>
 
-									<Select
-										autoWidth
-										size="small"
-										sx={{ minWidth: '11.5rem', ml: 0.5 }}
-										labelId="player-title-label"
-										id="player-title-select"
+									<PlayerSelect
 										value={selectedPlayerName}
 										onChange={handlePlayerChange}
-									>
-										<MenuItem key={t('all')} sx={{ ml: -0.5, minWidth: '11rem' }} value={t('all')}>
-											<div
-												style={{
-													display: 'flex',
-													alignItems: 'center',
-												}}
-											>
-												<Avatar
-													variant="square"
-													sx={{ width: 27, height: 27 }}
-													alt="league_logo"
-													src="/upload/avatars/cool_man.jpg"
-												/>
-
-												<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t('all')}</Typography>
-											</div>
-										</MenuItem>
-										{activeSeason &&
-											activeSeason.players
-												.slice()
-												.sort((a, b) =>
-													a.username && b.username ? a.username.localeCompare(b.username) : 0
-												)
-												.map((p) => (
-													<MenuItem
-														key={p.id}
-														sx={{ ml: -1, minWidth: '6.5rem' }}
-														value={p.username}
-													>
-														<div
-															style={{
-																display: 'flex',
-																alignItems: 'center',
-															}}
-														>
-															<Avatar
-																sx={{ width: 27, height: 27 }}
-																alt="user_avatar"
-																src={pathToAvatarImage(p.avatar)}
-															/>
-
-															<Typography sx={{ mx: 1, fontSize: '1rem' }}>{p.username}</Typography>
-														</div>
-													</MenuItem>
-												))}
-									</Select>
+										players={activeSeason?.players}
+									/>
 								</Box>
 								<StatsTableByTeams playersStatsByTeams={filteredStats} />
 							</Box>
