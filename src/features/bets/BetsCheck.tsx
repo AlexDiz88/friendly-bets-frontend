@@ -8,9 +8,12 @@ import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 import CustomBetCheckDialog from '../../components/custom/dialog/CustomBetCheckDialog';
+import {
+	showErrorSnackbar,
+	showInfoSnackbar,
+} from '../../components/custom/snackbar/snackbarSlice';
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
 import GameScoreValidation from '../../components/utils/GameScoreValidation';
-import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
 import { selectUser } from '../auth/selectors';
@@ -32,11 +35,6 @@ export default function BetsCheck(): JSX.Element {
 	const [selectedLeague, setSelectedLeague] = useState(t('all'));
 	const [dialogType, setDialogType] = useState<'LOST' | 'RETURNED' | 'WON' | undefined>(undefined);
 	const [showMessage, setShowMessage] = useState(false);
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
 
 	useFilterLanguageChange(setSelectedLeague);
 
@@ -61,18 +59,12 @@ export default function BetsCheck(): JSX.Element {
 				);
 
 				if (setBetResult.fulfilled.match(dispatchResult)) {
-					setOpenSnackbar(true);
-					setSnackbarSeverity('info');
-					setSnackbarMessage(t('betWasSuccessfullyProcessed'));
+					dispatch(showInfoSnackbar({ message: t('betWasSuccessfullyProcessed') }));
 					setGameResult('');
 					handleLeagueChange(selectedLeague);
 				}
 				if (setBetResult.rejected.match(dispatchResult)) {
-					setOpenSnackbar(true);
-					setSnackbarSeverity('error');
-					if (dispatchResult.error.message) {
-						setSnackbarMessage(dispatchResult.error.message);
-					}
+					dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 				}
 			}
 		},
@@ -95,10 +87,6 @@ export default function BetsCheck(): JSX.Element {
 		setGameResult(res);
 		setSelectedBet(bet);
 		setDialogType(type);
-	};
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
 	};
 
 	useEffect(() => {
@@ -294,16 +282,6 @@ export default function BetsCheck(): JSX.Element {
 				buttonColor="success"
 				buttonText={t('won')}
 			/>
-
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={3000}
-				/>
-			</Box>
 		</Box>
 	);
 }

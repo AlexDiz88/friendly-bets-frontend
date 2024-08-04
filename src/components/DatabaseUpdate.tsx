@@ -6,16 +6,11 @@ import { dbUpdate } from '../features/admin/seasons/seasonsSlice';
 import CustomButton from './custom/btn/CustomButton';
 import CustomCancelButton from './custom/btn/CustomCancelButton';
 import CustomSuccessButton from './custom/btn/CustomSuccessButton';
-import NotificationSnackbar from './utils/NotificationSnackbar';
+import { showErrorSnackbar, showSuccessSnackbar } from './custom/snackbar/snackbarSlice';
 
 export default function DatabaseUpdate(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const [openDialog, setOpenDialog] = useState(false);
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
 
 	const handleDbUpdateSubmit = useCallback(
 		async (event?: React.FormEvent) => {
@@ -24,16 +19,10 @@ export default function DatabaseUpdate(): JSX.Element {
 			const dispatchResult = await dispatch(dbUpdate());
 
 			if (dbUpdate.fulfilled.match(dispatchResult)) {
-				setOpenSnackbar(true);
-				setSnackbarSeverity('success');
-				setSnackbarMessage(t('databaseWasSuccessfullyUpdated'));
+				dispatch(showSuccessSnackbar({ message: t('databaseWasSuccessfullyUpdated') }));
 			}
 			if (dbUpdate.rejected.match(dispatchResult)) {
-				setOpenSnackbar(true);
-				setSnackbarSeverity('error');
-				if (dispatchResult.error.message) {
-					setSnackbarMessage(dispatchResult.error.message);
-				}
+				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 			}
 		},
 		[dispatch]
@@ -45,10 +34,6 @@ export default function DatabaseUpdate(): JSX.Element {
 
 	const handleCloseDialog = (): void => {
 		setOpenDialog(false);
-	};
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
 	};
 
 	return (
@@ -73,16 +58,6 @@ export default function DatabaseUpdate(): JSX.Element {
 					<CustomSuccessButton onClick={handleDbUpdateSubmit} />
 				</DialogActions>
 			</Dialog>
-
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={2000}
-				/>
-			</Box>
 		</Box>
 	);
 }

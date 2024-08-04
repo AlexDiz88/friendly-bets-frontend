@@ -12,19 +12,14 @@ import { getProfile } from '../../features/auth/authSlice';
 import { selectUser } from '../../features/auth/selectors';
 import CustomCancelButton from '../custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
+import { showErrorSnackbar, showSuccessSnackbar } from '../custom/snackbar/snackbarSlice';
 import Rules from '../Rules';
-import NotificationSnackbar from '../utils/NotificationSnackbar';
 
 export default function SeasonRegister(): JSX.Element {
 	const scheduledSeason = useAppSelector(selectScheduledSeason);
 	const dispatch = useAppDispatch();
 	const currentUser = useAppSelector(selectUser);
 	const [showRules, setShowRules] = useState(false);
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [openDialog, setOpenDialog] = useState(false);
 
 	const handleConfirm = useCallback(async () => {
@@ -32,22 +27,14 @@ export default function SeasonRegister(): JSX.Element {
 			const dispatchResult = await dispatch(registrationInSeason({ seasonId: scheduledSeason.id }));
 
 			if (registrationInSeason.fulfilled.match(dispatchResult)) {
-				await dispatch(getScheduledSeason());
-				setOpenSnackbar(true);
-				setSnackbarSeverity('success');
-				setSnackbarMessage(t('youWereSuccessfullyRegisteredInTournament'));
-				setOpenDialog(false);
+				dispatch(showSuccessSnackbar({ message: t('youWereSuccessfullyRegisteredInTournament') }));
 			}
 			if (registrationInSeason.rejected.match(dispatchResult)) {
-				setOpenDialog(false);
-				setOpenSnackbar(true);
-				setSnackbarSeverity('error');
-				if (dispatchResult.error.message) {
-					setSnackbarMessage(dispatchResult.error.message);
-				}
+				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 			}
+			setOpenDialog(false);
 		}
-	}, [dispatch, scheduledSeason]);
+	}, [scheduledSeason]);
 
 	const handleOpenDialog = (): void => {
 		setOpenDialog(true);
@@ -64,11 +51,7 @@ export default function SeasonRegister(): JSX.Element {
 	useEffect(() => {
 		dispatch(getProfile());
 		dispatch(getScheduledSeason());
-	}, [dispatch]);
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
-	};
+	}, [handleConfirm]);
 
 	return (
 		<Box sx={{ textAlign: 'center', mx: 2, mt: 2, mb: 4 }}>
@@ -149,16 +132,6 @@ export default function SeasonRegister(): JSX.Element {
 			) : (
 				<Typography sx={{ pb: 1, mx: 2, mt: 2 }}>{t('noSeasonsForRegistration')}</Typography>
 			)}
-
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={3000}
-				/>
-			</Box>
 		</Box>
 	);
 }

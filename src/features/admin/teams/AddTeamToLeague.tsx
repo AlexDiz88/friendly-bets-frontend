@@ -13,7 +13,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
-import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
+import {
+	showErrorSnackbar,
+	showSuccessSnackbar,
+} from '../../../components/custom/snackbar/snackbarSlice';
 import pathToLogoImage from '../../../components/utils/pathToLogoImage';
 import { addTeamToLeagueInSeason, getSeasons } from '../seasons/seasonsSlice';
 import { selectSeasons } from '../seasons/selectors';
@@ -37,12 +40,6 @@ export default function AddTeamToLeague({
 	const [seasonId, setSeasonId] = useState<string>('');
 	const [leagueId, setLeagueId] = useState<string>('');
 	const [teamId, setTeamId] = useState<string>('');
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
-	const [snackbarDuration, setSnackbarDuration] = useState(3000);
 
 	const handleAddTeamClick = useCallback(async () => {
 		const dispatchResult = await dispatch(
@@ -53,20 +50,13 @@ export default function AddTeamToLeague({
 			})
 		);
 		if (addTeamToLeagueInSeason.fulfilled.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarDuration(1000);
-			setSnackbarSeverity('success');
-			setSnackbarMessage(t('teamWasSuccessfullyAddedToLeague'));
+			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyAddedToLeague') }));
 			setSelectedTeam('');
 		}
 		if (addTeamToLeagueInSeason.rejected.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('error');
-			if (dispatchResult.error.message) {
-				setSnackbarMessage(dispatchResult.error.message);
-			}
+			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
-	}, [dispatch, leagueId, seasonId, teamId]);
+	}, [leagueId, seasonId, teamId]);
 
 	const handleSeasonChange = (event: SelectChangeEvent): void => {
 		setSelectedSeasonTitle(event.target.value);
@@ -98,10 +88,6 @@ export default function AddTeamToLeague({
 		closeAddTeamToLeague(false);
 	};
 
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
-	};
-
 	useEffect(() => {
 		dispatch(getSeasons());
 		dispatch(getAllTeams());
@@ -109,7 +95,7 @@ export default function AddTeamToLeague({
 
 	useEffect(() => {
 		dispatch(getLeagueTeams({ leagueId }));
-	}, [openSnackbar, selectedLeague]);
+	}, [handleAddTeamClick, selectedLeague]);
 
 	return (
 		<Box>
@@ -216,15 +202,6 @@ export default function AddTeamToLeague({
 					</Box>
 				</>
 			)}
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={snackbarDuration}
-				/>
-			</Box>
 		</Box>
 	);
 }

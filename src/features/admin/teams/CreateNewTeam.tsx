@@ -4,7 +4,10 @@ import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
-import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
+import {
+	showErrorSnackbar,
+	showSuccessSnackbar,
+} from '../../../components/custom/snackbar/snackbarSlice';
 import { createTeam } from './teamsSlice';
 
 export default function CreateNewTeam({
@@ -15,27 +18,16 @@ export default function CreateNewTeam({
 	const dispatch = useAppDispatch();
 	const [title, setTitle] = useState<string>('');
 	const [country, setCountry] = useState<string>('');
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
 
 	const handleSaveClick = useCallback(async () => {
 		const dispatchResult = await dispatch(createTeam({ title, country }));
 		if (createTeam.fulfilled.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('success');
-			setSnackbarMessage(t('teamWasSuccessfullyCreated'));
+			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyCreated') }));
 			setTitle('');
 			setCountry('');
 		}
 		if (createTeam.rejected.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('error');
-			if (dispatchResult.error.message) {
-				setSnackbarMessage(dispatchResult.error.message);
-			}
+			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
 	}, [dispatch, country, title]);
 
@@ -49,10 +41,6 @@ export default function CreateNewTeam({
 
 	const handleCancelClick = (): void => {
 		closeAddNewTeam(false);
-	};
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
 	};
 
 	return (
@@ -84,15 +72,6 @@ export default function CreateNewTeam({
 			<Box>
 				<CustomCancelButton onClick={handleCancelClick} />
 				<CustomSuccessButton onClick={handleSaveClick} buttonText={t('btnText.create')} />
-			</Box>
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={3000}
-				/>
 			</Box>
 		</FormControl>
 	);

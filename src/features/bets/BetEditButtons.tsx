@@ -4,8 +4,11 @@ import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
+import {
+	showErrorSnackbar,
+	showSuccessSnackbar,
+} from '../../components/custom/snackbar/snackbarSlice';
 import { removeExtraLabels, transformGameResult } from '../../components/utils/GameScoreValidation';
-import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import BetEditForm from './BetEditForm';
 import { deleteBet } from './betsSlice';
 import Bet from './types/Bet';
@@ -15,12 +18,6 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	const [showEditForm, setShowEditForm] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [transformedGameResult, setTransformedGameResult] = useState<string>('');
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
-	const [snackbarDuration, setSnackbarDuration] = useState(1500);
 
 	const handleBetDeleteSave = useCallback(async () => {
 		setOpenDeleteDialog(false);
@@ -29,17 +26,10 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 		);
 
 		if (deleteBet.fulfilled.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('success');
-			setSnackbarMessage(t('betWasSuccessfullyDeleted'));
+			dispatch(showSuccessSnackbar({ message: t('betWasSuccessfullyDeleted') }));
 		}
 		if (deleteBet.rejected.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarDuration(3000);
-			setSnackbarSeverity('error');
-			if (dispatchResult.error.message) {
-				setSnackbarMessage(dispatchResult.error.message);
-			}
+			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
 	}, [dispatch, bet.id, bet.seasonId, bet.leagueId]);
 
@@ -55,10 +45,6 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 
 	const handleCloseDialog = (): void => {
 		setOpenDeleteDialog(false);
-	};
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
 	};
 
 	return (
@@ -106,15 +92,6 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 					/>
 				</DialogActions>
 			</Dialog>
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={snackbarDuration}
-				/>
-			</Box>
 		</Box>
 	);
 }

@@ -8,7 +8,10 @@ import { useAppDispatch } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomBetInputDialog from '../../components/custom/dialog/CustomBetInputDialog';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
-import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
+import {
+	showErrorSnackbar,
+	showSuccessSnackbar,
+} from '../../components/custom/snackbar/snackbarSlice';
 import League from '../admin/leagues/types/League';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
@@ -47,12 +50,6 @@ export default function BetInputContainer(): JSX.Element {
 	const [selectedBetOdds, setSelectedBetOdds] = useState<string>('');
 	const [selectedBetSize, setSelectedBetSize] = useState<string>('');
 	const [showSendButton, setShowSendButton] = useState<boolean>(false);
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
-	const [snackbarDuration, setSnackbarDuration] = useState(3000);
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDialogEmptyBet, setOpenDialogEmptyBet] = useState(false);
 	const [openDialogTwoEmptyBet, setOpenDialogTwoEmptyBet] = useState(false);
@@ -90,10 +87,7 @@ export default function BetInputContainer(): JSX.Element {
 			);
 
 			if (addBet.fulfilled.match(dispatchResult)) {
-				setOpenSnackbar(true);
-				setSnackbarSeverity('success');
-				setSnackbarMessage(t('betWasSuccessfullyAdded'));
-				setSnackbarDuration(1000);
+				dispatch(showSuccessSnackbar({ message: t('betWasSuccessfullyAdded') }));
 				setResetTeams(!resetTeams);
 				setSelectedHomeTeam(undefined);
 				setSelectedAwayTeam(undefined);
@@ -102,11 +96,7 @@ export default function BetInputContainer(): JSX.Element {
 				setIsNot(false);
 			}
 			if (addBet.rejected.match(dispatchResult)) {
-				setOpenSnackbar(true);
-				setSnackbarSeverity('error');
-				if (dispatchResult.error.message) {
-					setSnackbarMessage(dispatchResult.error.message);
-				}
+				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 				setSelectedBetTitle('');
 				setSelectedBetOdds('');
 				setIsNot(false);
@@ -146,26 +136,19 @@ export default function BetInputContainer(): JSX.Element {
 			);
 
 			if (addEmptyBet.fulfilled.match(dispatchResult)) {
-				setOpenSnackbar(true);
-				setSnackbarSeverity('success');
 				if (openDialogEmptyBet) {
-					setSnackbarMessage(t('emptyBetWasSuccessfullyAdded'));
+					dispatch(showSuccessSnackbar({ message: t('emptyBetWasSuccessfullyAdded') }));
 				} else {
-					setSnackbarMessage(t('twoEmptyBetsWasSuccessfullyAdded'));
+					dispatch(showSuccessSnackbar({ message: t('twoEmptyBetsWasSuccessfullyAdded') }));
 				}
 			}
 			if (addEmptyBet.rejected.match(dispatchResult)) {
-				setOpenSnackbar(true);
-				setSnackbarSeverity('error');
-				if (dispatchResult.error.message) {
-					setSnackbarMessage(dispatchResult.error.message);
-				}
+				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 			}
 			setOpenDialogEmptyBet(false);
 			setOpenDialogTwoEmptyBet(false);
 		}
 	}, [
-		dispatch,
 		openDialogEmptyBet,
 		season,
 		selectedEmptyBetSize,
@@ -252,10 +235,6 @@ export default function BetInputContainer(): JSX.Element {
 		setOpenDialog(false);
 		setOpenDialogEmptyBet(false);
 		setOpenDialogTwoEmptyBet(false);
-	};
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
 	};
 
 	useEffect(() => {
@@ -439,16 +418,6 @@ export default function BetInputContainer(): JSX.Element {
 				onSave={handleSaveTwoEmptyBet}
 				title={t('addTwoEmptyBet')}
 			/>
-
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={snackbarDuration}
-				/>
-			</Box>
 		</Box>
 	);
 }

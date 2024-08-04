@@ -13,7 +13,10 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import CustomButton from '../../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
-import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
+import {
+	showErrorSnackbar,
+	showSuccessSnackbar,
+} from '../../../components/custom/snackbar/snackbarSlice';
 import AddLeagueInSeason from '../leagues/AddLeagueInSeason';
 import { changeSeasonStatus, getActiveSeason, getActiveSeasonId, getSeasons } from './seasonsSlice';
 import { selectStatuses } from './selectors';
@@ -29,11 +32,6 @@ export default function SeasonInfo({
 	const [seasonStatus, setSeasonStatus] = useState<string>(status);
 	const [showStatusOptions, setShowStatusOptions] = useState<boolean>(false);
 	const [showLeaguesList, setShowLeaguesList] = useState<boolean>(false);
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
 
 	const handleLeaguesClick = (): void => {
 		setShowStatusOptions(false);
@@ -62,27 +60,17 @@ export default function SeasonInfo({
 	const handleSaveClick = useCallback(async () => {
 		const dispatchResult = await dispatch(changeSeasonStatus({ id, status: seasonStatus }));
 		if (changeSeasonStatus.fulfilled.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('success');
-			setSnackbarMessage(t('seasonStatusWasSuccessfullyUpdated'));
+			dispatch(showSuccessSnackbar({ message: t('seasonStatusWasSuccessfullyUpdated') }));
 			setShowStatusOptions(false);
 			setSeasonStatus(seasonStatus);
 		}
 		if (changeSeasonStatus.rejected.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('error');
-			if (dispatchResult.error.message) {
-				setSnackbarMessage(dispatchResult.error.message);
-			}
+			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
 		dispatch(getSeasons());
 		dispatch(getActiveSeasonId());
 		dispatch(getActiveSeason());
-	}, [dispatch, id, seasonStatus]);
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
-	};
+	}, [id, seasonStatus]);
 
 	return (
 		<Box
@@ -177,15 +165,6 @@ export default function SeasonInfo({
 						handleLeagueListShow={handleLeagueListShow}
 					/>
 				)}
-			</Box>
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={3000}
-				/>
 			</Box>
 		</Box>
 	);

@@ -18,8 +18,11 @@ import { useAppDispatch } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
+import {
+	showErrorSnackbar,
+	showSuccessSnackbar,
+} from '../../components/custom/snackbar/snackbarSlice';
 import GameScoreValidation from '../../components/utils/GameScoreValidation';
-import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
 import BetInputOdds from './BetInputOdds';
@@ -61,12 +64,6 @@ export default function BetEditForm({
 	const [updatedGameResult, setUpdatedGameResult] = useState<string>(bet.gameResult || '');
 	const [inputGameResult, setInputGameResult] = useState<string>(transformedGameResult);
 	const [betUpdateOpenDialog, setBetUpdateOpenDialog] = useState<boolean>(false);
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
-	const [snackbarDuration, setSnackbarDuration] = useState(1500);
 
 	const scrollToTop = (): void => {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -99,25 +96,17 @@ export default function BetEditForm({
 		);
 
 		if (updateBet.fulfilled.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('success');
-			setSnackbarMessage(t('betWasSuccessfullyEdited'));
+			dispatch(showSuccessSnackbar({ message: t('betWasSuccessfullyEdited') }));
 			setTimeout(() => {
 				handleEditBet(false);
 				scrollToTop();
 			}, 700);
 		}
 		if (updateBet.rejected.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarDuration(3000);
-			setSnackbarSeverity('error');
-			if (dispatchResult.error.message) {
-				setSnackbarMessage(dispatchResult.error.message);
-			}
+			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
 	}, [
 		updatedBetOdds,
-		dispatch,
 		bet.id,
 		bet.seasonId,
 		bet.leagueId,
@@ -192,10 +181,6 @@ export default function BetEditForm({
 
 	const handleCloseForm = (): void => {
 		handleEditBet(false);
-	};
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
 	};
 
 	return (
@@ -361,15 +346,6 @@ export default function BetEditForm({
 					/>
 				</DialogActions>
 			</Dialog>
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={snackbarDuration}
-				/>
-			</Box>
 		</Box>
 	);
 }

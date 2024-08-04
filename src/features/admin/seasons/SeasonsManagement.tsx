@@ -5,7 +5,10 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import CustomButton from '../../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
-import NotificationSnackbar from '../../../components/utils/NotificationSnackbar';
+import {
+	showErrorSnackbar,
+	showSuccessSnackbar,
+} from '../../../components/custom/snackbar/snackbarSlice';
 import SeasonInfo from './SeasonInfo';
 import { addSeason, getLeagueCodeList, getSeasonStatusList, getSeasons } from './seasonsSlice';
 import { selectSeasons } from './selectors';
@@ -18,11 +21,6 @@ export default function SeasonsManagement(): JSX.Element {
 	const [seasonBetCount, setSeasonBetCount] = useState<string>('');
 	const [showCreateSeason, setShowCreateSeason] = useState(false);
 	const [showAllSeasons, setShowAllSeasons] = useState(false);
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
 
 	const handleSubmit = useCallback(
 		async (event?: React.FormEvent) => {
@@ -35,9 +33,7 @@ export default function SeasonsManagement(): JSX.Element {
 			);
 
 			if (addSeason.fulfilled.match(dispatchResult)) {
-				setOpenSnackbar(true);
-				setSnackbarSeverity('success');
-				setSnackbarMessage(t('seasonWasSuccessfullyCreated'));
+				dispatch(showSuccessSnackbar({ message: t('seasonWasSuccessfullyCreated') }));
 				setSeasonTitle('');
 				setSeasonBetCount('');
 				setShowCreateSeason(false);
@@ -45,14 +41,10 @@ export default function SeasonsManagement(): JSX.Element {
 				dispatch(getSeasons());
 			}
 			if (addSeason.rejected.match(dispatchResult)) {
-				setOpenSnackbar(true);
-				setSnackbarSeverity('error');
-				if (dispatchResult.error.message) {
-					setSnackbarMessage(dispatchResult.error.message);
-				}
+				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 			}
 		},
-		[dispatch, seasonBetCount, seasonTitle]
+		[seasonBetCount, seasonTitle]
 	);
 
 	const handleShowAllSeasons = (): void => {
@@ -76,10 +68,6 @@ export default function SeasonsManagement(): JSX.Element {
 
 	const handleSeasonBetCountChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		setSeasonBetCount(event.target.value);
-	};
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
 	};
 
 	return (
@@ -158,16 +146,6 @@ export default function SeasonsManagement(): JSX.Element {
 					)}
 				</Box>
 			)}
-
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={3000}
-				/>
-			</Box>
 		</Box>
 	);
 }
