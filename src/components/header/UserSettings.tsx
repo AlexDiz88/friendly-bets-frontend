@@ -17,6 +17,7 @@ export default function UserSettings(): JSX.Element {
 	const adminSettings = [
 		t('inputBet'),
 		t('summaryResults'),
+		t('matchdayCalendar'),
 		t('editBet'),
 		t('adminPanel'),
 		t('logout'),
@@ -24,13 +25,14 @@ export default function UserSettings(): JSX.Element {
 	const moderSettings = [
 		t('inputBet'),
 		t('summaryResults'),
+		t('matchdayCalendar'),
 		t('editBet'),
 		t('myProfile'),
 		// t('myStats'),
 		t('seasonRegister'),
 		t('logout'),
 	];
-	const authSettings = [t('myProfile'), t('myStats'), t('seasonRegister'), t('logout')];
+	const authSettings = [t('myProfile'), t('seasonRegister'), t('logout')];
 	const notAuthSettings = [t('login'), t('signUp')];
 	let settings: string[] = [];
 
@@ -44,38 +46,6 @@ export default function UserSettings(): JSX.Element {
 		settings = adminSettings;
 	}
 
-	const handleBetsEditList = (): void => {
-		navigate('/bets/edit');
-	};
-
-	const handleMyProfile = (): void => {
-		navigate('/my/profile');
-	};
-
-	const handleMyStatistic = (): void => {
-		navigate('/my/stats');
-	};
-
-	const handleBetInput = (): void => {
-		navigate('/bet-input');
-	};
-
-	const handleAdminCabinet = (): void => {
-		navigate('/admin/cabinet');
-	};
-
-	const handleSeasonRegister = (): void => {
-		navigate('/season/register');
-	};
-
-	const handleBetsCheck = (): void => {
-		navigate('/bets/check');
-	};
-
-	const handleBetDelete = (): void => {
-		// логика для обработки события клика на "Удалить ставку"
-	};
-
 	const handleLogout = useCallback(async () => {
 		const dispatchResult = await dispatch(logout());
 
@@ -88,14 +58,6 @@ export default function UserSettings(): JSX.Element {
 			throw new Error(dispatchResult.error.message);
 		}
 	}, [dispatch, navigate]);
-
-	const handleLogin = (): void => {
-		navigate('/auth/login');
-	};
-
-	const handleRegister = (): void => {
-		navigate('/auth/register');
-	};
 
 	const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>): void => {
 		setAnchorElUser(event.currentTarget);
@@ -119,7 +81,7 @@ export default function UserSettings(): JSX.Element {
 			</IconButton>
 			<Menu
 				sx={{ mt: '45px' }}
-				id="menu-appbar"
+				id="menu-app-bar"
 				anchorEl={anchorElUser}
 				anchorOrigin={{
 					vertical: 'top',
@@ -138,27 +100,27 @@ export default function UserSettings(): JSX.Element {
 						key={index}
 						onClick={() => {
 							if (setting === t('myProfile')) {
-								handleMyProfile();
+								navigate('/my/profile');
 							} else if (setting === t('myStats')) {
-								handleMyStatistic();
+								navigate('/my/stats');
 							} else if (setting === t('logout')) {
 								handleLogout();
 							} else if (setting === t('login')) {
-								handleLogin();
+								navigate('/auth/login');
 							} else if (setting === t('signUp')) {
-								handleRegister();
+								navigate('/auth/register');
 							} else if (setting === t('inputBet')) {
-								handleBetInput();
-							} else if (setting === t('deleteBet')) {
-								handleBetDelete();
+								navigate('/bet-input');
 							} else if (setting === t('adminPanel')) {
-								handleAdminCabinet();
+								navigate('/admin/cabinet');
 							} else if (setting === t('seasonRegister')) {
-								handleSeasonRegister();
+								navigate('/season/register');
 							} else if (setting === t('summaryResults')) {
-								handleBetsCheck();
+								navigate('/bets/check');
 							} else if (setting === t('editBet')) {
-								handleBetsEditList();
+								navigate('/bets/edit');
+							} else if (setting === t('matchdayCalendar')) {
+								navigate('/calendar');
 							}
 							handleCloseUserMenu();
 						}}

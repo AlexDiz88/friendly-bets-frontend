@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import * as api from './api';
 import AuthState from './types/AuthState';
 import Credentials from './types/Credentials';
-import * as api from './api';
 import RegisterData from './types/RegisterData';
 
 const initialState: AuthState = {
@@ -93,6 +93,7 @@ const authSlice = createSlice({
 			})
 			.addCase(getProfile.rejected, (state) => {
 				state.authChecked = true;
+				state.user = undefined;
 			})
 
 			.addCase(login.fulfilled, (state) => {

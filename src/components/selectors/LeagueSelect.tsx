@@ -30,7 +30,7 @@ const LeagueSelect = ({
 		>
 			{!withoutAll && (
 				<MenuItem key={t('all')} sx={{ ml: -0.5, minWidth: '6.5rem' }} value={t('all')}>
-					<Box style={{ display: 'flex', alignItems: 'center' }}>
+					<Box sx={{ display: 'flex', alignItems: 'center' }}>
 						<Avatar
 							variant="square"
 							sx={{ width: 27, height: 27 }}
@@ -47,7 +47,7 @@ const LeagueSelect = ({
 			{leagues &&
 				leagues.map((l) => (
 					<MenuItem sx={{ ml: -0.5, minWidth: '6.5rem' }} key={l.id} value={l.leagueCode}>
-						<Box style={{ display: 'flex', alignItems: 'center' }}>
+						<Box sx={{ display: 'flex', alignItems: 'center' }}>
 							<Avatar
 								variant="square"
 								sx={{ width: 27, height: 27 }}

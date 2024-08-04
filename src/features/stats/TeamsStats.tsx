@@ -157,7 +157,7 @@ function Row({ tStats }: RowProps): JSX.Element {
 export default function TeamsStats({
 	playersStatsByTeams,
 }: {
-	playersStatsByTeams: PlayerStatsByTeams[];
+	playersStatsByTeams: PlayerStatsByTeams;
 }): JSX.Element {
 	return (
 		<TableContainer component={Paper} sx={{ pt: 1.5 }}>
@@ -189,12 +189,12 @@ export default function TeamsStats({
 					</TableRow>
 				</TableHead>
 				<TableBody sx={{ border: 2 }}>
-					{playersStatsByTeams.map((pStats) =>
-						pStats.teamStats
-							.slice()
-							.sort((a, b) => b.actualBalance - a.actualBalance)
-							.map((tStats) => <Row key={tStats.team.title} tStats={tStats} />)
-					)}
+					{playersStatsByTeams.teamStats
+						.slice()
+						.sort((a, b) => b.actualBalance - a.actualBalance)
+						.map((tStats) => (
+							<Row key={tStats.team.title} tStats={tStats} />
+						))}
 				</TableBody>
 			</Table>
 		</TableContainer>

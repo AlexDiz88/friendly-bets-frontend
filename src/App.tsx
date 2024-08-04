@@ -12,6 +12,7 @@ import MyStats from './components/profile/MyStats';
 import Profile from './components/profile/Profile';
 import SeasonRegister from './components/profile/SeasonRegister';
 import AdminCabinet from './features/admin/AdminCabinet';
+import MatchdayCalendar from './features/admin/calendars/MatchdayCalendar';
 import Login from './features/auth/Login';
 import Register from './features/auth/Register';
 import { getProfile } from './features/auth/authSlice';
@@ -51,6 +52,7 @@ function App(): JSX.Element {
 				<Route path="/in-progress" element={<EmptyPage />} />
 				<Route path="/news" element={<News />} />
 				<Route path="/bets/edit" element={<BetEditList />} />
+				<Route path="/calendar" element={<MatchdayCalendar />} />
 				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
 				<Route path="/rules" element={<RulesPage />} />

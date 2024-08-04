@@ -6,6 +6,7 @@ const initialState: PlayersStatsState = {
 	playersStats: [],
 	playersStatsByLeague: [],
 	playersStatsByTeams: [],
+	statsByTeams: undefined,
 	error: undefined,
 };
 
@@ -25,6 +26,12 @@ export const getAllPlayersStatsByLeagues = createAsyncThunk(
 export const getAllStatsByTeamsInSeason = createAsyncThunk(
 	'stats/getAllStatsByTeamsInSeason',
 	async (seasonId: string) => api.getAllStatsByTeamsInSeason(seasonId)
+);
+
+export const getStatsByTeams = createAsyncThunk(
+	'stats/getStatsByTeams',
+	async ({ seasonId, leagueId, userId }: { seasonId: string; leagueId: string; userId: string }) =>
+		api.getStatsByTeams(seasonId, leagueId, userId)
 );
 
 export const playersStatsFullRecalculation = createAsyncThunk(
@@ -58,6 +65,13 @@ const statsSlice = createSlice({
 				state.playersStatsByTeams = action.payload.playersStatsByTeams;
 			})
 			.addCase(getAllStatsByTeamsInSeason.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
+			.addCase(getStatsByTeams.fulfilled, (state, action) => {
+				state.statsByTeams = action.payload.statsByTeams;
+			})
+			.addCase(getStatsByTeams.rejected, (state, action) => {
+				state.statsByTeams = undefined;
 				state.error = action.error.message;
 			})
 			.addCase(playersStatsFullRecalculation.fulfilled, (state, action) => {

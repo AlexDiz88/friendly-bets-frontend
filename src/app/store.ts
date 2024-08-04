@@ -1,5 +1,7 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
+import snackbarSlice from '../components/custom/snackbar/snackbarSlice';
 import languageSlice from '../components/utils/languageSlice';
+import calendarsSlice from '../features/admin/calendars/calendarsSlice';
 import seasonsSlice from '../features/admin/seasons/seasonsSlice';
 import teamsSlice from '../features/admin/teams/teamsSlice';
 import authSlice from '../features/auth/authSlice';
@@ -14,6 +16,8 @@ export const store = configureStore({
 		bets: betsSlice,
 		playersStats: statsSlice,
 		language: languageSlice,
+		calendars: calendarsSlice,
+		snackbar: snackbarSlice,
 	},
 });
 

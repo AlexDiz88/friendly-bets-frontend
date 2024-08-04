@@ -9,4 +9,6 @@ export const selectPlayersStatsByLeagues = (state: RootState): LeagueStats[] =>
 	state.playersStats.playersStatsByLeague;
 export const selectAllStatsByTeamsInSeason = (state: RootState): PlayerStatsByTeams[] =>
 	state.playersStats.playersStatsByTeams;
+export const selectStatsByTeams = (state: RootState): PlayerStatsByTeams =>
+	state.playersStats.statsByTeams;
 export const selectError = (state: RootState): string | undefined => state.playersStats.error;

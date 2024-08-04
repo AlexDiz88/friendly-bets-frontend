@@ -2,36 +2,29 @@ import { Box, SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import CustomErrorMessage from '../../components/custom/CustomErrorMessage';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import PlayerSelect from '../../components/selectors/PlayerSelect';
+import { TOTAL_STATS_BY_TEAMS_USER_ID } from '../../constants';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
-import { selectAllStatsByTeamsInSeason } from './selectors';
-import { getAllStatsByTeamsInSeason } from './statsSlice';
+import { selectError, selectStatsByTeams } from './selectors';
+import { getStatsByTeams } from './statsSlice';
 import TeamsStats from './TeamsStats';
 
 export default function TeamsStatsPage(): JSX.Element {
 	const activeSeason = useAppSelector(selectActiveSeason);
-	const statsByTeams = useAppSelector(selectAllStatsByTeamsInSeason);
+	const statsByTeams = useAppSelector(selectStatsByTeams);
+	const errorText = useAppSelector(selectError);
 	const dispatch = useAppDispatch();
 	const [selectedLeagueCode, setSelectedLeagueCode] = useState<string>('');
 	const [selectedPlayerName, setSelectedPlayerName] = useState<string>(t('all'));
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
-
-	const filteredStats =
-		selectedPlayerName === t('all')
-			? statsByTeams.filter((stats) => stats.leagueStats && stats.leagueCode === selectedLeagueCode)
-			: statsByTeams.filter(
-					(stats) =>
-						!stats.leagueStats &&
-						stats.username === selectedPlayerName &&
-						stats.leagueCode === selectedLeagueCode
-			  );
 
 	useFilterLanguageChange(setSelectedPlayerName);
 	// TODO: переделать систему отлова загрузки и ошибок (React Query??)
@@ -46,23 +39,40 @@ export default function TeamsStatsPage(): JSX.Element {
 	};
 
 	useEffect(() => {
-		if (statsByTeams && statsByTeams.length > 0) {
-			setSelectedLeagueCode(statsByTeams[0].leagueCode || '');
+		if (statsByTeams) {
+			setSelectedLeagueCode(statsByTeams.leagueCode || '');
 		}
 	}, [statsByTeams]);
 
 	useEffect(() => {
 		if (activeSeason) {
-			dispatch(getAllStatsByTeamsInSeason(activeSeason.id))
-				.then(() => {
-					setLoading(false);
-				})
-				.catch(() => {
-					setLoadingError(true);
-					setLoading(false);
-				});
+			setSelectedLeagueCode(activeSeason.leagues[0].leagueCode || '');
 		}
 	}, [activeSeason]);
+
+	useEffect(() => {
+		if (activeSeason) {
+			const league = activeSeason.leagues.find((l) => l.leagueCode === selectedLeagueCode);
+			let userId;
+			if (selectedPlayerName === t('all')) {
+				userId = TOTAL_STATS_BY_TEAMS_USER_ID;
+			} else {
+				const user = activeSeason.players.find((p) => p.username === selectedPlayerName);
+				userId = user?.id;
+			}
+			if (league && userId) {
+				setLoading(true);
+				dispatch(getStatsByTeams({ seasonId: activeSeason.id, leagueId: league?.id, userId }))
+					.then(() => {
+						setLoading(false);
+					})
+					.catch(() => {
+						setLoadingError(true);
+						setLoading(false);
+					});
+			}
+		}
+	}, [activeSeason, selectedLeagueCode, selectedPlayerName]);
 
 	useEffect(() => {
 		if (!activeSeason) {
@@ -78,7 +88,9 @@ export default function TeamsStatsPage(): JSX.Element {
 				) : (
 					<Box>
 						{loadingError ? (
-							<CustomLoadingError />
+							<Box>
+								<CustomLoadingError />
+							</Box>
 						) : (
 							<Box
 								sx={{
@@ -103,7 +115,11 @@ export default function TeamsStatsPage(): JSX.Element {
 										players={activeSeason?.players}
 									/>
 								</Box>
-								<TeamsStats playersStatsByTeams={filteredStats} />
+								{statsByTeams ? (
+									<TeamsStats playersStatsByTeams={statsByTeams} />
+								) : (
+									<CustomErrorMessage message={errorText} />
+								)}
 							</Box>
 						)}
 					</Box>

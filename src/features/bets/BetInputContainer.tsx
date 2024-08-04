@@ -1,24 +1,13 @@
 import { Dangerous } from '@mui/icons-material';
-import {
-	Box,
-	Checkbox,
-	CircularProgress,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	IconButton,
-	Switch,
-	TextField,
-	Typography,
-} from '@mui/material';
+import { Box, Checkbox, IconButton, Switch, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
-import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
-import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
+import CustomBetInputDialog from '../../components/custom/dialog/CustomBetInputDialog';
+import CustomLoading from '../../components/custom/loading/CustomLoading';
 import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
 import League from '../admin/leagues/types/League';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
@@ -41,7 +30,6 @@ export default function BetInputContainer(): JSX.Element {
 	const user = useSelector(selectUser);
 	const navigate = useNavigate();
 	const season = useSelector(selectActiveSeason);
-	const [showMessage, setShowMessage] = useState(false);
 	const [selectedUser, setSelectedUser] = useState<SimpleUser | undefined>(undefined);
 	const [selectedLeague, setSelectedLeague] = useState<League>();
 	const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
@@ -112,7 +100,6 @@ export default function BetInputContainer(): JSX.Element {
 				setSelectedBetTitle('');
 				setSelectedBetOdds('');
 				setIsNot(false);
-				await dispatch(getActiveSeason());
 			}
 			if (addBet.rejected.match(dispatchResult)) {
 				setOpenSnackbar(true);
@@ -126,7 +113,6 @@ export default function BetInputContainer(): JSX.Element {
 			}
 		}
 	}, [
-		dispatch,
 		isNot,
 		resetTeams,
 		season,
@@ -141,7 +127,7 @@ export default function BetInputContainer(): JSX.Element {
 	]);
 
 	// добавление пустой ставки
-	const handleSaveEmptyBetClick = useCallback(async () => {
+	const handleSaveEmptyBet = useCallback(async () => {
 		if (season && selectedUser) {
 			const matchDayCode =
 				matchDayInfo.matchDay === t('playoffRound.final') ? 'final' : matchDayInfo.matchDay;
@@ -163,9 +149,9 @@ export default function BetInputContainer(): JSX.Element {
 				setOpenSnackbar(true);
 				setSnackbarSeverity('success');
 				if (openDialogEmptyBet) {
-					setSnackbarMessage(t('emptyBetWasSuccessfullyDeleted'));
+					setSnackbarMessage(t('emptyBetWasSuccessfullyAdded'));
 				} else {
-					setSnackbarMessage(t('twoEmptyBetsWasSuccessfullyDeleted'));
+					setSnackbarMessage(t('twoEmptyBetsWasSuccessfullyAdded'));
 				}
 			}
 			if (addEmptyBet.rejected.match(dispatchResult)) {
@@ -249,8 +235,8 @@ export default function BetInputContainer(): JSX.Element {
 	};
 
 	const handleSaveTwoEmptyBet = async (): Promise<void> => {
-		await handleSaveEmptyBetClick();
-		handleSaveEmptyBetClick();
+		await handleSaveEmptyBet();
+		handleSaveEmptyBet();
 	};
 
 	const handleOpenDialogTwoEmptyBet = (): void => {
@@ -273,7 +259,9 @@ export default function BetInputContainer(): JSX.Element {
 	};
 
 	useEffect(() => {
-		dispatch(getActiveSeason());
+		if (!season) {
+			dispatch(getActiveSeason());
+		}
 	}, []);
 
 	// редирект неавторизованных пользователей
@@ -288,33 +276,8 @@ export default function BetInputContainer(): JSX.Element {
 		return () => clearTimeout(timer);
 	}, [navigate, user]);
 
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setShowMessage(true);
-		}, 1500);
-		return () => clearTimeout(timer);
-	}, []);
-
 	if (!user || (user && user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
-		return (
-			<Box
-				sx={{
-					p: 5,
-					display: 'flex',
-					flexDirection: 'column',
-					justifyContent: 'center',
-					alignItems: 'center',
-					height: '70vh',
-				}}
-			>
-				{showMessage && (
-					<Box sx={{ textAlign: 'center', my: 3, fontWeight: 600, color: 'brown' }}>
-						Проверка авторизации на доступ к панели модератора
-					</Box>
-				)}
-				<CircularProgress size={100} color="primary" />
-			</Box>
-		);
+		return <CustomLoading text="accessCheck" />;
 	}
 
 	return (
@@ -360,8 +323,6 @@ export default function BetInputContainer(): JSX.Element {
 				<>
 					{selectedLeagueId && matchDayInfo && (
 						<BetInputTeams
-							defaultHomeTeamName=""
-							defaultAwayTeamName=""
 							onHomeTeamSelect={handleHomeTeamSelection}
 							onAwayTeamSelect={handleAwayTeamSelection}
 							leagueId={selectedLeagueId}
@@ -373,12 +334,7 @@ export default function BetInputContainer(): JSX.Element {
 					)}
 					{selectedBetTitle && (
 						<Box sx={{ my: 2, width: '18.2rem' }}>
-							<Box
-								sx={{
-									display: 'flex',
-									justifyContent: 'center',
-								}}
-							>
+							<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 								<Typography
 									sx={{
 										ml: 1,
@@ -410,13 +366,7 @@ export default function BetInputContainer(): JSX.Element {
 							{t('not')}
 						</Box>
 					)}
-					{selectedBetTitle && (
-						<BetInputOdds
-							defaultBetOdds=""
-							defaultBetSize="10"
-							onOddsSelect={handleOddsSelection}
-						/>
-					)}
+					{selectedBetTitle && <BetInputOdds onOddsSelect={handleOddsSelection} />}
 					{showSendButton && selectedBetOdds && selectedBetSize && (
 						<CustomButton
 							sx={{ mt: 3, height: '3rem', px: 6 }}
@@ -455,61 +405,40 @@ export default function BetInputContainer(): JSX.Element {
 					/>
 				</>
 			)}
-			<Dialog open={openDialog} onClose={handleCloseDialog}>
-				<DialogContent>
-					<Box sx={{ fontSize: '1rem', width: '14rem' }}>
-						<BetSummaryInfo
-							message={t('addBet')}
-							player={selectedUser}
-							leagueCode={selectedLeague?.leagueCode || ''}
-							matchDayInfo={matchDayInfo}
-							homeTeam={selectedHomeTeam}
-							awayTeam={selectedAwayTeam}
-							isNot={isNot}
-							betTitle={selectedBetTitle}
-							betOdds={selectedBetOdds}
-							betSize={selectedBetSize}
-							gameResult=""
-							betStatus=""
-						/>
-					</Box>
-				</DialogContent>
-				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-					<DialogActions>
-						<CustomCancelButton onClick={handleCloseDialog} />
-						<CustomSuccessButton onClick={handleSaveClick} buttonText={t('btnText.accept')} />
-					</DialogActions>
-				</Box>
-			</Dialog>
 
-			<Dialog open={openDialogEmptyBet} onClose={handleCloseDialog}>
-				<DialogContent>
-					<Box sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>{t('addEmptyBet')}</Box>
-				</DialogContent>
-				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-					<DialogActions>
-						<CustomCancelButton onClick={handleCloseDialog} />
-						<CustomSuccessButton
-							onClick={handleSaveEmptyBetClick}
-							buttonText={t('btnText.accept')}
-						/>
-					</DialogActions>
-				</Box>
-			</Dialog>
+			<CustomBetInputDialog
+				open={openDialog}
+				onClose={handleCloseDialog}
+				onSave={handleSaveClick}
+				summaryComponent={
+					<BetSummaryInfo
+						message={t('addBet')}
+						player={selectedUser}
+						leagueCode={selectedLeague?.leagueCode || ''}
+						matchDayInfo={matchDayInfo}
+						homeTeam={selectedHomeTeam}
+						awayTeam={selectedAwayTeam}
+						isNot={isNot}
+						betTitle={selectedBetTitle}
+						betOdds={selectedBetOdds}
+						betSize={selectedBetSize}
+					/>
+				}
+			/>
 
-			<Dialog open={openDialogTwoEmptyBet} onClose={handleCloseDialog}>
-				<DialogContent>
-					<Box sx={{ fontWeight: '600', fontSize: '1rem', width: '14rem' }}>
-						{t('addTwoEmptyBet')}
-					</Box>
-				</DialogContent>
-				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-					<DialogActions>
-						<CustomCancelButton onClick={handleCloseDialog} />
-						<CustomSuccessButton onClick={handleSaveTwoEmptyBet} buttonText={t('btnText.accept')} />
-					</DialogActions>
-				</Box>
-			</Dialog>
+			<CustomBetInputDialog
+				open={openDialogEmptyBet}
+				onClose={handleCloseDialog}
+				onSave={handleSaveEmptyBet}
+				title={t('addEmptyBet')}
+			/>
+
+			<CustomBetInputDialog
+				open={openDialogTwoEmptyBet}
+				onClose={handleCloseDialog}
+				onSave={handleSaveTwoEmptyBet}
+				title={t('addTwoEmptyBet')}
+			/>
 
 			<Box textAlign="center">
 				<NotificationSnackbar

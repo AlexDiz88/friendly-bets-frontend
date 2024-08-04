@@ -7,15 +7,15 @@ import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 
 export default function BetInputTeams({
-	defaultHomeTeamName,
-	defaultAwayTeamName,
+	defaultHomeTeamName = '',
+	defaultAwayTeamName = '',
 	onHomeTeamSelect,
 	onAwayTeamSelect,
 	leagueId,
 	resetTeams,
 }: {
-	defaultHomeTeamName: string;
-	defaultAwayTeamName: string;
+	defaultHomeTeamName?: string;
+	defaultAwayTeamName?: string;
 	onHomeTeamSelect: (homeTeam: Team) => void;
 	onAwayTeamSelect: (awayTeam: Team) => void;
 	leagueId: string;

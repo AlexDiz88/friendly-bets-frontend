@@ -18,8 +18,8 @@ export default function BetSummaryInfo({
 	betTitle,
 	betOdds,
 	betSize,
-	betStatus,
-	gameResult,
+	betStatus = '',
+	gameResult = '',
 }: {
 	message: string;
 	player: SimpleUser | undefined;
@@ -31,8 +31,8 @@ export default function BetSummaryInfo({
 	isNot: boolean;
 	betOdds: string;
 	betSize: string;
-	gameResult: string;
-	betStatus: string;
+	gameResult?: string;
+	betStatus?: string;
 }): JSX.Element {
 	const { i18n } = useTranslation();
 	const currentLanguage = i18n.language;
