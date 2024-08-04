@@ -55,7 +55,7 @@ const calendarsSlice = createSlice({
 			})
 			.addCase(createCalendarNode.fulfilled, (state, action) => {
 				state.calendarNode = action.payload;
-				state.allCalendarNodes.push(action.payload);
+				state.allCalendarNodes.unshift(action.payload);
 			})
 			.addCase(createCalendarNode.rejected, (state, action) => {
 				state.error = action.error.message;

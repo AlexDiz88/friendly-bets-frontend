@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomBetInputDialog from '../../components/custom/dialog/CustomBetInputDialog';
-import CustomLoading from '../../components/custom/loading/CustomLoading';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
@@ -242,22 +241,6 @@ export default function BetInputContainer(): JSX.Element {
 			dispatch(getActiveSeason());
 		}
 	}, []);
-
-	// редирект неавторизованных пользователей
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			if (!user) {
-				navigate('/');
-			} else if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
-				navigate('/');
-			}
-		}, 3000);
-		return () => clearTimeout(timer);
-	}, [navigate, user]);
-
-	if (!user || (user && user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
-		return <CustomLoading text="accessCheck" />;
-	}
 
 	return (
 		<Box

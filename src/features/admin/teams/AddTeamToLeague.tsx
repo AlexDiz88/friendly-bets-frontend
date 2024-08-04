@@ -52,6 +52,7 @@ export default function AddTeamToLeague({
 		if (addTeamToLeagueInSeason.fulfilled.match(dispatchResult)) {
 			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyAddedToLeague') }));
 			setSelectedTeam('');
+			dispatch(getLeagueTeams({ leagueId }));
 		}
 		if (addTeamToLeagueInSeason.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
@@ -95,7 +96,7 @@ export default function AddTeamToLeague({
 
 	useEffect(() => {
 		dispatch(getLeagueTeams({ leagueId }));
-	}, [handleAddTeamClick, selectedLeague]);
+	}, [selectedLeague]);
 
 	return (
 		<Box>
