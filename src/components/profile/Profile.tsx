@@ -1,20 +1,10 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import {
-	Avatar,
-	Box,
-	CircularProgress,
-	IconButton,
-	InputAdornment,
-	TextField,
-	Typography,
-} from '@mui/material';
+import { Avatar, Box, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { editEmail, editPassword, editUsername, getProfile } from '../../features/auth/authSlice';
 import { selectUser } from '../../features/auth/selectors';
-import User from '../../features/auth/types/User';
 import CustomButton from '../custom/btn/CustomButton';
 import CustomCancelButton from '../custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
@@ -23,13 +13,11 @@ import UploadForm from '../UploadForm';
 import pathToAvatarImage from '../utils/pathToAvatarImage';
 
 export default function Profile(): JSX.Element {
-	const user: User | undefined = useAppSelector(selectUser);
+	const user = useAppSelector(selectUser);
 	const dispatch = useAppDispatch();
-	const navigate = useNavigate();
 	const [showEmailInput, setShowEmailInput] = useState(false);
 	const [showPasswordInput, setShowPasswordInput] = useState(false);
 	const [showNameInput, setShowNameInput] = useState(false);
-	const [showMessage, setShowMessage] = useState(false);
 	const [newEmail, setNewEmail] = useState(user?.email || '');
 	const [currentPassword, setCurrentPassword] = useState('');
 	const [newPassword, setNewPassword] = useState('');
@@ -125,45 +113,6 @@ export default function Profile(): JSX.Element {
 		dispatch(getProfile());
 	}, []);
 
-	// редирект неаутентифицированных пользователей
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			if (!user) {
-				navigate('/auth/login');
-			}
-		}, 3000);
-		return () => clearTimeout(timer);
-	}, [navigate, user]);
-
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setShowMessage(true);
-		}, 1500);
-		return () => clearTimeout(timer);
-	}, []);
-
-	if (!user) {
-		return (
-			<Box
-				sx={{
-					p: 5,
-					display: 'flex',
-					flexDirection: 'column',
-					justifyContent: 'center',
-					alignItems: 'center',
-					height: '70vh',
-				}}
-			>
-				{showMessage && (
-					<Box sx={{ textAlign: 'center', my: 3, fontWeight: 600, color: 'brown' }}>
-						Проверка авторизации на доступ к личному кабинету
-					</Box>
-				)}
-				<CircularProgress size={100} color="primary" />
-			</Box>
-		);
-	}
-
 	return (
 		<Box
 			sx={{
@@ -182,7 +131,7 @@ export default function Profile(): JSX.Element {
 				<Avatar
 					sx={{ mr: 1, height: '7rem', width: '7rem', border: 1 }}
 					alt="user_avatar"
-					src={pathToAvatarImage(user.avatar)}
+					src={pathToAvatarImage(user?.avatar)}
 				/>
 			</Box>
 			{/* TODO: загрузка фото */}

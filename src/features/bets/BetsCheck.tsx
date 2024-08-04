@@ -1,8 +1,6 @@
-/* eslint-disable react/jsx-curly-newline */
-import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
@@ -16,7 +14,6 @@ import useFilterLanguageChange from '../../components/hooks/useFilterLanguageCha
 import GameScoreValidation from '../../components/utils/GameScoreValidation';
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
-import { selectUser } from '../auth/selectors';
 import BetCard from './BetCard';
 import { getOpenedBets, setBetResult } from './betsSlice';
 import { selectOpenedBets } from './selectors';
@@ -26,15 +23,12 @@ export default function BetsCheck(): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const dispatch = useAppDispatch();
-	const user = useAppSelector(selectUser);
-	const navigate = useNavigate();
 	const openedBets = useAppSelector(selectOpenedBets);
 	const [selectedBet, setSelectedBet] = useState<Bet | undefined>(undefined);
 	const [gameResult, setGameResult] = useState<string>('');
 	const [inputValues, setInputValues] = useState<Record<string, string>>({});
 	const [selectedLeague, setSelectedLeague] = useState(t('all'));
 	const [dialogType, setDialogType] = useState<'LOST' | 'RETURNED' | 'WON' | undefined>(undefined);
-	const [showMessage, setShowMessage] = useState(false);
 
 	useFilterLanguageChange(setSelectedLeague);
 
@@ -103,47 +97,6 @@ export default function BetsCheck(): JSX.Element {
 			dispatch(getOpenedBets({ seasonId: activeSeasonId }));
 		}
 	}, [activeSeasonId]);
-
-	// редирект неавторизованных пользователей
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			if (!user) {
-				navigate('/');
-			} else if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
-				navigate('/');
-			}
-		}, 3000);
-		return () => clearTimeout(timer);
-	}, [navigate, user]);
-
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setShowMessage(true);
-		}, 1500);
-		return () => clearTimeout(timer);
-	}, []);
-
-	if (!user || (user && user.role !== 'ADMIN' && user.role !== 'MODERATOR')) {
-		return (
-			<Box
-				sx={{
-					p: 5,
-					display: 'flex',
-					flexDirection: 'column',
-					justifyContent: 'center',
-					alignItems: 'center',
-					height: '70vh',
-				}}
-			>
-				{showMessage && (
-					<Box sx={{ textAlign: 'center', my: 3, fontWeight: 600, color: 'brown' }}>
-						Проверка авторизации на доступ к панели модератора
-					</Box>
-				)}
-				<CircularProgress size={100} color="primary" />
-			</Box>
-		);
-	}
 
 	return (
 		<Box sx={{ display: 'flex', justifyContent: 'center' }}>

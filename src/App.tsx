@@ -14,6 +14,7 @@ import SeasonRegister from './components/profile/SeasonRegister';
 import AdminCabinet from './features/admin/AdminCabinet';
 import MatchdayCalendar from './features/admin/calendars/MatchdayCalendar';
 import Login from './features/auth/Login';
+import PrivateRoute from './features/auth/PrivateRoute';
 import Register from './features/auth/Register';
 import { getProfile } from './features/auth/authSlice';
 import BetEditList from './features/bets/BetEditList';
@@ -31,7 +32,7 @@ function App(): JSX.Element {
 
 	useEffect(() => {
 		dispatch(getProfile());
-	}, [dispatch]);
+	}, []);
 
 	return (
 		<Routes>
@@ -39,25 +40,48 @@ function App(): JSX.Element {
 				<Route path="/" element={<Homepage />} />
 				<Route path="/auth/login" element={<Login />} />
 				<Route path="/auth/register" element={<Register />} />
-				<Route path="/admin/cabinet" element={<AdminCabinet />} />
-				<Route path="/my/profile" element={<Profile />} />
+
+				<Route element={<PrivateRoute roles={['ADMIN']} />}>
+					<Route path="/admin/cabinet" element={<AdminCabinet />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/bet-input" element={<BetInputContainer />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/bets/check" element={<BetsCheck />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/bets/edit" element={<BetEditList />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/calendar" element={<MatchdayCalendar />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR', 'USER']} />}>
+					<Route path="/my/profile" element={<Profile />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR', 'USER']} />}>
+					<Route path="/season/register" element={<SeasonRegister />} />
+				</Route>
+
 				<Route path="/bets" element={<BetsList />}>
 					<Route path="/bets/opened" element={<OpenedBetsList />} />
 					<Route path="/bets/completed" element={<CompletedBetsList />} />
 				</Route>
-				<Route path="/bet-input" element={<BetInputContainer />} />
-				<Route path="/my/stats" element={<MyStats />} />
-				<Route path="/season/register" element={<SeasonRegister />} />
-				<Route path="/bets/check" element={<BetsCheck />} />
-				<Route path="/in-progress" element={<EmptyPage />} />
-				<Route path="/news" element={<News />} />
-				<Route path="/bets/edit" element={<BetEditList />} />
-				<Route path="/calendar" element={<MatchdayCalendar />} />
+
 				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
+				<Route path="/news" element={<News />} />
 				<Route path="/rules" element={<RulesPage />} />
 				<Route path="/archive" element={<Archive />} />
+				<Route path="/my/stats" element={<MyStats />} />
 				<Route path="/no-active-season" element={<NoActiveSeasonPage />} />
+				<Route path="/in-progress" element={<EmptyPage />} />
 			</Route>
 		</Routes>
 	);
