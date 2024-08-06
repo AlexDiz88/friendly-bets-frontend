@@ -3,6 +3,7 @@ import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
+import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import PlayerSelect from '../../components/selectors/PlayerSelect';
@@ -20,6 +21,7 @@ const OpenedBetsList = (): JSX.Element => {
 	const [selectedLeagueCode, setSelectedLeagueCode] = useState<string>(t('all'));
 	const [selectedPlayerName, setSelectedPlayerName] = useState<string>(t('all'));
 	const [loading, setLoading] = useState(true);
+	const [loadingError, setLoadingError] = useState(false);
 
 	const filterOpenedBets = (leagueName: string, playerName: string): void => {
 		let filtered = openedBets;
@@ -57,8 +59,11 @@ const OpenedBetsList = (): JSX.Element => {
 	useEffect(() => {
 		if (activeSeason) {
 			dispatch(getOpenedBets({ seasonId: activeSeason.id }))
-				.unwrap()
 				.then(() => {
+					setLoading(false);
+				})
+				.catch(() => {
+					setLoadingError(true);
 					setLoading(false);
 				});
 		}
@@ -71,36 +76,42 @@ const OpenedBetsList = (): JSX.Element => {
 	}, []);
 
 	return (
-		<>
+		<Box>
 			{loading ? (
 				<CustomLoading />
 			) : (
-				<>
-					<Box sx={{ display: 'flex', justifyContent: 'center', my: 1 }}>
-						<LeagueSelect
-							value={selectedLeagueCode}
-							onChange={handleLeagueChange}
-							leagues={activeSeason?.leagues}
-						/>
+				<Box>
+					{loadingError ? (
+						<CustomLoadingError />
+					) : (
+						<>
+							<Box sx={{ display: 'flex', justifyContent: 'center', my: 1 }}>
+								<LeagueSelect
+									value={selectedLeagueCode}
+									onChange={handleLeagueChange}
+									leagues={activeSeason?.leagues}
+								/>
 
-						<PlayerSelect
-							value={selectedPlayerName}
-							onChange={handlePlayerChange}
-							players={activeSeason?.players}
-						/>
-					</Box>
+								<PlayerSelect
+									value={selectedPlayerName}
+									onChange={handlePlayerChange}
+									players={activeSeason?.players}
+								/>
+							</Box>
 
-					<Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-						{filteredBets &&
-							filteredBets.map((bet) => (
-								<Box key={bet.id}>
-									<BetCard bet={bet} />
-								</Box>
-							))}
-					</Box>
-				</>
+							<Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+								{filteredBets &&
+									filteredBets.map((bet) => (
+										<Box key={bet.id}>
+											<BetCard bet={bet} />
+										</Box>
+									))}
+							</Box>
+						</>
+					)}
+				</Box>
 			)}
-		</>
+		</Box>
 	);
 };
 

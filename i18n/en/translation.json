@@ -265,7 +265,9 @@
 		"actualPasswordNotCorrect": "Entered current password is incorrect",
 		"newAndOldPasswordsAreSame": "New password is the same as the current one",
 		"newAndOldUsernamesAreSame": "New username is the same as the old one",
-		"usernameAlreadyExist": "User with this username already exists. Please choose a different name"
+		"usernameAlreadyExist": "User with this username already exists. Please choose a different name",
+		"userNotAuthenticated": "User not authenticated",
+		"leagueNotFoundInCalendarNode": "League not found in calendar"
 	},
 	"matchdayCalendar": "Matchday schedule",
 	"matchdayStartDate": "Start Date of Matchday",
@@ -278,5 +280,6 @@
 	"calendarNodeWasSuccessfullyDeleted": "Entry has been successfully deleted from calendar",
 	"showCalendarList": "Show matchday calendar",
 	"deleteNodeFromCalendar": "Delete entry from calendar",
-	"deleteNodeFromCalendarHelperText": "Selected entry will be deleted from calendar! Deletion is only possible for entries that have not yet had bets added to them"
+	"deleteNodeFromCalendarHelperText": "Selected entry will be deleted from calendar! Deletion is only possible for entries that have not yet had bets added to them",
+	"calendarForLeagueMatchdayNotExist": "The specified matchday of selected league has not been added to calendar!"
 }

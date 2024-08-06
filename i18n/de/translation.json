@@ -265,7 +265,9 @@
 		"actualPasswordNotCorrect": "Das eingegebene aktuelle Passwort ist falsch",
 		"newAndOldPasswordsAreSame": "Das neue Passwort ist identisch mit dem aktuellen",
 		"newAndOldUsernamesAreSame": "Der neue Benutzername ist identisch mit dem alten",
-		"usernameAlreadyExist": "Benutzer mit diesem Benutzernamen existiert bereits. Bitte wählen Sie einen anderen Namen"
+		"usernameAlreadyExist": "Benutzer mit diesem Benutzernamen existiert bereits. Bitte wählen Sie einen anderen Namen",
+		"userNotAuthenticated": "Benutzer nicht authentifiziert",
+		"leagueNotFoundInCalendarNode": "Liga im Kalender nicht gefunden"
 	},
 	"matchdayCalendar": "Spielplan",
 	"matchdayStartDate": "Startdatum des Spieltags",
@@ -278,5 +280,6 @@
 	"calendarNodeWasSuccessfullyDeleted": "Eintrag wurde erfolgreich vom Kalender gelöscht",
 	"showCalendarList": "Spieltagskalender anzeigen",
 	"deleteNodeFromCalendar": "Eintrag aus dem Kalender löschen",
-	"deleteNodeFromCalendarHelperText": "Ausgewählte Eintrag wird aus dem Kalender gelöscht! Das Löschen ist nur für Einträge möglich, auf die noch keine Wetten hinzugefügt wurden"
+	"deleteNodeFromCalendarHelperText": "Ausgewählte Eintrag wird aus dem Kalender gelöscht! Das Löschen ist nur für Einträge möglich, auf die noch keine Wetten hinzugefügt wurden",
+	"calendarForLeagueMatchdayNotExist": "Der angegebene Spieltag der ausgewählten Liga wurde nicht in den Kalender aufgenommen!"
 }

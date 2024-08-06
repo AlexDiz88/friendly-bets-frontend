@@ -42,6 +42,17 @@ const CustomDatePicker = ({
 						fontFamily: "'Exo 2'",
 					},
 				},
+				textField: {
+					sx: {
+						'& input': {
+							fontSize: '1.1rem',
+							fontWeight: 600,
+						},
+						'& input::placeholder': {
+							fontSize: '0rem',
+						},
+					},
+				},
 			}}
 		/>
 	);

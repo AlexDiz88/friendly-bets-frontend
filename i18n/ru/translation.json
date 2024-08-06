@@ -265,7 +265,9 @@
 		"actualPasswordNotCorrect": "Введенный текущий пароль указан неверно",
 		"newAndOldPasswordsAreSame": "Новый пароль совпадает с текущим",
 		"newAndOldUsernamesAreSame": "Новое имя совпадает со старым",
-		"usernameAlreadyExist": "Пользователь с таким именем уже существует. Выберите себе другое имя"
+		"usernameAlreadyExist": "Пользователь с таким именем уже существует. Выберите себе другое имя",
+		"userNotAuthenticated": "Пользователь не аутентифицирован",
+		"leagueNotFoundInCalendarNode": "Лига в календаре не найдена"
 	},
 	"matchdayCalendar": "Календарь туров",
 	"matchdayStartDate": "Дата начала тура",
@@ -278,5 +280,6 @@
 	"calendarNodeWasSuccessfullyDeleted": "Запись была успешно удалена из календаря",
 	"showCalendarList": "Показать календарь игровых туров",
 	"deleteNodeFromCalendar": "Удалить запись из календаря",
-	"deleteNodeFromCalendarHelperText": "Выбранная запись будет удалена из календаря! Удаление возможно только для записей в которые еще не были добавлены ставки"
+	"deleteNodeFromCalendarHelperText": "Выбранная запись будет удалена из календаря! Удаление возможно только для записей в которые еще не были добавлены ставки",
+	"calendarForLeagueMatchdayNotExist": "Указанный тур лиги не добавлен в календарь!"
 }

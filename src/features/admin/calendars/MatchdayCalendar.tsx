@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import { Dayjs } from 'dayjs';
 import { t } from 'i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -55,7 +55,19 @@ const MatchdayCalendar = (): JSX.Element => {
 		if (createCalendarNode.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
-	}, [activeSeason, startDate, endDate, leagueMatchdayNodes]);
+	}, [
+		activeSeason,
+		startDate,
+		endDate,
+		leagueMatchdayNodes,
+		t,
+		createCalendarNode,
+		showSuccessSnackbar,
+		showErrorSnackbar,
+		setStartDate,
+		setEndDate,
+		setLeagueMatchdayNodes,
+	]);
 
 	const handleShowCalendarList = (): void => {
 		setShowCalendarList(!showCalendarList);
@@ -85,17 +97,19 @@ const MatchdayCalendar = (): JSX.Element => {
 					borderBottom: '2px solid',
 					pb: 0.5,
 					mx: 3,
-					mb: 1,
+					mb: 1.5,
 				}}
 			>
 				{t('addNewEntryToCalendar')}
 			</Box>
-			<DateRangePicker
-				onStartDateChange={setStartDate}
-				onEndDateChange={setEndDate}
-				startDate={startDate}
-				endDate={endDate}
-			/>
+			<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+				<DateRangePicker
+					onStartDateChange={setStartDate}
+					onEndDateChange={setEndDate}
+					startDate={startDate}
+					endDate={endDate}
+				/>
+			</Box>
 
 			{activeSeason && startDate && endDate && (
 				<>
@@ -111,7 +125,7 @@ const MatchdayCalendar = (): JSX.Element => {
 				</>
 			)}
 
-			<Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+			<Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, pt: 2, borderTop: '1px solid' }}>
 				{showCalendarListButton ? (
 					<CustomButton
 						onClick={handleShowCalendarList}
@@ -128,9 +142,10 @@ const MatchdayCalendar = (): JSX.Element => {
 			</Box>
 			{activeSeason && showCalendarList && <CalendarsList activeSeasonId={activeSeason?.id} />}
 
+			{/* Невидимый элемент для снятия фокуса с дат */}
 			<Box aria-hidden="true">
-				<Button
-					ref={hiddenButtonRef}
+				<TextField
+					inputRef={hiddenButtonRef}
 					style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
 				/>
 			</Box>

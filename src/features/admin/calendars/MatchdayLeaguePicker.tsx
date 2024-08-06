@@ -57,6 +57,7 @@ const MatchdayLeaguePicker = ({
 				matchDay: matchDayInfo.matchDay,
 				isPlayoff: matchDayInfo.isPlayoff,
 				playoffRound: matchDayInfo.playoffRound,
+				bets: [],
 			};
 
 			const currentLeagueMatchdayNodes = [...leagueMatchdayNodes];

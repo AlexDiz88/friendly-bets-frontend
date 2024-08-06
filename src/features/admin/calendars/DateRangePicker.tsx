@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
@@ -35,12 +36,14 @@ const DateRangePicker = ({
 
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={locale}>
-			<CustomDatePicker
-				label={t('matchdayStartDate')}
-				value={startDate}
-				onChange={handleStartDateChange}
-				maxDate={endDate ? endDate : undefined}
-			/>
+			<Box sx={{ mr: 0.5 }}>
+				<CustomDatePicker
+					label={t('matchdayStartDate')}
+					value={startDate}
+					onChange={handleStartDateChange}
+					maxDate={endDate ? endDate : undefined}
+				/>
+			</Box>
 			<CustomDatePicker
 				label={t('matchdayEndDate')}
 				value={endDate}

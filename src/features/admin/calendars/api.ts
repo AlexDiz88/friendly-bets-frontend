@@ -39,17 +39,18 @@ export async function createCalendarNode(newCalendarNode: NewCalendar): Promise<
 
 export async function addBetToCalendarNode(
 	betId: string,
-	calendarNodeId: string
+	calendarNodeId: string,
+	leagueId: string
 ): Promise<Calendar> {
 	let url = `${
 		import.meta.env.VITE_PRODUCT_SERVER || ''
-	}/api/calendars/${calendarNodeId}/bets/${betId}`;
+	}/api/calendars/${calendarNodeId}/leagues/${leagueId}/bets/${betId}`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = `/api/calendars/${calendarNodeId}/bets/${betId}`;
+		url = `/api/calendars/${calendarNodeId}/leagues/${leagueId}/bets/${betId}`;
 	}
 	const result = await fetch(`${url}`, {
-		method: 'POST',
-		body: JSON.stringify({ betId, calendarNodeId }),
+		method: 'PUT',
+		body: JSON.stringify({ betId, calendarNodeId, leagueId }),
 		headers: {
 			'Content-Type': 'application/json',
 		},

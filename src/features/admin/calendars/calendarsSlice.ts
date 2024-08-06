@@ -22,8 +22,15 @@ export const createCalendarNode = createAsyncThunk(
 
 export const addBetToCalendarNode = createAsyncThunk(
 	'calendars/addBetToCalendarNode',
-	async ({ betId, calendarNodeId }: { betId: string; calendarNodeId: string }) =>
-		api.addBetToCalendarNode(betId, calendarNodeId)
+	async ({
+		betId,
+		calendarNodeId,
+		leagueId,
+	}: {
+		betId: string;
+		calendarNodeId: string;
+		leagueId: string;
+	}) => api.addBetToCalendarNode(betId, calendarNodeId, leagueId)
 );
 
 export const getBetsByCalendarNode = createAsyncThunk(
