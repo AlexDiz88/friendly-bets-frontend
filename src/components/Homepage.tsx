@@ -20,7 +20,7 @@ export default function Homepage(): JSX.Element {
 
 	const sortedPlayersStats = [...playersStats].sort((a, b) => b.actualBalance - a.actualBalance);
 
-	useFetchActiveSeason(activeSeasonId);
+	useFetchActiveSeason(activeSeasonId || '');
 
 	useEffect(() => {
 		if (activeSeasonId) {

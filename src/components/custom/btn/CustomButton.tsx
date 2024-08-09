@@ -1,5 +1,6 @@
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { RefObject } from 'react';
 
 const CustomButton = ({
 	onClick,
@@ -11,6 +12,7 @@ const CustomButton = ({
 	autoFocus,
 	textSize = '0.9rem',
 	fontFamily = 'Shantell Sans',
+	ref,
 }: {
 	onClick(event: React.MouseEvent<HTMLButtonElement>): void;
 	buttonColor?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
@@ -21,9 +23,11 @@ const CustomButton = ({
 	autoFocus?: boolean | undefined;
 	textSize?: string;
 	fontFamily?: string;
+	ref?: RefObject<HTMLButtonElement>;
 }): JSX.Element => {
 	return (
 		<Button
+			ref={ref}
 			sx={{ height: '2.3rem', ...sx }}
 			variant={buttonVariant}
 			color={buttonColor}

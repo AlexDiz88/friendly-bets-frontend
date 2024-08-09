@@ -1,7 +1,7 @@
 import { Box, CircularProgress } from '@mui/material';
 import { t } from 'i18next';
 
-const CustomLoading = (): JSX.Element => {
+const CustomLoading = ({ text }: { text?: string }): JSX.Element => {
 	return (
 		<Box
 			sx={{
@@ -13,7 +13,7 @@ const CustomLoading = (): JSX.Element => {
 			}}
 		>
 			<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown', pt: 10, fontSize: 18 }}>
-				{t('loading')}
+				{text ? t(`${text}`) : t('loading')}
 			</Box>
 			<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
 		</Box>

@@ -6,7 +6,10 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
-import NotificationSnackbar from '../../components/utils/NotificationSnackbar';
+import {
+	showErrorSnackbar,
+	showSuccessSnackbar,
+} from '../../components/custom/snackbar/snackbarSlice';
 import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import { playersStatsFullRecalculation } from './statsSlice';
@@ -16,11 +19,6 @@ export default function StatsRecalculating(): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const [openRecalculatePlayerStatsDialog, setOpenRecalculatePlayerStatsDialog] = useState(false);
 	const [openRecalculateTeamStatsDialog, setOpenRecalculateTeamStatsDialog] = useState(false);
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
 
 	const handleSubmitFullRecalculation = useCallback(
 		async (event?: React.FormEvent) => {
@@ -30,16 +28,10 @@ export default function StatsRecalculating(): JSX.Element {
 				const dispatchResult = await dispatch(playersStatsFullRecalculation(activeSeasonId));
 
 				if (playersStatsFullRecalculation.fulfilled.match(dispatchResult)) {
-					setOpenSnackbar(true);
-					setSnackbarSeverity('success');
-					setSnackbarMessage(t('statsWasSuccessfullyRecalculated'));
+					dispatch(showSuccessSnackbar({ message: t('statsWasSuccessfullyRecalculated') }));
 				}
 				if (playersStatsFullRecalculation.rejected.match(dispatchResult)) {
-					setOpenSnackbar(true);
-					setSnackbarSeverity('error');
-					if (dispatchResult.error.message) {
-						setSnackbarMessage(dispatchResult.error.message || t('errorByStatsRecalculating'));
-					}
+					dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 				}
 			}
 		},
@@ -61,23 +53,19 @@ export default function StatsRecalculating(): JSX.Element {
 					const response = await fetch(`${url}`);
 
 					if (response.ok) {
-						setOpenSnackbar(true);
-						setSnackbarSeverity('success');
-						setSnackbarMessage(t('statsWasSuccessfullyRecalculated'));
+						dispatch(showSuccessSnackbar({ message: t('statsWasSuccessfullyRecalculated') }));
 					} else {
 						const errorMessage = await response.text();
-						setOpenSnackbar(true);
-						setSnackbarSeverity('error');
-						setSnackbarMessage(errorMessage || t('errorByStatsRecalculating'));
+						dispatch(
+							showErrorSnackbar({ message: errorMessage || t('errorByStatsRecalculating') })
+						);
 					}
 				} catch (error) {
-					setOpenSnackbar(true);
-					setSnackbarSeverity('error');
-					setSnackbarMessage(t('errorByStatsRecalculating'));
+					dispatch(showErrorSnackbar({ message: t('errorByStatsRecalculating') }));
 				}
 			}
 		},
-		[dispatch, activeSeasonId]
+		[activeSeasonId]
 	);
 
 	const handleRecalculatePlayerStatsDialog = (): void => {
@@ -91,10 +79,6 @@ export default function StatsRecalculating(): JSX.Element {
 	const handleCloseDialog = (): void => {
 		setOpenRecalculatePlayerStatsDialog(false);
 		setOpenRecalculateTeamStatsDialog(false);
-	};
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
 	};
 
 	useEffect(() => {
@@ -145,16 +129,6 @@ export default function StatsRecalculating(): JSX.Element {
 					<CustomSuccessButton onClick={handleSubmitStatsByTeamsRecalculation} />
 				</DialogActions>
 			</Dialog>
-
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={3000}
-				/>
-			</Box>
 		</Box>
 	);
 }

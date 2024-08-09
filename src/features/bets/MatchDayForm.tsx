@@ -31,7 +31,7 @@ export default function MatchDayForm({
 		t(`playoffRound.1/2`),
 		t(`playoffRound.final`),
 	];
-	const playoffRoundsList: string[] = ['1', '2', '3', '4'];
+	const playoffRoundsList: string[] = ['', '1', '2', '3', '4'];
 
 	const playoffMappings: Record<string, string> = {
 		'7': t(`playoffRound.1/8`),
@@ -107,7 +107,7 @@ export default function MatchDayForm({
 			: matchDayInfo.matchDay;
 
 		const playoffRoundValue = flag
-			? playoffRoundMappings[updatedMatchDay] || '1'
+			? playoffRoundMappings[updatedMatchDay] || ''
 			: matchDayInfo.playoffRound;
 
 		setUpdatedMatchDay(matchDayTransform);
@@ -165,9 +165,9 @@ export default function MatchDayForm({
 					>
 						{playoffMatchDayList.map((value) => (
 							<MenuItem key={value} sx={{ ml: -0.5, minWidth: '6rem' }} value={value}>
-								<div style={{ display: 'flex', alignItems: 'center' }}>
+								<Box style={{ display: 'flex', alignItems: 'center' }}>
 									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{value}</Typography>
-								</div>
+								</Box>
 							</MenuItem>
 						))}
 					</Select>
@@ -182,9 +182,9 @@ export default function MatchDayForm({
 					>
 						{playoffRoundsList.map((value) => (
 							<MenuItem key={value} sx={{ ml: -0.5, minWidth: '6rem' }} value={value}>
-								<div style={{ display: 'flex', alignItems: 'center' }}>
+								<Box style={{ display: 'flex', alignItems: 'center' }}>
 									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{value}</Typography>
-								</div>
+								</Box>
 							</MenuItem>
 						))}
 					</Select>

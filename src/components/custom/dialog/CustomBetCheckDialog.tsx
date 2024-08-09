@@ -6,7 +6,7 @@ import TeamsInfo from '../../TeamsInfo';
 import CustomButton from '../btn/CustomButton';
 import CustomCancelButton from '../btn/CustomCancelButton';
 
-interface BetDialogProps {
+interface DialogProps {
 	open: boolean;
 	onClose: () => void;
 	onSave: () => void;
@@ -26,7 +26,7 @@ export default function CustomBetCheckDialog({
 	buttonColor = 'primary',
 	buttonText,
 	sx,
-}: BetDialogProps): JSX.Element {
+}: DialogProps): JSX.Element {
 	return (
 		<Dialog open={open} onClose={onClose}>
 			<DialogContent>

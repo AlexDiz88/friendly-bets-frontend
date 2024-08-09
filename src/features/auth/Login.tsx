@@ -16,7 +16,7 @@ import { forwardRef, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getProfile, login, resetLoginFormError } from './authSlice';
-import { selectLoginFormError } from './selectors';
+import { selectError, selectLoginFormError } from './selectors';
 
 // eslint-disable-next-line react/display-name
 const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => {
@@ -26,7 +26,8 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => {
 function Login(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
-	const error = useAppSelector(selectLoginFormError);
+	const error = useAppSelector(selectError);
+	const errorLoginForm = useAppSelector(selectLoginFormError);
 	const [email, setEmail] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
 	const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -203,7 +204,7 @@ function Login(): JSX.Element {
 					>
 						<Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '15rem' }}>
 							{t('loginError')}
-							{error && <Box>{error}</Box>}
+							{errorLoginForm && <Box>{errorLoginForm}</Box>}
 						</Alert>
 					</Snackbar>
 				</FormControl>
@@ -211,6 +212,7 @@ function Login(): JSX.Element {
 			<Box sx={{ mt: 3, fontSize: 16, textAlign: 'center' }}>
 				<Link href="#/auth/register">{t('noAccount')}</Link>
 			</Box>
+			{/* {error && <CustomErrorMessage message={error} />} */}
 		</>
 	);
 }

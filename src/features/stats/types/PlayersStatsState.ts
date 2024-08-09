@@ -6,5 +6,6 @@ export default interface PlayersStatsState {
 	playersStats: PlayerStats[];
 	playersStatsByLeague: LeagueStats[];
 	playersStatsByTeams: PlayerStatsByTeams[];
+	statsByTeams: PlayerStatsByTeams | undefined;
 	error?: string;
 }

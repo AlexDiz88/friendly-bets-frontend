@@ -48,6 +48,25 @@ export async function getAllStatsByTeamsInSeason(
 	return result.json();
 }
 
+export async function getStatsByTeams(
+	seasonId: string,
+	leagueId: string,
+	userId: string
+): Promise<{ statsByTeams: PlayerStatsByTeams }> {
+	let url = `${
+		import.meta.env.VITE_PRODUCT_SERVER
+	}/api/stats/season/${seasonId}/league/${leagueId}/user/${userId}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/stats/season/${seasonId}/league/${leagueId}/user/${userId}`;
+	}
+	const result = await fetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 export async function playersStatsFullRecalculation(
 	seasonId: string
 ): Promise<{ playersStats: PlayerStats[] }> {

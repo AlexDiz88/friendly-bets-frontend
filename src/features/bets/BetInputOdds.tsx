@@ -1,14 +1,14 @@
-import { useState } from 'react';
 import { Box, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
+import { useState } from 'react';
 
 export default function BetInputOdds({
-	defaultBetOdds,
-	defaultBetSize,
+	defaultBetOdds = '',
+	defaultBetSize = '10',
 	onOddsSelect,
 }: {
-	defaultBetOdds: string;
-	defaultBetSize: string;
+	defaultBetOdds?: string;
+	defaultBetSize?: string;
 	onOddsSelect: (betOdds: string, betSize: string) => void;
 }): JSX.Element {
 	const [betOdds, setBetOdds] = useState<string>(defaultBetOdds);

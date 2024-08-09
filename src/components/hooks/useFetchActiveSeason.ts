@@ -1,4 +1,3 @@
-import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
@@ -24,7 +23,7 @@ const useFetchActiveSeason = (activeSeasonId: string | undefined): LoadingResult
 					setLoading(false);
 				})
 				.catch((error: SeasonResponseError) => {
-					if (error.message === t('noActiveSeasonWasFounded')) {
+					if (error.message === 'noActiveSeasonWasFounded') {
 						navigate('/no-active-season');
 					} else {
 						setLoadingError(true);
@@ -32,7 +31,7 @@ const useFetchActiveSeason = (activeSeasonId: string | undefined): LoadingResult
 					setLoading(false);
 				});
 		}
-	}, [activeSeasonId, dispatch, navigate]);
+	}, [activeSeasonId, navigate]);
 
 	return { loading, loadingError };
 };

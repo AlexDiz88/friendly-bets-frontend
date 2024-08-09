@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import * as api from './api';
 import AuthState from './types/AuthState';
 import Credentials from './types/Credentials';
-import * as api from './api';
 import RegisterData from './types/RegisterData';
 
 const initialState: AuthState = {
@@ -90,9 +90,12 @@ const authSlice = createSlice({
 			.addCase(getProfile.fulfilled, (state, action) => {
 				state.authChecked = true;
 				state.user = action.payload;
+				state.error = undefined;
 			})
-			.addCase(getProfile.rejected, (state) => {
+			.addCase(getProfile.rejected, (state, action) => {
 				state.authChecked = true;
+				state.user = undefined;
+				state.error = action.error.message;
 			})
 
 			.addCase(login.fulfilled, (state) => {

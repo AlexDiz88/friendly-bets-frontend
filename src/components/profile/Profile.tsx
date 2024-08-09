@@ -1,35 +1,23 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import {
-	Avatar,
-	Box,
-	CircularProgress,
-	IconButton,
-	InputAdornment,
-	TextField,
-	Typography,
-} from '@mui/material';
+import { Avatar, Box, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { editEmail, editPassword, editUsername, getProfile } from '../../features/auth/authSlice';
 import { selectUser } from '../../features/auth/selectors';
-import User from '../../features/auth/types/User';
 import CustomButton from '../custom/btn/CustomButton';
 import CustomCancelButton from '../custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
+import { showErrorSnackbar, showSuccessSnackbar } from '../custom/snackbar/snackbarSlice';
 import UploadForm from '../UploadForm';
-import NotificationSnackbar from '../utils/NotificationSnackbar';
 import pathToAvatarImage from '../utils/pathToAvatarImage';
 
 export default function Profile(): JSX.Element {
-	const user: User | undefined = useAppSelector(selectUser);
+	const user = useAppSelector(selectUser);
 	const dispatch = useAppDispatch();
-	const navigate = useNavigate();
 	const [showEmailInput, setShowEmailInput] = useState(false);
 	const [showPasswordInput, setShowPasswordInput] = useState(false);
 	const [showNameInput, setShowNameInput] = useState(false);
-	const [showMessage, setShowMessage] = useState(false);
 	const [newEmail, setNewEmail] = useState(user?.email || '');
 	const [currentPassword, setCurrentPassword] = useState('');
 	const [newPassword, setNewPassword] = useState('');
@@ -38,12 +26,6 @@ export default function Profile(): JSX.Element {
 	const [showCurrentPassword, setShowCurrentPassword] = useState<boolean>(false);
 	const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
 	const [showUploadForm, setShowUploadForm] = useState(false);
-	const [openSnackbar, setOpenSnackbar] = useState(false);
-	const [snackbarSeverity, setSnackbarSeverity] = useState<
-		'success' | 'error' | 'warning' | 'info'
-	>('info');
-	const [snackbarMessage, setSnackbarMessage] = useState('');
-	const [snackbarDuration, setSnackbarDuration] = useState(2000);
 
 	const handleToggleCurrentPasswordVisibility = (): void => {
 		setShowCurrentPassword((prevShowPassword: boolean) => !prevShowPassword);
@@ -90,18 +72,11 @@ export default function Profile(): JSX.Element {
 	const handleSaveEmail = useCallback(async () => {
 		const dispatchResult = await dispatch(editEmail({ newEmail }));
 		if (editEmail.fulfilled.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('success');
-			setSnackbarMessage(t('emailWasSuccessfullyUpdated'));
+			dispatch(showSuccessSnackbar({ message: t('emailWasSuccessfullyUpdated') }));
 			setShowEmailInput(false);
 		}
 		if (editEmail.rejected.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('error');
-			setSnackbarDuration(3000);
-			if (dispatchResult.error.message) {
-				setSnackbarMessage(dispatchResult.error.message);
-			}
+			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
 	}, [dispatch, newEmail]);
 
@@ -111,21 +86,14 @@ export default function Profile(): JSX.Element {
 			editPassword({ currentPassword, newPassword, newPasswordRepeat })
 		);
 		if (editPassword.fulfilled.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('success');
-			setSnackbarMessage(t('passwordWasSuccessfullyUpdated'));
+			dispatch(showSuccessSnackbar({ message: t('passwordWasSuccessfullyUpdated') }));
 			setCurrentPassword('');
 			setNewPassword('');
 			setNewPasswordRepeat('');
 			setShowPasswordInput(false);
 		}
 		if (editPassword.rejected.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('error');
-			setSnackbarDuration(3000);
-			if (dispatchResult.error.message) {
-				setSnackbarMessage(dispatchResult.error.message);
-			}
+			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
 	}, [dispatch, currentPassword, newPassword, newPasswordRepeat]);
 
@@ -133,67 +101,17 @@ export default function Profile(): JSX.Element {
 	const handleSaveName = useCallback(async () => {
 		const dispatchResult = await dispatch(editUsername({ newUsername: newName }));
 		if (editUsername.fulfilled.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('success');
-			setSnackbarMessage(t('usernameWasSuccessfullyUpdated'));
+			dispatch(showSuccessSnackbar({ message: t('usernameWasSuccessfullyUpdated') }));
 			setShowNameInput(false);
 		}
 		if (editUsername.rejected.match(dispatchResult)) {
-			setOpenSnackbar(true);
-			setSnackbarSeverity('error');
-			setSnackbarDuration(6000);
-			if (dispatchResult.error.message) {
-				setSnackbarMessage(dispatchResult.error.message);
-			}
+			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
-	}, [dispatch, newName]);
-
-	const handleCloseSnackbar = (): void => {
-		setOpenSnackbar(false);
-	};
+	}, [newName]);
 
 	useEffect(() => {
 		dispatch(getProfile());
-	}, [dispatch, openSnackbar]);
-
-	// редирект неаутентифицированных пользователей
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			if (!user) {
-				navigate('/auth/login');
-			}
-		}, 3000);
-		return () => clearTimeout(timer);
-	}, [navigate, user]);
-
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setShowMessage(true);
-		}, 1500);
-		return () => clearTimeout(timer);
 	}, []);
-
-	if (!user) {
-		return (
-			<Box
-				sx={{
-					p: 5,
-					display: 'flex',
-					flexDirection: 'column',
-					justifyContent: 'center',
-					alignItems: 'center',
-					height: '70vh',
-				}}
-			>
-				{showMessage && (
-					<Box sx={{ textAlign: 'center', my: 3, fontWeight: 600, color: 'brown' }}>
-						Проверка авторизации на доступ к личному кабинету
-					</Box>
-				)}
-				<CircularProgress size={100} color="primary" />
-			</Box>
-		);
-	}
 
 	return (
 		<Box
@@ -213,7 +131,7 @@ export default function Profile(): JSX.Element {
 				<Avatar
 					sx={{ mr: 1, height: '7rem', width: '7rem', border: 1 }}
 					alt="user_avatar"
-					src={pathToAvatarImage(user.avatar)}
+					src={pathToAvatarImage(user?.avatar)}
 				/>
 			</Box>
 			{/* TODO: загрузка фото */}
@@ -359,15 +277,6 @@ export default function Profile(): JSX.Element {
 				<Typography sx={{ mt: 1, mx: 2, fontWeight: 600, color: 'brown' }}>
 					{t('contentInProgress')}
 				</Typography>
-			</Box>
-			<Box textAlign="center">
-				<NotificationSnackbar
-					open={openSnackbar}
-					onClose={handleCloseSnackbar}
-					severity={snackbarSeverity}
-					message={snackbarMessage}
-					duration={snackbarDuration}
-				/>
 			</Box>
 		</Box>
 	);
