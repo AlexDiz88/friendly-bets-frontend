@@ -60,7 +60,9 @@ const CalendarsList = ({ activeSeasonId }: { activeSeasonId: string }): JSX.Elem
 			>
 				{Array.isArray(calendarNodes) &&
 					calendarNodes.map((c) => (
-						<CalendarNode key={c.id} calendar={c} onClick={() => handleOpenDialog(c)} deleteIcon />
+						<Box key={c.id} sx={{ my: 0.5 }}>
+							<CalendarNode calendar={c} onClick={() => handleOpenDialog(c)} deleteIcon />
+						</Box>
 					))}
 			</Box>
 

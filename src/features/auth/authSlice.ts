@@ -90,10 +90,12 @@ const authSlice = createSlice({
 			.addCase(getProfile.fulfilled, (state, action) => {
 				state.authChecked = true;
 				state.user = action.payload;
+				state.error = undefined;
 			})
-			.addCase(getProfile.rejected, (state) => {
+			.addCase(getProfile.rejected, (state, action) => {
 				state.authChecked = true;
 				state.user = undefined;
+				state.error = action.error.message;
 			})
 
 			.addCase(login.fulfilled, (state) => {

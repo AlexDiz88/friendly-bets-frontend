@@ -11,8 +11,6 @@ export default interface Bet {
 	isPlayoff: boolean;
 	matchDay: string;
 	playoffRound: string;
-	gameId?: string;
-	gameDate?: string;
 	homeTeam: Team;
 	awayTeam: Team;
 	betTitle: string;
@@ -23,6 +21,7 @@ export default interface Bet {
 	betStatus: string;
 	balanceChange?: number;
 	updatedAt: Date;
+	calendarNodeId?: string;
 }
 
 export type BetId = Bet['id'];

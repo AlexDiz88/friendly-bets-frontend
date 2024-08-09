@@ -2,16 +2,16 @@ import { Dangerous } from '@mui/icons-material';
 import { Box, Checkbox, IconButton, Switch, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomBetInputDialog from '../../components/custom/dialog/CustomBetInputDialog';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
+import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 import CalendarNode from '../admin/calendars/CalendarNode';
-import { addBetToCalendarNode, getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
+import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
 import { selectAllCalendarNodes } from '../admin/calendars/selectors';
 import Calendar from '../admin/calendars/types/Calendar';
 import League from '../admin/leagues/types/League';
@@ -31,8 +31,8 @@ import MatchDayInfo from './types/MatchDayInfo';
 
 export default function BetInputContainer(): JSX.Element {
 	const dispatch = useAppDispatch();
-	const season = useSelector(selectActiveSeason);
-	const calendarNodes = useSelector(selectAllCalendarNodes);
+	const season = useAppSelector(selectActiveSeason);
+	const calendarNodes = useAppSelector(selectAllCalendarNodes);
 	const [calendar, setCalendar] = useState<Calendar | undefined>();
 	const [selectedUser, setSelectedUser] = useState<SimpleUser | undefined>(undefined);
 	const [selectedLeague, setSelectedLeague] = useState<League>();
@@ -56,6 +56,8 @@ export default function BetInputContainer(): JSX.Element {
 	const [openDialogTwoEmptyBet, setOpenDialogTwoEmptyBet] = useState(false);
 	const [isNot, setIsNot] = useState(false);
 
+	useFetchCurrentUser();
+
 	const scrollToBottom = (): void => {
 		window.scrollTo({ top: 100, behavior: 'smooth' });
 	};
@@ -63,7 +65,7 @@ export default function BetInputContainer(): JSX.Element {
 	// добавление ставки
 	const handleSaveClick = useCallback(async () => {
 		setOpenDialog(false);
-		if (season && selectedUser && selectedHomeTeam && selectedAwayTeam && calendar) {
+		if (season && selectedUser && selectedHomeTeam && selectedAwayTeam) {
 			const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
 			// TODO: добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
 			const matchDayCode =
@@ -83,24 +85,16 @@ export default function BetInputContainer(): JSX.Element {
 						betTitle: isNot ? `${selectedBetTitle}${t('not')}` : selectedBetTitle,
 						betOdds: betOddsToNumber,
 						betSize: Number(selectedBetSize),
+						calendarNodeId: calendar?.id,
 					},
 				})
 			);
 
 			if (addBet.fulfilled.match(dispatchResult)) {
-				const savedBet = dispatchResult.payload;
 				dispatch(showSuccessSnackbar({ message: t('betWasSuccessfullyAdded') }));
 				setResetTeams(!resetTeams);
 				setSelectedHomeTeam(undefined);
 				setSelectedAwayTeam(undefined);
-				// TODO: добавить calendarId в ставку и вызывать добавление ставки в календарь на сервере
-				await dispatch(
-					addBetToCalendarNode({
-						betId: savedBet.id,
-						calendarNodeId: calendar.id,
-						leagueId: selectedLeagueId,
-					})
-				);
 			}
 			if (addBet.rejected.match(dispatchResult)) {
 				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
@@ -140,6 +134,7 @@ export default function BetInputContainer(): JSX.Element {
 						matchDay: matchDayCode,
 						playoffRound: matchDayInfo.playoffRound,
 						betSize: Number(selectedEmptyBetSize),
+						calendarNodeId: calendar?.id,
 					},
 				})
 			);

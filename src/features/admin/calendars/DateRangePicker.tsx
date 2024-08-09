@@ -3,12 +3,17 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/de';
+import 'dayjs/locale/ru';
+import timezone from 'dayjs/plugin/timezone';
 import updateLocale from 'dayjs/plugin/updateLocale';
+import utc from 'dayjs/plugin/utc';
 import { t } from 'i18next';
 import CustomDatePicker from '../../../components/custom/dialog/CustomDatePicker';
 
 dayjs.locale('de');
 dayjs.extend(updateLocale);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 dayjs.updateLocale('de', { weekStart: 1 });
 
 interface DateRangePickerProps {

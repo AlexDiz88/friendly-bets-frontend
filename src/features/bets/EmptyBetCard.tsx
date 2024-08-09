@@ -2,11 +2,11 @@ import { GppMaybe } from '@mui/icons-material';
 import { Avatar, Box } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import Bet from './types/Bet';
-import { useTranslation } from 'react-i18next';
 
 export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 	const { i18n } = useTranslation();

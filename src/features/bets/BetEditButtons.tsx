@@ -22,7 +22,12 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	const handleBetDeleteSave = useCallback(async () => {
 		setOpenDeleteDialog(false);
 		const dispatchResult = await dispatch(
-			deleteBet({ betId: bet.id, seasonId: bet.seasonId, leagueId: bet.leagueId })
+			deleteBet({
+				betId: bet.id,
+				seasonId: bet.seasonId,
+				leagueId: bet.leagueId,
+				calendarNodeId: bet.calendarNodeId || '',
+			})
 		);
 
 		if (deleteBet.fulfilled.match(dispatchResult)) {

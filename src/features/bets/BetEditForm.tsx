@@ -13,8 +13,8 @@ import {
 	Typography,
 } from '@mui/material';
 import { t } from 'i18next';
-import { useCallback, useState } from 'react';
-import { useAppDispatch } from '../../app/hooks';
+import { useCallback, useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
@@ -23,6 +23,17 @@ import {
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import GameScoreValidation from '../../components/utils/GameScoreValidation';
+import {
+	BET_STATUS_EMPTY,
+	BET_STATUS_LOST,
+	BET_STATUS_OPENED,
+	BET_STATUS_RETURNED,
+	BET_STATUS_WON,
+} from '../../constants';
+import CalendarNode from '../admin/calendars/CalendarNode';
+import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
+import { selectAllCalendarNodes } from '../admin/calendars/selectors';
+import Calendar from '../admin/calendars/types/Calendar';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
 import BetInputOdds from './BetInputOdds';
@@ -35,7 +46,7 @@ import { updateBet } from './betsSlice';
 import Bet from './types/Bet';
 import MatchDayInfo from './types/MatchDayInfo';
 
-const statuses = ['WON', 'RETURNED', 'LOST'];
+const statuses = [BET_STATUS_WON, BET_STATUS_RETURNED, BET_STATUS_LOST];
 
 export default function BetEditForm({
 	bet,
@@ -47,6 +58,8 @@ export default function BetEditForm({
 	handleEditBet: (showEditForm: boolean) => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
+	const calendarNodes = useAppSelector(selectAllCalendarNodes);
+	const [calendar, setCalendar] = useState<Calendar | undefined>();
 	const [updatedUser, setUpdatedUser] = useState<SimpleUser>(bet.player);
 	const [updatedIsPlayoff, setUpdatedIsPlayoff] = useState<boolean>(bet.isPlayoff);
 	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(bet.matchDay);
@@ -71,6 +84,11 @@ export default function BetEditForm({
 	// TODO: исправить проблему в редактировании ставки при смене флага плейофф + общая проверка
 
 	const handleBetUpdateSave = useCallback(async () => {
+		console.log('prevCalendarNodeId:');
+		console.log(bet.calendarNodeId);
+		console.log('newCalendarNodeId:');
+		console.log(calendar?.id);
+
 		setBetUpdateOpenDialog(false);
 		const betOddsToNumber = Number(updatedBetOdds.trim().replace(',', '.'));
 		// TODO добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
@@ -91,6 +109,8 @@ export default function BetEditForm({
 					betSize: Number(updatedBetSize),
 					betStatus: updatedBetStatus,
 					gameResult: updatedGameResult,
+					prevCalendarNodeId: bet.calendarNodeId,
+					calendarNodeId: calendar?.id,
 				},
 			})
 		);
@@ -106,18 +126,17 @@ export default function BetEditForm({
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
 	}, [
-		updatedBetOdds,
-		bet.id,
-		bet.seasonId,
-		bet.leagueId,
+		bet,
+		calendar,
 		updatedUser.id,
-		updatedIsPlayoff,
 		updatedMatchDay,
+		updatedIsPlayoff,
 		updatedPlayoffRound,
 		updatedHomeTeam.id,
 		updatedAwayTeam.id,
-		isNot,
 		updatedBetTitle,
+		isNot,
+		updatedBetOdds,
 		updatedBetSize,
 		updatedBetStatus,
 		updatedGameResult,
@@ -183,6 +202,29 @@ export default function BetEditForm({
 		handleEditBet(false);
 	};
 
+	useEffect(() => {
+		const res = calendarNodes.find((c) =>
+			c.leagueMatchdayNodes.some((n) => {
+				if (n.leagueCode === bet.leagueCode) {
+					if (updatedIsPlayoff && updatedMatchDay !== t('playoffRound.final')) {
+						return n.matchDay === updatedMatchDay && n.playoffRound === updatedPlayoffRound;
+					}
+					if (updatedMatchDay === t('playoffRound.final')) {
+						return n.matchDay === 'final';
+					}
+					return n.matchDay === updatedMatchDay;
+				}
+			})
+		);
+		setCalendar(res);
+	}, [calendarNodes, bet, updatedMatchDay, updatedIsPlayoff, updatedPlayoffRound]);
+
+	useEffect(() => {
+		if (bet.seasonId) {
+			dispatch(getAllSeasonCalendarNodes(bet.seasonId));
+		}
+	}, []);
+
 	return (
 		<Box
 			sx={{
@@ -206,6 +248,7 @@ export default function BetEditForm({
 				}}
 				onMatchDayInfo={handleMatchDaySelection}
 			/>
+			{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}
 			<BetInputTeams
 				defaultHomeTeamName={bet.homeTeam.title}
 				defaultAwayTeamName={bet.awayTeam.title}
@@ -253,7 +296,7 @@ export default function BetEditForm({
 				onOddsSelect={handleOddsSelection}
 			/>
 
-			{bet.betStatus !== 'OPENED' && bet.betStatus !== 'EMPTY' && (
+			{bet.betStatus !== BET_STATUS_OPENED && bet.betStatus !== BET_STATUS_EMPTY && (
 				<Box sx={{ textAlign: 'left' }}>
 					<Typography sx={{ mx: 1, mt: 1, fontWeight: '600' }}>{t('betStatus')}</Typography>
 					<Select
@@ -263,13 +306,13 @@ export default function BetEditForm({
 							minWidth: '15rem',
 							mb: 1,
 							bgcolor:
-								updatedBetStatus === 'WON'
+								updatedBetStatus === BET_STATUS_WON
 									? '#daf3db'
-									: updatedBetStatus === 'RETURNED'
+									: updatedBetStatus === BET_STATUS_RETURNED
 									? '#f8f9d6'
-									: updatedBetStatus === 'LOST'
+									: updatedBetStatus === BET_STATUS_LOST
 									? '#f3dada'
-									: updatedBetStatus === 'OPENED'
+									: updatedBetStatus === BET_STATUS_OPENED
 									? '#e0dfe4'
 									: 'white',
 						}}

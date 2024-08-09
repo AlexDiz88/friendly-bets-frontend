@@ -14,6 +14,7 @@ import {
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
 import GameScoreValidation from '../../components/utils/GameScoreValidation';
+import { BET_STATUS_LOST, BET_STATUS_RETURNED, BET_STATUS_WON, BetStatus } from '../../constants';
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
 import BetCard from './BetCard';
@@ -30,7 +31,7 @@ export default function BetsCheck(): JSX.Element {
 	const [gameResult, setGameResult] = useState<string>('');
 	const [inputValues, setInputValues] = useState<Record<string, string>>({});
 	const [selectedLeague, setSelectedLeague] = useState(t('all'));
-	const [dialogType, setDialogType] = useState<'LOST' | 'RETURNED' | 'WON' | undefined>(undefined);
+	const [dialogType, setDialogType] = useState<BetStatus | undefined>(undefined);
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 
@@ -80,7 +81,7 @@ export default function BetsCheck(): JSX.Element {
 		}));
 	};
 
-	const openDialog = (type: 'LOST' | 'RETURNED' | 'WON', bet: Bet, result: string): void => {
+	const openDialog = (type: BetStatus, bet: Bet, result: string): void => {
 		const res = GameScoreValidation(result);
 		setGameResult(res);
 		setSelectedBet(bet);
@@ -209,7 +210,9 @@ export default function BetsCheck(): JSX.Element {
 															<Box>
 																<CustomCancelButton
 																	sx={{ px: 2 }}
-																	onClick={() => openDialog('LOST', bet, inputValues[bet.id])}
+																	onClick={() =>
+																		openDialog(BET_STATUS_LOST, bet, inputValues[bet.id])
+																	}
 																	buttonText={t('lost')}
 																	textSize="0.8rem"
 																/>
@@ -221,13 +224,17 @@ export default function BetsCheck(): JSX.Element {
 																		color: 'black',
 																		px: 2,
 																	}}
-																	onClick={() => openDialog('RETURNED', bet, inputValues[bet.id])}
+																	onClick={() =>
+																		openDialog(BET_STATUS_RETURNED, bet, inputValues[bet.id])
+																	}
 																	buttonText={t('returned')}
 																	textSize="0.8rem"
 																/>
 																<CustomSuccessButton
 																	sx={{ px: 2 }}
-																	onClick={() => openDialog('WON', bet, inputValues[bet.id])}
+																	onClick={() =>
+																		openDialog(BET_STATUS_WON, bet, inputValues[bet.id])
+																	}
 																	buttonText={t('won')}
 																	textSize="0.8rem"
 																/>
@@ -242,9 +249,9 @@ export default function BetsCheck(): JSX.Element {
 							)}
 
 							<CustomBetCheckDialog
-								open={dialogType === 'LOST'}
+								open={dialogType === BET_STATUS_LOST}
 								onClose={handleCloseDialog}
-								onSave={() => handleBetSave('LOST')}
+								onSave={() => handleBetSave(BET_STATUS_LOST)}
 								gameResult={gameResult}
 								bet={selectedBet}
 								buttonColor="error"
@@ -252,9 +259,9 @@ export default function BetsCheck(): JSX.Element {
 							/>
 
 							<CustomBetCheckDialog
-								open={dialogType === 'RETURNED'}
+								open={dialogType === BET_STATUS_RETURNED}
 								onClose={handleCloseDialog}
-								onSave={() => handleBetSave('RETURNED')}
+								onSave={() => handleBetSave(BET_STATUS_RETURNED)}
 								gameResult={gameResult}
 								bet={selectedBet}
 								buttonText={t('returned')}
@@ -262,9 +269,9 @@ export default function BetsCheck(): JSX.Element {
 							/>
 
 							<CustomBetCheckDialog
-								open={dialogType === 'WON'}
+								open={dialogType === BET_STATUS_WON}
 								onClose={handleCloseDialog}
-								onSave={() => handleBetSave('WON')}
+								onSave={() => handleBetSave(BET_STATUS_WON)}
 								gameResult={gameResult}
 								bet={selectedBet}
 								buttonColor="success"

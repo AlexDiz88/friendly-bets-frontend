@@ -9,6 +9,7 @@ import {
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
 import useFetchActiveSeason from '../../../components/hooks/useFetchActiveSeason';
+import useFetchCurrentUser from '../../../components/hooks/useFetchCurrentUser';
 import { getActiveSeason } from '../seasons/seasonsSlice';
 import { selectActiveSeason } from '../seasons/selectors';
 import CalendarsList from './CalendarsList';
@@ -30,6 +31,7 @@ const MatchdayCalendar = (): JSX.Element => {
 	const [showCalendarListButton, setShowCalendarListButton] = useState(true);
 
 	useFetchActiveSeason(activeSeason?.id);
+	useFetchCurrentUser();
 
 	const handleSave = useCallback(async () => {
 		const updatedNodes = leagueMatchdayNodes.map((node) => {
@@ -39,8 +41,8 @@ const MatchdayCalendar = (): JSX.Element => {
 
 		const newCalendarNode: NewCalendar = {
 			seasonId: activeSeason?.id,
-			startDate,
-			endDate,
+			startDate: startDate?.add(2, 'hours') || startDate,
+			endDate: endDate?.add(2, 'hours') || endDate,
 			leagueMatchdayNodes: updatedNodes,
 		};
 
@@ -64,9 +66,9 @@ const MatchdayCalendar = (): JSX.Element => {
 		createCalendarNode,
 		showSuccessSnackbar,
 		showErrorSnackbar,
+		setLeagueMatchdayNodes,
 		setStartDate,
 		setEndDate,
-		setLeagueMatchdayNodes,
 	]);
 
 	const handleShowCalendarList = (): void => {
@@ -90,6 +92,14 @@ const MatchdayCalendar = (): JSX.Element => {
 
 	return (
 		<Box sx={{ maxWidth: '22rem', margin: '0 auto' }}>
+			{/* Невидимый элемент для снятия фокуса с дат */}
+			<Box>
+				<TextField
+					inputRef={hiddenButtonRef}
+					style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
+				/>
+			</Box>
+
 			<Box
 				sx={{
 					display: 'flex',
@@ -141,14 +151,6 @@ const MatchdayCalendar = (): JSX.Element => {
 				)}
 			</Box>
 			{activeSeason && showCalendarList && <CalendarsList activeSeasonId={activeSeason?.id} />}
-
-			{/* Невидимый элемент для снятия фокуса с дат */}
-			<Box aria-hidden="true">
-				<TextField
-					inputRef={hiddenButtonRef}
-					style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
-				/>
-			</Box>
 		</Box>
 	);
 };

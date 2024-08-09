@@ -17,7 +17,7 @@ const PrivateRoute = ({ roles }: PrivateRouteProps): JSX.Element => {
 
 	if (roles && !roles.includes(user.role)) {
 		// Если роль пользователя не соответствует требуемым ролям, перенаправить на главную страницу
-		return <Navigate to="/" />;
+		return <Navigate to="/gameweeks" />;
 	}
 
 	return <Outlet />;

@@ -4,6 +4,7 @@
 	"byLeagues": "By Leagues",
 	"byTeams": "By Teams",
 	"byMonths": "By Month",
+	"byGameweeks": "By Gameweeks",
 	"rules": "Rules",
 	"bets": "Bets",
 	"language": "Language",
@@ -167,6 +168,7 @@
 	"betReturned": "Bet refunded",
 	"betLost": "Bet lost",
 	"betNotPlaced": "Bet not placed",
+	"betNotPlacedShort": "Bet not placed",
 	"registerOnTournament": "Tournament Registration",
 	"listOfPlayers": "Participant List",
 	"congratulations": "Congratulations!",
@@ -206,6 +208,7 @@
 		"unknownError": "Unknown error",
 		"noTotalStatsByTeamsInLeague": "Overall team statistics for selected league are unavailable",
 		"noPlayerStatsByTeamsInLeague": "Player's team statistics for this league are unavailable",
+		"noTotalPlayerStats": "Player statistics are missing",
 		"leagueMatchdayAlreadyAdded": "League with this matchday has already been added",
 		"noData": "No data",
 		"fieldMustNotBeNull": "Data is missing! Check the completeness of the fields",
@@ -267,7 +270,11 @@
 		"newAndOldUsernamesAreSame": "New username is the same as the old one",
 		"usernameAlreadyExist": "User with this username already exists. Please choose a different name",
 		"userNotAuthenticated": "User not authenticated",
-		"leagueNotFoundInCalendarNode": "League not found in calendar"
+		"leagueNotFoundInCalendarNode": "League not found in calendar",
+		"betCalendarNodeIdCannotBeBlank": "Matchday of the selected league is missing in the calendar",
+		"betNotFoundInCalendar": "Bet not found in the calendar",
+		"yourSessionWasFinished": "Your session has ended or was interrupted. Please log in again",
+		"noGameweeks": "There are currently no gameweeks available"
 	},
 	"matchdayCalendar": "Matchday schedule",
 	"matchdayStartDate": "Start Date of Matchday",
@@ -281,5 +288,7 @@
 	"showCalendarList": "Show matchday calendar",
 	"deleteNodeFromCalendar": "Delete entry from calendar",
 	"deleteNodeFromCalendarHelperText": "Selected entry will be deleted from calendar! Deletion is only possible for entries that have not yet had bets added to them",
-	"calendarForLeagueMatchdayNotExist": "The specified matchday of selected league has not been added to calendar!"
+	"calendarForLeagueMatchdayNotExist": "The specified matchday of selected league has not been added to calendar!",
+	"chooseGameweekForDetailedView": "Select gameweek for detailed view",
+	"thinkingAboutBet": "Thinking about bet"
 }

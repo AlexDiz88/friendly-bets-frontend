@@ -4,6 +4,7 @@
 	"byLeagues": "Nach Ligen",
 	"byTeams": "Nach Teams",
 	"byMonths": "Nach Monaten",
+	"byGameweeks": "Nach Spieltag",
 	"rules": "Regeln",
 	"bets": "Wetten",
 	"language": "Sprache",
@@ -167,6 +168,7 @@
 	"betReturned": "Wette zurückerstattet",
 	"betLost": "Wette verloren",
 	"betNotPlaced": "Wette nicht gesetzt",
+	"betNotPlacedShort": "Wette nicht gesetzt",
 	"registerOnTournament": "Turnieranmeldung",
 	"listOfPlayers": "Teilnehmerliste",
 	"congratulations": "Herzlichen Glückwunsch!",
@@ -206,6 +208,7 @@
 		"unknownError": "Unbekannter Fehler",
 		"noTotalStatsByTeamsInLeague": "Allgemeine Teamstatistiken für die ausgewählte Liga sind nicht verfügbar",
 		"noPlayerStatsByTeamsInLeague": "Teilnehmerstatistiken für Teams in dieser Liga sind nicht verfügbar",
+		"noTotalPlayerStats": "Spielerstatistik fehlt",
 		"leagueMatchdayAlreadyAdded": "Liga mit diesem Spieltag wurde bereits hinzugefügt",
 		"noData": "Keine Daten",
 		"fieldMustNotBeNull": "Daten fehlen! Überprüfen Sie die Vollständigkeit der Felder",
@@ -267,7 +270,11 @@
 		"newAndOldUsernamesAreSame": "Der neue Benutzername ist identisch mit dem alten",
 		"usernameAlreadyExist": "Benutzer mit diesem Benutzernamen existiert bereits. Bitte wählen Sie einen anderen Namen",
 		"userNotAuthenticated": "Benutzer nicht authentifiziert",
-		"leagueNotFoundInCalendarNode": "Liga im Kalender nicht gefunden"
+		"leagueNotFoundInCalendarNode": "Liga im Kalender nicht gefunden",
+		"betCalendarNodeIdCannotBeBlank": "Spieltag der ausgewählten Liga fehlt im Kalender",
+		"betNotFoundInCalendar": "Wette im Kalender nicht gefunden",
+		"yourSessionWasFinished": "Ihre Sitzung wurde beendet oder unterbrochen. Bitte melden Sie sich erneut an",
+		"noGameweeks": "Derzeit sind keine Spieltage verfügbar"
 	},
 	"matchdayCalendar": "Spielplan",
 	"matchdayStartDate": "Startdatum des Spieltags",
@@ -281,5 +288,7 @@
 	"showCalendarList": "Spieltagskalender anzeigen",
 	"deleteNodeFromCalendar": "Eintrag aus dem Kalender löschen",
 	"deleteNodeFromCalendarHelperText": "Ausgewählte Eintrag wird aus dem Kalender gelöscht! Das Löschen ist nur für Einträge möglich, auf die noch keine Wetten hinzugefügt wurden",
-	"calendarForLeagueMatchdayNotExist": "Der angegebene Spieltag der ausgewählten Liga wurde nicht in den Kalender aufgenommen!"
+	"calendarForLeagueMatchdayNotExist": "Der angegebene Spieltag der ausgewählten Liga wurde nicht in den Kalender aufgenommen!",
+	"chooseGameweekForDetailedView": "Wählen Sie Spielzeitraum zur Detailansicht aus",
+	"thinkingAboutBet": "Überlegt die Wette"
 }

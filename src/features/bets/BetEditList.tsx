@@ -14,6 +14,7 @@ import { getAllBets } from './betsSlice';
 import CompleteBetCard from './CompleteBetCard';
 import EmptyBetCard from './EmptyBetCard';
 import { selectAllBets, selectTotalPages } from './selectors';
+import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 
 export default function BetEditList(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -25,6 +26,7 @@ export default function BetEditList(): JSX.Element {
 	const totalPages = useAppSelector(selectTotalPages);
 
 	useFetchActiveSeason(activeSeasonId);
+	useFetchCurrentUser();
 
 	const handlePageChange = (pageNumber: number): void => {
 		setPage(pageNumber);

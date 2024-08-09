@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import CustomMenuPageText from '../custom/CustomMenuPageText';
 import { changeLanguageAsync } from '../utils/languageSlice';
 
 interface Language {
@@ -28,9 +29,9 @@ export default function MenuPages(): JSX.Element {
 
 	const pages = [
 		t('news'),
+		t('byGameweeks'),
 		t('byLeagues'),
 		t('byTeams'),
-		// t('byMatchDay'),
 		// t('byMonths'),
 		t('archive'),
 		t('rules'),
@@ -57,6 +58,9 @@ export default function MenuPages(): JSX.Element {
 				break;
 			case t('rules'):
 				navigate('/rules');
+				break;
+			case t('byGameweeks'):
+				navigate('/gameweeks');
 				break;
 			default:
 				break;
@@ -110,10 +114,7 @@ export default function MenuPages(): JSX.Element {
 						horizontal: 'right',
 					}}
 					keepMounted
-					transformOrigin={{
-						vertical: 'top',
-						horizontal: 'right',
-					}}
+					transformOrigin={{ vertical: 'top', horizontal: 'right' }}
 					open={Boolean(anchorElNav)}
 					onClose={handleCloseNavMenu}
 					sx={{
@@ -145,10 +146,7 @@ export default function MenuPages(): JSX.Element {
 							vertical: 'top',
 							horizontal: 'right',
 						}}
-						transformOrigin={{
-							vertical: 'top',
-							horizontal: 'left',
-						}}
+						transformOrigin={{ vertical: 'top', horizontal: 'left' }}
 						open={Boolean(anchorElLang)}
 						onClose={handleCloseLangMenu}
 					>
@@ -168,89 +166,20 @@ export default function MenuPages(): JSX.Element {
 					</Menu>
 				</Menu>
 			</Box>
-			<Box
-				sx={{
-					display: 'flex',
-					alignItems: 'center',
-				}}
-			>
-				<Typography
-					variant="h5"
-					noWrap
-					component="a"
-					href="#"
-					onClick={scrollToTop}
-					sx={{
-						px: { xs: 0, md: 0.5 },
-						my: 2,
-						mx: 1,
-						fontWeight: 600,
-						fontSize: '1rem',
-						color: 'inherit',
-						textDecoration: 'none',
-						'&:hover': {
-							color: '#ff9800',
-						},
-					}}
-				>
-					{t('table')}
-				</Typography>
-				<Typography
-					variant="h5"
-					noWrap
-					component="a"
-					href="#/bets"
-					onClick={scrollToTop}
-					sx={{
-						px: { xs: 0, md: 0.5 },
-						my: 2,
-						mx: 1,
-						fontWeight: 600,
-						fontSize: '1rem',
-						color: 'inherit',
-						textDecoration: 'none',
-						'&:hover': {
-							color: '#ff9800',
-						},
-					}}
-				>
-					{t('bets')}
-				</Typography>
-				<Box
-					sx={{
-						flexGrow: 1,
-						display: { xs: 'none', md: 'flex' },
-					}}
-				>
+			<Box sx={{ display: 'flex', alignItems: 'center' }}>
+				<CustomMenuPageText onClick={scrollToTop} href="#" title={t('table')} />
+				<CustomMenuPageText onClick={scrollToTop} href="#/bets/opened" title={t('bets')} />
+				<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
 					{pages.map((page) => (
-						<Typography
-							fontFamily="Exo 2"
-							fontSize="0.9rem"
+						<CustomMenuPageText
 							key={page}
 							onClickCapture={() => {
 								handleCloseNavMenu();
 								handleNavigate(page);
 								scrollToTop();
 							}}
-							variant="h5"
-							noWrap
-							sx={{
-								px: { xs: 0, md: 0.5 },
-								my: 2,
-								mx: 1,
-								fontFamily: 'Exo 2',
-								fontWeight: 600,
-								fontSize: '1rem',
-								color: 'inherit',
-								textDecoration: 'none',
-								cursor: 'pointer',
-								'&:hover': {
-									color: '#ff9800',
-								},
-							}}
-						>
-							{page}
-						</Typography>
+							title={page}
+						/>
 					))}
 				</Box>
 			</Box>

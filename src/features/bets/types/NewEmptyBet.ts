@@ -6,4 +6,5 @@ export default interface NewEmptyBet {
 	matchDay: string;
 	playoffRound: string;
 	betSize: number;
+	calendarNodeId: string | undefined;
 }

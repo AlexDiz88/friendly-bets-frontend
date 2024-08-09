@@ -18,6 +18,36 @@ export async function getAllSeasonCalendarNodes(
 	return result.json();
 }
 
+export async function getSeasonCalendarHasBetsNodes(
+	seasonId: string
+): Promise<{ calendarNodes: Calendar[] }> {
+	let url = `${
+		import.meta.env.VITE_PRODUCT_SERVER || ''
+	}/api/calendars/seasons/${seasonId}/has-bets`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/calendars/seasons/${seasonId}/has-bets`;
+	}
+	const result = await fetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function getActualCalendarNodeBets(seasonId: string): Promise<BetsPage> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/calendars/seasons/${seasonId}/actual`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/calendars/seasons/${seasonId}/actual`;
+	}
+	const result = await fetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 export async function createCalendarNode(newCalendarNode: NewCalendar): Promise<Calendar> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/calendars`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {

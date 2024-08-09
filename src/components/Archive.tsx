@@ -56,7 +56,7 @@ export default function Archive(): JSX.Element {
 		} else {
 			setLoading(false);
 		}
-	}, [selectedSeason, seasons, dispatch]);
+	}, [selectedSeason, seasons]);
 
 	return (
 		<Box>

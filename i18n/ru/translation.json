@@ -4,6 +4,7 @@
 	"byLeagues": "По лигам",
 	"byTeams": "По командам",
 	"byMonths": "По месяцам",
+	"byGameweeks": "По турам",
 	"rules": "Правила",
 	"bets": "Ставки",
 	"language": "Язык",
@@ -167,6 +168,7 @@
 	"betReturned": "Ставка вернулась",
 	"betLost": "Ставка не сыграла",
 	"betNotPlaced": "Ставка на тур не сделана",
+	"betNotPlacedShort": "Ставка не сделана",
 	"registerOnTournament": "Регистрация на турнир",
 	"listOfPlayers": "Список участников",
 	"congratulations": "Поздравляем!",
@@ -206,6 +208,7 @@
 		"unknownError": "Неизвестная ошибка",
 		"noTotalStatsByTeamsInLeague": "Общая статистика по командам в выбранной лиге отсутствует",
 		"noPlayerStatsByTeamsInLeague": "Статистика участника по командам в этой лиге отсутствует",
+		"noTotalPlayerStats": "Статистика игрока отсутствует",
 		"leagueMatchdayAlreadyAdded": "Лига с таким туром уже добавлена",
 		"noData": "Нет данных",
 		"fieldMustNotBeNull": "Данные отсутствуют! Проверьте заполненность полей",
@@ -267,7 +270,11 @@
 		"newAndOldUsernamesAreSame": "Новое имя совпадает со старым",
 		"usernameAlreadyExist": "Пользователь с таким именем уже существует. Выберите себе другое имя",
 		"userNotAuthenticated": "Пользователь не аутентифицирован",
-		"leagueNotFoundInCalendarNode": "Лига в календаре не найдена"
+		"leagueNotFoundInCalendarNode": "Лига в календаре не найдена",
+		"betCalendarNodeIdCannotBeBlank": "Тур выбранной лиги отсутствует в календаре",
+		"betNotFoundInCalendar": "Ставка в календаре не найдена",
+		"yourSessionWasFinished": "Ваша сессия была окончена или прервана. Войдите снова",
+		"noGameweeks": "В данный момент игровые туры отсутствуют"
 	},
 	"matchdayCalendar": "Календарь туров",
 	"matchdayStartDate": "Дата начала тура",
@@ -281,5 +288,7 @@
 	"showCalendarList": "Показать календарь игровых туров",
 	"deleteNodeFromCalendar": "Удалить запись из календаря",
 	"deleteNodeFromCalendarHelperText": "Выбранная запись будет удалена из календаря! Удаление возможно только для записей в которые еще не были добавлены ставки",
-	"calendarForLeagueMatchdayNotExist": "Указанный тур лиги не добавлен в календарь!"
+	"calendarForLeagueMatchdayNotExist": "Указанный тур лиги не добавлен в календарь!",
+	"chooseGameweekForDetailedView": "Выберите игровой тур для его обзора",
+	"thinkingAboutBet": "Думает над ставкой"
 }

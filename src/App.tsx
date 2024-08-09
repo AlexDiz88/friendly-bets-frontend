@@ -13,6 +13,8 @@ import Profile from './components/profile/Profile';
 import SeasonRegister from './components/profile/SeasonRegister';
 import AdminCabinet from './features/admin/AdminCabinet';
 import MatchdayCalendar from './features/admin/calendars/MatchdayCalendar';
+import { getActiveSeason, getActiveSeasonId } from './features/admin/seasons/seasonsSlice';
+import { selectActiveSeason, selectActiveSeasonId } from './features/admin/seasons/selectors';
 import Login from './features/auth/Login';
 import PrivateRoute from './features/auth/PrivateRoute';
 import Register from './features/auth/Register';
@@ -23,15 +25,30 @@ import BetsCheck from './features/bets/BetsCheck';
 import BetsList from './features/bets/BetsList';
 import CompletedBetsList from './features/bets/CompletedBetsList';
 import OpenedBetsList from './features/bets/OpenedBetsList';
+import Gameweek from './features/gameweeks/Gameweek';
 import LeaguesStatsPage from './features/stats/LeaguesStatsPage';
 import TeamsStatsPage from './features/stats/TeamsStatsPage';
 
 function App(): JSX.Element {
 	useAppSelector((state) => state.language);
 	const dispatch = useAppDispatch();
+	const activeSeason = useAppSelector(selectActiveSeason);
+	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 
 	useEffect(() => {
 		dispatch(getProfile());
+	}, []);
+
+	useEffect(() => {
+		if (!activeSeasonId) {
+			dispatch(getActiveSeasonId());
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!activeSeason) {
+			dispatch(getActiveSeason());
+		}
 	}, []);
 
 	return (
@@ -76,6 +93,7 @@ function App(): JSX.Element {
 
 				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
+				<Route path="/gameweeks" element={<Gameweek />} />
 				<Route path="/news" element={<News />} />
 				<Route path="/rules" element={<RulesPage />} />
 				<Route path="/archive" element={<Archive />} />

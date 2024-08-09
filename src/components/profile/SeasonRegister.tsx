@@ -51,7 +51,7 @@ export default function SeasonRegister(): JSX.Element {
 	useEffect(() => {
 		dispatch(getProfile());
 		dispatch(getScheduledSeason());
-	}, [handleConfirm]);
+	}, [openDialog]);
 
 	return (
 		<Box sx={{ textAlign: 'center', mx: 2, mt: 2, mb: 4 }}>

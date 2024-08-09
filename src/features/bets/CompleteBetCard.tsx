@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import { BET_STATUS_RETURNED, BET_STATUS_WON } from '../../constants';
 import Bet from './types/Bet';
 
 export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
@@ -49,7 +50,12 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 				mb: 1.5,
 				p: 0.5,
 				borderRadius: 2,
-				bgcolor: betStatus === 'WON' ? '#daf3db' : betStatus === 'RETURNED' ? '#f8f9d6' : '#f3dada',
+				bgcolor:
+					betStatus === BET_STATUS_WON
+						? '#daf3db'
+						: betStatus === BET_STATUS_RETURNED
+						? '#f8f9d6'
+						: '#f3dada',
 				boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.7)',
 			}}
 		>
@@ -112,17 +118,17 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 							alignItems: 'center',
 						}}
 					>
-						{betStatus === 'WON' ? (
+						{betStatus === BET_STATUS_WON ? (
 							<GppGood sx={{ color: 'green' }} />
-						) : betStatus === 'RETURNED' ? (
+						) : betStatus === BET_STATUS_RETURNED ? (
 							<RestorePage sx={{ color: '#b89e00' }} />
 						) : (
 							<GppBad sx={{ color: '#bd0000' }} />
 						)}
 
-						{betStatus === 'WON'
+						{betStatus === BET_STATUS_WON
 							? t('betWon')
-							: betStatus === 'RETURNED'
+							: betStatus === BET_STATUS_RETURNED
 							? t('betReturned')
 							: t('betLost')}
 					</Box>

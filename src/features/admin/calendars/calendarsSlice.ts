@@ -5,6 +5,8 @@ import NewCalendar from './types/NewCalendar';
 
 const initialState: CalendarsState = {
 	allCalendarNodes: [],
+	calendarNodesHasBets: [],
+	actualCalendarNodeBets: [],
 	calendarNode: undefined,
 	betsByCalendarNode: undefined,
 	error: undefined,
@@ -13,6 +15,16 @@ const initialState: CalendarsState = {
 export const getAllSeasonCalendarNodes = createAsyncThunk(
 	'calendars/getAllSeasonCalendarNodes',
 	async (seasonId: string) => api.getAllSeasonCalendarNodes(seasonId)
+);
+
+export const getSeasonCalendarHasBetsNodes = createAsyncThunk(
+	'calendars/getSeasonCalendarHasBetsNodes',
+	async (seasonId: string) => api.getSeasonCalendarHasBetsNodes(seasonId)
+);
+
+export const getActualCalendarNodeBets = createAsyncThunk(
+	'calendars/getActualCalendarNodeBets',
+	async (seasonId: string) => api.getActualCalendarNodeBets(seasonId)
 );
 
 export const createCalendarNode = createAsyncThunk(
@@ -59,6 +71,20 @@ const calendarsSlice = createSlice({
 			.addCase(getAllSeasonCalendarNodes.rejected, (state, action) => {
 				state.error = action.error.message;
 				state.allCalendarNodes = [];
+			})
+			.addCase(getSeasonCalendarHasBetsNodes.fulfilled, (state, action) => {
+				state.calendarNodesHasBets = action.payload.calendarNodes;
+			})
+			.addCase(getSeasonCalendarHasBetsNodes.rejected, (state, action) => {
+				state.error = action.error.message;
+				state.calendarNodesHasBets = [];
+			})
+			.addCase(getActualCalendarNodeBets.fulfilled, (state, action) => {
+				state.actualCalendarNodeBets = action.payload.bets;
+			})
+			.addCase(getActualCalendarNodeBets.rejected, (state, action) => {
+				state.error = action.error.message;
+				state.actualCalendarNodeBets = [];
 			})
 			.addCase(createCalendarNode.fulfilled, (state, action) => {
 				state.calendarNode = action.payload;

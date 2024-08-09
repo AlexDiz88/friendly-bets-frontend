@@ -16,15 +16,12 @@ const CalendarNode = ({
 	deleteIcon?: boolean;
 	noCalendar?: boolean;
 }): JSX.Element => {
-	const calendarHasBets = calendar?.leagueMatchdayNodes.some((n) => n.bets.length !== 0);
-
 	return (
 		<Box
 			sx={{
 				border: '1px solid #123456DB',
 				borderRadius: 2,
-				my: 1,
-				px: 1,
+				px: 1.5,
 				py: 0.5,
 				boxShadow: '0 4px 8px #12131BB6',
 				bgcolor: '#0008420E',
@@ -33,8 +30,8 @@ const CalendarNode = ({
 			{calendar && (
 				<>
 					<Box sx={{ fontWeight: 600, mb: 0.5 }}>
-						{calendar.startDate ? dayjs(calendar.startDate).format('DD.MM.YYYY') : ''} -{' '}
-						{calendar.endDate ? dayjs(calendar.endDate).format('DD.MM.YYYY') : ''}
+						{calendar.startDate ? dayjs(calendar.startDate).format('DD.MM') : ''} -{' '}
+						{calendar.endDate ? dayjs(calendar.endDate).format('DD.MM') : ''}
 					</Box>
 					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 						<Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -50,7 +47,7 @@ const CalendarNode = ({
 											/>
 											<Typography
 												sx={{
-													mx: 0.5,
+													mx: 0.3,
 													fontWeight: 600,
 													fontFamily: "'Exo 2'",
 													color: '#123456',
@@ -66,7 +63,7 @@ const CalendarNode = ({
 								))}
 						</Box>
 
-						{deleteIcon && !calendarHasBets && (
+						{deleteIcon && !calendar.hasBets && (
 							<IconButton
 								sx={{ mt: -3, mr: 1, p: 0, color: 'red', scale: '150%' }}
 								onClick={onClick}
