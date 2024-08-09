@@ -60,6 +60,9 @@ export default function MatchDayTitleTransform(
 		// но затем его нужно отсечь и правильно обработать а также сохранить в бд просто как 1/8
 		// const idx = result.indexOf(' ');
 		// result = result.substring(0, idx);
+		if (matchDayInfo.playoffRound === '') {
+			return result;
+		}
 		return result + ' [' + matchDayInfo.playoffRound + ']';
 	}
 

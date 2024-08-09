@@ -31,7 +31,7 @@ export default function MatchDayForm({
 		t(`playoffRound.1/2`),
 		t(`playoffRound.final`),
 	];
-	const playoffRoundsList: string[] = ['1', '2', '3', '4'];
+	const playoffRoundsList: string[] = ['', '1', '2', '3', '4'];
 
 	const playoffMappings: Record<string, string> = {
 		'7': t(`playoffRound.1/8`),
@@ -107,7 +107,7 @@ export default function MatchDayForm({
 			: matchDayInfo.matchDay;
 
 		const playoffRoundValue = flag
-			? playoffRoundMappings[updatedMatchDay] || '1'
+			? playoffRoundMappings[updatedMatchDay] || ''
 			: matchDayInfo.playoffRound;
 
 		setUpdatedMatchDay(matchDayTransform);
