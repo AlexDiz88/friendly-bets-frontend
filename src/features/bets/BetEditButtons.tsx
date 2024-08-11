@@ -8,7 +8,7 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
-import { transformGameResult } from '../../components/utils/gameScoreValidation';
+import { transformGameResult } from '../../components/utils/scoreValidation';
 import BetEditForm from './BetEditForm';
 import { deleteBet } from './betsSlice';
 import Bet from './types/Bet';
