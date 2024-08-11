@@ -7,8 +7,8 @@ import CustomLeagueButton from '../../../components/custom/btn/CustomLeagueButto
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import CustomErrorMessage from '../../../components/custom/CustomErrorMessage';
 import pathToLogoImage from '../../../components/utils/pathToLogoImage';
+import { MATCHDAY_TITLE_FINAL } from '../../../constants';
 import MatchDayForm from '../../bets/MatchDayForm';
-import MatchDayInfo from '../../bets/types/MatchDayInfo';
 import League from '../leagues/types/League';
 import LeagueMatchdayNode from './types/LeagueMatchdayNode';
 
@@ -28,22 +28,17 @@ const MatchdayLeaguePicker = ({
 	const [showLeagues, setShowLeagues] = useState<boolean>(true);
 	const [showMatchDayForm, setShowMatchDayForm] = useState<boolean>(false);
 	const [showAddLeagueError, setShowAddLeagueError] = useState<boolean>(false);
-	const [matchDayInfo, setMatchDayInfo] = useState<MatchDayInfo>({
-		isPlayoff: false,
-		matchDay: '1',
-		playoffRound: '',
-	});
+	const [matchDay, setMatchDay] = useState<string>('1');
 
 	const handleAddLeague = (): void => {
 		if (selectedLeague) {
-			const leagueExists = leagueMatchdayNodes.some((l) => {
-				if (l.leagueId === selectedLeague.id && l.matchDay === matchDayInfo.matchDay) {
-					if (l.matchDay !== t('playoffRound.final')) {
-						return l.playoffRound === matchDayInfo.playoffRound;
-					}
-					return true;
-				}
-				return false;
+			const leagueExists = leagueMatchdayNodes.some((lmn) => {
+				console.log('lmn.matchDay');
+				console.log(lmn.matchDay);
+				console.log('matchDay');
+				console.log(matchDay);
+
+				return lmn.leagueId === selectedLeague.id && lmn.matchDay === matchDay;
 			});
 
 			if (leagueExists) {
@@ -54,9 +49,7 @@ const MatchdayLeaguePicker = ({
 			const newLeagueMatchdayNode: LeagueMatchdayNode = {
 				leagueId: selectedLeague.id,
 				leagueCode: selectedLeague.leagueCode,
-				matchDay: matchDayInfo.matchDay,
-				isPlayoff: matchDayInfo.isPlayoff,
-				playoffRound: matchDayInfo.playoffRound,
+				matchDay,
 				bets: [],
 			};
 
@@ -74,11 +67,7 @@ const MatchdayLeaguePicker = ({
 		setSelectedLeague(league);
 		setShowLeagues(false);
 		setShowMatchDayForm(true);
-		setMatchDayInfo({
-			isPlayoff: false,
-			matchDay: league.currentMatchDay,
-			playoffRound: '',
-		});
+		setMatchDay(league.currentMatchDay);
 	};
 
 	const handleCancelLeaguePick = (): void => {
@@ -86,26 +75,19 @@ const MatchdayLeaguePicker = ({
 		setShowLeagues(true);
 		setShowMatchDayForm(false);
 		setShowAddLeagueError(false);
-		setMatchDayInfo({
-			isPlayoff: false,
-			matchDay: '1',
-			playoffRound: '',
-		});
+		setMatchDay('1');
 	};
 
-	const handleMatchDayInfo = (info: MatchDayInfo): void => {
-		setMatchDayInfo(info);
+	const handleMatchDay = (title: string): void => {
+		setMatchDay(title);
 	};
 
 	const handleRemoveLeagueMatchdayNode = (leagueMatchdayNode: LeagueMatchdayNode): void => {
 		const newLeagueMatchdayNodes = leagueMatchdayNodes.filter(
-			(l) =>
+			(lmn) =>
 				!(
-					l.leagueId === leagueMatchdayNode.leagueId &&
-					l.matchDay === leagueMatchdayNode.matchDay &&
-					(leagueMatchdayNode.matchDay !== t('playoffRound.final')
-						? l.playoffRound === leagueMatchdayNode.playoffRound
-						: true)
+					lmn.leagueId === leagueMatchdayNode.leagueId &&
+					lmn.matchDay === leagueMatchdayNode.matchDay
 				)
 		);
 
@@ -138,7 +120,7 @@ const MatchdayLeaguePicker = ({
 
 			{showMatchDayForm && (
 				<>
-					<MatchDayForm matchDayInfo={matchDayInfo} onMatchDayInfo={handleMatchDayInfo} />
+					<MatchDayForm matchDay={matchDay} onMatchDay={handleMatchDay} />
 					<Box sx={{ mt: 3 }}>
 						<CustomCancelButton onClick={handleCancelLeaguePick} sx={{ height: '2.3rem' }} />
 						<CustomSuccessButton onClick={handleAddLeague} sx={{ height: '2.3rem' }} />
@@ -160,7 +142,7 @@ const MatchdayLeaguePicker = ({
 				)}
 				<Box sx={{ my: 1 }}> {t('listOfPickedLeaguesMatchdays')}:</Box>
 				{leagueMatchdayNodes &&
-					leagueMatchdayNodes.map((l, index) => (
+					leagueMatchdayNodes.map((lmn, index) => (
 						<Box
 							key={index}
 							sx={{
@@ -179,21 +161,21 @@ const MatchdayLeaguePicker = ({
 									variant="square"
 									sx={{ width: 27, height: 27 }}
 									alt="league_logo"
-									src={pathToLogoImage(l.leagueCode)}
+									src={pathToLogoImage(lmn.leagueCode)}
 								/>
 								<Typography
 									sx={{ mx: 0.5, fontWeight: 600, fontFamily: "'Exo 2'", color: '#123456' }}
 								>
-									{t(`leagueFullName.${l.leagueCode}`)} - {l.matchDay}
-									{l.isPlayoff && l.matchDay !== t('playoffRound.final')
-										? ` [${l.playoffRound}]`
-										: ''}
+									{t(`leagueFullName.${lmn.leagueCode}`)} -{' '}
+									{lmn.matchDay === MATCHDAY_TITLE_FINAL
+										? t(`playoffRound.${lmn.matchDay}`)
+										: lmn.matchDay}
 								</Typography>
 							</Box>
 							{leagueMatchdayNodes.length === index + 1 && (
 								<IconButton
 									sx={{ ml: 1, p: 0, color: 'red', scale: '150%' }}
-									onClick={() => handleRemoveLeagueMatchdayNode(l)}
+									onClick={() => handleRemoveLeagueMatchdayNode(lmn)}
 								>
 									<DoDisturbOn />
 								</IconButton>

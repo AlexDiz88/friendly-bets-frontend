@@ -50,7 +50,7 @@ function isValidScore(matchScore: string, isOvertime: boolean, isPenalty: boolea
 }
 
 // проверка корректности введенного счёта
-export default function GameScoreValidation(inputString: string): string {
+export default function gameScoreValidation(inputString: string): string {
 	if (!inputString) {
 		return '';
 	}

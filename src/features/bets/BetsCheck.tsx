@@ -13,7 +13,7 @@ import {
 	showInfoSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
-import GameScoreValidation from '../../components/utils/GameScoreValidation';
+import gameScoreValidation from '../../components/utils/gameScoreValidation';
 import { BET_STATUS_LOST, BET_STATUS_RETURNED, BET_STATUS_WON, BetStatus } from '../../constants';
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
@@ -82,7 +82,7 @@ export default function BetsCheck(): JSX.Element {
 	};
 
 	const openDialog = (type: BetStatus, bet: Bet, result: string): void => {
-		const res = GameScoreValidation(result);
+		const res = gameScoreValidation(result);
 		setGameResult(res);
 		setSelectedBet(bet);
 		setDialogType(type);

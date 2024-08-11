@@ -11,14 +11,13 @@ import GameweekOpenedCard from './GameweekOpenedCard';
 const GameweekPlayersContainer = ({
 	activeSeason,
 	bets,
-	gameweekLeaguesCount,
+	gameweekCardsCount,
 }: {
 	activeSeason: Season;
 	bets: Bet[];
-	gameweekLeaguesCount: number;
+	gameweekCardsCount: number;
 }): JSX.Element => {
 	const betsByPlayers: { [key: string]: Bet[] } = {};
-	const gameweekCardsCount = activeSeason.betCountPerMatchDay * gameweekLeaguesCount;
 
 	activeSeason.players.forEach((player) => {
 		betsByPlayers[player.id] = [];
@@ -40,11 +39,18 @@ const GameweekPlayersContainer = ({
 	);
 
 	return (
-		<Box sx={{ m: '0 aut', my: 2, maxWidth: '25rem' }}>
+		<Box sx={{ m: '0 auto', my: 2, maxWidth: '25rem' }}>
 			{sortedPlayers.map((player) => (
 				<Box
 					key={player.id}
-					sx={{ mb: 2, p: 0.5, border: '2px solid', borderRadius: 2, bgcolor: '#FFF4E8CE' }}
+					sx={{
+						mb: 2,
+						p: 0.5,
+						border: '2px solid',
+						borderRadius: 2,
+						bgcolor: '#FFF4E8CE',
+						boxShadow: '1px 4px 7px rgba(0, 0, 60, 0.4), 0px 4px 8px rgba(0, 0, 0, 0.7)',
+					}}
 				>
 					<Box sx={{ mb: 0.8, ml: 0.5, display: 'flex', alignItems: 'center', fontWeight: 600 }}>
 						<Box

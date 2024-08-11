@@ -22,7 +22,7 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
-import GameScoreValidation from '../../components/utils/GameScoreValidation';
+import gameScoreValidation from '../../components/utils/gameScoreValidation';
 import {
 	BET_STATUS_EMPTY,
 	BET_STATUS_LOST,
@@ -44,7 +44,6 @@ import BetSummaryInfo from './BetSummaryInfo';
 import MatchDayForm from './MatchDayForm';
 import { updateBet } from './betsSlice';
 import Bet from './types/Bet';
-import MatchDayInfo from './types/MatchDayInfo';
 
 const statuses = [BET_STATUS_WON, BET_STATUS_RETURNED, BET_STATUS_LOST];
 
@@ -61,9 +60,7 @@ export default function BetEditForm({
 	const calendarNodes = useAppSelector(selectAllCalendarNodes);
 	const [calendar, setCalendar] = useState<Calendar | undefined>();
 	const [updatedUser, setUpdatedUser] = useState<SimpleUser>(bet.player);
-	const [updatedIsPlayoff, setUpdatedIsPlayoff] = useState<boolean>(bet.isPlayoff);
 	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(bet.matchDay);
-	const [updatedPlayoffRound, setUpdatedPlayoffRound] = useState<string>(bet.playoffRound);
 	// TODO передать/посчитать пробелы в transformedGameResult и передать в MatchdayForm
 	const [updatedHomeTeam, setUpdatedHomeTeam] = useState<Team>(bet.homeTeam);
 	const [updatedAwayTeam, setUpdatedAwayTeam] = useState<Team>(bet.awayTeam);
@@ -84,14 +81,9 @@ export default function BetEditForm({
 	// TODO: исправить проблему в редактировании ставки при смене флага плейофф + общая проверка
 
 	const handleBetUpdateSave = useCallback(async () => {
-		console.log('prevCalendarNodeId:');
-		console.log(bet.calendarNodeId);
-		console.log('newCalendarNodeId:');
-		console.log(calendar?.id);
-
 		setBetUpdateOpenDialog(false);
-		const betOddsToNumber = Number(updatedBetOdds.trim().replace(',', '.'));
 		// TODO добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
+		const betOddsToNumber = Number(updatedBetOdds.trim().replace(',', '.'));
 		const dispatchResult = await dispatch(
 			updateBet({
 				betId: bet.id,
@@ -99,9 +91,7 @@ export default function BetEditForm({
 					seasonId: bet.seasonId,
 					leagueId: bet.leagueId,
 					userId: updatedUser.id,
-					isPlayoff: updatedIsPlayoff,
 					matchDay: updatedMatchDay,
-					playoffRound: updatedPlayoffRound,
 					homeTeamId: updatedHomeTeam.id,
 					awayTeamId: updatedAwayTeam.id,
 					betTitle: isNot ? `${updatedBetTitle}${t('not')}` : updatedBetTitle,
@@ -128,12 +118,10 @@ export default function BetEditForm({
 	}, [
 		bet,
 		calendar,
-		updatedUser.id,
+		updatedUser,
 		updatedMatchDay,
-		updatedIsPlayoff,
-		updatedPlayoffRound,
-		updatedHomeTeam.id,
-		updatedAwayTeam.id,
+		updatedHomeTeam,
+		updatedAwayTeam,
 		updatedBetTitle,
 		isNot,
 		updatedBetOdds,
@@ -148,10 +136,8 @@ export default function BetEditForm({
 		setUpdatedUser(selectedUser);
 	};
 
-	const handleMatchDaySelection = (matchDayInfo: MatchDayInfo): void => {
-		setUpdatedIsPlayoff(matchDayInfo.isPlayoff);
-		setUpdatedMatchDay(matchDayInfo.matchDay);
-		setUpdatedPlayoffRound(matchDayInfo.playoffRound);
+	const handleMatchDaySelection = (matchDayTitle: string): void => {
+		setUpdatedMatchDay(matchDayTitle);
 	};
 
 	const handleHomeTeamSelection = (homeTeam: Team): void => {
@@ -189,7 +175,7 @@ export default function BetEditForm({
 	};
 
 	const handleBetUpdateOpenDialog = (inputBet: string): void => {
-		const res = GameScoreValidation(inputBet);
+		const res = gameScoreValidation(inputBet);
 		setUpdatedGameResult(res);
 		setBetUpdateOpenDialog(true);
 	};
@@ -206,18 +192,12 @@ export default function BetEditForm({
 		const res = calendarNodes.find((c) =>
 			c.leagueMatchdayNodes.some((n) => {
 				if (n.leagueCode === bet.leagueCode) {
-					if (updatedIsPlayoff && updatedMatchDay !== t('playoffRound.final')) {
-						return n.matchDay === updatedMatchDay && n.playoffRound === updatedPlayoffRound;
-					}
-					if (updatedMatchDay === t('playoffRound.final')) {
-						return n.matchDay === 'final';
-					}
 					return n.matchDay === updatedMatchDay;
 				}
 			})
 		);
 		setCalendar(res);
-	}, [calendarNodes, bet, updatedMatchDay, updatedIsPlayoff, updatedPlayoffRound]);
+	}, [calendarNodes, bet, updatedMatchDay]);
 
 	useEffect(() => {
 		if (bet.seasonId) {
@@ -240,14 +220,7 @@ export default function BetEditForm({
 			}}
 		>
 			<BetInputPlayer defaultValue={bet.player} onUserSelect={handleUserSelection} />
-			<MatchDayForm
-				matchDayInfo={{
-					isPlayoff: bet.isPlayoff,
-					matchDay: bet.matchDay,
-					playoffRound: bet.playoffRound,
-				}}
-				onMatchDayInfo={handleMatchDaySelection}
-			/>
+			<MatchDayForm matchDay={bet.matchDay} onMatchDay={handleMatchDaySelection} />
 			{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}
 			<BetInputTeams
 				defaultHomeTeamName={bet.homeTeam.title}
@@ -364,11 +337,7 @@ export default function BetEditForm({
 							message={t('changeBet')}
 							player={updatedUser}
 							leagueCode={bet.leagueCode}
-							matchDayInfo={{
-								isPlayoff: updatedIsPlayoff,
-								matchDay: updatedMatchDay,
-								playoffRound: updatedPlayoffRound,
-							}}
+							matchDay={updatedMatchDay}
 							homeTeam={updatedHomeTeam}
 							awayTeam={updatedAwayTeam}
 							isNot={isNot}

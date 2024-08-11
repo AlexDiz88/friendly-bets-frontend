@@ -39,7 +39,6 @@ const GameweekNoCard = (): JSX.Element => {
 					flexDirection: 'column',
 				}}
 			>
-				{/* <HelpIcon sx={{ color: '#E76B0C', scale: '120%' }} /> */}
 				<PsychologyIcon sx={{ color: '#E76B0C', scale: '170%' }} />
 				{t('thinkingAboutBet')}
 			</Box>
