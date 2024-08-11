@@ -13,7 +13,7 @@ import {
 	showInfoSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
-import { gameScoreValidation } from '../../components/utils/gameScoreValidation';
+import { gameScoreValidation } from '../../components/utils/scoreValidation';
 import { BET_STATUS_LOST, BET_STATUS_RETURNED, BET_STATUS_WON, BetStatus } from '../../constants';
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';

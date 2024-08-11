@@ -22,7 +22,7 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
-import { gameScoreValidation } from '../../components/utils/gameScoreValidation';
+import { gameScoreValidation } from '../../components/utils/scoreValidation';
 import {
 	BET_STATUS_EMPTY,
 	BET_STATUS_LOST,
