@@ -1,17 +1,16 @@
 import { Avatar, Box } from '@mui/material';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
+import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
-import MatchDayInfo from './types/MatchDayInfo';
 
 export default function BetSummaryInfo({
 	message,
 	player,
 	leagueCode,
-	matchDayInfo,
+	matchDay,
 	homeTeam,
 	awayTeam,
 	isNot,
@@ -24,7 +23,7 @@ export default function BetSummaryInfo({
 	message: string;
 	player: SimpleUser | undefined;
 	leagueCode: string;
-	matchDayInfo: MatchDayInfo;
+	matchDay: string;
 	homeTeam: Team | undefined;
 	awayTeam: Team | undefined;
 	betTitle: string;
@@ -36,7 +35,7 @@ export default function BetSummaryInfo({
 }): JSX.Element {
 	const { i18n } = useTranslation();
 	const currentLanguage = i18n.language;
-	const matchDayTitle = MatchDayTitleTransform(matchDayInfo, currentLanguage);
+	const transformedTitle = matchDayTitleViewTransform(matchDay, currentLanguage);
 
 	return (
 		<Box sx={{ minWidth: '15rem', m: 0, p: 0, fontWeight: 400 }}>
@@ -54,7 +53,7 @@ export default function BetSummaryInfo({
 				/>
 				{t(`leagueFullName.${leagueCode}`)}
 			</Box>
-			<b>{t('matchday')}:</b> {matchDayTitle}
+			<b>{t('matchday')}:</b> {transformedTitle}
 			<Box sx={{ display: 'flex', alignItems: 'center' }}>
 				<b>{t('homeTeam')}:</b>
 				<Avatar

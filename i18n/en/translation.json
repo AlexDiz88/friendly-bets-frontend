@@ -274,7 +274,8 @@
 		"betCalendarNodeIdCannotBeBlank": "Matchday of the selected league is missing in the calendar",
 		"betNotFoundInCalendar": "Bet not found in the calendar",
 		"yourSessionWasFinished": "Your session has ended or was interrupted. Please log in again",
-		"noGameweeks": "There are currently no gameweeks available"
+		"noGameweeks": "There are currently no gameweeks available",
+		"betNotFoundInAnyCalendar": "Bet not found in any calendar"
 	},
 	"matchdayCalendar": "Matchday schedule",
 	"matchdayStartDate": "Start Date of Matchday",

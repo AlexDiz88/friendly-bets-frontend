@@ -8,9 +8,7 @@ export default interface Bet {
 	leagueCode: string;
 	createdAt: Date;
 	player: SimpleUser;
-	isPlayoff: boolean;
 	matchDay: string;
-	playoffRound: string;
 	homeTeam: Team;
 	awayTeam: Team;
 	betTitle: string;

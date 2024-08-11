@@ -274,7 +274,8 @@
 		"betCalendarNodeIdCannotBeBlank": "Spieltag der ausgewählten Liga fehlt im Kalender",
 		"betNotFoundInCalendar": "Wette im Kalender nicht gefunden",
 		"yourSessionWasFinished": "Ihre Sitzung wurde beendet oder unterbrochen. Bitte melden Sie sich erneut an",
-		"noGameweeks": "Derzeit sind keine Spieltage verfügbar"
+		"noGameweeks": "Derzeit sind keine Spieltage verfügbar",
+		"betNotFoundInAnyCalendar": "Wette in keinem Kalender gefunden"
 	},
 	"matchdayCalendar": "Spielplan",
 	"matchdayStartDate": "Startdatum des Spieltags",

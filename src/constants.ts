@@ -1,4 +1,5 @@
 export const TOTAL_STATS_BY_TEAMS_USER_ID = 'total';
+export const MATCHDAY_TITLE_FINAL = 'final';
 
 export const BET_STATUS_OPENED = 'OPENED';
 export const BET_STATUS_EMPTY = 'EMPTY';

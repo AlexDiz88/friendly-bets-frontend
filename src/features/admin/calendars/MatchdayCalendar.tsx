@@ -34,16 +34,11 @@ const MatchdayCalendar = (): JSX.Element => {
 	useFetchCurrentUser();
 
 	const handleSave = useCallback(async () => {
-		const updatedNodes = leagueMatchdayNodes.map((node) => {
-			const matchDayCode = node.matchDay === t('playoffRound.final') ? 'final' : node.matchDay;
-			return { ...node, matchDay: matchDayCode };
-		});
-
 		const newCalendarNode: NewCalendar = {
 			seasonId: activeSeason?.id,
 			startDate: startDate?.add(2, 'hours') || startDate,
 			endDate: endDate?.add(2, 'hours') || endDate,
-			leagueMatchdayNodes: updatedNodes,
+			leagueMatchdayNodes,
 		};
 
 		const dispatchResult = await dispatch(createCalendarNode(newCalendarNode));
@@ -57,19 +52,7 @@ const MatchdayCalendar = (): JSX.Element => {
 		if (createCalendarNode.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
-	}, [
-		activeSeason,
-		startDate,
-		endDate,
-		leagueMatchdayNodes,
-		t,
-		createCalendarNode,
-		showSuccessSnackbar,
-		showErrorSnackbar,
-		setLeagueMatchdayNodes,
-		setStartDate,
-		setEndDate,
-	]);
+	}, [activeSeason, startDate, endDate, leagueMatchdayNodes]);
 
 	const handleShowCalendarList = (): void => {
 		setShowCalendarList(!showCalendarList);

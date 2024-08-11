@@ -11,41 +11,49 @@ import {
 } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
-import MatchDayInfo from './types/MatchDayInfo';
+import { MATCHDAY_TITLE_FINAL } from '../../constants';
+
+const getIsPlayoff = (title: string): boolean => {
+	return title === MATCHDAY_TITLE_FINAL || title.startsWith('1/');
+};
+
+const getMatchday = (title: string): string => {
+	const index = title.indexOf('[');
+	return index !== -1 ? title.substring(0, index).trim() : title;
+};
+
+const getPlayoffRound = (title: string): string => {
+	const index = title.indexOf('[');
+	return index !== -1 ? title[index + 1] : '';
+};
 
 export default function MatchDayForm({
-	matchDayInfo,
-	onMatchDayInfo,
+	matchDay,
+	onMatchDay,
 }: {
-	matchDayInfo: MatchDayInfo;
-	onMatchDayInfo: (matchDayInfo: MatchDayInfo) => void;
+	matchDay: string;
+	onMatchDay: (matchDay: string) => void;
 }): JSX.Element {
-	const [updatedIsPlayoff, setUpdatedIsPlayoff] = useState<boolean>(matchDayInfo.isPlayoff);
-	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(matchDayInfo.matchDay);
-	const [updatedPlayoffRound, setUpdatedPlayoffRound] = useState<string>(matchDayInfo.playoffRound);
+	const [updatedIsPlayoff, setUpdatedIsPlayoff] = useState<boolean>(getIsPlayoff(matchDay));
+	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(getMatchday(matchDay));
+	const [updatedPlayoffRound, setUpdatedPlayoffRound] = useState<string>(getPlayoffRound(matchDay));
 
-	const playoffMatchDayList: string[] = [
-		t(`playoffRound.1/16`),
-		t(`playoffRound.1/8`),
-		t(`playoffRound.1/4`),
-		t(`playoffRound.1/2`),
-		t(`playoffRound.final`),
-	];
+	const playoffMatchDayList: string[] = ['1/16', '1/8', '1/4', '1/2', MATCHDAY_TITLE_FINAL];
 	const playoffRoundsList: string[] = ['', '1', '2', '3', '4'];
 
-	const playoffMappings: Record<string, string> = {
-		'7': t(`playoffRound.1/8`),
-		'8': t(`playoffRound.1/8`),
-		'9': t(`playoffRound.1/8`),
-		'10': t(`playoffRound.1/8`),
-		'11': t(`playoffRound.1/4`),
-		'12': t(`playoffRound.1/4`),
-		'13': t(`playoffRound.1/2`),
-		'14': t(`playoffRound.1/2`),
-		'15': t(`playoffRound.final`),
+	const championsLeaguePlayoffMappings: Record<string, string> = {
+		'7': '1/8',
+		'8': '1/8',
+		'9': '1/8',
+		'10': '1/8',
+		'11': '1/4',
+		'12': '1/4',
+		'13': '1/2',
+		'14': '1/2',
+		'15': MATCHDAY_TITLE_FINAL,
 	};
 
-	const playoffRoundMappings: Record<string, string> = {
+	const championsLeaguePlayoffRoundMappings: Record<string, string> = {
 		'7': '1',
 		'8': '2',
 		'9': '3',
@@ -58,11 +66,11 @@ export default function MatchDayForm({
 	};
 
 	useEffect(() => {
-		onMatchDayInfo({
-			isPlayoff: updatedIsPlayoff,
-			matchDay: updatedMatchDay,
-			playoffRound: updatedPlayoffRound,
-		});
+		let res = updatedMatchDay;
+		if (updatedIsPlayoff && updatedPlayoffRound !== '') {
+			res = updatedMatchDay + ' [' + updatedPlayoffRound + ']';
+		}
+		onMatchDay(res);
 	}, [updatedIsPlayoff, updatedMatchDay, updatedPlayoffRound]);
 
 	const handleIncrement = (): void => {
@@ -89,6 +97,9 @@ export default function MatchDayForm({
 	};
 
 	const handleMatchDaySelect = (e: SelectChangeEvent): void => {
+		if (e.target.value === MATCHDAY_TITLE_FINAL) {
+			setUpdatedPlayoffRound('');
+		}
 		setUpdatedMatchDay(e.target.value);
 	};
 
@@ -101,14 +112,14 @@ export default function MatchDayForm({
 		setUpdatedIsPlayoff(flag);
 
 		const matchDayTransform = flag
-			? playoffMappings[updatedMatchDay] || t(`playoffRound.1/8`)
-			: matchDayInfo.matchDay.includes('1/') || matchDayInfo.matchDay === t(`playoffRound.final`)
+			? championsLeaguePlayoffMappings[updatedMatchDay] || '1/8'
+			: getIsPlayoff(matchDay)
 			? '1'
-			: matchDayInfo.matchDay;
+			: matchDay;
 
 		const playoffRoundValue = flag
-			? playoffRoundMappings[updatedMatchDay] || ''
-			: matchDayInfo.playoffRound;
+			? championsLeaguePlayoffRoundMappings[updatedMatchDay] || ''
+			: getPlayoffRound(matchDay);
 
 		setUpdatedMatchDay(matchDayTransform);
 		setUpdatedPlayoffRound(playoffRoundValue);
@@ -166,12 +177,15 @@ export default function MatchDayForm({
 						{playoffMatchDayList.map((value) => (
 							<MenuItem key={value} sx={{ ml: -0.5, minWidth: '6rem' }} value={value}>
 								<Box style={{ display: 'flex', alignItems: 'center' }}>
-									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{value}</Typography>
+									<Typography sx={{ mx: 1, fontSize: '1rem' }}>
+										{t(`playoffRound.${value}`)}
+									</Typography>
 								</Box>
 							</MenuItem>
 						))}
 					</Select>
 					<Select
+						disabled={updatedMatchDay === MATCHDAY_TITLE_FINAL ? true : false}
 						autoWidth
 						size="small"
 						sx={{ minWidth: '4rem', mt: 1.5, mb: 0.6 }}

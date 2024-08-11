@@ -27,7 +27,6 @@ import BetInputTitle from './BetInputTitle';
 import BetSummaryInfo from './BetSummaryInfo';
 import MatchDayForm from './MatchDayForm';
 import { addBet, addEmptyBet } from './betsSlice';
-import MatchDayInfo from './types/MatchDayInfo';
 
 export default function BetInputContainer(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -37,11 +36,7 @@ export default function BetInputContainer(): JSX.Element {
 	const [selectedUser, setSelectedUser] = useState<SimpleUser | undefined>(undefined);
 	const [selectedLeague, setSelectedLeague] = useState<League>();
 	const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
-	const [matchDayInfo, setMatchDayInfo] = useState<MatchDayInfo>({
-		isPlayoff: false,
-		matchDay: '1',
-		playoffRound: '',
-	});
+	const [matchDay, setMatchDay] = useState<string>('1');
 	const [selectedHomeTeam, setSelectedHomeTeam] = useState<Team | undefined>(undefined);
 	const [selectedAwayTeam, setSelectedAwayTeam] = useState<Team | undefined>(undefined);
 	const [selectedEmptyBetSize, setSelectedEmptyBetSize] = useState<string>('10');
@@ -66,10 +61,8 @@ export default function BetInputContainer(): JSX.Element {
 	const handleSaveClick = useCallback(async () => {
 		setOpenDialog(false);
 		if (season && selectedUser && selectedHomeTeam && selectedAwayTeam) {
-			const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
 			// TODO: добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
-			const matchDayCode =
-				matchDayInfo.matchDay === t('playoffRound.final') ? 'final' : matchDayInfo.matchDay;
+			const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
 
 			const dispatchResult = await dispatch(
 				addBet({
@@ -77,9 +70,7 @@ export default function BetInputContainer(): JSX.Element {
 						seasonId: season.id,
 						leagueId: selectedLeagueId,
 						userId: selectedUser?.id,
-						isPlayoff: matchDayInfo.isPlayoff,
-						matchDay: matchDayCode,
-						playoffRound: matchDayInfo.playoffRound,
+						matchDay,
 						homeTeamId: selectedHomeTeam?.id,
 						awayTeamId: selectedAwayTeam?.id,
 						betTitle: isNot ? `${selectedBetTitle}${t('not')}` : selectedBetTitle,
@@ -113,7 +104,7 @@ export default function BetInputContainer(): JSX.Element {
 		selectedBetTitle,
 		selectedHomeTeam,
 		selectedLeagueId,
-		matchDayInfo,
+		matchDay,
 		selectedUser,
 		t,
 		calendar,
@@ -122,17 +113,13 @@ export default function BetInputContainer(): JSX.Element {
 	// добавление пустой ставки
 	const handleSaveEmptyBet = useCallback(async () => {
 		if (season && selectedUser) {
-			const matchDayCode =
-				matchDayInfo.matchDay === t('playoffRound.final') ? 'final' : matchDayInfo.matchDay;
 			const dispatchResult = await dispatch(
 				addEmptyBet({
 					newEmptyBet: {
 						seasonId: season.id,
 						leagueId: selectedLeagueId,
 						userId: selectedUser.id,
-						isPlayoff: matchDayInfo.isPlayoff,
-						matchDay: matchDayCode,
-						playoffRound: matchDayInfo.playoffRound,
+						matchDay,
 						betSize: Number(selectedEmptyBetSize),
 						calendarNodeId: calendar?.id,
 					},
@@ -152,14 +139,7 @@ export default function BetInputContainer(): JSX.Element {
 			setOpenDialogEmptyBet(false);
 			setOpenDialogTwoEmptyBet(false);
 		}
-	}, [
-		openDialogEmptyBet,
-		season,
-		selectedEmptyBetSize,
-		selectedLeagueId,
-		matchDayInfo,
-		selectedUser,
-	]);
+	}, [openDialogEmptyBet, season, selectedEmptyBetSize, selectedLeagueId, matchDay, selectedUser]);
 
 	// хэндлеры
 	const handleEmptyBet = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -179,8 +159,8 @@ export default function BetInputContainer(): JSX.Element {
 		setShowSendButton(false);
 	};
 
-	const handleMatchDayInfo = (info: MatchDayInfo): void => {
-		setMatchDayInfo(info);
+	const handleMatchDay = (title: string): void => {
+		setMatchDay(title);
 	};
 
 	const handleHomeTeamSelection = (homeTeam: Team): void => {
@@ -245,20 +225,12 @@ export default function BetInputContainer(): JSX.Element {
 		const res = calendarNodes.find((c) =>
 			c.leagueMatchdayNodes.some((n) => {
 				if (n.leagueCode === selectedLeague?.leagueCode) {
-					if (matchDayInfo.isPlayoff && matchDayInfo.matchDay !== t('playoffRound.final')) {
-						return (
-							n.matchDay === matchDayInfo.matchDay && n.playoffRound === matchDayInfo.playoffRound
-						);
-					}
-					if (matchDayInfo.matchDay === t('playoffRound.final')) {
-						return n.matchDay === 'final';
-					}
-					return n.matchDay === matchDayInfo.matchDay;
+					return n.matchDay === matchDay;
 				}
 			})
 		);
 		setCalendar(res);
-	}, [selectedLeague, matchDayInfo]);
+	}, [selectedLeague, matchDay]);
 
 	useEffect(() => {
 		if (season) {
@@ -302,12 +274,8 @@ export default function BetInputContainer(): JSX.Element {
 						<>
 							<MatchDayForm
 								key={selectedLeague.id}
-								matchDayInfo={{
-									isPlayoff: false,
-									matchDay: selectedLeague ? selectedLeague.currentMatchDay : '1',
-									playoffRound: '',
-								}}
-								onMatchDayInfo={handleMatchDayInfo}
+								matchDay={selectedLeague ? selectedLeague.currentMatchDay : '1'}
+								onMatchDay={handleMatchDay}
 							/>
 							{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}
 						</>
@@ -316,7 +284,7 @@ export default function BetInputContainer(): JSX.Element {
 			)}
 			{!isEmptyBet && (
 				<>
-					{selectedLeagueId && matchDayInfo && (
+					{selectedLeagueId && matchDay && (
 						<BetInputTeams
 							onHomeTeamSelect={handleHomeTeamSelection}
 							onAwayTeamSelect={handleAwayTeamSelection}
@@ -410,7 +378,7 @@ export default function BetInputContainer(): JSX.Element {
 						message={t('addBet')}
 						player={selectedUser}
 						leagueCode={selectedLeague?.leagueCode || ''}
-						matchDayInfo={matchDayInfo}
+						matchDay={matchDay}
 						homeTeam={selectedHomeTeam}
 						awayTeam={selectedAwayTeam}
 						isNot={isNot}

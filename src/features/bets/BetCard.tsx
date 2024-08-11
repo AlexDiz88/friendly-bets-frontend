@@ -2,7 +2,7 @@ import { Avatar, Box } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import MatchDayTitleTransform from '../../components/utils/MatchDayTitleTransform';
+import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import Bet from './types/Bet';
@@ -13,16 +13,7 @@ export default function BetCard({ bet }: { bet: Bet }): JSX.Element {
 	const [matchDayTitle, setMatchDayTitle] = useState<string>('');
 
 	useEffect(() => {
-		setMatchDayTitle(
-			MatchDayTitleTransform(
-				{
-					isPlayoff: bet.isPlayoff,
-					matchDay: bet.matchDay,
-					playoffRound: bet.playoffRound,
-				},
-				currentLanguage
-			)
-		);
+		setMatchDayTitle(matchDayTitleViewTransform(bet.matchDay, currentLanguage));
 	}, [bet, currentLanguage]);
 
 	const { leagueCode, player, homeTeam, awayTeam, betTitle, betOdds, betSize } = bet;

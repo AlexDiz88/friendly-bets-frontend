@@ -3,6 +3,7 @@ import { Avatar, Box, IconButton, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import pathToLogoImage from '../../../components/utils/pathToLogoImage';
+import { MATCHDAY_TITLE_FINAL } from '../../../constants';
 import Calendar from './types/Calendar';
 
 const CalendarNode = ({
@@ -53,10 +54,9 @@ const CalendarNode = ({
 													color: '#123456',
 												}}
 											>
-												{node.matchDay === 'final' ? t('playoffRound.final') : node.matchDay}
-												{node.isPlayoff && node.matchDay !== 'final'
-													? ` [${node.playoffRound}]`
-													: ''}
+												{node.matchDay === MATCHDAY_TITLE_FINAL
+													? t(`playoffRound.${node.matchDay}`)
+													: node.matchDay}
 											</Typography>
 										</Box>
 									</Box>
