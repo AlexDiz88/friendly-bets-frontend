@@ -1,6 +1,15 @@
 import { t } from 'i18next';
 
+const removeExtraLabels = (str: string): string => {
+	str = str
+		.trim()
+		.replace(/[$!"№%?{}§&+=\][(]/g, '')
+		.replace(/доп\.|пен\./g, '');
+	return str;
+};
+
 export const transformGameResult = (str: string): string => {
+	str = removeExtraLabels(str);
 	str = str
 		.trim()
 		.replace(/[$!"№%?(){}\]§&+=]/g, '')
@@ -9,14 +18,6 @@ export const transformGameResult = (str: string): string => {
 		.replace(/[,]/g, ' ')
 		.replace(/\s+/g, ' ')
 		.trim();
-	return str;
-};
-
-export const removeExtraLabels = (str: string): string => {
-	str = str
-		.trim()
-		.replace(/[$!"№%?{}§&+=\][(]/g, '')
-		.replace(/доп\.|пен\./g, '');
 	return str;
 };
 
@@ -50,7 +51,7 @@ function isValidScore(matchScore: string, isOvertime: boolean, isPenalty: boolea
 }
 
 // проверка корректности введенного счёта
-export function gameScoreValidation(inputString: string): string {
+export const gameScoreValidation = (inputString: string): string => {
 	if (!inputString) {
 		return '';
 	}
@@ -83,4 +84,4 @@ export function gameScoreValidation(inputString: string): string {
 	}
 
 	return transformedString;
-}
+};

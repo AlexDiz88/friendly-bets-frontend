@@ -8,7 +8,7 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
-import { removeExtraLabels, transformGameResult } from '../../components/utils/gameScoreValidation';
+import { transformGameResult } from '../../components/utils/gameScoreValidation';
 import BetEditForm from './BetEditForm';
 import { deleteBet } from './betsSlice';
 import Bet from './types/Bet';
@@ -40,7 +40,7 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 
 	const handleEditBet = (): void => {
 		setShowEditForm(!showEditForm);
-		const result = transformGameResult(removeExtraLabels(bet.gameResult || ''));
+		const result = transformGameResult(bet.gameResult || '');
 		setTransformedGameResult(result);
 	};
 
