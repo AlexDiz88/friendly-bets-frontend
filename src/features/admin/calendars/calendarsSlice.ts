@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import dayjs from 'dayjs';
 import * as api from './api';
 import CalendarsState from './types/CalendarsState';
 import NewCalendar from './types/NewCalendar';
@@ -87,8 +88,9 @@ const calendarsSlice = createSlice({
 				state.actualCalendarNodeBets = [];
 			})
 			.addCase(createCalendarNode.fulfilled, (state, action) => {
-				state.calendarNode = action.payload;
-				state.allCalendarNodes.unshift(action.payload);
+				state.allCalendarNodes = [action.payload, ...state.allCalendarNodes].sort((a, b) =>
+					dayjs(a.startDate).isBefore(dayjs(b.startDate)) ? 1 : -1
+				);
 			})
 			.addCase(createCalendarNode.rejected, (state, action) => {
 				state.error = action.error.message;

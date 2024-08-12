@@ -1,7 +1,7 @@
 import { Box, Dialog, DialogActions, DialogContent } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import {
@@ -9,12 +9,15 @@ import {
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import { transformGameResult } from '../../components/utils/scoreValidation';
+import { getSeasonCalendarHasBetsNodes } from '../admin/calendars/calendarsSlice';
+import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import BetEditForm from './BetEditForm';
 import { deleteBet } from './betsSlice';
 import Bet from './types/Bet';
 
 export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	const dispatch = useAppDispatch();
+	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const [showEditForm, setShowEditForm] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [transformedGameResult, setTransformedGameResult] = useState<string>('');
@@ -32,6 +35,9 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 
 		if (deleteBet.fulfilled.match(dispatchResult)) {
 			dispatch(showSuccessSnackbar({ message: t('betWasSuccessfullyDeleted') }));
+			if (activeSeasonId) {
+				dispatch(getSeasonCalendarHasBetsNodes(activeSeasonId));
+			}
 		}
 		if (deleteBet.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));

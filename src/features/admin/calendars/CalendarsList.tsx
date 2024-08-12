@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import CustomErrorMessage from '../../../components/custom/CustomErrorMessage';
 import CustomCalendarDialog from '../../../components/custom/dialog/CustomCalendarDialog';
 import {
 	showErrorSnackbar,
@@ -58,12 +59,17 @@ const CalendarsList = ({ activeSeasonId }: { activeSeasonId: string }): JSX.Elem
 					mt: 2,
 				}}
 			>
-				{Array.isArray(calendarNodes) &&
-					calendarNodes.map((c) => (
-						<Box key={c.id} sx={{ my: 0.5 }}>
-							<CalendarNode calendar={c} onClick={() => handleOpenDialog(c)} deleteIcon />
-						</Box>
-					))}
+				<Box>
+					{Array.isArray(calendarNodes) && calendarNodes.length > 0 ? (
+						calendarNodes.map((c) => (
+							<Box key={c.id} sx={{ my: 0.5 }}>
+								<CalendarNode calendar={c} onClick={() => handleOpenDialog(c)} deleteIcon />
+							</Box>
+						))
+					) : (
+						<CustomErrorMessage message="noGameweeks" />
+					)}
+				</Box>
 			</Box>
 
 			{selectedCalendarNode && (

@@ -32,10 +32,11 @@ export default function MenuPages(): JSX.Element {
 		t('byGameweeks'),
 		t('byLeagues'),
 		t('byTeams'),
-		// t('byMonths'),
 		t('archive'),
 		t('rules'),
+		t('language'),
 	];
+
 	const languages: Language[] = [
 		{ code: 'en', name: 'English', img: 'english.png' },
 		{ code: 'de', name: 'Deutsch', img: 'german.png' },
@@ -95,6 +96,7 @@ export default function MenuPages(): JSX.Element {
 
 	return (
 		<>
+			{/* Мобильная версия меню */}
 			<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 				<IconButton
 					size="large"
@@ -124,48 +126,32 @@ export default function MenuPages(): JSX.Element {
 					{pages.map((page) => (
 						<MenuItem
 							key={page}
-							onClick={() => {
-								handleCloseNavMenu();
-								handleNavigate(page);
-							}}
+							sx={
+								page === t('language')
+									? {
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'space-between',
+									  }
+									: undefined
+							}
+							onClick={
+								page === t('language')
+									? handleOpenLangMenu
+									: () => {
+											handleCloseNavMenu();
+											handleNavigate(page);
+									  }
+							}
 						>
-							<Typography>{page}</Typography>
+							<Typography sx={{ fontWeight: 600 }}>{page}</Typography>
+							{page === t('language') && <KeyboardArrowRight />}
 						</MenuItem>
 					))}
-					<MenuItem
-						onClick={handleOpenLangMenu}
-						sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-					>
-						<Typography>{t('language')}</Typography>
-						<KeyboardArrowRight />
-					</MenuItem>
-					<Menu
-						id="language-menu"
-						anchorEl={anchorElLang}
-						anchorOrigin={{
-							vertical: 'top',
-							horizontal: 'right',
-						}}
-						transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-						open={Boolean(anchorElLang)}
-						onClose={handleCloseLangMenu}
-					>
-						{languages.map((lang) => (
-							<MenuItem key={lang.code} onClick={() => handleLanguageSelect(lang)}>
-								<Box sx={{ mb: 0.8, ml: 0.5, display: 'flex', alignItems: 'center' }}>
-									<Avatar
-										sx={{ mr: 0.5, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
-										alt="language_flag"
-										// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-										src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${lang.img}`}
-									/>
-									{lang.name}
-								</Box>
-							</MenuItem>
-						))}
-					</Menu>
 				</Menu>
 			</Box>
+
+			{/* Десктопная версия меню */}
 			<Box sx={{ display: 'flex', alignItems: 'center' }}>
 				<CustomMenuPageText onClick={scrollToTop} href="#" title={t('table')} />
 				<CustomMenuPageText onClick={scrollToTop} href="#/bets/opened" title={t('bets')} />
@@ -173,16 +159,43 @@ export default function MenuPages(): JSX.Element {
 					{pages.map((page) => (
 						<CustomMenuPageText
 							key={page}
-							onClickCapture={() => {
-								handleCloseNavMenu();
-								handleNavigate(page);
+							onClickCapture={(event) => {
+								if (page === t('language')) {
+									handleOpenLangMenu(event);
+								} else {
+									handleNavigate(page);
+								}
 								scrollToTop();
+								handleCloseNavMenu();
 							}}
 							title={page}
 						/>
 					))}
 				</Box>
 			</Box>
+
+			<Menu
+				id="language-menu"
+				anchorEl={anchorElLang}
+				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+				transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+				open={Boolean(anchorElLang)}
+				onClose={handleCloseLangMenu}
+			>
+				{languages.map((lang) => (
+					<MenuItem key={lang.code} onClick={() => handleLanguageSelect(lang)}>
+						<Box sx={{ mb: 0.8, ml: 0, display: 'flex', alignItems: 'center' }}>
+							<Avatar
+								sx={{ mr: 0.5, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
+								alt="language_flag"
+								// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+								src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${lang.img}`}
+							/>
+							{lang.name}
+						</Box>
+					</MenuItem>
+				))}
+			</Menu>
 		</>
 	);
 }

@@ -139,7 +139,15 @@ export default function BetInputContainer(): JSX.Element {
 			setOpenDialogEmptyBet(false);
 			setOpenDialogTwoEmptyBet(false);
 		}
-	}, [openDialogEmptyBet, season, selectedEmptyBetSize, selectedLeagueId, matchDay, selectedUser]);
+	}, [
+		openDialogEmptyBet,
+		season,
+		selectedEmptyBetSize,
+		selectedLeagueId,
+		matchDay,
+		selectedUser,
+		calendar,
+	]);
 
 	// хэндлеры
 	const handleEmptyBet = (event: React.ChangeEvent<HTMLInputElement>): void => {
