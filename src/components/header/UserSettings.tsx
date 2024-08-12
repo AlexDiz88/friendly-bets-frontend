@@ -125,7 +125,7 @@ export default function UserSettings(): JSX.Element {
 							handleCloseUserMenu();
 						}}
 					>
-						<Typography>{setting}</Typography>
+						<Typography sx={{ fontWeight: 600 }}>{setting}</Typography>
 					</MenuItem>
 				))}
 			</Menu>

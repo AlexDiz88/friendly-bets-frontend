@@ -144,24 +144,23 @@ const Gameweek = (): JSX.Element => {
 												))}
 											</Select>
 										</Box>
+										<Box>
+											{activeSeason && gameweekBets?.bets && selectedCalendarNode ? (
+												<Box>
+													<GameweekPlayerContainer
+														activeSeason={activeSeason}
+														bets={gameweekBets.bets}
+														gameweekCardsCount={gameweekCardsCount}
+													/>
+												</Box>
+											) : (
+												<CustomLoading />
+											)}
+										</Box>
 									</>
 								) : (
 									<CustomErrorMessage message="noGameweeks" />
 								)}
-
-								<Box>
-									{activeSeason && gameweekBets?.bets && selectedCalendarNode ? (
-										<Box>
-											<GameweekPlayerContainer
-												activeSeason={activeSeason}
-												bets={gameweekBets.bets}
-												gameweekCardsCount={gameweekCardsCount}
-											/>
-										</Box>
-									) : (
-										<CustomLoading />
-									)}
-								</Box>
 							</>
 						)}
 					</Box>

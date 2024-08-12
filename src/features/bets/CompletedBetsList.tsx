@@ -33,10 +33,12 @@ const CompletedBetsList = (): JSX.Element => {
 
 	const handleLeagueChange = (e: SelectChangeEvent): void => {
 		setSelectedLeagueCode(e.target.value);
+		setPage(1);
 	};
 
 	const handlePlayerChange = (e: SelectChangeEvent): void => {
 		setSelectedPlayerName(e.target.value);
+		setPage(1);
 	};
 
 	useEffect(() => {

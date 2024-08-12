@@ -31,9 +31,13 @@ import {
 	BET_STATUS_WON,
 } from '../../constants';
 import CalendarNode from '../admin/calendars/CalendarNode';
-import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
+import {
+	getAllSeasonCalendarNodes,
+	getSeasonCalendarHasBetsNodes,
+} from '../admin/calendars/calendarsSlice';
 import { selectAllCalendarNodes } from '../admin/calendars/selectors';
 import Calendar from '../admin/calendars/types/Calendar';
+import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
 import BetInputOdds from './BetInputOdds';
@@ -57,6 +61,7 @@ export default function BetEditForm({
 	handleEditBet: (showEditForm: boolean) => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
+	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const calendarNodes = useAppSelector(selectAllCalendarNodes);
 	const [calendar, setCalendar] = useState<Calendar | undefined>();
 	const [updatedUser, setUpdatedUser] = useState<SimpleUser>(bet.player);
@@ -107,6 +112,9 @@ export default function BetEditForm({
 
 		if (updateBet.fulfilled.match(dispatchResult)) {
 			dispatch(showSuccessSnackbar({ message: t('betWasSuccessfullyEdited') }));
+			if (activeSeasonId) {
+				dispatch(getSeasonCalendarHasBetsNodes(activeSeasonId));
+			}
 			setTimeout(() => {
 				handleEditBet(false);
 				scrollToTop();

@@ -33,11 +33,6 @@ const MatchdayLeaguePicker = ({
 	const handleAddLeague = (): void => {
 		if (selectedLeague) {
 			const leagueExists = leagueMatchdayNodes.some((lmn) => {
-				console.log('lmn.matchDay');
-				console.log(lmn.matchDay);
-				console.log('matchDay');
-				console.log(matchDay);
-
 				return lmn.leagueId === selectedLeague.id && lmn.matchDay === matchDay;
 			});
 
