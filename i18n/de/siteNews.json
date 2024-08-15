@@ -1,47 +1,79 @@
 {
-  "Season2324": {
-    "title": "Beginn der Saison 2023-2024",
-    "date": "11. August 2023",
-    "header": "Freue mich, den Beginn der neuen Fußballsaison bekannt zu geben! In diesem Jahr haben wir eine neue Website. Alle Details sind auf Knopfdruck verfügbar",
-    "topic": "Hauptmerkmale unserer neuen Website",
-    "paragraph": {
-      "1": "1. Autorisierung. Jeder Teilnehmer hat jetzt die Möglichkeit, sich auf der Website zu registrieren, sein persönliches Konto zu nutzen und seinen Anzeigenamen nach Belieben zu ändern. In naher Zukunft wird es auch möglich sein, Ihr Foto hochzuladen.",
-      "3": "3. Das gesamte Design der Website-Oberfläche basiert auf den Abstimmungspräferenzen aller Teilnehmer, um die Benutzerfreundlichkeit speziell auf Smartphones zu gewährleisten. Daher werden derzeit möglicherweise nicht alle Seiten der Website auf großen Monitorbildschirmen schön angezeigt. Es kann auch verschiedene kleinere Anzeigeprobleme auf sehr kleinen Smartphone-Bildschirmen geben. Wenn Sie auf schiefe Tabellen/Seiten stoßen, lassen Sie es mich privat wissen.",
-      "4": "4. Wir haben jetzt Website-Nachrichten (wie diese, die Sie gerade lesen :D). Sie werden selten sein, aber jetzt können Sie jederzeit zurückkommen und nützliche oder interessante Informationen über unsere Website, das Turnier oder irgendwelche Innovationen und Änderungen lesen.",
-      "5": "5. Wie Sie vielleicht bemerkt haben, sind viele Seiten der Website noch nicht verfügbar. In naher Zukunft werden viele verschiedene Tabellen, interessante Statistiken, Filter und Sortierungen für verschiedene Turniere, Teilnehmer usw. erscheinen, die immer auf dem neuesten Stand sind. Derzeit gibt es das notwendige Minimum in Form der Haupttabelle, der Wettliste, der Wettresultate und des persönlichen Kontos.",
-      "6": "6. Fast alle visuellen und technischen Änderungen der Website sind möglich. Wenn Sie also Vorschläge und Ideen haben, wie die Website verbessert werden könnte, zögern Sie nicht, mir oder im allgemeinen Chat zu schreiben. Wir werden alles besprechen und die interessantesten und nützlichsten Ideen umsetzen!",
-      "2a": "2. Die Verwaltung von Saisons und Wetten erfolgt jetzt direkt von der Website aus und nicht wie bisher in Excel- oder GoogleSheets-Tabellen. Alle Daten werden auf der offiziellen Website gespeichert",
-      "2b": "Das Hinzufügen und Verarbeiten von Wetten erfolgt jetzt online. Sobald eine Wette vom Moderator hinzugefügt oder verarbeitet wird, werden alle Ergebnisse, einschließlich der Haupttabelle, sofort in Echtzeit aktualisiert."
-    },
-    "text": {
-      "1": "Teilnehmeranforderungen",
-      "2": "Um am Turnier teilzunehmen, müssen Sie",
-      "3": "Registrieren Sie sich auf der Website. Klicken Sie dazu auf das Foto des Mannes mit Brille und wählen Sie die Option",
-      "4": "Registrieren",
-      "5": "Ihr Passwort muss mindestens 6 Zeichen lang sein.",
-      "6": "Gehen Sie dann in Ihr persönliches Konto (auch über diesen Mann) und wählen Sie die Option",
-      "7": "Mein Profil",
-      "8": "Klicken Sie dann auf",
-      "9": "Namen ändern",
-      "10": "und wählen Sie sich einen Spitznamen auf der Website. Schreiben Sie keine zu langen Namen. Im Namen können nur Buchstaben/Zahlen, Leerzeichen und Symbole verwendet werden",
-      "11": "Sie können Ihren Namen jederzeit später ändern.",
-      "12": "Wählen Sie erneut über den Mann",
-      "13": "Turnieranmeldung",
-      "14": "Klicken Sie im geöffneten Fenster auf die Registrierungs-Schaltfläche.",
-      "15": "Herzlichen Glückwunsch! Alles ist bereit :D",
-      "16": "Sicherheit der Website",
-      "17": "Die Website wurde unter Anwendung moderner Sicherheitstechnologien entwickelt. Die Übertragung aller Daten erfolgt über ein sicheres SSL-Zertifikat unter Verwendung einer https-Verbindung. Außerdem wird beispielsweise beim Eingeben eines Passworts eine sichere Tastatur verwendet, zusätzlich werden alle Passwörter mit einem zuverlässigen BCrypt-System verschlüsselt und in der Datenbank als Hash gespeichert. Ein solches Passwort zu knacken (d. h. zurückzucodieren), selbst bei Zugriff auf die Datenbank, ist physisch unmöglich. Daher können Sie bedenkenlos beliebige Passwörter für die Registrierung auf der Website verwenden und sicher sein, dass sie zuverlässig geschützt sind.",
-      "18": "Später wird die Möglichkeit hinzugefügt, sich mit einem Google-Konto auf der Website zu registrieren und anzumelden",
-      "19": "Das ist alles! Viel Erfolg allen bei unserem Wettbewerb!"
-    }
-  },
-  "ScheduleEuro2024": {
-    "title": "Spielplan der Gruppenphase der EURO 2024",
-    "date": "13. Juni 2024",
-    "header": "Hier können Sie die Daten und Startzeiten aller Gruppenspielen einsehen.",
-    "showSchedule": "Spielplan anzeigen",
-    "text": {
-      "1": "Viel Erfolg allen im Turnier!"
-    }
-  }
+	"Season2324": {
+		"title": "Beginn der Saison 2023-2024",
+		"date": "11. August 2023",
+		"header": "Freue mich, den Beginn der neuen Fußballsaison bekannt zu geben! In diesem Jahr haben wir eine neue Website. Alle Details sind auf Knopfdruck verfügbar",
+		"topic": "Hauptmerkmale unserer neuen Website",
+		"paragraph": {
+			"1": "1. Autorisierung. Jeder Teilnehmer hat jetzt die Möglichkeit, sich auf der Website zu registrieren, sein persönliches Konto zu nutzen und seinen Anzeigenamen nach Belieben zu ändern. In naher Zukunft wird es auch möglich sein, Ihr Foto hochzuladen.",
+			"3": "3. Das gesamte Design der Website-Oberfläche basiert auf den Abstimmungspräferenzen aller Teilnehmer, um die Benutzerfreundlichkeit speziell auf Smartphones zu gewährleisten. Daher werden derzeit möglicherweise nicht alle Seiten der Website auf großen Monitorbildschirmen schön angezeigt. Es kann auch verschiedene kleinere Anzeigeprobleme auf sehr kleinen Smartphone-Bildschirmen geben. Wenn Sie auf schiefe Tabellen/Seiten stoßen, lassen Sie es mich privat wissen.",
+			"4": "4. Wir haben jetzt Website-Nachrichten (wie diese, die Sie gerade lesen :D). Sie werden selten sein, aber jetzt können Sie jederzeit zurückkommen und nützliche oder interessante Informationen über unsere Website, das Turnier oder irgendwelche Innovationen und Änderungen lesen.",
+			"5": "5. Wie Sie vielleicht bemerkt haben, sind viele Seiten der Website noch nicht verfügbar. In naher Zukunft werden viele verschiedene Tabellen, interessante Statistiken, Filter und Sortierungen für verschiedene Turniere, Teilnehmer usw. erscheinen, die immer auf dem neuesten Stand sind. Derzeit gibt es das notwendige Minimum in Form der Haupttabelle, der Wettliste, der Wettresultate und des persönlichen Kontos.",
+			"6": "6. Fast alle visuellen und technischen Änderungen der Website sind möglich. Wenn Sie also Vorschläge und Ideen haben, wie die Website verbessert werden könnte, zögern Sie nicht, mir oder im allgemeinen Chat zu schreiben. Wir werden alles besprechen und die interessantesten und nützlichsten Ideen umsetzen!",
+			"2a": "2. Die Verwaltung von Saisons und Wetten erfolgt jetzt direkt von der Website aus und nicht wie bisher in Excel- oder GoogleSheets-Tabellen. Alle Daten werden auf der offiziellen Website gespeichert",
+			"2b": "Das Hinzufügen und Verarbeiten von Wetten erfolgt jetzt online. Sobald eine Wette vom Moderator hinzugefügt oder verarbeitet wird, werden alle Ergebnisse, einschließlich der Haupttabelle, sofort in Echtzeit aktualisiert."
+		},
+		"text": {
+			"1": "Teilnehmeranforderungen",
+			"2": "Um am Turnier teilzunehmen, müssen Sie",
+			"3": "Registrieren Sie sich auf der Website. Klicken Sie dazu auf das Foto des Mannes mit Brille und wählen Sie die Option",
+			"4": "Registrieren",
+			"5": "Ihr Passwort muss mindestens 6 Zeichen lang sein.",
+			"6": "Gehen Sie dann in Ihr persönliches Konto (auch über diesen Mann) und wählen Sie die Option",
+			"7": "Mein Profil",
+			"8": "Klicken Sie dann auf",
+			"9": "Namen ändern",
+			"10": "und wählen Sie sich einen Spitznamen auf der Website. Schreiben Sie keine zu langen Namen. Im Namen können nur Buchstaben/Zahlen, Leerzeichen und Symbole verwendet werden",
+			"11": "Sie können Ihren Namen jederzeit später ändern.",
+			"12": "Wählen Sie erneut über den Mann",
+			"13": "Turnieranmeldung",
+			"14": "Klicken Sie im geöffneten Fenster auf die Registrierungs-Schaltfläche.",
+			"15": "Herzlichen Glückwunsch! Alles ist bereit :D",
+			"16": "Sicherheit der Website",
+			"17": "Die Website wurde unter Anwendung moderner Sicherheitstechnologien entwickelt. Die Übertragung aller Daten erfolgt über ein sicheres SSL-Zertifikat unter Verwendung einer https-Verbindung. Außerdem wird beispielsweise beim Eingeben eines Passworts eine sichere Tastatur verwendet, zusätzlich werden alle Passwörter mit einem zuverlässigen BCrypt-System verschlüsselt und in der Datenbank als Hash gespeichert. Ein solches Passwort zu knacken (d. h. zurückzucodieren), selbst bei Zugriff auf die Datenbank, ist physisch unmöglich. Daher können Sie bedenkenlos beliebige Passwörter für die Registrierung auf der Website verwenden und sicher sein, dass sie zuverlässig geschützt sind.",
+			"18": "Später wird die Möglichkeit hinzugefügt, sich mit einem Google-Konto auf der Website zu registrieren und anzumelden",
+			"19": "Das ist alles! Viel Erfolg allen bei unserem Wettbewerb!"
+		}
+	},
+	"ScheduleEuro2024": {
+		"title": "Spielplan der Gruppenphase der EURO 2024",
+		"date": "13. Juni 2024",
+		"header": "Hier können Sie die Daten und Startzeiten aller Gruppenspielen einsehen.",
+		"showSchedule": "Spielplan anzeigen",
+		"text": {
+			"1": "Viel Erfolg allen im Turnier!"
+		}
+	},
+	"Season2425": {
+		"title": "Start der Saison 2024-2025",
+		"date": "15. August, 2024",
+		"header": "Die neue Fußballsaison steht kurz bevor! Über die Neuerungen und Änderungen können Sie nachlesen, indem Sie auf die Schaltfläche 'Mehr Details' klicken",
+		"showSchedule": "Mehr Details",
+		"topic": "Wichtige Änderungen in dieser Saison",
+		"text": {
+			"1": "1. Änderungen in den Turnierregeln, in Abschnitt Nr. 3.",
+			"2": "Um zu vermeiden, dass unser Wettbewerb zu einem Glücksspiel wird, gilt ab dieser Saison der erhöhte Einsatzbetrag nur ",
+			"3": "für die Finalspiele der Turniere ",
+			"4": " und entspricht dem doppelten Einsatzbetrag - ",
+			"5": "20 Einheiten ",
+			"6": "(anstatt wie bisher 30).",
+			"7": "Daher gilt für alle Halbfinale jetzt der Standard-Einsatzbetrag von 10 Einheiten. Diese Änderung ergibt sich daraus, dass es in der regulären Saison zu viele Halbfinalspiele gibt (so viele wie 8!!! - 4 in der CL + 4 in der EL), während EM und WM insgesamt recht kurze Turniere sind, bei denen es ohnehin schon schwierig ist, einen Vorsprung gegenüber den Konkurrenten zu erzielen.",
+			"8": "2. Neue Seite 'Nach Spieltagen'",
+			"9": "Auf dieser Seite können Sie bequem den Status aller Wetten der Teilnehmer für den aktuellen Spieltag verfolgen. Hier können Sie auch die Statistiken jedes vergangenen Spieltages einsehen. Der Vorteil besteht darin, dass man an einem Ort sehen kann, welche Wetten von wem eingereicht wurden, und je nach Wettstatus (gewonnen/verloren/verpasst) werden nur die nützlichen Informationen dazu angezeigt.",
+			"9a": "Hier können Sie auch das Guthaben der Teilnehmer in einem bestimmten Spieltag überprüfen (es wird neben dem Namen des Teilnehmers angezeigt). Die Teilnehmer sind übrigens nach Gewinn sortiert, was es sehr einfach macht, zu sehen, wer in der betreffenden Woche der Beste war.",
+			"10": "Sie finden diese Seite, indem Sie auf den 'Hamburger' in der oberen linken Ecke klicken und den entsprechenden Link auswählen.",
+			"11": "3. Die Seite ist jetzt mehrsprachig!",
+			"12": "Jeder Benutzer hat nun die Möglichkeit, eine Sprache auszuwählen, die ihm angenehm ist.",
+			"13": "Zur Auswahl stehen Russisch, Englisch und Deutsch. Derzeit sind fast 100 % der Website übersetzt, einschließlich Menüs, Nachrichten, Regeln, Teamnamen, Ligen usw.",
+			"14": "Das Einzige, was vorerst unübersetzt bleibt, sind die Namen der Wetten (es gibt dort einige Komplexitäten, daher habe ich dieses Thema wegen Zeitmangels aufgeschoben, aber sie werden im Laufe dieser Saison übersetzt).",
+			"15": "4. Neues Logo der Seite und Optimierung",
+			"16a": "Es wurden verschiedene Arbeiten zur Verbesserung der Geschwindigkeit der Seite durchgeführt. Jetzt laden die Seiten ",
+			"16b": "'Wetten' ",
+			"16c": "und ",
+			"16d": "'Nach Teams' ",
+			"16e": "deutlich schneller als zuvor und deren Betrachtung wird nicht mehr von langen Ladezeiten begleitet.",
+			"17": "Und das neue Logo, hoffe ich, verleiht etwas Stil :)",
+			"18": "Das ist alles! Viel Erfolg allen in der neuen Saison!!!"
+		}
+	}
 }

@@ -67,13 +67,13 @@ export default function BetEditForm({
 	const [updatedUser, setUpdatedUser] = useState<SimpleUser>(bet.player);
 	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(bet.matchDay);
 	// TODO передать/посчитать пробелы в transformedGameResult и передать в MatchdayForm
-	const [updatedHomeTeam, setUpdatedHomeTeam] = useState<Team>(bet.homeTeam);
-	const [updatedAwayTeam, setUpdatedAwayTeam] = useState<Team>(bet.awayTeam);
-	const [updatedBetTitle, setUpdatedBetTitle] = useState<string>(
-		bet.betTitle.endsWith(t('not')) ? bet.betTitle.split(t('not'))[0].trim() : bet.betTitle
+	const [updatedHomeTeam, setUpdatedHomeTeam] = useState<Team | undefined>(bet.homeTeam);
+	const [updatedAwayTeam, setUpdatedAwayTeam] = useState<Team | undefined>(bet.awayTeam);
+	const [updatedBetTitle, setUpdatedBetTitle] = useState<string | undefined>(
+		bet.betTitle?.endsWith(t('not')) ? bet.betTitle.split(t('not'))[0].trim() : bet.betTitle
 	);
-	const [isNot, setIsNot] = useState<boolean>(bet.betTitle.endsWith(t('not')));
-	const [updatedBetOdds, setUpdatedBetOdds] = useState<string>(bet.betOdds.toString());
+	const [isNot, setIsNot] = useState<boolean | undefined>(bet.betTitle?.endsWith(t('not')));
+	const [updatedBetOdds, setUpdatedBetOdds] = useState<string | undefined>(bet.betOdds?.toString());
 	const [updatedBetSize, setUpdatedBetSize] = useState<string>(bet.betSize.toString());
 	const [updatedBetStatus, setUpdatedBetStatus] = useState<string>(bet.betStatus);
 	const [updatedGameResult, setUpdatedGameResult] = useState<string>(bet.gameResult || '');
@@ -88,7 +88,7 @@ export default function BetEditForm({
 	const handleBetUpdateSave = useCallback(async () => {
 		setBetUpdateOpenDialog(false);
 		// TODO добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
-		const betOddsToNumber = Number(updatedBetOdds.trim().replace(',', '.'));
+		const betOddsToNumber = Number(updatedBetOdds?.trim().replace(',', '.'));
 		const dispatchResult = await dispatch(
 			updateBet({
 				betId: bet.id,
@@ -97,9 +97,9 @@ export default function BetEditForm({
 					leagueId: bet.leagueId,
 					userId: updatedUser.id,
 					matchDay: updatedMatchDay,
-					homeTeamId: updatedHomeTeam.id,
-					awayTeamId: updatedAwayTeam.id,
-					betTitle: isNot ? `${updatedBetTitle}${t('not')}` : updatedBetTitle,
+					homeTeamId: updatedHomeTeam?.id || '',
+					awayTeamId: updatedAwayTeam?.id || '',
+					betTitle: isNot ? `${updatedBetTitle || ''}${t('not')}` : updatedBetTitle || '',
 					betOdds: betOddsToNumber,
 					betSize: Number(updatedBetSize),
 					betStatus: updatedBetStatus,
@@ -231,8 +231,8 @@ export default function BetEditForm({
 			<MatchDayForm matchDay={bet.matchDay} onMatchDay={handleMatchDaySelection} />
 			{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}
 			<BetInputTeams
-				defaultHomeTeamName={bet.homeTeam.title}
-				defaultAwayTeamName={bet.awayTeam.title}
+				defaultHomeTeamName={bet.homeTeam?.title}
+				defaultAwayTeamName={bet.awayTeam?.title}
 				onHomeTeamSelect={handleHomeTeamSelection}
 				onAwayTeamSelect={handleAwayTeamSelection}
 				leagueId={bet.leagueId}
@@ -272,7 +272,7 @@ export default function BetEditForm({
 			)}
 
 			<BetInputOdds
-				defaultBetOdds={bet.betOdds.toString()}
+				defaultBetOdds={bet.betOdds?.toString()}
 				defaultBetSize={bet.betSize.toString()}
 				onOddsSelect={handleOddsSelection}
 			/>
@@ -348,9 +348,9 @@ export default function BetEditForm({
 							matchDay={updatedMatchDay}
 							homeTeam={updatedHomeTeam}
 							awayTeam={updatedAwayTeam}
-							isNot={isNot}
-							betTitle={updatedBetTitle}
-							betOdds={updatedBetOdds}
+							isNot={isNot || false}
+							betTitle={updatedBetTitle || ''}
+							betOdds={updatedBetOdds || ''}
 							betSize={updatedBetSize}
 							betStatus={updatedBetStatus}
 							gameResult={updatedGameResult}

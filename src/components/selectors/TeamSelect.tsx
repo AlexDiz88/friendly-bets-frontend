@@ -1,7 +1,7 @@
-import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { t } from 'i18next';
 import Team from '../../features/admin/teams/types/Team';
-import pathToLogoImage from '../utils/pathToLogoImage';
+import TeamAvatar from '../custom/avatar/TeamAvatar';
 
 interface TeamSelectProps {
 	label: string;
@@ -30,14 +30,7 @@ const TeamSelect = ({ label, value, onChange, teams }: TeamSelectProps): JSX.Ele
 					)
 					.map((team) => (
 						<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={team.id} value={team.title}>
-							<Box sx={{ display: 'flex', alignItems: 'center' }}>
-								<Avatar
-									sx={{ width: 27, height: 27 }}
-									alt="team_logo"
-									src={pathToLogoImage(team.title)}
-								/>
-								<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t(`teams:${team.title}`)}</Typography>
-							</Box>
+							<TeamAvatar team={team} sx={{ ml: -1 }} />
 						</MenuItem>
 					))}
 		</Select>

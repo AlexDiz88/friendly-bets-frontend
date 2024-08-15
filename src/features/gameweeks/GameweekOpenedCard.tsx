@@ -32,7 +32,7 @@ const GameweekOpenedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 					<Avatar
 						sx={{ width: 30, height: 30 }}
 						alt="team_logo"
-						src={pathToLogoImage(bet.homeTeam.title)}
+						src={pathToLogoImage(bet.homeTeam?.title)}
 					/>
 					<Box
 						sx={{
@@ -47,12 +47,12 @@ const GameweekOpenedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 							border: '1px solid',
 						}}
 					>
-						{bet.betOdds.toFixed(2)}
+						{bet.betOdds?.toFixed(2)}
 					</Box>
 					<Avatar
 						sx={{ width: 30, height: 30 }}
 						alt="team_logo"
-						src={pathToLogoImage(bet.awayTeam.title)}
+						src={pathToLogoImage(bet.awayTeam?.title)}
 					/>
 				</Box>
 			</Box>
@@ -63,8 +63,8 @@ const GameweekOpenedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 						sx={{
 							textAlign: 'center',
 							fontWeight: 600,
-							fontSize: bet.betTitle.length > 16 ? '0.8rem' : '1.1rem',
-							lineHeight: bet.betTitle.length > 16 ? 0.8 : 1,
+							fontSize: (bet.betTitle?.length || 0) > 16 ? '0.8rem' : '1.1rem',
+							lineHeight: (bet.betTitle?.length || 0) > 16 ? 0.8 : 1,
 							pb: 0.5,
 							pt: 0.1,
 						}}

@@ -17,7 +17,7 @@ import { gameScoreValidation } from '../../components/utils/scoreValidation';
 import { BET_STATUS_LOST, BET_STATUS_RETURNED, BET_STATUS_WON, BetStatus } from '../../constants';
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
-import BetCard from './BetCard';
+import OpenedBetCard from './OpenedBetCard';
 import { getOpenedBets, setBetResult } from './betsSlice';
 import { selectOpenedBets } from './selectors';
 import Bet from './types/Bet';
@@ -183,7 +183,7 @@ export default function BetsCheck(): JSX.Element {
 										if (bet.leagueCode === selectedLeague || selectedLeague === t('all')) {
 											return (
 												<Box key={bet.id}>
-													<BetCard bet={bet} />
+													<OpenedBetCard bet={bet} />
 													<Box
 														sx={{
 															mb: 3,

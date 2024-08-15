@@ -1,4 +1,4 @@
-import { SelectChangeEvent } from '@mui/material';
+import { Box, SelectChangeEvent } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import TeamSelect from '../../components/selectors/TeamSelect';
@@ -66,7 +66,7 @@ export default function BetInputTeams({
 	}, []);
 
 	return (
-		<>
+		<Box sx={{ mt: 0.5 }}>
 			<TeamSelect
 				label="homeTeam"
 				value={selectedHomeTeamName}
@@ -79,6 +79,6 @@ export default function BetInputTeams({
 				onChange={handleAwayTeamChange}
 				teams={league?.teams}
 			/>
-		</>
+		</Box>
 	);
 }

@@ -6,15 +6,15 @@ import CustomButtonGroupPagination from '../../components/custom/btn/CustomButto
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
+import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
-import BetCard from './BetCard';
 import BetEditButtons from './BetEditButtons';
 import { getAllBets } from './betsSlice';
 import CompleteBetCard from './CompleteBetCard';
 import EmptyBetCard from './EmptyBetCard';
+import OpenedBetCard from './OpenedBetCard';
 import { selectAllBets, selectTotalPages } from './selectors';
-import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 
 export default function BetEditList(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -89,24 +89,22 @@ export default function BetEditList(): JSX.Element {
 												<Box key={bet.id}>
 													{bet.betStatus === 'OPENED' ? (
 														<>
-															<BetCard bet={bet} />
-															<BetEditButtons bet={bet} />
+															<OpenedBetCard bet={bet} />
 														</>
 													) : (
 														<Box>
 															{bet.betStatus === 'EMPTY' ? (
 																<>
 																	<EmptyBetCard bet={bet} />
-																	<BetEditButtons bet={bet} />
 																</>
 															) : (
 																<Box>
 																	<CompleteBetCard bet={bet} />
-																	<BetEditButtons bet={bet} />
 																</Box>
 															)}
 														</Box>
 													)}
+													<BetEditButtons bet={bet} />
 												</Box>
 											);
 										});

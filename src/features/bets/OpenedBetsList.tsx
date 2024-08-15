@@ -9,7 +9,7 @@ import LeagueSelect from '../../components/selectors/LeagueSelect';
 import PlayerSelect from '../../components/selectors/PlayerSelect';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
-import BetCard from './BetCard';
+import OpenedBetCard from './OpenedBetCard';
 import { getOpenedBets } from './betsSlice';
 import { selectOpenedBets } from './selectors';
 
@@ -103,7 +103,7 @@ const OpenedBetsList = (): JSX.Element => {
 								{filteredBets &&
 									filteredBets.map((bet) => (
 										<Box key={bet.id}>
-											<BetCard bet={bet} />
+											<OpenedBetCard bet={bet} />
 										</Box>
 									))}
 							</Box>

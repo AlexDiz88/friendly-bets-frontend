@@ -54,7 +54,7 @@ const GameweekCompletedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 					<Avatar
 						sx={{ width: 30, height: 30 }}
 						alt="team_logo"
-						src={pathToLogoImage(bet.homeTeam.title)}
+						src={pathToLogoImage(bet.homeTeam?.title)}
 					/>
 					<Box
 						sx={{
@@ -77,7 +77,7 @@ const GameweekCompletedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 					<Avatar
 						sx={{ width: 30, height: 30 }}
 						alt="team_logo"
-						src={pathToLogoImage(bet.awayTeam.title)}
+						src={pathToLogoImage(bet.awayTeam?.title)}
 					/>
 				</Box>
 			</Box>

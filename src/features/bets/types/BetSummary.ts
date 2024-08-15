@@ -1,17 +1,17 @@
-import League from '../../admin/leagues/types/League';
 import Team from '../../admin/teams/types/Team';
-import User from '../../auth/types/User';
+import SimpleUser from '../../auth/types/SimpleUser';
 
 export default interface BetSummary {
-	player: User;
-	league: League;
+	message: string;
+	player: SimpleUser | undefined;
+	leagueCode: string;
 	matchDay: string;
-	homeTeam: Team;
-	awayTeam: Team;
+	homeTeam: Team | undefined;
+	awayTeam: Team | undefined;
 	betTitle: string;
 	isNot: boolean;
-	betOdds: number;
-	betSize: number;
+	betOdds: string;
+	betSize: string;
 	gameResult?: string;
 	betStatus?: string;
 }
