@@ -1,9 +1,7 @@
 import {
-	Avatar,
 	Box,
 	List,
 	ListItem,
-	ListItemText,
 	MenuItem,
 	Select,
 	SelectChangeEvent,
@@ -12,13 +10,13 @@ import {
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import LeagueAvatar from '../../../components/custom/avatar/LeagueAvatar';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
-import pathToLogoImage from '../../../components/utils/pathToLogoImage';
 import League from '../leagues/types/League';
 import { addLeagueToSeason } from '../seasons/seasonsSlice';
 import { selectLeagueCodes } from '../seasons/selectors';
@@ -37,12 +35,7 @@ export default function AddLeagueInSeason({
 	const [leagueCode, setLeagueCode] = useState<string>('');
 
 	const handleAddLeagueClick = useCallback(async () => {
-		const dispatchResult = await dispatch(
-			addLeagueToSeason({
-				seasonId,
-				leagueCode,
-			})
-		);
+		const dispatchResult = await dispatch(addLeagueToSeason({ seasonId, leagueCode }));
 		if (addLeagueToSeason.fulfilled.match(dispatchResult)) {
 			dispatch(showSuccessSnackbar({ message: t('leagueWasSuccessfullyAddedToSeason') }));
 			setLeagueCode('');
@@ -68,14 +61,7 @@ export default function AddLeagueInSeason({
 				<List sx={{ borderBottom: 1 }}>
 					{leagues?.map((l) => (
 						<ListItem sx={{ my: 0, px: 1, py: 0 }} key={l.id}>
-							<Box sx={{ display: 'flex', alignItems: 'center' }}>
-								<Avatar
-									sx={{ mr: 1, width: 30, height: 30 }}
-									alt="league_logo"
-									src={pathToLogoImage(l.leagueCode)}
-								/>
-								<ListItemText primary={t(`leagueFullName.${l.leagueCode}`)} />
-							</Box>
+							<LeagueAvatar leagueCode={l.leagueCode} height={30} fullName />
 						</ListItem>
 					))}
 				</List>
@@ -94,18 +80,13 @@ export default function AddLeagueInSeason({
 				>
 					{leagueCodeList &&
 						leagueCodeList.map((l) => (
-							<MenuItem sx={{ ml: -0.5, minWidth: '15rem' }} key={l} value={l}>
-								<Box sx={{ display: 'flex', alignItems: 'center' }}>
-									<Avatar
-										variant="square"
-										sx={{ width: 27, height: 27 }}
-										alt="league_logo"
-										src={pathToLogoImage(l)}
-									/>
-									<Typography sx={{ mx: 1, fontSize: '1rem' }}>
-										{t(`leagueFullName.${l}`)}
-									</Typography>
-								</Box>
+							<MenuItem sx={{ ml: -0.5, py: 1.5, minWidth: '15rem' }} key={l} value={l}>
+								<LeagueAvatar
+									leagueCode={l}
+									height={32}
+									fullName
+									sx={{ justifyContent: 'start' }}
+								/>
 							</MenuItem>
 						))}
 				</Select>

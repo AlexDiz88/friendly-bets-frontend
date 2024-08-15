@@ -2,7 +2,7 @@ import { Box, Dialog, DialogActions, DialogContent, Typography } from '@mui/mate
 import { t } from 'i18next';
 import BetGameResultInfo from '../../../features/bets/BetGameResultInfo';
 import Bet from '../../../features/bets/types/Bet';
-import TeamsInfo from '../../TeamsInfo';
+import TeamAvatar from '../avatar/TeamAvatar';
 import CustomButton from '../btn/CustomButton';
 import CustomCancelButton from '../btn/CustomCancelButton';
 
@@ -33,8 +33,15 @@ export default function CustomBetCheckDialog({
 				<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 					<BetGameResultInfo gameResult={gameResult} />
 				</Box>
-				<TeamsInfo homeTeam={bet?.homeTeam} awayTeam={bet?.awayTeam} />
-				<Typography sx={{ fontSize: '0.9rem' }}>
+				<Box sx={{ display: 'flex', alignItems: 'center' }}>
+					<b>{t('homeTeam')}:</b>
+					<TeamAvatar team={bet?.homeTeam} />
+				</Box>
+				<Box sx={{ display: 'flex', alignItems: 'center' }}>
+					<b>{t('awayTeam')}:</b>
+					<TeamAvatar team={bet?.awayTeam} />
+				</Box>
+				<Typography>
 					<b>{t('bet')}:</b> {bet?.betTitle || ''}
 				</Typography>
 			</DialogContent>

@@ -1,16 +1,13 @@
-import { Avatar, Box, Button, Typography } from '@mui/material';
-import { t } from 'i18next';
+import { Box, Button } from '@mui/material';
 import League from '../../../features/admin/leagues/types/League';
-import pathToLogoImage from '../../utils/pathToLogoImage';
+import LeagueAvatar from '../avatar/LeagueAvatar';
 
 const CustomLeagueButton = ({
-	key,
 	league,
 	onClick,
 }: {
 	league: League | undefined;
 	onClick(event: React.MouseEvent<HTMLButtonElement>): void;
-	key?: string;
 }): JSX.Element => {
 	return (
 		<Box
@@ -27,23 +24,10 @@ const CustomLeagueButton = ({
 			}}
 		>
 			<Button sx={{ py: 1.5 }} onClick={onClick}>
-				<Avatar
-					variant="square"
-					sx={{ width: 27, height: 27 }}
-					alt="league_logo"
-					src={pathToLogoImage(league?.leagueCode)}
+				<LeagueAvatar
+					leagueCode={league?.leagueCode}
+					sx={{ mx: 1, fontSize: '1rem', fontWeight: 600, fontFamily: "'Exo 2'", color: '#123456' }}
 				/>
-				<Typography
-					sx={{
-						mx: 1,
-						fontSize: '1rem',
-						fontWeight: 600,
-						fontFamily: "'Exo 2'",
-						color: '#123456',
-					}}
-				>
-					{t(`leagueShortName.${league?.leagueCode || ''}`)}
-				</Typography>
 			</Button>
 		</Box>
 	);

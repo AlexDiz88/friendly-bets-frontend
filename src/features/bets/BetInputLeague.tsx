@@ -1,8 +1,8 @@
-import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
 import League from '../admin/leagues/types/League';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
@@ -52,22 +52,7 @@ export default function BetInputLeague({
 				{leagues &&
 					leagues.map((l) => (
 						<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={l.id} value={l.leagueCode}>
-							<div
-								style={{
-									display: 'flex',
-									alignItems: 'center',
-								}}
-							>
-								<Avatar
-									sx={{ width: 27, height: 27 }}
-									alt="league_logo"
-									src={pathToLogoImage(l.leagueCode)}
-								/>
-
-								<Typography sx={{ mx: 1, fontSize: '1rem' }}>
-									{t(`leagueFullName.${l.leagueCode}`)}
-								</Typography>
-							</div>
+							<LeagueAvatar leagueCode={l.leagueCode} fullName sx={{ justifyContent: 'start' }} />
 						</MenuItem>
 					))}
 			</Select>

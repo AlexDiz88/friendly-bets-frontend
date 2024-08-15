@@ -7,6 +7,8 @@ import matchDayTitleViewTransform from '../../components/utils/matchDayTitleView
 import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import Bet from './types/Bet';
+import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
+import UserAvatar from '../../components/custom/avatar/UserAvatar';
 
 export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 	const { i18n } = useTranslation();
@@ -42,22 +44,8 @@ export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 							justifyContent: 'space-between',
 						}}
 					>
-						<Box sx={{ mb: 0.8, ml: 0.5, display: 'flex', alignItems: 'center' }}>
-							<Avatar
-								sx={{ mr: 0.5, width: 40, height: 40, border: 1, borderColor: 'gray' }}
-								alt="user_avatar"
-								src={pathToAvatarImage(player.avatar)}
-							/>
-							<b>{player.username}</b>
-						</Box>
-						<Box sx={{ mr: 1, display: 'flex', alignItems: 'start' }}>
-							<Avatar
-								sx={{ mr: 0.5, width: 25, height: 25 }}
-								alt="team_logo"
-								src={pathToLogoImage(leagueCode)}
-							/>
-							{t(`leagueShortName.${leagueCode}`)}-{matchDayTitle}
-						</Box>
+						<UserAvatar player={player} />
+						<LeagueAvatar leagueCode={leagueCode} matchDay={matchDayTitle} />
 					</Box>
 					<Box sx={{ textAlign: 'left', ml: 0.5 }}>
 						<b>{t('amount')}:</b> {betSize}

@@ -1,7 +1,7 @@
 import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { t } from 'i18next';
 import League from '../../features/admin/leagues/types/League';
-import pathToLogoImage from '../utils/pathToLogoImage';
+import LeagueAvatar from '../custom/avatar/LeagueAvatar';
 
 interface LeagueSelectProps {
 	value: string;
@@ -47,19 +47,12 @@ const LeagueSelect = ({
 			{leagues &&
 				leagues.map((l) => (
 					<MenuItem sx={{ ml: -0.5, minWidth: '6.5rem' }} key={l.id} value={l.leagueCode}>
-						<Box sx={{ display: 'flex', alignItems: 'center' }}>
-							<Avatar
-								variant="square"
-								sx={{ width: 27, height: 27 }}
-								alt="league_logo"
-								src={pathToLogoImage(l.leagueCode)}
-							/>
-							<Typography sx={{ mx: 1, fontSize: '1rem' }}>
-								{fullLeagueNames
-									? t(`leagueFullName.${l.leagueCode}`)
-									: t(`leagueShortName.${l.leagueCode}`)}
-							</Typography>
-						</Box>
+						<LeagueAvatar
+							leagueCode={l.leagueCode}
+							sx={{ justifyContent: 'start' }}
+							avasx={{ mr: 1 }}
+							fullName={fullLeagueNames}
+						/>
 					</MenuItem>
 				))}
 		</Select>

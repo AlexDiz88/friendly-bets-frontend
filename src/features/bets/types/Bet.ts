@@ -9,16 +9,16 @@ export default interface Bet {
 	createdAt: Date;
 	player: SimpleUser;
 	matchDay: string;
-	homeTeam: Team;
-	awayTeam: Team;
-	betTitle: string;
-	betOdds: number;
+	homeTeam?: Team;
+	awayTeam?: Team;
+	betTitle?: string;
+	betOdds?: number;
 	betSize: number;
+	betResultAddedAt?: Date;
 	gameResult?: string;
-	betResultAddedAt: Date;
 	betStatus: string;
 	balanceChange?: number;
-	updatedAt: Date;
+	updatedAt?: Date;
 	calendarNodeId?: string;
 }
 
