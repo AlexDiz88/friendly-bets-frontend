@@ -4,6 +4,7 @@ import BetsState from './types/BetsState';
 import NewBet from './types/NewBet';
 import NewEmptyBet from './types/NewEmptyBet';
 import NewGameResult from './types/NewGameResult';
+import UpdatedBet from './types/UpdatedBet';
 
 const initialState: BetsState = {
 	bet: undefined,
@@ -70,7 +71,8 @@ export const getAllBets = createAsyncThunk(
 
 export const updateBet = createAsyncThunk(
 	'bets/updateBet',
-	async ({ betId, newBet }: { betId: string; newBet: NewBet }) => api.updateBet(betId, newBet)
+	async ({ betId, editedBet }: { betId: string; editedBet: UpdatedBet }) =>
+		api.updateBet(betId, editedBet)
 );
 
 export const deleteBet = createAsyncThunk(

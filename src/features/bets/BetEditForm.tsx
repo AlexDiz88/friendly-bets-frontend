@@ -92,14 +92,14 @@ export default function BetEditForm({
 		const dispatchResult = await dispatch(
 			updateBet({
 				betId: bet.id,
-				newBet: {
+				editedBet: {
 					seasonId: bet.seasonId,
 					leagueId: bet.leagueId,
 					userId: updatedUser.id,
 					matchDay: updatedMatchDay,
-					homeTeamId: updatedHomeTeam?.id || '',
-					awayTeamId: updatedAwayTeam?.id || '',
-					betTitle: isNot ? `${updatedBetTitle || ''}${t('not')}` : updatedBetTitle || '',
+					homeTeamId: updatedHomeTeam?.id,
+					awayTeamId: updatedAwayTeam?.id,
+					betTitle: isNot ? `${updatedBetTitle || ''}${t('not')}` : updatedBetTitle,
 					betOdds: betOddsToNumber,
 					betSize: Number(updatedBetSize),
 					betStatus: updatedBetStatus,
