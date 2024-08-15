@@ -1,7 +1,7 @@
 import Team from '../../admin/teams/types/Team';
 import SimpleUser from '../../auth/types/SimpleUser';
 
-export default interface Bet {
+export default interface NotEmptyBet {
 	id: string;
 	seasonId: string;
 	leagueId: string;
@@ -21,5 +21,3 @@ export default interface Bet {
 	updatedAt: Date;
 	calendarNodeId?: string;
 }
-
-export type BetId = Bet['id'];
