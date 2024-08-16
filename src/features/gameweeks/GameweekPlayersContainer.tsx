@@ -34,9 +34,18 @@ const GameweekPlayersContainer = ({
 		return playerBets.reduce((total, bet) => total + (bet.balanceChange || 0), 0);
 	};
 
-	const sortedPlayers = [...activeSeason.players].sort(
-		(a, b) => calculateTotalBalanceChange(b.id) - calculateTotalBalanceChange(a.id)
-	);
+	const sortedPlayers = [...activeSeason.players].sort((a, b) => {
+		const balanceDifference = calculateTotalBalanceChange(b.id) - calculateTotalBalanceChange(a.id);
+
+		if (balanceDifference !== 0) {
+			return balanceDifference;
+		}
+
+		const aBetCount = (betsByPlayers[a.id] || []).length;
+		const bBetCount = (betsByPlayers[b.id] || []).length;
+
+		return bBetCount - aBetCount;
+	});
 
 	return (
 		<Box sx={{ m: '0 auto', my: 2, maxWidth: '25rem' }}>
