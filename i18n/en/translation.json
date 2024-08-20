@@ -275,7 +275,9 @@
 		"betNotFoundInCalendar": "Bet not found in the calendar",
 		"yourSessionWasFinished": "Your session has ended or was interrupted. Please log in again",
 		"noGameweeks": "There are currently no gameweeks available",
-		"betNotFoundInAnyCalendar": "Bet not found in any calendar"
+		"betNotFoundInAnyCalendar": "Bet not found in any calendar",
+		"noPlayersInSeason": "There are no participants in the season",
+		"nullOrZeroBetCountPerMatchDay": "The number of bets per matchday is missing"
 	},
 	"matchdayCalendar": "Matchday schedule",
 	"matchdayStartDate": "Start Date of Matchday",

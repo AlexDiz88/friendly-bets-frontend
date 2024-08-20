@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import Bet, { BetId } from './types/Bet';
+import BetResult from './types/BetResult';
 import BetsPage from './types/BetsPage';
 import NewBet from './types/NewBet';
 import NewEmptyBet from './types/NewEmptyBet';
-import NewGameResult from './types/NewGameResult';
 import UpdatedBet from './types/UpdatedBet';
 
 export async function addBet(newBet: NewBet): Promise<Bet> {
@@ -44,14 +44,14 @@ export async function addEmptyBet(newEmptyBet: NewEmptyBet): Promise<Bet> {
 	return result.json();
 }
 
-export async function setBetResult(betId: string, newGameResult: NewGameResult): Promise<Bet> {
+export async function setBetResult(betId: string, betResult: BetResult): Promise<Bet> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/${betId}/set-bet-result`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/${betId}/set-bet-result`;
 	}
 	const result = await fetch(`${url}`, {
 		method: 'PUT',
-		body: JSON.stringify(newGameResult),
+		body: JSON.stringify(betResult),
 		headers: {
 			'Content-Type': 'application/json',
 		},

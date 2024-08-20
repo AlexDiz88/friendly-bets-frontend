@@ -39,8 +39,9 @@ export default function TeamsStatsPage(): JSX.Element {
 	};
 
 	useEffect(() => {
-		if (statsByTeams) {
-			setSelectedLeagueCode(statsByTeams.leagueCode || '');
+		if (activeSeason && statsByTeams) {
+			const league = activeSeason.leagues.find((l) => l.id === statsByTeams.leagueId);
+			setSelectedLeagueCode(league?.leagueCode || '');
 		}
 	}, [statsByTeams]);
 

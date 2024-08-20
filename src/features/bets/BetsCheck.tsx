@@ -12,6 +12,7 @@ import {
 	showErrorSnackbar,
 	showInfoSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
+import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
 import { gameScoreValidation } from '../../components/utils/scoreValidation';
 import { BET_STATUS_LOST, BET_STATUS_RETURNED, BET_STATUS_WON, BetStatus } from '../../constants';
@@ -36,6 +37,7 @@ export default function BetsCheck(): JSX.Element {
 	const [loadingError, setLoadingError] = useState(false);
 
 	useFilterLanguageChange(setSelectedLeague);
+	useFetchCurrentUser();
 
 	const handleCloseDialog = (): void => {
 		setDialogType(undefined);
@@ -53,7 +55,7 @@ export default function BetsCheck(): JSX.Element {
 				const dispatchResult = await dispatch(
 					setBetResult({
 						betId: selectedBet.id,
-						newGameResult: { gameResult, betStatus },
+						betResult: { gameResult, betStatus },
 					})
 				);
 

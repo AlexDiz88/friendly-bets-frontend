@@ -275,7 +275,9 @@
 		"betNotFoundInCalendar": "Wette im Kalender nicht gefunden",
 		"yourSessionWasFinished": "Ihre Sitzung wurde beendet oder unterbrochen. Bitte melden Sie sich erneut an",
 		"noGameweeks": "Derzeit sind keine Spieltage verfügbar",
-		"betNotFoundInAnyCalendar": "Wette in keinem Kalender gefunden"
+		"betNotFoundInAnyCalendar": "Wette in keinem Kalender gefunden",
+		"noPlayersInSeason": "Es gibt keine Teilnehmer in der Saison",
+		"nullOrZeroBetCountPerMatchDay": "Der Wert für die Anzahl der Wetten pro Spieltag fehlt"
 	},
 	"matchdayCalendar": "Spielplan",
 	"matchdayStartDate": "Startdatum des Spieltags",
