@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import * as api from './api';
+import BetResult from './types/BetResult';
 import BetsState from './types/BetsState';
 import NewBet from './types/NewBet';
 import NewEmptyBet from './types/NewEmptyBet';
-import NewGameResult from './types/NewGameResult';
 import UpdatedBet from './types/UpdatedBet';
 
 const initialState: BetsState = {
@@ -30,8 +30,8 @@ export const addEmptyBet = createAsyncThunk(
 
 export const setBetResult = createAsyncThunk(
 	'bets/setBetResult',
-	async ({ betId, newGameResult }: { betId: string; newGameResult: NewGameResult }) =>
-		api.setBetResult(betId, newGameResult)
+	async ({ betId, betResult }: { betId: string; betResult: BetResult }) =>
+		api.setBetResult(betId, betResult)
 );
 
 export const getOpenedBets = createAsyncThunk(

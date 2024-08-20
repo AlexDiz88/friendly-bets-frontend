@@ -1,3 +1,4 @@
+export const TOTAL_ID = 'total';
 export const TOTAL_STATS_BY_TEAMS_USER_ID = 'total';
 export const MATCHDAY_TITLE_FINAL = 'final';
 

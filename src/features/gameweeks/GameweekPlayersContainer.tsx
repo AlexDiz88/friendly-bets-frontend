@@ -34,9 +34,13 @@ const GameweekPlayersContainer = ({
 		return playerBets.reduce((total, bet) => total + (bet.balanceChange || 0), 0);
 	};
 
+	const countEmptyBets = (playerId: string): number => {
+		const totalBets = betsByPlayers[playerId] || [];
+		return totalBets.filter((bet) => bet.betStatus === BET_STATUS_EMPTY).length;
+	};
+
 	const sortedPlayers = [...activeSeason.players].sort((a, b) => {
 		const balanceDifference = calculateTotalBalanceChange(b.id) - calculateTotalBalanceChange(a.id);
-
 		if (balanceDifference !== 0) {
 			return balanceDifference;
 		}
@@ -44,7 +48,14 @@ const GameweekPlayersContainer = ({
 		const aBetCount = (betsByPlayers[a.id] || []).length;
 		const bBetCount = (betsByPlayers[b.id] || []).length;
 
-		return bBetCount - aBetCount;
+		if (aBetCount !== bBetCount) {
+			return bBetCount - aBetCount;
+		}
+
+		const aEmptyBetCount = countEmptyBets(a.id);
+		const bEmptyBetCount = countEmptyBets(b.id);
+
+		return aEmptyBetCount - bEmptyBetCount;
 	});
 
 	return (

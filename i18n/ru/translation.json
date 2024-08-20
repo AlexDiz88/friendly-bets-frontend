@@ -275,7 +275,9 @@
 		"betNotFoundInCalendar": "Ставка в календаре не найдена",
 		"yourSessionWasFinished": "Ваша сессия была окончена или прервана. Войдите снова",
 		"noGameweeks": "В данный момент игровые туры отсутствуют",
-		"betNotFoundInAnyCalendar": "Ставка не найдена ни в одной записи календаря"
+		"betNotFoundInAnyCalendar": "Ставка не найдена ни в одной записи календаря",
+		"noPlayersInSeason": "В сезоне нет ни одного участника",
+		"nullOrZeroBetCountPerMatchDay": "Отсутствует значение количества ставок на тур"
 	},
 	"matchdayCalendar": "Календарь туров",
 	"matchdayStartDate": "Дата начала тура",
