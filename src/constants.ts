@@ -2,6 +2,12 @@ export const TOTAL_ID = 'total';
 export const TOTAL_STATS_BY_TEAMS_USER_ID = 'total';
 export const MATCHDAY_TITLE_FINAL = 'final';
 
+export const SEASON_STATUS_CREATED = 'CREATED';
+export const SEASON_STATUS_SCHEDULED = 'SCHEDULED';
+export const SEASON_STATUS_ACTIVE = 'ACTIVE';
+export const SEASON_STATUS_PAUSED = 'PAUSED';
+export const SEASON_STATUS_FINISHED = 'FINISHED';
+
 export const BET_STATUS_OPENED = 'OPENED';
 export const BET_STATUS_EMPTY = 'EMPTY';
 export const BET_STATUS_WON = 'WON';

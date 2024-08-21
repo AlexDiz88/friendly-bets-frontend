@@ -2,6 +2,7 @@ import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/mater
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { SEASON_STATUS_FINISHED } from '../constants';
 import { getSeasons } from '../features/admin/seasons/seasonsSlice';
 import { selectSeasons } from '../features/admin/seasons/selectors';
 import Season from '../features/admin/seasons/types/Season';
@@ -38,7 +39,7 @@ export default function Archive(): JSX.Element {
 	}, []);
 
 	useEffect(() => {
-		const finishedSeasons = seasons.filter((season) => season.status === 'FINISHED');
+		const finishedSeasons = seasons.filter((season) => season.status === SEASON_STATUS_FINISHED);
 		setFilteredSeasons(finishedSeasons);
 	}, [seasons]);
 

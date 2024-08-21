@@ -125,8 +125,8 @@
 	"listOfLeagueTeams": "Mannschaftsliste der Liga",
 	"noTeamsInLeagueAtThisMoment": "In dieser Liga gibt es derzeit keine Teams",
 	"chooseTeamForAddingToLeague": "Team zur Liga hinzufügen",
-	"mainStatsRecalculating": "Neuberechnung der Gesamtstatistik",
-	"teamStatsRecalculating": "Neuberechnung der Teamstatistik",
+	"mainStatsRecalculating": "Neuberechnung der Gesamtstats",
+	"teamStatsRecalculating": "Neuberechnung der Teamstats",
 	"mainStatsWillBeRecalculated": "Die Statistiken für alle Spieler der Saison werden neu berechnet",
 	"thisActionCannotBeCanceled": "Achtung!! Diese Aktion kann nach der Bestätigung nicht zurückgesetzt werden!",
 	"teamStatsWillBeRecalculated": "Die Statistiken für alle Teams der Saison werden neu berechnet",
@@ -293,5 +293,6 @@
 	"deleteNodeFromCalendarHelperText": "Ausgewählte Eintrag wird aus dem Kalender gelöscht! Das Löschen ist nur für Einträge möglich, auf die noch keine Wetten hinzugefügt wurden",
 	"calendarForLeagueMatchdayNotExist": "Der angegebene Spieltag der ausgewählten Liga wurde nicht in den Kalender aufgenommen!",
 	"chooseGameweekForDetailedView": "Wählen Sie Spielzeitraum zur Detailansicht aus",
-	"thinkingAboutBet": "Überlegt die Wette"
+	"thinkingAboutBet": "Überlegt die Wette",
+	"updateInProgress": "Das Datenbank-Update läuft. Dies kann einige Minuten dauern..."
 }

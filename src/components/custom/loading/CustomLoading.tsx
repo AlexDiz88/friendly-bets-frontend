@@ -13,7 +13,7 @@ const CustomLoading = ({ text }: { text?: string }): JSX.Element => {
 			}}
 		>
 			<Box sx={{ textAlign: 'center', fontWeight: 600, color: 'brown', pt: 10, fontSize: 18 }}>
-				{text ? t(`${text}`) : t('loading')}
+				{text ? text : t('loading')}
 			</Box>
 			<CircularProgress sx={{ mt: 5 }} size={100} color="primary" />
 		</Box>
