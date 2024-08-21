@@ -13,6 +13,7 @@ const CustomButton = ({
 	textSize = '0.9rem',
 	fontFamily = 'Shantell Sans',
 	ref,
+	disabled = false,
 }: {
 	onClick(event: React.MouseEvent<HTMLButtonElement>): void;
 	buttonColor?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
@@ -24,9 +25,11 @@ const CustomButton = ({
 	textSize?: string;
 	fontFamily?: string;
 	ref?: RefObject<HTMLButtonElement>;
+	disabled?: boolean;
 }): JSX.Element => {
 	return (
 		<Button
+			disabled={disabled}
 			ref={ref}
 			sx={{ height: '2.3rem', ...sx }}
 			variant={buttonVariant}

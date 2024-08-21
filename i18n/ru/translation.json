@@ -293,5 +293,6 @@
 	"deleteNodeFromCalendarHelperText": "Выбранная запись будет удалена из календаря! Удаление возможно только для записей в которые еще не были добавлены ставки",
 	"calendarForLeagueMatchdayNotExist": "Указанный тур лиги не добавлен в календарь!",
 	"chooseGameweekForDetailedView": "Выберите игровой тур для его обзора",
-	"thinkingAboutBet": "Думает над ставкой"
+	"thinkingAboutBet": "Думает над ставкой",
+	"updateInProgress": "Идёт процесс обновления базы данных. Это может занять несколько минут..."
 }

@@ -14,7 +14,13 @@ import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import { playersStatsFullRecalculation } from './statsSlice';
 
-export default function StatsRecalculating(): JSX.Element {
+export default function StatsRecalculating({
+	startLoading,
+	stopLoading,
+}: {
+	startLoading: () => void;
+	stopLoading: () => void;
+}): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const [openRecalculatePlayerStatsDialog, setOpenRecalculatePlayerStatsDialog] = useState(false);
@@ -24,6 +30,7 @@ export default function StatsRecalculating(): JSX.Element {
 		async (event?: React.FormEvent) => {
 			setOpenRecalculatePlayerStatsDialog(false);
 			event?.preventDefault();
+			startLoading();
 			if (activeSeasonId) {
 				const dispatchResult = await dispatch(playersStatsFullRecalculation(activeSeasonId));
 
@@ -33,6 +40,7 @@ export default function StatsRecalculating(): JSX.Element {
 				if (playersStatsFullRecalculation.rejected.match(dispatchResult)) {
 					dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 				}
+				stopLoading();
 			}
 		},
 		[dispatch, activeSeasonId]
@@ -42,6 +50,7 @@ export default function StatsRecalculating(): JSX.Element {
 		async (event?: React.FormEvent) => {
 			setOpenRecalculateTeamStatsDialog(false);
 			event?.preventDefault();
+			startLoading();
 			if (activeSeasonId) {
 				try {
 					let url = `${
@@ -63,6 +72,7 @@ export default function StatsRecalculating(): JSX.Element {
 				} catch (error) {
 					dispatch(showErrorSnackbar({ message: t('errorByStatsRecalculating') }));
 				}
+				stopLoading();
 			}
 		},
 		[activeSeasonId]

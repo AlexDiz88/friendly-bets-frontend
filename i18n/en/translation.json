@@ -125,8 +125,8 @@
 	"listOfLeagueTeams": "List of league teams",
 	"noTeamsInLeagueAtThisMoment": "There are currently no teams in this league",
 	"chooseTeamForAddingToLeague": "Select team to add to league",
-	"mainStatsRecalculating": "Recalculation of general statistics",
-	"teamStatsRecalculating": "Recalculation of statistics by teams",
+	"mainStatsRecalculating": "Recalculation general stats",
+	"teamStatsRecalculating": "Recalculation stats by teams",
 	"mainStatsWillBeRecalculated": "Statistics for all players of the season will be recalculated",
 	"thisActionCannotBeCanceled": "Attention!! This action cannot be rolled back after confirmation!",
 	"teamStatsWillBeRecalculated": "Statistics for all teams of season will be recalculated",
@@ -293,5 +293,6 @@
 	"deleteNodeFromCalendarHelperText": "Selected entry will be deleted from calendar! Deletion is only possible for entries that have not yet had bets added to them",
 	"calendarForLeagueMatchdayNotExist": "The specified matchday of selected league has not been added to calendar!",
 	"chooseGameweekForDetailedView": "Select gameweek for detailed view",
-	"thinkingAboutBet": "Thinking about bet"
+	"thinkingAboutBet": "Thinking about bet",
+	"updateInProgress": "The database update is in progress. This may take a few minutes..."
 }

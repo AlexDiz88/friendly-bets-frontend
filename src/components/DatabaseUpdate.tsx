@@ -8,7 +8,13 @@ import CustomCancelButton from './custom/btn/CustomCancelButton';
 import CustomSuccessButton from './custom/btn/CustomSuccessButton';
 import { showErrorSnackbar, showSuccessSnackbar } from './custom/snackbar/snackbarSlice';
 
-export default function DatabaseUpdate(): JSX.Element {
+export default function DatabaseUpdate({
+	startLoading,
+	stopLoading,
+}: {
+	startLoading: () => void;
+	stopLoading: () => void;
+}): JSX.Element {
 	const dispatch = useAppDispatch();
 	const [openDialog, setOpenDialog] = useState(false);
 
@@ -16,6 +22,7 @@ export default function DatabaseUpdate(): JSX.Element {
 		async (event?: React.FormEvent) => {
 			event?.preventDefault();
 			setOpenDialog(false);
+			startLoading();
 			const dispatchResult = await dispatch(dbUpdate());
 
 			if (dbUpdate.fulfilled.match(dispatchResult)) {
@@ -24,6 +31,7 @@ export default function DatabaseUpdate(): JSX.Element {
 			if (dbUpdate.rejected.match(dispatchResult)) {
 				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 			}
+			stopLoading();
 		},
 		[dispatch]
 	);
