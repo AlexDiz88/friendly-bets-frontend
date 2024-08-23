@@ -1,5 +1,6 @@
 import { GppBad, GppGood, RestorePage } from '@mui/icons-material';
 import { Avatar, Box } from '@mui/material';
+import { getGameResultView } from '../../components/utils/gameResultValidation';
 import pathToLogoImage from '../../components/utils/pathToLogoImage';
 import {
 	BET_STATUS_RETURNED,
@@ -11,18 +12,19 @@ import {
 import Bet from '../bets/types/Bet';
 
 const GameweekCompletedCard = ({ bet }: { bet: Bet }): JSX.Element => {
-	const gameResult = bet.gameResult || '';
-	const index = gameResult.indexOf('[');
+	const gameResultView = getGameResultView(bet.gameResult, false);
+
+	const index = gameResultView.indexOf('[');
 
 	let part1 = '';
 	let part2 = '';
 
 	if (index !== -1) {
-		part1 = gameResult.substring(0, index);
-		part2 = gameResult.substring(index);
+		part1 = gameResultView.substring(0, index);
+		part2 = gameResultView.substring(index);
 		part2 = part2.replace('доп.', '').replace('пен.', '');
 	} else {
-		part1 = gameResult;
+		part1 = gameResultView;
 	}
 
 	return (

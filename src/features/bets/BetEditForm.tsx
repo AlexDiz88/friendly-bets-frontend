@@ -22,7 +22,10 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
-import { gameScoreValidation } from '../../components/utils/scoreValidation';
+import {
+	gameScoreValidation,
+	transformToGameResult,
+} from '../../components/utils/gameResultValidation';
 import {
 	BET_STATUS_EMPTY,
 	BET_STATUS_LOST,
@@ -48,16 +51,17 @@ import BetSummaryInfo from './BetSummaryInfo';
 import MatchDayForm from './MatchDayForm';
 import { updateBet } from './betsSlice';
 import Bet from './types/Bet';
+import GameResult from './types/GameResult';
 
 const statuses = [BET_STATUS_WON, BET_STATUS_RETURNED, BET_STATUS_LOST];
 
 export default function BetEditForm({
 	bet,
-	transformedGameResult,
+	gameResultAsString,
 	handleEditBet,
 }: {
 	bet: Bet;
-	transformedGameResult: string;
+	gameResultAsString: string;
 	handleEditBet: (showEditForm: boolean) => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -66,7 +70,7 @@ export default function BetEditForm({
 	const [calendar, setCalendar] = useState<Calendar | undefined>();
 	const [updatedUser, setUpdatedUser] = useState<SimpleUser>(bet.player);
 	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(bet.matchDay);
-	// TODO передать/посчитать пробелы в transformedGameResult и передать в MatchdayForm
+	// TODO передать/посчитать пробелы в gameResultAsString и передать в MatchdayForm
 	const [updatedHomeTeam, setUpdatedHomeTeam] = useState<Team | undefined>(bet.homeTeam);
 	const [updatedAwayTeam, setUpdatedAwayTeam] = useState<Team | undefined>(bet.awayTeam);
 	const [updatedBetTitle, setUpdatedBetTitle] = useState<string | undefined>(
@@ -76,8 +80,10 @@ export default function BetEditForm({
 	const [updatedBetOdds, setUpdatedBetOdds] = useState<string | undefined>(bet.betOdds?.toString());
 	const [updatedBetSize, setUpdatedBetSize] = useState<string>(bet.betSize.toString());
 	const [updatedBetStatus, setUpdatedBetStatus] = useState<string>(bet.betStatus);
-	const [updatedGameResult, setUpdatedGameResult] = useState<string>(bet.gameResult || '');
-	const [inputGameResult, setInputGameResult] = useState<string>(transformedGameResult);
+	const [updatedGameResult, setUpdatedGameResult] = useState<GameResult | undefined>(
+		bet.gameResult
+	);
+	const [gameResultInput, setGameResultInput] = useState<string>(gameResultAsString);
 	const [betUpdateOpenDialog, setBetUpdateOpenDialog] = useState<boolean>(false);
 
 	const scrollToTop = (): void => {
@@ -178,13 +184,24 @@ export default function BetEditForm({
 		setUpdatedBetStatus(event.target.value);
 	};
 
-	const handleGameResultChange = (value: string): void => {
-		setInputGameResult(value);
+	const handleGameResultInputChange = (value: string): void => {
+		setGameResultInput(value);
+		console.log();
 	};
 
-	const handleBetUpdateOpenDialog = (inputBet: string): void => {
-		const res = gameScoreValidation(inputBet);
-		setUpdatedGameResult(res);
+	const handleBetUpdateOpenDialog = (inputStr: string): void => {
+		console.log('inputStr');
+		console.log(inputStr);
+
+		const checkedGameResult = gameScoreValidation(inputStr);
+		console.log('checkedGameResult');
+		console.log(checkedGameResult);
+
+		const gameResultObj = transformToGameResult(checkedGameResult);
+		console.log('gameResultObj');
+		console.log(gameResultObj);
+
+		setUpdatedGameResult(gameResultObj);
 		setBetUpdateOpenDialog(true);
 	};
 
@@ -321,8 +338,8 @@ export default function BetEditForm({
 							id={`gameResult-${bet.id}`}
 							label={t('gameScore')}
 							variant="outlined"
-							value={inputGameResult}
-							onChange={(event) => handleGameResultChange(event.target.value)}
+							value={gameResultInput}
+							onChange={(event) => handleGameResultInputChange(event.target.value)}
 						/>
 					</Box>
 				</Box>
@@ -332,7 +349,7 @@ export default function BetEditForm({
 				<CustomCancelButton onClick={handleCloseForm} />
 				<CustomButton
 					sx={{ height: '2rem' }}
-					onClick={() => handleBetUpdateOpenDialog(inputGameResult)}
+					onClick={() => handleBetUpdateOpenDialog(gameResultInput)}
 					buttonText={t('btnText.update')}
 					buttonColor="secondary"
 				/>
@@ -353,7 +370,7 @@ export default function BetEditForm({
 							betOdds={updatedBetOdds || ''}
 							betSize={updatedBetSize}
 							betStatus={updatedBetStatus}
-							gameResult={updatedGameResult}
+							gameResultInput={gameResultInput}
 						/>
 					</Box>
 				</DialogContent>

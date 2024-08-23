@@ -10,7 +10,7 @@ interface DialogProps {
 	open: boolean;
 	onClose: () => void;
 	onSave: () => void;
-	gameResult: string;
+	gameResultInput: string | undefined;
 	bet?: Bet;
 	buttonColor?: 'success' | 'error' | 'warning' | 'info' | 'primary' | 'secondary';
 	buttonText: string;
@@ -21,7 +21,7 @@ export default function CustomBetCheckDialog({
 	open,
 	onClose,
 	onSave,
-	gameResult,
+	gameResultInput,
 	bet,
 	buttonColor = 'primary',
 	buttonText,
@@ -31,7 +31,7 @@ export default function CustomBetCheckDialog({
 		<Dialog open={open} onClose={onClose}>
 			<DialogContent>
 				<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
-					<BetGameResultInfo gameResult={gameResult} />
+					<BetGameResultInfo gameResultInput={gameResultInput} />
 				</Box>
 				<Box sx={{ display: 'flex', alignItems: 'center' }}>
 					<b>{t('homeTeam')}:</b>

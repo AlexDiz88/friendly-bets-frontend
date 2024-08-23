@@ -1,7 +1,19 @@
 import { Box } from '@mui/material';
 import { t } from 'i18next';
+import {
+	gameScoreValidation,
+	getGameResultView,
+	transformToGameResult,
+} from '../../components/utils/gameResultValidation';
 
-export default function BetGameResultInfo({ gameResult }: { gameResult: string }): JSX.Element {
+export default function BetGameResultInfo({
+	gameResultInput,
+}: {
+	gameResultInput: string | undefined;
+}): JSX.Element {
+	const checkedGameResult = gameScoreValidation(gameResultInput);
+	const gameResultObj = transformToGameResult(checkedGameResult);
+	const gameScoreView = getGameResultView(gameResultObj);
 	return (
 		<>
 			<Box sx={{ textAlign: 'left', borderBottom: 1, pb: 0.3, mb: 1.5 }}>
@@ -9,13 +21,15 @@ export default function BetGameResultInfo({ gameResult }: { gameResult: string }
 			</Box>
 			<Box
 				sx={{
-					color: gameResult === t('incorrectGameScore') || gameResult === '' ? 'brown' : 'inherit',
-					fontWeight: gameResult === t('incorrectGameScore') || gameResult === '' ? 600 : 400,
+					color:
+						checkedGameResult === t('incorrectGameScore') || checkedGameResult === t('notSpecified')
+							? 'brown'
+							: 'inherit',
 				}}
 			>
-				<b>
-					{t('finalScore')} - {gameResult || t('notSpecified')}
-				</b>
+				{checkedGameResult !== t('incorrectGameScore')
+					? `${t('finalScore')} - ${gameScoreView}`
+					: checkedGameResult}
 			</Box>
 		</>
 	);
