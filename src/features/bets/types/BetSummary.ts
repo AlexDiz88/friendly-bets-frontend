@@ -12,6 +12,6 @@ export default interface BetSummary {
 	isNot: boolean;
 	betOdds: string;
 	betSize: string;
-	gameResult?: string;
+	gameResultInput?: string;
 	betStatus?: string;
 }

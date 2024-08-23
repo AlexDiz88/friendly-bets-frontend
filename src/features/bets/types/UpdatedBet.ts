@@ -1,3 +1,5 @@
+import GameResult from './GameResult';
+
 export default interface UpdatedBet {
 	seasonId: string;
 	leagueId: string;
@@ -8,7 +10,7 @@ export default interface UpdatedBet {
 	betTitle: string | undefined;
 	betOdds: number;
 	betSize: number;
-	gameResult?: string;
+	gameResult?: GameResult | null;
 	betStatus: string;
 	prevCalendarNodeId?: string | undefined;
 	calendarNodeId: string | undefined;

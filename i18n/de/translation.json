@@ -258,7 +258,7 @@
 		"betAlreadyProcessed": "Diese Wette wurde bereits von einem anderen Moderator bearbeitet",
 		"invalidRequest": "Ungültige Anfrage",
 		"emptyAndDeletedBetsCannotBeEdited": "Leere und gelöschte Wetten können nicht bearbeitet werden",
-		"gamescoreIsBlank": "Spielstand fehlt",
+		"gamescoreIsNull": "Spielstand fehlt",
 		"betAlreadyEdited": "Diese Wette wurde bereits von einem anderen Moderator bearbeitet",
 		"userWithThisEmailAlreadyRegistered": "Benutzer mit dieser E-Mail ist bereits registriert",
 		"teamWithThisTitleAlreadyExist": "Team mit diesem Titel existiert bereits",
@@ -277,7 +277,11 @@
 		"noGameweeks": "Derzeit sind keine Spieltage verfügbar",
 		"betNotFoundInAnyCalendar": "Wette in keinem Kalender gefunden",
 		"noPlayersInSeason": "Es gibt keine Teilnehmer in der Saison",
-		"nullOrZeroBetCountPerMatchDay": "Der Wert für die Anzahl der Wetten pro Spieltag fehlt"
+		"nullOrZeroBetCountPerMatchDay": "Der Wert für die Anzahl der Wetten pro Spieltag fehlt",
+		"incorrectGameScore": "Ungültiger Spielstand!",
+		"gameResultIsNull": "Spielergebnis fehlt",
+		"invalidGameScoreFormat": "Ungültiges Spielergebnis-Format",
+		"gameResultNotSpecified": "Spielergebnis ist nicht festgelegt"
 	},
 	"matchdayCalendar": "Spielplan",
 	"matchdayStartDate": "Startdatum des Spieltags",
@@ -294,5 +298,8 @@
 	"calendarForLeagueMatchdayNotExist": "Der angegebene Spieltag der ausgewählten Liga wurde nicht in den Kalender aufgenommen!",
 	"chooseGameweekForDetailedView": "Wählen Sie Spielzeitraum zur Detailansicht aus",
 	"thinkingAboutBet": "Überlegt die Wette",
-	"updateInProgress": "Das Datenbank-Update läuft. Dies kann einige Minuten dauern..."
+	"updateInProgress": "Das Datenbank-Update läuft. Dies kann einige Minuten dauern...",
+	"noGameScore": "Spielergebnis fehlt!",
+	"ot": "ot.",
+	"penalty": "p."
 }

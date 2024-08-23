@@ -1,14 +1,12 @@
 import { GppMaybe } from '@mui/icons-material';
-import { Avatar, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
-import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
-import pathToLogoImage from '../../components/utils/pathToLogoImage';
-import Bet from './types/Bet';
 import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
 import UserAvatar from '../../components/custom/avatar/UserAvatar';
+import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
+import Bet from './types/Bet';
 
 export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 	const { i18n } = useTranslation();

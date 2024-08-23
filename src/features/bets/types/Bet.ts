@@ -1,5 +1,6 @@
 import Team from '../../admin/teams/types/Team';
 import SimpleUser from '../../auth/types/SimpleUser';
+import GameResult from './GameResult';
 
 export default interface Bet {
 	id: string;
@@ -15,7 +16,7 @@ export default interface Bet {
 	betOdds?: number;
 	betSize: number;
 	betResultAddedAt?: Date;
-	gameResult?: string;
+	gameResult?: GameResult;
 	betStatus: string;
 	balanceChange?: number;
 	updatedAt?: Date;

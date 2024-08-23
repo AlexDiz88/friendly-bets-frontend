@@ -3,6 +3,11 @@ import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
 import TeamAvatar from '../../components/custom/avatar/TeamAvatar';
+import {
+	gameScoreValidation,
+	getGameResultView,
+	transformToGameResult,
+} from '../../components/utils/gameResultValidation';
 import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
 import BetSummary from './types/BetSummary';
 
@@ -18,11 +23,13 @@ export default function BetSummaryInfo({
 	betOdds,
 	betSize,
 	betStatus = '',
-	gameResult = '',
+	gameResultInput = '',
 }: BetSummary): JSX.Element {
 	const { i18n } = useTranslation();
 	const currentLanguage = i18n.language;
 	const transformedTitle = matchDayTitleViewTransform(matchDay, currentLanguage);
+
+	const score = gameScoreValidation(gameResultInput);
 
 	return (
 		<Box sx={{ minWidth: '15rem', m: 0, p: 0, fontWeight: 400 }}>
@@ -54,11 +61,18 @@ export default function BetSummaryInfo({
 					<Box
 						sx={{
 							color:
-								gameResult === t('incorrectGameScore') || gameResult === '' ? 'brown' : 'inherit',
-							fontWeight: gameResult === t('incorrectGameScore') || gameResult === '' ? 600 : 400,
+								score === t('notSpecified') || score === t('incorrectGameScore')
+									? 'brown'
+									: 'inherit',
+							fontWeight:
+								score === t('notSpecified') || score === t('incorrectGameScore') ? 600 : 400,
 						}}
 					>
-						{gameResult || t('notSpecified')}
+						{score === t('notSpecified')
+							? t('notSpecified')
+							: score === t('incorrectGameScore')
+							? t('incorrectGameScore')
+							: getGameResultView(transformToGameResult(score))}
 					</Box>
 				</Box>
 			)}

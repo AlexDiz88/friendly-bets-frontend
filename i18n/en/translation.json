@@ -152,7 +152,7 @@
 		"1/2": "1/2",
 		"final": "Final"
 	},
-	"incorrectGameScore": "Incorrect match score!",
+	"incorrectGameScore": "Incorrect game score!",
 	"not": " - нет",
 	"betsCheck": "Bet verification",
 	"lost": "Lost",
@@ -258,7 +258,7 @@
 		"betAlreadyProcessed": "This bet has already been processed by another moderator",
 		"invalidRequest": "Invalid request",
 		"emptyAndDeletedBetsCannotBeEdited": "Empty and deleted bets cannot be edited",
-		"gamescoreIsBlank": "Match score is blank",
+		"gamescoreIsNull": "Match score is null",
 		"betAlreadyEdited": "This bet has already been edited by another moderator",
 		"userWithThisEmailAlreadyRegistered": "User with this email is already registered",
 		"teamWithThisTitleAlreadyExist": "Team with this title already exists",
@@ -277,7 +277,11 @@
 		"noGameweeks": "There are currently no gameweeks available",
 		"betNotFoundInAnyCalendar": "Bet not found in any calendar",
 		"noPlayersInSeason": "There are no participants in the season",
-		"nullOrZeroBetCountPerMatchDay": "The number of bets per matchday is missing"
+		"nullOrZeroBetCountPerMatchDay": "The number of bets per matchday is missing",
+		"incorrectGameScore": "Incorrect game score!",
+		"gameResultIsNull": "Game result is missing",
+		"invalidGameScoreFormat": "Invalid game result format",
+		"gameResultNotSpecified": "Game result is not specified"
 	},
 	"matchdayCalendar": "Matchday schedule",
 	"matchdayStartDate": "Start Date of Matchday",
@@ -294,5 +298,8 @@
 	"calendarForLeagueMatchdayNotExist": "The specified matchday of selected league has not been added to calendar!",
 	"chooseGameweekForDetailedView": "Select gameweek for detailed view",
 	"thinkingAboutBet": "Thinking about bet",
-	"updateInProgress": "The database update is in progress. This may take a few minutes..."
+	"updateInProgress": "The database update is in progress. This may take a few minutes...",
+	"noGameScore": "Match result is missing!",
+	"ot": "ot.",
+	"penalty": "p."
 }

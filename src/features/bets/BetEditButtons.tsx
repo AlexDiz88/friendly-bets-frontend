@@ -8,7 +8,7 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
-import { transformGameResult } from '../../components/utils/scoreValidation';
+import { convertGameResultToString } from '../../components/utils/gameResultValidation';
 import { getSeasonCalendarHasBetsNodes } from '../admin/calendars/calendarsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import BetEditForm from './BetEditForm';
@@ -46,8 +46,8 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 
 	const handleEditBet = (): void => {
 		setShowEditForm(!showEditForm);
-		const result = transformGameResult(bet.gameResult || '');
-		setTransformedGameResult(result);
+		const gameResultAsString = convertGameResultToString(bet.gameResult);
+		setTransformedGameResult(gameResultAsString);
 	};
 
 	const handleDeleteBetOpenDialog = (): void => {
@@ -76,7 +76,7 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 			{showEditForm && bet.betStatus !== 'EMPTY' && (
 				<BetEditForm
 					bet={bet}
-					transformedGameResult={transformedGameResult}
+					gameResultAsString={transformedGameResult}
 					handleEditBet={handleEditBet}
 				/>
 			)}

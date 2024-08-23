@@ -258,7 +258,7 @@
 		"betAlreadyProcessed": "Эта ставка уже обработана другим модератором",
 		"invalidRequest": "Некорректный запрос",
 		"emptyAndDeletedBetsCannotBeEdited": "Пустые и удалённые ставки редактировать запрещено",
-		"gamescoreIsBlank": "Счёт матча отсутствует",
+		"gamescoreIsNull": "Счёт матча отсутствует",
 		"betAlreadyEdited": "Ставка на этот матч уже отредактирована другим модератором",
 		"userWithThisEmailAlreadyRegistered": "Пользователь с таким e-mail уже зарегистрирован",
 		"teamWithThisTitleAlreadyExist": "Команда с таким названием уже существует",
@@ -277,7 +277,11 @@
 		"noGameweeks": "В данный момент игровые туры отсутствуют",
 		"betNotFoundInAnyCalendar": "Ставка не найдена ни в одной записи календаря",
 		"noPlayersInSeason": "В сезоне нет ни одного участника",
-		"nullOrZeroBetCountPerMatchDay": "Отсутствует значение количества ставок на тур"
+		"nullOrZeroBetCountPerMatchDay": "Отсутствует значение количества ставок на тур",
+		"incorrectGameScore": "Некорректный счёт матча!",
+		"gameResultIsNull": "Результат матча отсутствует",
+		"invalidGameScoreFormat": "Некорректный формат результата матча",
+		"gameResultNotSpecified": "Результат матча не установлен"
 	},
 	"matchdayCalendar": "Календарь туров",
 	"matchdayStartDate": "Дата начала тура",
@@ -294,5 +298,8 @@
 	"calendarForLeagueMatchdayNotExist": "Указанный тур лиги не добавлен в календарь!",
 	"chooseGameweekForDetailedView": "Выберите игровой тур для его обзора",
 	"thinkingAboutBet": "Думает над ставкой",
-	"updateInProgress": "Идёт процесс обновления базы данных. Это может занять несколько минут..."
+	"updateInProgress": "Идёт процесс обновления базы данных. Это может занять несколько минут...",
+	"noGameScore": "Результат матча отсутствует!",
+	"ot": "доп.",
+	"penalty": "пен."
 }
