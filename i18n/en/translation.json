@@ -87,6 +87,9 @@
 	"team": "Team",
 	"totalBets": "Bets",
 	"balance": "Balance",
+	"weekChange": "This gameweek",
+	"positionChange": "Position change",
+	"afterGameweek": "After gameweek",
 	"leagueShortName": {
 		"EPL": "EPL",
 		"BL": "BL",
@@ -127,9 +130,11 @@
 	"chooseTeamForAddingToLeague": "Select team to add to league",
 	"mainStatsRecalculating": "Recalculation general stats",
 	"teamStatsRecalculating": "Recalculation stats by teams",
+	"gameweekStatsRecalculating": "Recalculation stats by gameweeks",
 	"mainStatsWillBeRecalculated": "Statistics for all players of the season will be recalculated",
 	"thisActionCannotBeCanceled": "Attention!! This action cannot be rolled back after confirmation!",
 	"teamStatsWillBeRecalculated": "Statistics for all teams of season will be recalculated",
+	"gameweekStatsWillBeRecalculated": "Stats for all gameweeks in the season will be recalculated",
 	"dbManagement": "Database management",
 	"dbUpdate": "Update database",
 	"newSeason": "New season",
@@ -301,5 +306,6 @@
 	"updateInProgress": "The database update is in progress. This may take a few minutes...",
 	"noGameScore": "Match result is missing!",
 	"ot": "ot.",
-	"penalty": "p."
+	"penalty": "p.",
+	"statsWillBeAddedWhenGameweekFinished": "Standings for the gameweek will be added after all its games are completed"
 }

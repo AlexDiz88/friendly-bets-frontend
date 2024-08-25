@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import * as api from './api';
 import BetResult from './types/BetResult';
 import BetsState from './types/BetsState';
-import NewBet from './types/NewBet';
 import NewEmptyBet from './types/NewEmptyBet';
+import NewOpenedBet from './types/NewOpenedBet';
 import UpdatedBet from './types/UpdatedBet';
 
 const initialState: BetsState = {
@@ -15,13 +15,10 @@ const initialState: BetsState = {
 	error: undefined,
 };
 
-export const addBet = createAsyncThunk('bets/addBet', async ({ newBet }: { newBet: NewBet }) => {
-	if (!newBet.betTitle) {
-		throw new Error('Отсутствует ставка');
-	}
-	// TODO доделать проверки
-	return api.addBet(newBet);
-});
+export const addOpenedBet = createAsyncThunk(
+	'bets/addOpenedBet',
+	async ({ newOpenedBet }: { newOpenedBet: NewOpenedBet }) => api.addOpenedBet(newOpenedBet)
+);
 
 export const addEmptyBet = createAsyncThunk(
 	'bets/addEmptyBet',
@@ -100,10 +97,10 @@ const betsSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(addBet.fulfilled, (state, action) => {
+			.addCase(addOpenedBet.fulfilled, (state, action) => {
 				state.bet = action.payload;
 			})
-			.addCase(addBet.rejected, (state, action) => {
+			.addCase(addOpenedBet.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
 			.addCase(addEmptyBet.fulfilled, (state, action) => {
@@ -145,6 +142,7 @@ const betsSlice = createSlice({
 					}
 					return bet;
 				});
+				state.bet = action.payload;
 			})
 			.addCase(updateBet.rejected, (state, action) => {
 				state.error = action.error.message;

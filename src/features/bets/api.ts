@@ -2,18 +2,18 @@
 import Bet, { BetId } from './types/Bet';
 import BetResult from './types/BetResult';
 import BetsPage from './types/BetsPage';
-import NewBet from './types/NewBet';
 import NewEmptyBet from './types/NewEmptyBet';
+import NewOpenedBet from './types/NewOpenedBet';
 import UpdatedBet from './types/UpdatedBet';
 
-export async function addBet(newBet: NewBet): Promise<Bet> {
+export async function addOpenedBet(newOpenedBet: NewOpenedBet): Promise<Bet> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/add`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/add`;
 	}
 	const result = await fetch(`${url}`, {
 		method: 'POST',
-		body: JSON.stringify(newBet),
+		body: JSON.stringify(newOpenedBet),
 		headers: {
 			'Content-Type': 'application/json',
 		},

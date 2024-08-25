@@ -70,7 +70,6 @@ export default function BetEditForm({
 	const [calendar, setCalendar] = useState<Calendar | undefined>();
 	const [updatedUser, setUpdatedUser] = useState<SimpleUser>(bet.player);
 	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(bet.matchDay);
-	// TODO передать/посчитать пробелы в gameResultAsString и передать в MatchdayForm
 	const [updatedHomeTeam, setUpdatedHomeTeam] = useState<Team | undefined>(bet.homeTeam);
 	const [updatedAwayTeam, setUpdatedAwayTeam] = useState<Team | undefined>(bet.awayTeam);
 	const [updatedBetTitle, setUpdatedBetTitle] = useState<string | undefined>(
@@ -89,11 +88,9 @@ export default function BetEditForm({
 	const scrollToTop = (): void => {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
-	// TODO: исправить проблему в редактировании ставки при смене флага плейофф + общая проверка
 
 	const handleBetUpdateSave = useCallback(async () => {
 		setBetUpdateOpenDialog(false);
-		// TODO добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
 		const betOddsToNumber = Number(updatedBetOdds?.trim().replace(',', '.'));
 		const dispatchResult = await dispatch(
 			updateBet({
@@ -186,21 +183,11 @@ export default function BetEditForm({
 
 	const handleGameResultInputChange = (value: string): void => {
 		setGameResultInput(value);
-		console.log();
 	};
 
 	const handleBetUpdateOpenDialog = (inputStr: string): void => {
-		console.log('inputStr');
-		console.log(inputStr);
-
 		const checkedGameResult = gameScoreValidation(inputStr);
-		console.log('checkedGameResult');
-		console.log(checkedGameResult);
-
 		const gameResultObj = transformToGameResult(checkedGameResult);
-		console.log('gameResultObj');
-		console.log(gameResultObj);
-
 		setUpdatedGameResult(gameResultObj);
 		setBetUpdateOpenDialog(true);
 	};

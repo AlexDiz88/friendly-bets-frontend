@@ -87,6 +87,9 @@
 	"team": "Команда",
 	"totalBets": "Ставок",
 	"balance": "Баланс",
+	"weekChange": "Этот тур",
+	"positionChange": "Смена позиции",
+	"afterGameweek": "После тура",
 	"leagueShortName": {
 		"EPL": "АПЛ",
 		"BL": "БЛ",
@@ -127,9 +130,11 @@
 	"chooseTeamForAddingToLeague": "Выбрать команду для добавления в лигу",
 	"mainStatsRecalculating": "Пересчёт общей статистики",
 	"teamStatsRecalculating": "Пересчёт статистики по командам",
+	"gameweekStatsRecalculating": "Пересчёт статистики по турам",
 	"mainStatsWillBeRecalculated": "Будет пересчитана статистика по всем участникам сезона",
 	"thisActionCannotBeCanceled": "Внимание!! Это действие нельзя откатить после подтверждения!",
 	"teamStatsWillBeRecalculated": "Будет пересчитана статистика по всем командам сезона",
+	"gameweekStatsWillBeRecalculated": "Будет пересчитана статистика по всем турам сезона",
 	"dbManagement": "Управление базой данных",
 	"dbUpdate": "Обновить базу данных",
 	"newSeason": "Новый сезон",
@@ -301,5 +306,6 @@
 	"updateInProgress": "Идёт процесс обновления базы данных. Это может занять несколько минут...",
 	"noGameScore": "Результат матча отсутствует!",
 	"ot": "доп.",
-	"penalty": "пен."
+	"penalty": "пен.",
+	"statsWillBeAddedWhenGameweekFinished": "Итоговая таблица игрового тура будет добавлена после окончания всех его матчей"
 }

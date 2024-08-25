@@ -42,7 +42,7 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 		if (deleteBet.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
-	}, [dispatch, bet.id, bet.seasonId, bet.leagueId]);
+	}, [bet, transformedGameResult]);
 
 	const handleEditBet = (): void => {
 		setShowEditForm(!showEditForm);
