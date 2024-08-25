@@ -26,7 +26,7 @@ import BetInputTeams from './BetInputTeams';
 import BetInputTitle from './BetInputTitle';
 import BetSummaryInfo from './BetSummaryInfo';
 import MatchDayForm from './MatchDayForm';
-import { addBet, addEmptyBet } from './betsSlice';
+import { addEmptyBet, addOpenedBet } from './betsSlice';
 
 export default function BetInputContainer(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -61,12 +61,11 @@ export default function BetInputContainer(): JSX.Element {
 	const handleSaveClick = useCallback(async () => {
 		setOpenDialog(false);
 		if (season && selectedUser && selectedHomeTeam && selectedAwayTeam) {
-			// TODO: добавить проверку на валидность кэфа (наличие пробелов между цифрами итд)
 			const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
 
 			const dispatchResult = await dispatch(
-				addBet({
-					newBet: {
+				addOpenedBet({
+					newOpenedBet: {
 						seasonId: season.id,
 						leagueId: selectedLeagueId,
 						userId: selectedUser?.id,
@@ -81,13 +80,13 @@ export default function BetInputContainer(): JSX.Element {
 				})
 			);
 
-			if (addBet.fulfilled.match(dispatchResult)) {
+			if (addOpenedBet.fulfilled.match(dispatchResult)) {
 				dispatch(showSuccessSnackbar({ message: t('betWasSuccessfullyAdded') }));
 				setResetTeams(!resetTeams);
 				setSelectedHomeTeam(undefined);
 				setSelectedAwayTeam(undefined);
 			}
-			if (addBet.rejected.match(dispatchResult)) {
+			if (addOpenedBet.rejected.match(dispatchResult)) {
 				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 			}
 			setSelectedBetTitle('');

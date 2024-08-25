@@ -10,9 +10,6 @@ const initialState: PlayersStatsState = {
 	error: undefined,
 };
 
-// TODO добавить GET методы на getAllByLeagueInSeason,
-// TODO getAllBySeason, getAllByPlayerInSeason, getAllByPlayerByLeagueInSeason
-
 export const getAllPlayersStatsBySeason = createAsyncThunk(
 	'stats/getAllPlayersStatsBySeason',
 	async (seasonId: string) => api.getAllPlayersStatsBySeason(seasonId)

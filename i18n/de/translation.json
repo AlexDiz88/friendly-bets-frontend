@@ -87,6 +87,9 @@
 	"team": "Mannschaft",
 	"totalBets": "Wetten",
 	"balance": "Balance",
+	"weekChange": "Dieser Spieltag",
+	"positionChange": "Positions änderung",
+	"afterGameweek": "Nach Spieltag",
 	"leagueShortName": {
 		"EPL": "EPL",
 		"BL": "BL",
@@ -127,9 +130,11 @@
 	"chooseTeamForAddingToLeague": "Team zur Liga hinzufügen",
 	"mainStatsRecalculating": "Neuberechnung der Gesamtstats",
 	"teamStatsRecalculating": "Neuberechnung der Teamstats",
+	"gameweekStatsRecalculating": "Neuberechnung der Spieltagsstats",
 	"mainStatsWillBeRecalculated": "Die Statistiken für alle Spieler der Saison werden neu berechnet",
 	"thisActionCannotBeCanceled": "Achtung!! Diese Aktion kann nach der Bestätigung nicht zurückgesetzt werden!",
 	"teamStatsWillBeRecalculated": "Die Statistiken für alle Teams der Saison werden neu berechnet",
+	"gameweekStatsWillBeRecalculated": "Die Statistiken für alle Spieltage der Saison werden neu berechnet",
 	"dbManagement": "Datenbankverwaltung",
 	"dbUpdate": "Datenbank update",
 	"newSeason": "Neue Saison",
@@ -301,5 +306,6 @@
 	"updateInProgress": "Das Datenbank-Update läuft. Dies kann einige Minuten dauern...",
 	"noGameScore": "Spielergebnis fehlt!",
 	"ot": "ot.",
-	"penalty": "p."
+	"penalty": "p.",
+	"statsWillBeAddedWhenGameweekFinished": "Die Tabelle des Spieltags wird hinzugefügt, nachdem alle Spiele abgeschlossen sind"
 }

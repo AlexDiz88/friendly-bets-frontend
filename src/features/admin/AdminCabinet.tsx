@@ -6,12 +6,15 @@ import DatabaseUpdate from '../../components/DatabaseUpdate';
 import StatsRecalculating from '../stats/StatsRecalculating';
 import SeasonsManagement from './seasons/SeasonsManagement';
 import TeamsManagement from './teams/TeamsManagement';
+import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 
 export default function AdminCabinet(): JSX.Element {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const handleStartLoading = (): void => setIsLoading(true);
 	const handleStopLoading = (): void => setIsLoading(false);
+
+	useFetchCurrentUser();
 
 	return (
 		<Box sx={{ textAlign: 'center', mx: 2, mb: 10, position: 'relative' }}>

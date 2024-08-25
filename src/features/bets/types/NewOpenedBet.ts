@@ -1,6 +1,6 @@
 import NewEmptyBet from './NewEmptyBet';
 
-export default interface NewBet extends NewEmptyBet {
+export default interface NewOpenedBet extends NewEmptyBet {
 	homeTeamId: string;
 	awayTeamId: string;
 	betTitle: string;

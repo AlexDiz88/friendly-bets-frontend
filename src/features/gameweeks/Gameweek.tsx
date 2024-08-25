@@ -19,6 +19,7 @@ import Calendar from '../admin/calendars/types/Calendar';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import BetsPage from '../bets/types/BetsPage';
 import GameweekPlayerContainer from './GameweekPlayersContainer';
+import GameweekStats from './GameweekStats';
 
 const Gameweek = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -152,6 +153,7 @@ const Gameweek = (): JSX.Element => {
 														bets={gameweekBets.bets}
 														gameweekCardsCount={gameweekCardsCount}
 													/>
+													<GameweekStats calendarNode={selectedCalendarNode} />
 												</Box>
 											) : (
 												<CustomLoading />
