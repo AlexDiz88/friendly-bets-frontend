@@ -25,7 +25,7 @@ const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Elemen
 	);
 
 	return (
-		<Box sx={{ maxWidth: '25rem', m: '0 auto', my: 3 }}>
+		<Box sx={{ maxWidth: '25rem', m: '0 auto', my: 2 }}>
 			{calendarNode.isFinished ? (
 				<Box>
 					<TableContainer
@@ -34,6 +34,7 @@ const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Elemen
 							overflowX: 'auto',
 							backgroundColor: '#f5f5f5',
 							border: 2,
+							boxShadow: '1px 4px 7px rgba(0, 0, 60, 0.4), 0px 4px 8px rgba(0, 0, 0, 0.7)',
 							borderRadius: 2,
 						}}
 					>
@@ -44,10 +45,6 @@ const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Elemen
 										fontWeight: 600,
 										color: 'whitesmoke',
 										background: 'linear-gradient(45deg, #f6d365, #fda085)',
-										// background: 'linear-gradient(45deg, #6a11cb, #2575fc)',
-										// background: 'linear-gradient(45deg, #ff9a9e, #fad0c4)',
-										// background: 'linear-gradient(45deg, #56ccf2, #2f80ed)',
-										// background: 'linear-gradient(45deg, #a1c4fd, #c2e9fb)',
 									}}
 								>
 									<TableCell
@@ -97,7 +94,7 @@ const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Elemen
 													sx={{ fontWeight: 600, fontSize: '0.9rem' }}
 													color={s.balanceChange >= 0 ? 'green' : 'red'}
 												>
-													{s.balanceChange >= 0 ? `+${weekBalance}` : weekBalance}
+													{s.balanceChange >= 0 ? `+${weekBalance}` : weekBalance}€
 												</Typography>
 											</TableCell>
 
@@ -116,13 +113,13 @@ const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Elemen
 
 											<TableCell align="center">
 												<Typography
+													sx={{ fontWeight: 'bold', fontSize: '1.05rem', pr: 0.5 }}
 													color={s.totalBalance >= 0 ? 'green' : 'red'}
-													fontWeight="bold"
-													fontSize="1.1rem"
 												>
 													{s.totalBalance >= 0
 														? `+${totalBalanceAfterWeek}`
 														: totalBalanceAfterWeek}
+													€
 												</Typography>
 											</TableCell>
 										</TableRow>
@@ -140,8 +137,7 @@ const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Elemen
 							borderRadius: 2,
 							border: 2,
 							background: 'linear-gradient(45deg, #F6D465CF, #FD9F85C2)',
-							backdropFilter: 'blur(10px)',
-							padding: 3,
+							px: 2,
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
