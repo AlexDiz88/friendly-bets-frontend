@@ -148,12 +148,12 @@ const Gameweek = (): JSX.Element => {
 										<Box>
 											{activeSeason && gameweekBets?.bets && selectedCalendarNode ? (
 												<Box>
+													<GameweekStats calendarNode={selectedCalendarNode} />
 													<GameweekPlayerContainer
 														activeSeason={activeSeason}
 														bets={gameweekBets.bets}
 														gameweekCardsCount={gameweekCardsCount}
 													/>
-													<GameweekStats calendarNode={selectedCalendarNode} />
 												</Box>
 											) : (
 												<CustomLoading />
