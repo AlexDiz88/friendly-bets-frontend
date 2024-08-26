@@ -137,7 +137,6 @@ const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Elemen
 							borderRadius: 2,
 							border: 2,
 							background: 'linear-gradient(45deg, #F6D465CF, #FD9F85C2)',
-							backdropFilter: 'blur(10px)',
 							px: 2,
 							display: 'flex',
 							alignItems: 'center',
