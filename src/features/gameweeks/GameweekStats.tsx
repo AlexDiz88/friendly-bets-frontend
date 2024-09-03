@@ -156,6 +156,7 @@ const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Elemen
 								transform: 'skewX(-35deg)',
 								animation: 'shine 5s linear infinite',
 							},
+							'@keyframes shine': { '0%': { right: '220%' }, '100%': { right: '-250%' } },
 						}}
 					>
 						<AssessmentIcon sx={{ color: '#D22D90', marginRight: 2, scale: '150%' }} />
@@ -163,8 +164,6 @@ const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Elemen
 							{t('statsWillBeAddedWhenGameweekFinished')}
 						</Typography>
 					</Box>
-
-					<style>{`@keyframes shine {0% { right: 220%; } 100% { right: -250%; }}`}</style>
 				</>
 			)}
 		</Box>

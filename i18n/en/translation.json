@@ -286,7 +286,8 @@
 		"incorrectGameScore": "Incorrect game score!",
 		"gameResultIsNull": "Game result is missing",
 		"invalidGameScoreFormat": "Invalid game result format",
-		"gameResultNotSpecified": "Game result is not specified"
+		"gameResultNotSpecified": "Game result is not specified",
+		"exceededLimitBetsFromPlayer": "Player's betting limit for league in this gameweek has been exceeded"
 	},
 	"matchdayCalendar": "Matchday schedule",
 	"matchdayStartDate": "Start Date of Matchday",

@@ -286,7 +286,8 @@
 		"incorrectGameScore": "Некорректный счёт матча!",
 		"gameResultIsNull": "Результат матча отсутствует",
 		"invalidGameScoreFormat": "Некорректный формат результата матча",
-		"gameResultNotSpecified": "Результат матча не установлен"
+		"gameResultNotSpecified": "Результат матча не установлен",
+		"exceededLimitBetsFromPlayer": "Превышен лимит ставок от игрока на лигу в этом туре"
 	},
 	"matchdayCalendar": "Календарь туров",
 	"matchdayStartDate": "Дата начала тура",

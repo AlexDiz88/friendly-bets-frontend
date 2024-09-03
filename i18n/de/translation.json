@@ -286,7 +286,8 @@
 		"incorrectGameScore": "Ungültiger Spielstand!",
 		"gameResultIsNull": "Spielergebnis fehlt",
 		"invalidGameScoreFormat": "Ungültiges Spielergebnis-Format",
-		"gameResultNotSpecified": "Spielergebnis ist nicht festgelegt"
+		"gameResultNotSpecified": "Spielergebnis ist nicht festgelegt",
+		"exceededLimitBetsFromPlayer": "Einsatzlimit des Spielers für die Liga in diesem Spieltag wurde überschritten"
 	},
 	"matchdayCalendar": "Spielplan",
 	"matchdayStartDate": "Startdatum des Spieltags",
