@@ -7,7 +7,6 @@ import CustomLoadingError from '../../components/custom/loading/CustomLoadingErr
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import PlayerSelect from '../../components/selectors/PlayerSelect';
-import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import OpenedBetCard from './OpenedBetCard';
 import { getOpenedBets } from './betsSlice';
@@ -68,12 +67,6 @@ const OpenedBetsList = (): JSX.Element => {
 				});
 		}
 	}, [activeSeason]);
-
-	useEffect(() => {
-		if (!activeSeason) {
-			dispatch(getActiveSeason());
-		}
-	}, []);
 
 	return (
 		<Box>

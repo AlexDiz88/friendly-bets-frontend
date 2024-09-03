@@ -67,31 +67,6 @@ export async function createCalendarNode(newCalendarNode: NewCalendar): Promise<
 	return result.json();
 }
 
-export async function addBetToCalendarNode(
-	betId: string,
-	calendarNodeId: string,
-	leagueId: string
-): Promise<Calendar> {
-	let url = `${
-		import.meta.env.VITE_PRODUCT_SERVER || ''
-	}/api/calendars/${calendarNodeId}/leagues/${leagueId}/bets/${betId}`;
-	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = `/api/calendars/${calendarNodeId}/leagues/${leagueId}/bets/${betId}`;
-	}
-	const result = await fetch(`${url}`, {
-		method: 'PUT',
-		body: JSON.stringify({ betId, calendarNodeId, leagueId }),
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
-}
-
 export async function getBetsByCalendarNode(calendarNodeId: string): Promise<BetsPage> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/calendars/${calendarNodeId}/bets`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {

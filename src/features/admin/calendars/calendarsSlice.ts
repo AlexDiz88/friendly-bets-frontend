@@ -33,19 +33,6 @@ export const createCalendarNode = createAsyncThunk(
 	async (newCalendarNode: NewCalendar) => api.createCalendarNode(newCalendarNode)
 );
 
-export const addBetToCalendarNode = createAsyncThunk(
-	'calendars/addBetToCalendarNode',
-	async ({
-		betId,
-		calendarNodeId,
-		leagueId,
-	}: {
-		betId: string;
-		calendarNodeId: string;
-		leagueId: string;
-	}) => api.addBetToCalendarNode(betId, calendarNodeId, leagueId)
-);
-
 export const getBetsByCalendarNode = createAsyncThunk(
 	'calendars/getBetsByCalendarNode',
 	async (calendarNodeId: string) => api.getBetsByCalendarNode(calendarNodeId)
@@ -93,13 +80,6 @@ const calendarsSlice = createSlice({
 				);
 			})
 			.addCase(createCalendarNode.rejected, (state, action) => {
-				state.error = action.error.message;
-				state.calendarNode = undefined;
-			})
-			.addCase(addBetToCalendarNode.fulfilled, (state, action) => {
-				state.calendarNode = action.payload;
-			})
-			.addCase(addBetToCalendarNode.rejected, (state, action) => {
 				state.error = action.error.message;
 				state.calendarNode = undefined;
 			})
