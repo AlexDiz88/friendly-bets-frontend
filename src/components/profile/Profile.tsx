@@ -1,9 +1,9 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Avatar, Box, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { editEmail, editPassword, editUsername, getProfile } from '../../features/auth/authSlice';
+import { editEmail, editPassword, editUsername } from '../../features/auth/authSlice';
 import { selectUser } from '../../features/auth/selectors';
 import CustomButton from '../custom/btn/CustomButton';
 import CustomCancelButton from '../custom/btn/CustomCancelButton';
@@ -109,10 +109,6 @@ export default function Profile(): JSX.Element {
 		}
 	}, [newName]);
 
-	useEffect(() => {
-		dispatch(getProfile());
-	}, []);
-
 	return (
 		<Box
 			sx={{
@@ -135,7 +131,7 @@ export default function Profile(): JSX.Element {
 				/>
 			</Box>
 			{/* TODO: загрузка фото */}
-			{showUploadForm && (
+			{!showUploadForm && (
 				<CustomButton onClick={() => setShowUploadForm(true)} buttonText={t('changePhoto')} />
 			)}
 			{showUploadForm && <UploadForm onClose={() => setShowUploadForm(false)} />}

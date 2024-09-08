@@ -1,17 +1,17 @@
 import { Box, Button, FormControl, InputLabel, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useState } from 'react';
-import { useAppSelector } from '../app/hooks';
-import { getProfile } from '../features/auth/api';
-import { selectUser } from '../features/auth/selectors';
+import { useState } from 'react';
+import { useAppDispatch } from '../app/hooks';
+import { getProfile, uploadAvatar } from '../features/auth/authSlice';
 import CustomCancelButton from './custom/btn/CustomCancelButton';
+import { showErrorSnackbar, showSuccessSnackbar } from './custom/snackbar/snackbarSlice';
 
 interface UploadFormProps {
 	onClose: () => void;
 }
 
 function UploadForm({ onClose }: UploadFormProps): JSX.Element {
-	const user = useAppSelector(selectUser);
+	const dispatch = useAppDispatch();
 	const [image, setImage] = useState<File | null>(null);
 
 	const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -24,32 +24,28 @@ function UploadForm({ onClose }: UploadFormProps): JSX.Element {
 		event.preventDefault();
 
 		if (!image) {
-			console.log('Файл не выбран');
+			dispatch(showErrorSnackbar({ message: t('fileNotChose') }));
 			return;
 		}
 
-		try {
-			const formData = new FormData();
-			formData.append('image', image);
-			let url = `${(import.meta.env.VITE_PRODUCT_SERVER as string) || ''}/api/files/upload/avatars`;
-			if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-				url = '/api/files/upload/avatars';
-			}
-			const response = await fetch(`${url}`, {
-				method: 'POST',
-				body: formData,
-			});
+		// const formData = new FormData();
+		// formData.append('image', image);
+		// let url = `${(import.meta.env.VITE_PRODUCT_SERVER as string) || ''}/api/files/upload/avatars`;
+		// if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		// 	url = '/api/files/upload/avatars';
+		// }
+		// const response = await fetch(`${url}`, {
+		// 	method: 'POST',
+		// 	body: formData,
+		// });
+		const dispatchResult = await dispatch(uploadAvatar({ image }));
 
-			if (response.ok) {
-				console.log('Файл загружен на сервер');
-				setImage(null);
-				onClose();
-				window.location.reload();
-			} else {
-				console.log('Произошла ошибка при загрузке файла на сервер');
-			}
-		} catch (error) {
-			console.log('Произошла ошибка при загрузке файла на сервер:', error);
+		if (uploadAvatar.fulfilled.match(dispatchResult)) {
+			dispatch(showSuccessSnackbar({ message: t('userAvatarWasUploaded') }));
+			dispatch(getProfile());
+		}
+		if (uploadAvatar.rejected.match(dispatchResult)) {
+			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
 	};
 
@@ -57,15 +53,9 @@ function UploadForm({ onClose }: UploadFormProps): JSX.Element {
 		onClose();
 	};
 
-	useEffect(() => {
-		getProfile();
-	}, [user]);
-
 	return (
 		<Box>
-			<Typography sx={{ fontSize: '1.1rem', fontFamily: 'Literata' }}>
-				{t('changePhoto')}
-			</Typography>
+			<Typography sx={{ fontFamily: "'Exo 2'" }}>{t('changePhoto')}</Typography>
 			<FormControl component="form" onSubmit={handleSubmit}>
 				<InputLabel htmlFor="imageInput" />
 				<TextField
@@ -76,12 +66,8 @@ function UploadForm({ onClose }: UploadFormProps): JSX.Element {
 				/>
 				<Box sx={{ mt: 1, mb: 1, mr: 1 }}>
 					<CustomCancelButton onClick={handleCancel} />
-					<Button
-						type="submit"
-						sx={{ height: '1.8rem', px: 1 }}
-						variant="contained"
-						color="success"
-					>
+					{/* <CustomSuccessButton onClick={handleSubmit} /> */}
+					<Button type="submit" sx={{ height: '2rem', px: 1 }} variant="contained" color="success">
 						<Typography
 							variant="button"
 							fontWeight="600"
