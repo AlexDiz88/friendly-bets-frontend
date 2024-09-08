@@ -128,3 +128,22 @@ export async function editUsername({ newUsername }: { newUsername: string }): Pr
 	}
 	return result.json();
 }
+
+export async function uploadAvatar({ image }: { image: File }): Promise<ImageData> {
+	const formData = new FormData();
+	formData.append('image', image);
+	let url = `${(import.meta.env.VITE_PRODUCT_SERVER as string) || ''}/api/files/upload/avatars`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = '/api/files/upload/avatars';
+	}
+	const result = await fetch(`${url}`, {
+		method: 'POST',
+		body: formData,
+	});
+
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}

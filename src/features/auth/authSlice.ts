@@ -74,6 +74,11 @@ export const editUsername = createAsyncThunk(
 	}
 );
 
+export const uploadAvatar = createAsyncThunk(
+	'api/users/my/profile/uploadAvatar',
+	async ({ image }: { image: File }) => api.uploadAvatar({ image })
+);
+
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
@@ -136,6 +141,13 @@ const authSlice = createSlice({
 				state.user = action.payload;
 			})
 			.addCase(editPassword.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
+
+			.addCase(uploadAvatar.fulfilled, (state) => {
+				state.user = undefined;
+			})
+			.addCase(uploadAvatar.rejected, (state, action) => {
 				state.error = action.error.message;
 			});
 	},
