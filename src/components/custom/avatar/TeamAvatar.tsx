@@ -1,7 +1,7 @@
 import { Avatar, Box } from '@mui/material';
 import { t } from 'i18next';
 import Team from '../../../features/admin/teams/types/Team';
-import pathToLogoImage from '../../utils/pathToLogoImage';
+import { pathToLogoImage } from '../../utils/imgBase64Converter';
 
 const TeamAvatar = ({
 	team,

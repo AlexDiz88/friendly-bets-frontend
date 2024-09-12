@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
-import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
+import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
 import PlayerStats from './types/PlayerStats';
 
 function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
@@ -51,7 +51,7 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 					<Avatar
 						sx={{ mr: 0.5, width: 50, height: 50, border: 0 }}
 						alt="user_avatar"
-						src={pathToAvatarImage(pStats.avatar)}
+						src={avatarBase64Converter(pStats.avatar)}
 					/>
 					<Box sx={{ fontSize: '0.95rem', textAlign: 'left', maxWidth: '4.8rem' }}>
 						{pStats.username}

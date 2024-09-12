@@ -1,5 +1,5 @@
 import { Avatar, Box, Grid } from '@mui/material';
-import pathToAvatarImage from '../../components/utils/pathToAvatarImage';
+import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
 import { BET_STATUS_EMPTY, BET_STATUS_OPENED, COMPLETED_BET_STATUSES } from '../../constants';
 import Season from '../admin/seasons/types/Season';
 import Bet from '../bets/types/Bet';
@@ -90,7 +90,7 @@ const GameweekPlayersContainer = ({
 						<Avatar
 							sx={{ mr: 0.5, width: 30, height: 30, border: 1, borderColor: 'gray' }}
 							alt="user_avatar"
-							src={pathToAvatarImage(player.avatar)}
+							src={avatarBase64Converter(player.avatar)}
 						/>
 						{player.username}
 					</Box>

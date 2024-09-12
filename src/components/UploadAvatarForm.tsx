@@ -2,7 +2,7 @@ import { Box, Button, FormControl, InputLabel, TextField, Typography } from '@mu
 import { t } from 'i18next';
 import { useState } from 'react';
 import { useAppDispatch } from '../app/hooks';
-import { getProfile, uploadAvatar } from '../features/auth/authSlice';
+import { uploadUserAvatar } from '../features/auth/authSlice';
 import CustomCancelButton from './custom/btn/CustomCancelButton';
 import { showErrorSnackbar, showSuccessSnackbar } from './custom/snackbar/snackbarSlice';
 
@@ -10,7 +10,7 @@ interface UploadFormProps {
 	onClose: () => void;
 }
 
-function UploadForm({ onClose }: UploadFormProps): JSX.Element {
+const UploadAvatarForm = ({ onClose }: UploadFormProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const [image, setImage] = useState<File | null>(null);
 
@@ -24,27 +24,17 @@ function UploadForm({ onClose }: UploadFormProps): JSX.Element {
 		event.preventDefault();
 
 		if (!image) {
-			dispatch(showErrorSnackbar({ message: t('fileNotChose') }));
+			dispatch(showErrorSnackbar({ message: t('fileNotChosen') }));
 			return;
 		}
 
-		// const formData = new FormData();
-		// formData.append('image', image);
-		// let url = `${(import.meta.env.VITE_PRODUCT_SERVER as string) || ''}/api/files/upload/avatars`;
-		// if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		// 	url = '/api/files/upload/avatars';
-		// }
-		// const response = await fetch(`${url}`, {
-		// 	method: 'POST',
-		// 	body: formData,
-		// });
-		const dispatchResult = await dispatch(uploadAvatar({ image }));
+		const dispatchResult = await dispatch(uploadUserAvatar({ file: image }));
 
-		if (uploadAvatar.fulfilled.match(dispatchResult)) {
+		if (uploadUserAvatar.fulfilled.match(dispatchResult)) {
 			dispatch(showSuccessSnackbar({ message: t('userAvatarWasUploaded') }));
-			dispatch(getProfile());
+			onClose();
 		}
-		if (uploadAvatar.rejected.match(dispatchResult)) {
+		if (uploadUserAvatar.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
 	};
@@ -81,6 +71,6 @@ function UploadForm({ onClose }: UploadFormProps): JSX.Element {
 			</FormControl>
 		</Box>
 	);
-}
+};
 
-export default UploadForm;
+export default UploadAvatarForm;

@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
-import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import PlayerStatsByTeams from './types/PlayerStatsByTeams';
 import TeamStats from './types/TeamStats';
 

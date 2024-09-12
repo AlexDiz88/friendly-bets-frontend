@@ -2,6 +2,12 @@ export const TOTAL_ID = 'total';
 export const TOTAL_STATS_BY_TEAMS_USER_ID = 'total';
 export const MATCHDAY_TITLE_FINAL = 'final';
 
+export const AWS_BUCKET_URL = 'https://friendly-bets.s3.eu-central-1.amazonaws.com';
+export const AWS_AVATARS_FOLDER = 'avatars';
+export const AWS_IMG_FOLDER = 'img';
+export const AWS_LOCALES_FOLDER = 'locales';
+export const AWS_LOGO_FOLDER = 'logo';
+
 export const SEASON_STATUS_CREATED = 'CREATED';
 export const SEASON_STATUS_SCHEDULED = 'SCHEDULED';
 export const SEASON_STATUS_ACTIVE = 'ACTIVE';

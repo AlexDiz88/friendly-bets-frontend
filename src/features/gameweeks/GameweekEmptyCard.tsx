@@ -1,7 +1,7 @@
 import { GppMaybe } from '@mui/icons-material';
 import { Avatar, Box } from '@mui/material';
 import { t } from 'i18next';
-import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import {
 	GAMEWEEK_CARD_HEIGHT,
 	GAMEWEEK_CARD_MAX_WIDTH,
