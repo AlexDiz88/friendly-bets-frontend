@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getProfile, logout } from '../../features/auth/authSlice';
 import { selectUser } from '../../features/auth/selectors';
 import User from '../../features/auth/types/User';
-import pathToAvatarImage from '../utils/pathToAvatarImage';
+import { avatarBase64Converter } from '../utils/imgBase64Converter';
 
 export default function UserSettings(): JSX.Element {
 	const user: User | undefined = useAppSelector(selectUser);
@@ -77,7 +77,7 @@ export default function UserSettings(): JSX.Element {
 			}}
 		>
 			<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-				<Avatar alt="avatar" src={pathToAvatarImage(user?.avatar)} />
+				<Avatar alt="avatar" src={avatarBase64Converter(user?.avatar)} />
 			</IconButton>
 			<Menu
 				sx={{ mt: '45px' }}

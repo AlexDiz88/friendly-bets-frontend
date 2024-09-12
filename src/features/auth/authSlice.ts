@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { t } from 'i18next';
 import * as api from './api';
 import AuthState from './types/AuthState';
 import Credentials from './types/Credentials';
@@ -16,17 +17,17 @@ export const getProfile = createAsyncThunk('api/users/my/profile', async () => a
 
 export const login = createAsyncThunk('login', async (credentials: Credentials) => {
 	if (!credentials.email.trim() || !credentials.password.trim()) {
-		throw new Error('Не все поля заполнены');
+		throw new Error(t('error.emptyFields'));
 	}
 	return api.login(credentials);
 });
 
 export const register = createAsyncThunk('auth/register', async (data: RegisterData) => {
 	if (data.password !== data.passwordRepeat) {
-		throw new Error('Пароли не совпадают');
+		throw new Error(t('error.enteredPasswordsNotEqual'));
 	}
 	if (!data.email.trim() || !data.password.trim()) {
-		throw new Error('Не все поля заполнены');
+		throw new Error(t('error.emptyFields'));
 	}
 	return api.register(data);
 });
@@ -37,7 +38,7 @@ export const editEmail = createAsyncThunk(
 	'api/users/my/profile/editEmail',
 	async ({ newEmail }: { newEmail: string }) => {
 		if (!newEmail.trim()) {
-			throw new Error('Email не может быть пустым');
+			throw new Error(t('error.emailCannotBeEmpty'));
 		}
 		return api.editEmail({ newEmail });
 	}
@@ -55,10 +56,10 @@ export const editPassword = createAsyncThunk(
 		newPasswordRepeat: string;
 	}) => {
 		if (!currentPassword || !newPassword || !newPasswordRepeat) {
-			throw new Error('Текущий или новый пароль не может быть пустым');
+			throw new Error(t('error.actualOrNewPasswordsCannotBeEmpty'));
 		}
 		if (newPassword !== newPasswordRepeat) {
-			throw new Error('Новый пароль и повтор пароля не совпадают');
+			throw new Error(t('error.newAndRepeatPasswordsNotEqual'));
 		}
 		return api.editPassword({ currentPassword, newPassword });
 	}
@@ -68,15 +69,20 @@ export const editUsername = createAsyncThunk(
 	'api/users/my/profile/editUsername',
 	async ({ newUsername }: { newUsername: string }) => {
 		if (!newUsername.trim()) {
-			throw new Error('Имя не может быть пустым');
+			throw new Error(t('error.usernameCannotBeEmpty'));
 		}
 		return api.editUsername({ newUsername });
 	}
 );
 
-export const uploadAvatar = createAsyncThunk(
-	'api/users/my/profile/uploadAvatar',
-	async ({ image }: { image: File }) => api.uploadAvatar({ image })
+export const uploadFile = createAsyncThunk(
+	'api/files/upload',
+	async ({ file, folder }: { file: File; folder?: string }) => api.uploadFile({ file, folder })
+);
+
+export const uploadUserAvatar = createAsyncThunk(
+	'api/files/upload/avatars',
+	async ({ file }: { file: File }) => api.uploadUserAvatar({ file })
 );
 
 const authSlice = createSlice({
@@ -141,13 +147,6 @@ const authSlice = createSlice({
 				state.user = action.payload;
 			})
 			.addCase(editPassword.rejected, (state, action) => {
-				state.error = action.error.message;
-			})
-
-			.addCase(uploadAvatar.fulfilled, (state) => {
-				state.user = undefined;
-			})
-			.addCase(uploadAvatar.rejected, (state, action) => {
 				state.error = action.error.message;
 			});
 	},

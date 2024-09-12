@@ -2,7 +2,7 @@ import { DoDisturbOn } from '@mui/icons-material';
 import { Avatar, Box, IconButton, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import pathToLogoImage from '../../../components/utils/pathToLogoImage';
+import { pathToLogoImage } from '../../../components/utils/imgBase64Converter';
 import { MATCHDAY_TITLE_FINAL } from '../../../constants';
 import Calendar from './types/Calendar';
 

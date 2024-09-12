@@ -17,7 +17,7 @@ const useFetchCurrentUser = (): void => {
 
 	useEffect(() => {
 		if (!currentUser) {
-			dispatch(showErrorSnackbar({ message: t('yourSessionWasFinished') }));
+			dispatch(showErrorSnackbar({ message: t('error.yourSessionWasFinished') }));
 
 			const timer = setTimeout(() => {
 				navigate('/auth/login');

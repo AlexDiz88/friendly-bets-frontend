@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import Credentials from './types/Credentials';
 import RegisterData from './types/RegisterData';
+import ResponseDto from './types/ResponseDto';
 import User from './types/User';
 
 export async function getProfile(): Promise<User> {
@@ -129,12 +130,59 @@ export async function editUsername({ newUsername }: { newUsername: string }): Pr
 	return result.json();
 }
 
-export async function uploadAvatar({ image }: { image: File }): Promise<ImageData> {
+export async function uploadFile({
+	file,
+	folder,
+}: {
+	file: File;
+	folder?: string;
+}): Promise<ResponseDto> {
 	const formData = new FormData();
-	formData.append('image', image);
+	formData.append('file', file);
+	if (folder) {
+		formData.append('folder', folder);
+	}
+	let url = `${(import.meta.env.VITE_PRODUCT_SERVER as string) || ''}/api/files/upload`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = '/api/files/upload';
+	}
+	const result = await fetch(`${url}`, {
+		method: 'POST',
+		body: formData,
+	});
+
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function uploadUserAvatar({ file }: { file: File }): Promise<ResponseDto> {
+	const formData = new FormData();
+	formData.append('file', file);
 	let url = `${(import.meta.env.VITE_PRODUCT_SERVER as string) || ''}/api/files/upload/avatars`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/files/upload/avatars';
+	}
+	const result = await fetch(`${url}`, {
+		method: 'POST',
+		body: formData,
+	});
+
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function uploadAvatarOLD({ image }: { image: File }): Promise<ResponseDto> {
+	const formData = new FormData();
+	formData.append('image', image);
+	let url = `${(import.meta.env.VITE_PRODUCT_SERVER as string) || ''}/api/files/upload/avatarsOLD`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = '/api/files/upload/avatarsOLD';
 	}
 	const result = await fetch(`${url}`, {
 		method: 'POST',

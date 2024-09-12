@@ -17,7 +17,7 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
-import pathToLogoImage from '../../../components/utils/pathToLogoImage';
+import { pathToLogoImage } from '../../../components/utils/imgBase64Converter';
 import { addTeamToLeagueInSeason, getSeasons } from '../seasons/seasonsSlice';
 import { selectSeasons } from '../seasons/selectors';
 import Season from '../seasons/types/Season';

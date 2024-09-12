@@ -9,8 +9,8 @@ import CustomButton from '../custom/btn/CustomButton';
 import CustomCancelButton from '../custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
 import { showErrorSnackbar, showSuccessSnackbar } from '../custom/snackbar/snackbarSlice';
-import UploadForm from '../UploadForm';
-import pathToAvatarImage from '../utils/pathToAvatarImage';
+import UploadForm from '../UploadAvatarForm';
+import { avatarBase64Converter } from '../utils/imgBase64Converter';
 
 export default function Profile(): JSX.Element {
 	const user = useAppSelector(selectUser);
@@ -127,7 +127,7 @@ export default function Profile(): JSX.Element {
 				<Avatar
 					sx={{ mr: 1, height: '7rem', width: '7rem', border: 1 }}
 					alt="user_avatar"
-					src={pathToAvatarImage(user?.avatar)}
+					src={avatarBase64Converter(user?.avatar)}
 				/>
 			</Box>
 			{/* TODO: загрузка фото */}

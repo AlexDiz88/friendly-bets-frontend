@@ -1,7 +1,7 @@
 import { GppBad, GppGood, RestorePage } from '@mui/icons-material';
 import { Avatar, Box } from '@mui/material';
 import { getGameResultView } from '../../components/utils/gameResultValidation';
-import pathToLogoImage from '../../components/utils/pathToLogoImage';
+import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import {
 	BET_STATUS_RETURNED,
 	BET_STATUS_WON,

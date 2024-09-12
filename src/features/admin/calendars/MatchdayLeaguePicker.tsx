@@ -6,7 +6,7 @@ import CustomCancelButton from '../../../components/custom/btn/CustomCancelButto
 import CustomLeagueButton from '../../../components/custom/btn/CustomLeagueButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import CustomErrorMessage from '../../../components/custom/CustomErrorMessage';
-import pathToLogoImage from '../../../components/utils/pathToLogoImage';
+import { pathToLogoImage } from '../../../components/utils/imgBase64Converter';
 import { MATCHDAY_TITLE_FINAL } from '../../../constants';
 import MatchDayForm from '../../bets/MatchDayForm';
 import League from '../leagues/types/League';
