@@ -171,25 +171,9 @@ export async function uploadUserAvatar({ file }: { file: File }): Promise<Respon
 	});
 
 	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
-}
-
-export async function uploadAvatarOLD({ image }: { image: File }): Promise<ResponseDto> {
-	const formData = new FormData();
-	formData.append('image', image);
-	let url = `${(import.meta.env.VITE_PRODUCT_SERVER as string) || ''}/api/files/upload/avatarsOLD`;
-	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = '/api/files/upload/avatarsOLD';
-	}
-	const result = await fetch(`${url}`, {
-		method: 'POST',
-		body: formData,
-	});
-
-	if (result.status >= 400) {
+		if (result.status === 413) {
+			throw new Error('error.fileSizeLimit');
+		}
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
 	}
