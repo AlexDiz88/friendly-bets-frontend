@@ -304,7 +304,10 @@
 		"imageIsNull": "Изображение отсутствует",
 		"imageSaveError": "Ошибка сохранения изображения",
 		"invalidFileFormat": "Недопустимый формат файла. Разрешены только jpg, png, webp, heic",
-		"fileSizeLimit": "Превышен максимальный размер файла"
+		"fileSizeLimit": "Превышен максимальный размер файла",
+		"canvasIsEmpty": "Изображение пустое",
+		"failedToGetCanvasContext": "Не удалось получить контекст изображения",
+		"fileNotChosen": "Файл не выбран"
 	},
 	"matchdayCalendar": "Календарь туров",
 	"matchdayStartDate": "Дата начала тура",
@@ -326,6 +329,5 @@
 	"ot": "доп.",
 	"penalty": "пен.",
 	"statsWillBeAddedWhenGameweekFinished": "Итоговая таблица игрового тура будет добавлена после окончания всех его матчей",
-	"userAvatarWasUploaded": "Фотография пользователя была успешно загружена",
-	"fileNotChosen": "Файл не выбран"
+	"userAvatarWasUploaded": "Фотография пользователя была успешно загружена"
 }

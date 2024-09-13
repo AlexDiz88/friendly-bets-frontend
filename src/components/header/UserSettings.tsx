@@ -19,6 +19,7 @@ export default function UserSettings(): JSX.Element {
 		t('summaryResults'),
 		t('matchdayCalendar'),
 		t('editBet'),
+		t('myProfile'),
 		t('adminPanel'),
 		t('logout'),
 	];

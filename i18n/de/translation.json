@@ -304,7 +304,10 @@
 		"imageIsNull": "Bild fehlt",
 		"imageSaveError": "Fehler beim Speichern des Bildes",
 		"invalidFileFormat": "Ungültiges Dateiformat. Nur jpg, png, webp, heic sind erlaubt",
-		"fileSizeLimit": "Dateigröße überschreitet das maximale Limit"
+		"fileSizeLimit": "Dateigröße überschreitet das maximale Limit",
+		"canvasIsEmpty": "Canvas ist leer",
+		"failedToGetCanvasContext": "Fehler beim Abrufen des Canvas-Kontexts",
+		"fileNotChosen": "Datei nicht ausgewählt"
 	},
 	"matchdayCalendar": "Spielplan",
 	"matchdayStartDate": "Startdatum des Spieltags",
@@ -326,6 +329,5 @@
 	"ot": "ot.",
 	"penalty": "p.",
 	"statsWillBeAddedWhenGameweekFinished": "Die Tabelle des Spieltags wird hinzugefügt, nachdem alle Spiele abgeschlossen sind",
-	"userAvatarWasUploaded": "Benutzerfoto wurde erfolgreich hochgeladen",
-	"fileNotChosen": "Datei nicht ausgewählt"
+	"userAvatarWasUploaded": "Benutzerfoto wurde erfolgreich hochgeladen"
 }

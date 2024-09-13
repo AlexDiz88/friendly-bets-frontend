@@ -304,7 +304,10 @@
 		"imageIsNull": "Image is missing",
 		"imageSaveError": "Error saving image",
 		"invalidFileFormat": "Invalid file format. Only jpg, png, webp, heic are allowed",
-		"fileSizeLimit": "File size exceeds the maximum limit"
+		"fileSizeLimit": "File size exceeds the maximum limit",
+		"canvasIsEmpty": "Canvas is empty",
+		"failedToGetCanvasContext": "Failed to get canvas context",
+		"fileNotChosen": "File not chosen"
 	},
 	"matchdayCalendar": "Matchday schedule",
 	"matchdayStartDate": "Start Date of Matchday",
@@ -326,6 +329,5 @@
 	"ot": "ot.",
 	"penalty": "p.",
 	"statsWillBeAddedWhenGameweekFinished": "Standings for the gameweek will be added after all its games are completed",
-	"userAvatarWasUploaded": "User's photo was successfully uploaded",
-	"fileNotChosen": "File not chosen"
+	"userAvatarWasUploaded": "User's photo was successfully uploaded"
 }
