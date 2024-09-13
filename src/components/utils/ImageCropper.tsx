@@ -40,7 +40,14 @@ const ImageCropper = ({
 	return (
 		<>
 			{!!src && (
-				<ReactCrop crop={crop} onChange={onCropChange} onComplete={handleCrop} aspect={1}>
+				<ReactCrop
+					crop={crop}
+					onChange={onCropChange}
+					onComplete={handleCrop}
+					aspect={1}
+					circularCrop
+					keepSelection
+				>
 					<img
 						ref={imgRef}
 						alt="Crop me"
