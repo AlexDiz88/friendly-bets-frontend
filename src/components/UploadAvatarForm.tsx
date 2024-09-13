@@ -120,7 +120,7 @@ const UploadAvatarForm = ({ onClose }: UploadFormProps): JSX.Element => {
 				</label>
 				<Box>
 					<Typography sx={{ fontFamily: "'Exo 2'", fontSize: '0.85rem' }}>
-						*{t('maxFileSize2MB')}
+						*{t('maxFileSize50MB')}
 					</Typography>
 				</Box>
 

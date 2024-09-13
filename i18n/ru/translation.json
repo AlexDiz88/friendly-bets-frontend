@@ -27,7 +27,7 @@
 	"personalAccount": "Личный кабинет",
 	"changePhoto": "Изменить фото",
 	"selectFile": "Выбрать файл",
-	"maxFileSize2MB": "Максимальный размер файла - 2МБ",
+	"maxFileSize50MB": "Максимальный размер файла - 50МБ",
 	"changeEmail": "Изменить email",
 	"changePassword": "Изменить пароль",
 	"changeUsername": "Изменить имя",

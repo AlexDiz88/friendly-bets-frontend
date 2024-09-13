@@ -27,7 +27,7 @@
 	"personalAccount": "Persönliches Konto",
 	"changePhoto": "Foto Ändern",
 	"selectFile": "Datei auswählen",
-	"maxFileSize2MB": "Die maximale Dateigröße beträgt 2 MB",
+	"maxFileSize50MB": "Die maximale Dateigröße beträgt 50 MB",
 	"changeEmail": "Email Ändern",
 	"changePassword": "Passwort Ändern",
 	"changeUsername": "Benutzername Ändern",

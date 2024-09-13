@@ -1,6 +1,6 @@
 /* eslint-disable import/named */
 import { useRef, useState } from 'react';
-import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
+import ReactCrop, { centerCrop, Crop, makeAspectCrop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
 const ImageCropper = ({
@@ -15,8 +15,15 @@ const ImageCropper = ({
 	const [crop, setCrop] = useState<Crop>();
 	const imgRef = useRef<HTMLImageElement>(null);
 
-	const onImageLoad = (): void => {
-		setCrop({ unit: '%', width: 50, height: 50, x: 25, y: 25 });
+	const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>): void => {
+		const { naturalWidth: width, naturalHeight: height } = e.currentTarget;
+		const newCrop = centerCrop(
+			makeAspectCrop({ unit: '%', width: 80 }, 1, width, height),
+			width,
+			height
+		);
+		setCrop(newCrop);
+
 		if (imgRef.current) {
 			setImageElement(imgRef.current);
 		}
