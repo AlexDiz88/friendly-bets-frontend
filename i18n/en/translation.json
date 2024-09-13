@@ -27,6 +27,7 @@
 	"personalAccount": "Personal Account",
 	"changePhoto": "Change Photo",
 	"selectFile": "Select file",
+	"selectAnotherFile": "Select another file",
 	"maxFileSize50MB": "Maximum file size is 50 MB",
 	"changeEmail": "Change Email",
 	"changePassword": "Change Password",
@@ -307,7 +308,8 @@
 		"fileSizeLimit": "File size exceeds the maximum limit",
 		"canvasIsEmpty": "Canvas is empty",
 		"failedToGetCanvasContext": "Failed to get canvas context",
-		"fileNotChosen": "File not chosen"
+		"fileNotChosen": "File not chosen",
+		"failedToConvertHeicImage": "Failed to convert HEIC image"
 	},
 	"matchdayCalendar": "Matchday schedule",
 	"matchdayStartDate": "Start Date of Matchday",
