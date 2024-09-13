@@ -27,6 +27,7 @@
 	"personalAccount": "Личный кабинет",
 	"changePhoto": "Изменить фото",
 	"selectFile": "Выбрать файл",
+	"selectAnotherFile": "Выбрать другой файл",
 	"maxFileSize50MB": "Максимальный размер файла - 50МБ",
 	"changeEmail": "Изменить email",
 	"changePassword": "Изменить пароль",
@@ -307,7 +308,8 @@
 		"fileSizeLimit": "Превышен максимальный размер файла",
 		"canvasIsEmpty": "Изображение пустое",
 		"failedToGetCanvasContext": "Не удалось получить контекст изображения",
-		"fileNotChosen": "Файл не выбран"
+		"fileNotChosen": "Файл не выбран",
+		"failedToConvertHeicImage": "Не удалось конвертировать изображение HEIC"
 	},
 	"matchdayCalendar": "Календарь туров",
 	"matchdayStartDate": "Дата начала тура",

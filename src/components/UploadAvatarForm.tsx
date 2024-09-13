@@ -8,6 +8,7 @@ import { getProfile, uploadUserAvatar } from '../features/auth/authSlice';
 import CustomCancelButton from './custom/btn/CustomCancelButton';
 import { showErrorSnackbar, showSuccessSnackbar } from './custom/snackbar/snackbarSlice';
 import ImageCropper from './utils/ImageCropper';
+import convertHeicToJpeg from './utils/convertHeicToJpeg';
 import getCroppedImage from './utils/getCroppedImage';
 
 interface UploadFormProps {
@@ -23,10 +24,23 @@ const UploadAvatarForm = ({ onClose }: UploadFormProps): JSX.Element => {
 
 	const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'heic'];
 
-	const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-		if (event.target.files && event.target.files.length > 0) {
-			const selectedFile = event.target.files[0];
-			setImageUrl(URL.createObjectURL(selectedFile));
+	const getFileExtension = (file: File): string => {
+		return file.name.split('.').pop()?.toLowerCase() || '';
+	};
+
+	const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+		const file = event.target.files?.[0];
+		if (file) {
+			if (getFileExtension(file) === 'heic') {
+				const convertedFile = await convertHeicToJpeg(file);
+				if (convertedFile) {
+					setImageUrl(URL.createObjectURL(convertedFile));
+				} else {
+					dispatch(showErrorSnackbar({ message: t('failedToConvertHeicImage') }));
+				}
+			} else {
+				setImageUrl(URL.createObjectURL(file));
+			}
 			setAnimate(true);
 		}
 	};
@@ -46,8 +60,7 @@ const UploadAvatarForm = ({ onClose }: UploadFormProps): JSX.Element => {
 			return;
 		}
 
-		const fileExtension = fileToUpload.name.split('.').pop()?.toLowerCase();
-		if (!allowedExtensions.includes(fileExtension || '')) {
+		if (!allowedExtensions.includes(getFileExtension(fileToUpload))) {
 			dispatch(showErrorSnackbar({ message: t('invalidFileFormat') }));
 			return;
 		}
@@ -114,7 +127,7 @@ const UploadAvatarForm = ({ onClose }: UploadFormProps): JSX.Element => {
 							fontFamily="'Exo 2'"
 							color={animate ? 'whitesmoke' : '#1C3780FF'}
 						>
-							{fileToUpload ? fileToUpload.name : t('selectFile')}
+							{fileToUpload ? t('selectAnotherFile') : t('selectFile')}
 						</Typography>
 					</Button>
 				</label>
