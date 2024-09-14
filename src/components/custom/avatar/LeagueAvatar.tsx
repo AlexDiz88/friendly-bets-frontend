@@ -20,7 +20,7 @@ const LeagueAvatar = ({
 	return (
 		<Box sx={{ mr: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', ...sx }}>
 			<Avatar
-				sx={{ mr: 0.3, height, width: 'auto', ...avasx }}
+				sx={{ mr: 0.3, height, width: height, ...avasx }}
 				variant="square"
 				alt="league_logo"
 				src={pathToLogoImage(leagueCode)}
