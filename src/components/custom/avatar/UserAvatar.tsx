@@ -18,9 +18,10 @@ const UserAvatar = ({
 		<Box sx={{ mb: 0.8, ml: 0.5, display: 'flex', alignItems: 'center', fontWeight: 600, ...sx }}>
 			<Avatar
 				sx={{ mr: 0.5, height, width: height, border: 1, borderColor: 'gray', ...avasx }}
+				variant="circular"
 				alt="user_avatar"
 				src={avatarBase64Converter(player?.avatar)}
-				// src={`${AWS_BUCKET_URL}/avatars/${player?.id || ''}`} // S3 variant
+				// src={`${AWS_BUCKET_URL}/avatars/${player?.id || ''}`} // aws S3 variant
 			/>
 			{player?.username}
 		</Box>

@@ -23,12 +23,14 @@ const TeamsAvatars = ({
 		>
 			<Avatar
 				sx={{ mr: 0.5, height, width: height }}
+				variant="square"
 				alt="team_logo"
 				src={pathToLogoImage(homeTeam?.title)}
 			/>
 			{t(`teams:${homeTeam?.title || ''}`)}
 			<Avatar
 				sx={{ mr: 0.5, ml: 1, height, width: height }}
+				variant="square"
 				alt="team_logo"
 				src={pathToLogoImage(awayTeam?.title)}
 			/>

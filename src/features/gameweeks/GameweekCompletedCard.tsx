@@ -22,7 +22,6 @@ const GameweekCompletedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 	if (index !== -1) {
 		part1 = gameResultView.substring(0, index);
 		part2 = gameResultView.substring(index);
-		part2 = part2.replace('доп.', '').replace('пен.', '');
 	} else {
 		part1 = gameResultView;
 	}
@@ -55,6 +54,7 @@ const GameweekCompletedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 				<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 					<Avatar
 						sx={{ width: 30, height: 30 }}
+						variant="square"
 						alt="team_logo"
 						src={pathToLogoImage(bet.homeTeam?.title)}
 					/>
@@ -78,6 +78,7 @@ const GameweekCompletedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 					</Box>
 					<Avatar
 						sx={{ width: 30, height: 30 }}
+						variant="square"
 						alt="team_logo"
 						src={pathToLogoImage(bet.awayTeam?.title)}
 					/>
