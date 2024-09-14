@@ -24,8 +24,8 @@ const PlayerSelect = ({ value, onChange, players }: PlayerSelectProps): JSX.Elem
 				<Box sx={{ display: 'flex', alignItems: 'center' }}>
 					<Avatar
 						variant="square"
-						sx={{ height: 27, width: 'auto' }}
-						alt="league_logo"
+						sx={{ height: 27, width: 27 }}
+						alt="all_players_logo"
 						src="/upload/avatars/cool_man.jpg"
 					/>
 

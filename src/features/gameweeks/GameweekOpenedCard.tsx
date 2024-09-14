@@ -31,6 +31,7 @@ const GameweekOpenedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 				<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 					<Avatar
 						sx={{ width: 30, height: 30 }}
+						variant="square"
 						alt="team_logo"
 						src={pathToLogoImage(bet.homeTeam?.title)}
 					/>
@@ -51,6 +52,7 @@ const GameweekOpenedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 					</Box>
 					<Avatar
 						sx={{ width: 30, height: 30 }}
+						variant="square"
 						alt="team_logo"
 						src={pathToLogoImage(bet.awayTeam?.title)}
 					/>

@@ -51,6 +51,7 @@ const GameweekEmptyCard = ({ bet }: { bet: Bet }): JSX.Element => {
 				>
 					<Avatar
 						sx={{ mr: 0.5, width: 30, height: 30 }}
+						variant="square"
 						alt="team_logo"
 						src={pathToLogoImage(bet.leagueCode)}
 					/>
