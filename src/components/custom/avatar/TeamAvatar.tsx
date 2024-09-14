@@ -16,7 +16,7 @@ const TeamAvatar = ({
 		<Box sx={{ display: 'flex', alignItems: 'center', ...sx }}>
 			<Avatar
 				variant="square"
-				sx={{ px: 0.5, height, width: 'auto' }}
+				sx={{ px: 0.5, height, width: height }}
 				alt="team_logo"
 				src={pathToLogoImage(team?.title)}
 			/>
