@@ -25,17 +25,19 @@
 	"seasonRegister": "Anmeldung in der Saison",
 	"deleteBet": "Wette löschen",
 	"personalAccount": "Persönliches Konto",
-	"changePhoto": "Foto Ändern",
+	"changePhoto": "Foto ändern",
 	"selectFile": "Datei auswählen",
 	"selectAnotherFile": "Andere Datei auswählen",
 	"maxFileSize50MB": "Die maximale Dateigröße beträgt 50 MB",
-	"changeEmail": "Email Ändern",
-	"changePassword": "Passwort Ändern",
-	"changeUsername": "Benutzername Ändern",
-	"changeStatus": "Status Ändern",
+	"changeEmail": "Email ändern",
+	"changePassword": "Passwort ändern",
+	"changeUsername": "Benutzername ändern",
+	"changeLanguage": "Sprache ändern",
+	"currentSiteLanguage": "Aktuelle Sprache",
+	"changeStatus": "Status ändern",
 	"loginPage": "Loginseite",
 	"noAccount": "Kein Konto? Melden Sie sich an!",
-	"changeBet": "Wette Ändern",
+	"changeBet": "Wette ändern",
 	"currentPassword": "Aktuelles Passwort",
 	"newPassword": "Neues Passwort",
 	"newPasswordRepeat": "Neues Passwort (wiederholen)",
@@ -309,7 +311,8 @@
 		"canvasIsEmpty": "Canvas ist leer",
 		"failedToGetCanvasContext": "Fehler beim Abrufen des Canvas-Kontexts",
 		"fileNotChosen": "Datei nicht ausgewählt",
-		"failedToConvertHeicImage": "Fehler beim Konvertieren des HEIC-Bildes"
+		"failedToConvertHeicImage": "Fehler beim Konvertieren des HEIC-Bildes",
+		"languageNotSupported": "Sprache wird nicht unterstützt"
 	},
 	"matchdayCalendar": "Spielplan",
 	"matchdayStartDate": "Startdatum des Spieltags",
@@ -331,5 +334,6 @@
 	"ot": "ot.",
 	"penalty": "p.",
 	"statsWillBeAddedWhenGameweekFinished": "Die Tabelle des Spieltags wird hinzugefügt, nachdem alle Spiele abgeschlossen sind",
-	"userAvatarWasUploaded": "Benutzerfoto wurde erfolgreich hochgeladen"
+	"userAvatarWasUploaded": "Benutzerfoto wurde erfolgreich hochgeladen",
+	"siteLanguageSuccessfullyChanged": "Sprache der Seite wurde erfolgreich geändert"
 }

@@ -4,4 +4,5 @@ export default interface User {
 	role: string;
 	username?: string;
 	avatar?: string;
+	language?: string;
 }

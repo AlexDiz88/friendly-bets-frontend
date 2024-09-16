@@ -1,3 +1,4 @@
+import i18n from 'i18next';
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from './app/hooks';
@@ -19,6 +20,7 @@ import Login from './features/auth/Login';
 import PrivateRoute from './features/auth/PrivateRoute';
 import Register from './features/auth/Register';
 import { getProfile } from './features/auth/authSlice';
+import { selectUser } from './features/auth/selectors';
 import BetEditList from './features/bets/BetEditList';
 import BetInputContainer from './features/bets/BetInputContainer';
 import BetsCheck from './features/bets/BetsCheck';
@@ -34,10 +36,17 @@ function App(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
+	const user = useAppSelector(selectUser);
 
 	useEffect(() => {
 		dispatch(getProfile());
 	}, []);
+
+	useEffect(() => {
+		if (user && user.language) {
+			i18n.changeLanguage(user.language);
+		}
+	}, [user]);
 
 	useEffect(() => {
 		if (!activeSeasonId) {
