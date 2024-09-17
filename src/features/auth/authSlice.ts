@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { t } from 'i18next';
+import { saveUserLanguageAsync } from '../languages/languageSlice';
 import * as api from './api';
 import AuthState from './types/AuthState';
 import Credentials from './types/Credentials';
@@ -17,17 +18,17 @@ export const getProfile = createAsyncThunk('api/users/my/profile', async () => a
 
 export const login = createAsyncThunk('login', async (credentials: Credentials) => {
 	if (!credentials.email.trim() || !credentials.password.trim()) {
-		throw new Error(t('error.emptyFields'));
+		throw new Error(t('emptyFields'));
 	}
 	return api.login(credentials);
 });
 
 export const register = createAsyncThunk('auth/register', async (data: RegisterData) => {
 	if (data.password !== data.passwordRepeat) {
-		throw new Error(t('error.enteredPasswordsNotEqual'));
+		throw new Error(t('enteredPasswordsNotEqual'));
 	}
 	if (!data.email.trim() || !data.password.trim()) {
-		throw new Error(t('error.emptyFields'));
+		throw new Error(t('emptyFields'));
 	}
 	return api.register(data);
 });
@@ -38,7 +39,7 @@ export const editEmail = createAsyncThunk(
 	'api/users/my/profile/editEmail',
 	async ({ newEmail }: { newEmail: string }) => {
 		if (!newEmail.trim()) {
-			throw new Error(t('error.emailCannotBeEmpty'));
+			throw new Error(t('emailCannotBeEmpty'));
 		}
 		return api.editEmail({ newEmail });
 	}
@@ -56,10 +57,10 @@ export const editPassword = createAsyncThunk(
 		newPasswordRepeat: string;
 	}) => {
 		if (!currentPassword || !newPassword || !newPasswordRepeat) {
-			throw new Error(t('error.actualOrNewPasswordsCannotBeEmpty'));
+			throw new Error(t('actualOrNewPasswordsCannotBeEmpty'));
 		}
 		if (newPassword !== newPasswordRepeat) {
-			throw new Error(t('error.newAndRepeatPasswordsNotEqual'));
+			throw new Error(t('newAndRepeatPasswordsNotEqual'));
 		}
 		return api.editPassword({ currentPassword, newPassword });
 	}
@@ -69,7 +70,7 @@ export const editUsername = createAsyncThunk(
 	'api/users/my/profile/editUsername',
 	async ({ newUsername }: { newUsername: string }) => {
 		if (!newUsername.trim()) {
-			throw new Error(t('error.usernameCannotBeEmpty'));
+			throw new Error(t('usernameCannotBeEmpty'));
 		}
 		return api.editUsername({ newUsername });
 	}
@@ -148,6 +149,9 @@ const authSlice = createSlice({
 			})
 			.addCase(editPassword.rejected, (state, action) => {
 				state.error = action.error.message;
+			})
+			.addCase(saveUserLanguageAsync.fulfilled, (state, action) => {
+				state.user = action.payload;
 			});
 	},
 });

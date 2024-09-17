@@ -32,6 +32,8 @@
 	"changeEmail": "Изменить email",
 	"changePassword": "Изменить пароль",
 	"changeUsername": "Изменить имя",
+	"changeLanguage": "Изменить язык",
+	"currentSiteLanguage": "Текущий язык сайта",
 	"changeStatus": "Изменить статус",
 	"loginPage": "Вход в аккаунт",
 	"noAccount": "Нет аккаунта? Регистрируйся!",
@@ -309,7 +311,8 @@
 		"canvasIsEmpty": "Изображение пустое",
 		"failedToGetCanvasContext": "Не удалось получить контекст изображения",
 		"fileNotChosen": "Файл не выбран",
-		"failedToConvertHeicImage": "Не удалось конвертировать изображение HEIC"
+		"failedToConvertHeicImage": "Не удалось конвертировать изображение HEIC",
+		"languageNotSupported": "Язык не поддерживается"
 	},
 	"matchdayCalendar": "Календарь туров",
 	"matchdayStartDate": "Дата начала тура",
@@ -331,5 +334,6 @@
 	"ot": "доп.",
 	"penalty": "пен.",
 	"statsWillBeAddedWhenGameweekFinished": "Итоговая таблица игрового тура будет добавлена после окончания всех его матчей",
-	"userAvatarWasUploaded": "Фотография пользователя была успешно загружена"
+	"userAvatarWasUploaded": "Фотография пользователя была успешно загружена",
+	"siteLanguageSuccessfullyChanged": "Язык сайта успешно изменён"
 }

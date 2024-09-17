@@ -1,5 +1,5 @@
 import { DoDisturbOn } from '@mui/icons-material';
-import { Avatar, Box, Button, IconButton, Typography } from '@mui/material';
+import { Avatar, Box, IconButton, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useRef, useState } from 'react';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
@@ -178,12 +178,12 @@ const MatchdayLeaguePicker = ({
 						</Box>
 					))}
 			</Box>
-			<Box aria-hidden="true">
+			{/* <Box aria-hidden="true">
 				<Button
 					ref={hiddenButtonRef}
 					style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
 				/>
-			</Box>
+			</Box> */}
 		</Box>
 	);
 };

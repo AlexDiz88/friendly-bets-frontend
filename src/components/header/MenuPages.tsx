@@ -10,16 +10,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { selectUser } from '../../features/auth/selectors';
+import { changeLanguageAsync, saveUserLanguageAsync } from '../../features/languages/languageSlice';
+import Language from '../../features/languages/types/Language';
 import CustomMenuPageText from '../custom/CustomMenuPageText';
-import { changeLanguageAsync } from '../utils/languageSlice';
-
-interface Language {
-	code: string;
-	name: string;
-	img: string;
-}
 
 export default function MenuPages(): JSX.Element {
+	const user = useAppSelector(selectUser);
 	const { t } = useTranslation();
 	useAppSelector((state) => state.language);
 	const navigate = useNavigate();
@@ -85,7 +82,11 @@ export default function MenuPages(): JSX.Element {
 	};
 
 	const handleLanguageSelect = (lang: Language): void => {
-		dispatch(changeLanguageAsync(lang.code));
+		if (user) {
+			dispatch(saveUserLanguageAsync(lang.code));
+		} else {
+			dispatch(changeLanguageAsync(lang.code));
+		}
 		handleCloseLangMenu();
 		handleCloseNavMenu();
 	};
