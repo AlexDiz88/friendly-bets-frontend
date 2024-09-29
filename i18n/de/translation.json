@@ -162,7 +162,6 @@
 		"1/2": "1/2",
 		"final": "Finale"
 	},
-	"incorrectGameScore": "Ungültiger Spielstand!",
 	"not": " - нет",
 	"betsCheck": "Wettüberprüfung",
 	"lost": "Verloren",
@@ -299,7 +298,7 @@
 		"betNotFoundInAnyCalendar": "Wette in keinem Kalender gefunden",
 		"noPlayersInSeason": "Es gibt keine Teilnehmer in der Saison",
 		"nullOrZeroBetCountPerMatchDay": "Der Wert für die Anzahl der Wetten pro Spieltag fehlt",
-		"incorrectGameScore": "Ungültiger Spielstand!",
+		"incorrectGameResult": "Ungültiger Spielstand!",
 		"gameResultIsNull": "Spielergebnis fehlt",
 		"invalidGameScoreFormat": "Ungültiges Spielergebnis-Format",
 		"gameResultNotSpecified": "Spielergebnis ist nicht festgelegt",

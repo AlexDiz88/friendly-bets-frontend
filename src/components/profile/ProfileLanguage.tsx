@@ -26,7 +26,7 @@ const ProfileLanguage = ({ lng }: { lng: string | undefined }): JSX.Element => {
 	const handleSaveLanguage = useCallback(async () => {
 		const dispatchResult = await dispatch(saveUserLanguageAsync(language));
 		if (saveUserLanguageAsync.fulfilled.match(dispatchResult)) {
-			dispatch(showSuccessSnackbar({ message: t('siteLanguageWasChanged') }));
+			dispatch(showSuccessSnackbar({ message: t('siteLanguageSuccessfullyChanged') }));
 			dispatch(getProfile());
 			setShowLangChange(false);
 		}

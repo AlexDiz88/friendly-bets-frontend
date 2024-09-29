@@ -18,9 +18,34 @@ export default function Homepage(): JSX.Element {
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 
+	const [externalData, setExternalData] = useState<any>(null);
+	const [externalDataError, setExternalDataError] = useState(false);
+
 	const sortedPlayersStats = [...playersStats].sort((a, b) => b.actualBalance - a.actualBalance);
 
 	useFetchActiveSeason(activeSeasonId || '');
+
+	// Fetch данных с API
+	// useEffect(() => {
+	// 	const fetchExternalData = async (): Promise<any> => {
+	// 		try {
+	// 			const response = await fetch(
+	// 				'https://apiv2.allsportsapi.com/football/?met=Fixtures&leagueId=152&APIkey=e3cd4b7c6cee52133ed9a2ecbcd04cb3b114b53aa74b6eb8f5b2bf45be8af491&from=2024-09-28&to=2024-10-04'
+	// 			);
+	// 			if (!response.ok) {
+	// 				throw new Error('Ошибка при загрузке данных с API');
+	// 			}
+	// 			const data = await response.json();
+	// 			console.log(data.result[0].event_home_team);
+
+	// 			setExternalData(data);
+	// 		} catch (error) {
+	// 			setExternalDataError(true);
+	// 		}
+	// 	};
+
+	// 	fetchExternalData();
+	// }, []);
 
 	useEffect(() => {
 		if (activeSeasonId) {
@@ -64,6 +89,25 @@ export default function Homepage(): JSX.Element {
 							}}
 						>
 							<PlayersStats playersStats={sortedPlayersStats} />
+							{/* <Box sx={{ py: 3, px: 1 }}>
+								Fetch Results:
+								{externalDataError ? (
+									<Box>Error loading external data</Box>
+								) : (
+									<>
+										<Box>
+											{externalData
+												? JSON.stringify(externalData.result[0].event_home_team)
+												: 'Loading...'}
+										</Box>
+										<Box>
+											{externalData
+												? JSON.stringify(externalData.result[0].event_away_team)
+												: 'Loading...'}
+										</Box>
+									</>
+								)}
+							</Box> */}
 						</Box>
 					)}
 				</Box>
