@@ -162,7 +162,6 @@
 		"1/2": "1/2",
 		"final": "Final"
 	},
-	"incorrectGameScore": "Incorrect game score!",
 	"not": " - нет",
 	"betsCheck": "Bet verification",
 	"lost": "Lost",
@@ -299,7 +298,7 @@
 		"betNotFoundInAnyCalendar": "Bet not found in any calendar",
 		"noPlayersInSeason": "There are no participants in the season",
 		"nullOrZeroBetCountPerMatchDay": "The number of bets per matchday is missing",
-		"incorrectGameScore": "Incorrect game score!",
+		"incorrectGameResult": "Incorrect game score!",
 		"gameResultIsNull": "Game result is missing",
 		"invalidGameScoreFormat": "Invalid game result format",
 		"gameResultNotSpecified": "Game result is not specified",

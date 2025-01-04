@@ -61,17 +61,17 @@ export default function BetSummaryInfo({
 					<Box
 						sx={{
 							color:
-								score === t('notSpecified') || score === t('incorrectGameScore')
+								score === t('notSpecified') || score === t('error.incorrectGameResult')
 									? 'brown'
 									: 'inherit',
 							fontWeight:
-								score === t('notSpecified') || score === t('incorrectGameScore') ? 600 : 400,
+								score === t('notSpecified') || score === t('error.incorrectGameResult') ? 600 : 400,
 						}}
 					>
 						{score === t('notSpecified')
 							? t('notSpecified')
-							: score === t('incorrectGameScore')
-							? t('incorrectGameScore')
+							: score === t('error.incorrectGameResult')
+							? t('error.incorrectGameResult')
 							: getGameResultView(transformToGameResult(score))}
 					</Box>
 				</Box>

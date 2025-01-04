@@ -103,7 +103,7 @@ export const gameScoreValidation = (gameScore: string | undefined): string => {
 		return cleanedGameScore;
 	}
 
-	return t('incorrectGameScore');
+	return t('error.incorrectGameResult');
 };
 
 // main function
@@ -167,7 +167,7 @@ export const convertGameResultToString = (gameResult: GameResult | undefined): s
 		return t('notSpecified');
 	}
 	if (!gameResult.fullTime || !gameResult.firstTime) {
-		return t('incorrectGameScore');
+		return t('error.incorrectGameResult');
 	}
 
 	let res = `${gameResult.fullTime} ${gameResult.firstTime}`;

@@ -22,12 +22,13 @@ export default function BetGameResultInfo({
 			<Box
 				sx={{
 					color:
-						checkedGameResult === t('incorrectGameScore') || checkedGameResult === t('notSpecified')
+						checkedGameResult === t('error.incorrectGameResult') ||
+						checkedGameResult === t('notSpecified')
 							? 'brown'
 							: 'inherit',
 				}}
 			>
-				{checkedGameResult !== t('incorrectGameScore')
+				{checkedGameResult !== t('error.incorrectGameResult')
 					? `${t('finalScore')} - ${gameScoreView}`
 					: checkedGameResult}
 			</Box>

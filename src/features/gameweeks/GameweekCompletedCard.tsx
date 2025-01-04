@@ -11,7 +11,13 @@ import {
 } from '../../constants';
 import Bet from '../bets/types/Bet';
 
-const GameweekCompletedCard = ({ bet }: { bet: Bet }): JSX.Element => {
+const GameweekCompletedCard = ({
+	bet,
+	onClick,
+}: {
+	bet: Bet;
+	onClick: () => void;
+}): JSX.Element => {
 	const gameResultView = getGameResultView(bet.gameResult, false);
 
 	const index = gameResultView.indexOf('[');
@@ -48,7 +54,9 @@ const GameweekCompletedCard = ({ bet }: { bet: Bet }): JSX.Element => {
 						? '#f8f9d6'
 						: '#f3dada',
 				boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.7)',
+				cursor: 'pointer',
 			}}
+			onClick={onClick}
 		>
 			<Box>
 				<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

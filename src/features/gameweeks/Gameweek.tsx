@@ -37,7 +37,7 @@ const Gameweek = (): JSX.Element => {
 			if (node.matchDay === MATCHDAY_TITLE_FINAL) {
 				return sum + 1;
 			}
-			return sum + (activeSeason?.betCountPerMatchDay || 0) ?? 0;
+			return sum + (activeSeason?.betCountPerMatchDay ?? 0);
 		}, 0) || 0;
 
 	const handleSelectCalendar = (event: SelectChangeEvent<string>): void => {

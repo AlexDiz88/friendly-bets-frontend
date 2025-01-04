@@ -162,7 +162,6 @@
 		"1/2": "1/2",
 		"final": "Финал"
 	},
-	"incorrectGameScore": "Некорректный счёт матча!",
 	"not": " - нет",
 	"betsCheck": "Проверка ставок",
 	"lost": "Не зашла",
@@ -299,7 +298,7 @@
 		"betNotFoundInAnyCalendar": "Ставка не найдена ни в одной записи календаря",
 		"noPlayersInSeason": "В сезоне нет ни одного участника",
 		"nullOrZeroBetCountPerMatchDay": "Отсутствует значение количества ставок на тур",
-		"incorrectGameScore": "Некорректный счёт матча!",
+		"incorrectGameResult": "Некорректный счёт матча!",
 		"gameResultIsNull": "Результат матча отсутствует",
 		"invalidGameScoreFormat": "Некорректный формат результата матча",
 		"gameResultNotSpecified": "Результат матча не установлен",
