@@ -28,7 +28,7 @@ export default function OpenedBetCard({ bet }: { bet: Bet }): JSX.Element {
 						minWidth: '19rem',
 						border: 2,
 						mx: 0.5,
-						mb: 1.5,
+						my: 0.5,
 						p: 0.5,
 						borderRadius: 2,
 						bgcolor: 'white',
