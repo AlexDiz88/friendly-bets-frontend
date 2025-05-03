@@ -1,5 +1,5 @@
-import { DoDisturbOn } from '@mui/icons-material';
-import { Avatar, Box, IconButton, Typography } from '@mui/material';
+import { AddCircle, DoDisturbOn, RemoveCircle } from '@mui/icons-material';
+import { Avatar, Box, IconButton, Switch, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useRef, useState } from 'react';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
@@ -16,12 +16,14 @@ interface MatchdayLeaguePickerProps {
 	leagues: League[];
 	setLeagueMatchdayNodes: (leagueMatchdayNodes: LeagueMatchdayNode[]) => void;
 	leagueMatchdayNodes: LeagueMatchdayNode[];
+	defaultSeasonBetLimit: number;
 }
 
 const MatchdayLeaguePicker = ({
 	leagues,
 	setLeagueMatchdayNodes,
 	leagueMatchdayNodes,
+	defaultSeasonBetLimit,
 }: MatchdayLeaguePickerProps): JSX.Element => {
 	const hiddenButtonRef = useRef<HTMLButtonElement>(null);
 	const [selectedLeague, setSelectedLeague] = useState<League | undefined>(undefined);
@@ -29,6 +31,8 @@ const MatchdayLeaguePicker = ({
 	const [showMatchDayForm, setShowMatchDayForm] = useState<boolean>(false);
 	const [showAddLeagueError, setShowAddLeagueError] = useState<boolean>(false);
 	const [matchDay, setMatchDay] = useState<string>('1');
+	const [betLimit, setBetLimit] = useState<number>(defaultSeasonBetLimit);
+	const [isLimitEnabled, setIsLimitEnabled] = useState(false);
 
 	const handleAddLeague = (): void => {
 		if (selectedLeague) {
@@ -45,6 +49,7 @@ const MatchdayLeaguePicker = ({
 				leagueId: selectedLeague.id,
 				leagueCode: selectedLeague.leagueCode,
 				matchDay,
+				betCountLimit: betLimit,
 				bets: [],
 			};
 
@@ -71,6 +76,7 @@ const MatchdayLeaguePicker = ({
 		setShowMatchDayForm(false);
 		setShowAddLeagueError(false);
 		setMatchDay('1');
+		setBetLimit(0);
 	};
 
 	const handleMatchDay = (title: string): void => {
@@ -116,6 +122,39 @@ const MatchdayLeaguePicker = ({
 			{showMatchDayForm && (
 				<>
 					<MatchDayForm matchDay={matchDay} onMatchDay={handleMatchDay} />
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'flex-end',
+							flexDirection: 'column',
+						}}
+					>
+						<Switch
+							checked={isLimitEnabled}
+							onChange={(e) => setIsLimitEnabled(e.target.checked)}
+							color="secondary"
+						/>
+						<Box
+							sx={{ display: 'flex', alignItems: 'center', justifyContent: 'right', height: 20 }}
+						>
+							<Typography sx={{ mr: 0.5, fontWeight: 600 }}>{t('maxBetsPerMatchday')}:</Typography>
+							{isLimitEnabled && (
+								<IconButton
+									sx={{ p: 0, m: 0 }}
+									onClick={() => setBetLimit((prev) => Math.max(1, prev - 1))}
+								>
+									<RemoveCircle color="secondary" sx={{ fontSize: '1.75rem', m: 0, p: 0 }} />
+								</IconButton>
+							)}
+							<Typography sx={{ fontWeight: 600, mx: 0.15 }}>{betLimit}</Typography>
+							{isLimitEnabled && (
+								<IconButton sx={{ p: 0, m: 0 }} onClick={() => setBetLimit((prev) => prev + 1)}>
+									<AddCircle color="secondary" sx={{ fontSize: '1.75rem', m: 0, p: 0 }} />
+								</IconButton>
+							)}
+						</Box>
+					</Box>
+
 					<Box sx={{ mt: 3 }}>
 						<CustomCancelButton onClick={handleCancelLeaguePick} sx={{ height: '2.3rem' }} />
 						<CustomSuccessButton onClick={handleAddLeague} sx={{ height: '2.3rem' }} />

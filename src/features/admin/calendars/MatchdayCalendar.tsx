@@ -110,6 +110,7 @@ const MatchdayCalendar = (): JSX.Element => {
 						leagues={activeSeason?.leagues}
 						leagueMatchdayNodes={leagueMatchdayNodes}
 						setLeagueMatchdayNodes={setLeagueMatchdayNodes}
+						defaultSeasonBetLimit={activeSeason.betCountPerMatchDay}
 					/>
 					<MatchdayCalendarSaveDialog
 						leagueMatchdayNodes={leagueMatchdayNodes}

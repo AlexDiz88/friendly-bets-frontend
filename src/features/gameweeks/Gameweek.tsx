@@ -8,7 +8,6 @@ import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import { showErrorSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
-import { MATCHDAY_TITLE_FINAL } from '../../constants';
 import CalendarNode from '../admin/calendars/CalendarNode';
 import {
 	getBetsByCalendarNode,
@@ -33,12 +32,9 @@ const Gameweek = (): JSX.Element => {
 	useFetchActiveSeason(activeSeason?.id);
 
 	const gameweekCardsCount =
-		selectedCalendarNode?.leagueMatchdayNodes.reduce((sum, node) => {
-			if (node.matchDay === MATCHDAY_TITLE_FINAL) {
-				return sum + 1;
-			}
-			return sum + (activeSeason?.betCountPerMatchDay ?? 0);
-		}, 0) || 0;
+		selectedCalendarNode?.leagueMatchdayNodes?.reduce((sum, node) => {
+			return sum + (node.betCountLimit ?? 0);
+		}, 0) ?? 0;
 
 	const handleSelectCalendar = (event: SelectChangeEvent<string>): void => {
 		const selectedId = event.target.value;

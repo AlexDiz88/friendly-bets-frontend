@@ -334,5 +334,6 @@
 	"penalty": "p.",
 	"statsWillBeAddedWhenGameweekFinished": "Standings for the gameweek will be added after all its games are completed",
 	"userAvatarWasUploaded": "User's photo was successfully uploaded",
-	"siteLanguageSuccessfullyChanged": "Site language successfully changed"
+	"siteLanguageSuccessfullyChanged": "Site language successfully changed",
+	"maxBetsPerMatchday": "Bets limit"
 }
