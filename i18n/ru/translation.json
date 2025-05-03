@@ -334,5 +334,6 @@
 	"penalty": "пен.",
 	"statsWillBeAddedWhenGameweekFinished": "Итоговая таблица игрового тура будет добавлена после окончания всех его матчей",
 	"userAvatarWasUploaded": "Фотография пользователя была успешно загружена",
-	"siteLanguageSuccessfullyChanged": "Язык сайта успешно изменён"
+	"siteLanguageSuccessfullyChanged": "Язык сайта успешно изменён",
+	"maxBetsPerMatchday": "Макс.Ставок"
 }

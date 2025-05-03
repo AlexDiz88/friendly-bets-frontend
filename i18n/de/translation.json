@@ -334,5 +334,6 @@
 	"penalty": "p.",
 	"statsWillBeAddedWhenGameweekFinished": "Die Tabelle des Spieltags wird hinzugefügt, nachdem alle Spiele abgeschlossen sind",
 	"userAvatarWasUploaded": "Benutzerfoto wurde erfolgreich hochgeladen",
-	"siteLanguageSuccessfullyChanged": "Sprache der Seite wurde erfolgreich geändert"
+	"siteLanguageSuccessfullyChanged": "Sprache der Seite wurde erfolgreich geändert",
+	"maxBetsPerMatchday": "Wettlimit"
 }
