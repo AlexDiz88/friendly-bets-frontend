@@ -16,7 +16,7 @@ import { forwardRef, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getProfile, login, resetLoginFormError } from './authSlice';
-import { selectError, selectLoginFormError } from './selectors';
+import { selectLoginFormError } from './selectors';
 
 // eslint-disable-next-line react/display-name
 const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => {
@@ -26,7 +26,6 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => {
 function Login(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
-	const error = useAppSelector(selectError);
 	const errorLoginForm = useAppSelector(selectLoginFormError);
 	const [email, setEmail] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
