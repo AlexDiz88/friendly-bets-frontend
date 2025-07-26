@@ -11,6 +11,7 @@ const initialState: BetsState = {
 	openedBets: [],
 	completedBets: [],
 	allBets: [],
+	betTitleCodeLabelMap: undefined,
 	totalPages: 1,
 	error: undefined,
 };
@@ -87,6 +88,10 @@ export const deleteBet = createAsyncThunk(
 	}) => api.deleteBet(betId, seasonId, leagueId, calendarNodeId)
 );
 
+export const getBetTitleCodeLabelMap = createAsyncThunk('bets/fetchBetTitleMap', async () =>
+	api.getBetTitleCodeLabelMap()
+);
+
 const betsSlice = createSlice({
 	name: 'bets',
 	initialState,
@@ -152,6 +157,9 @@ const betsSlice = createSlice({
 			})
 			.addCase(deleteBet.rejected, (state, action) => {
 				state.error = action.error.message;
+			})
+			.addCase(getBetTitleCodeLabelMap.fulfilled, (state, action) => {
+				state.betTitleCodeLabelMap = action.payload;
 			});
 	},
 });

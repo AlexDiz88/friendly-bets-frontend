@@ -10,6 +10,7 @@ import {
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
+import { getFullBetTitle } from '../../components/utils/stringTransform';
 import CalendarNode from '../admin/calendars/CalendarNode';
 import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
 import { selectAllCalendarNodes } from '../admin/calendars/selectors';
@@ -27,6 +28,7 @@ import BetInputTitle from './BetInputTitle';
 import BetSummaryInfo from './BetSummaryInfo';
 import MatchDayForm from './MatchDayForm';
 import { addEmptyBet, addOpenedBet } from './betsSlice';
+import BetTitle from './types/BetTitle';
 
 export default function BetInputContainer(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -42,14 +44,13 @@ export default function BetInputContainer(): JSX.Element {
 	const [selectedEmptyBetSize, setSelectedEmptyBetSize] = useState<string>('10');
 	const [resetTeams, setResetTeams] = useState(false);
 	const [isEmptyBet, setIsEmptyBet] = useState(false);
-	const [selectedBetTitle, setSelectedBetTitle] = useState<string>('');
+	const [selectedBetTitle, setSelectedBetTitle] = useState<BetTitle>();
 	const [selectedBetOdds, setSelectedBetOdds] = useState<string>('');
 	const [selectedBetSize, setSelectedBetSize] = useState<string>('');
 	const [showSendButton, setShowSendButton] = useState<boolean>(false);
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openDialogEmptyBet, setOpenDialogEmptyBet] = useState(false);
 	const [openDialogTwoEmptyBet, setOpenDialogTwoEmptyBet] = useState(false);
-	const [isNot, setIsNot] = useState(false);
 
 	useFetchCurrentUser();
 
@@ -72,7 +73,9 @@ export default function BetInputContainer(): JSX.Element {
 						matchDay,
 						homeTeamId: selectedHomeTeam?.id,
 						awayTeamId: selectedAwayTeam?.id,
-						betTitle: isNot ? `${selectedBetTitle}${t('not')}` : selectedBetTitle,
+						betTitle: selectedBetTitle
+							? selectedBetTitle
+							: { code: 0, label: 'EMPTY BET', isNot: false },
 						betOdds: betOddsToNumber,
 						betSize: Number(selectedBetSize),
 						calendarNodeId: calendar?.id,
@@ -89,12 +92,10 @@ export default function BetInputContainer(): JSX.Element {
 			if (addOpenedBet.rejected.match(dispatchResult)) {
 				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 			}
-			setSelectedBetTitle('');
+			setSelectedBetTitle(undefined);
 			setSelectedBetOdds('');
-			setIsNot(false);
 		}
 	}, [
-		isNot,
 		resetTeams,
 		season,
 		selectedAwayTeam,
@@ -162,7 +163,7 @@ export default function BetInputContainer(): JSX.Element {
 		setSelectedLeagueId(league.id);
 		setSelectedHomeTeam(undefined);
 		setSelectedAwayTeam(undefined);
-		setSelectedBetTitle('');
+		setSelectedBetTitle(undefined);
 		setShowSendButton(false);
 	};
 
@@ -179,13 +180,13 @@ export default function BetInputContainer(): JSX.Element {
 	};
 
 	const handleBetCancel = (): void => {
-		setSelectedBetTitle('');
+		setSelectedBetTitle(undefined);
 		setSelectedBetOdds('');
 		setShowSendButton(false);
 	};
 
-	const handleBetTitleSelection = (betTitle: string): void => {
-		setSelectedBetTitle(betTitle);
+	const handleBetTitleSelection = (code: number, label: string): void => {
+		setSelectedBetTitle({ code, label, isNot: selectedBetTitle?.isNot ?? false });
 		setShowSendButton(true);
 		scrollToBottom();
 	};
@@ -219,7 +220,9 @@ export default function BetInputContainer(): JSX.Element {
 
 	const handleIsNotChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const { checked } = event.target;
-		setIsNot(checked);
+		if (selectedBetTitle) {
+			setSelectedBetTitle({ ...selectedBetTitle, isNot: checked });
+		}
 	};
 
 	const handleCloseDialog = (): void => {
@@ -318,7 +321,7 @@ export default function BetInputContainer(): JSX.Element {
 										borderRadius: '4px',
 									}}
 								>
-									{selectedBetTitle}
+									{getFullBetTitle(selectedBetTitle)}
 								</Typography>
 								<IconButton sx={{ p: 0 }} onClick={handleBetCancel}>
 									<Dangerous
@@ -329,7 +332,7 @@ export default function BetInputContainer(): JSX.Element {
 							</Box>
 							<Checkbox
 								sx={{ pt: 0.5 }}
-								checked={isNot}
+								checked={selectedBetTitle.isNot}
 								onChange={handleIsNotChange}
 								inputProps={{ 'aria-label': 'controlled' }}
 							/>
@@ -388,7 +391,6 @@ export default function BetInputContainer(): JSX.Element {
 						matchDay={matchDay}
 						homeTeam={selectedHomeTeam}
 						awayTeam={selectedAwayTeam}
-						isNot={isNot}
 						betTitle={selectedBetTitle}
 						betOdds={selectedBetOdds}
 						betSize={selectedBetSize}

@@ -5,6 +5,7 @@ export default interface BetsState {
 	openedBets: Bet[];
 	completedBets: Bet[];
 	allBets: Bet[];
+	betTitleCodeLabelMap: Record<number, string> | undefined;
 	totalPages: number;
 	error?: string;
 }

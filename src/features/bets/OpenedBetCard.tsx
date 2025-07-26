@@ -6,6 +6,7 @@ import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
 import TeamsAvatars from '../../components/custom/avatar/TeamsAvatars';
 import UserAvatar from '../../components/custom/avatar/UserAvatar';
 import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
+import { getFullBetTitle } from '../../components/utils/stringTransform';
 import Bet from './types/Bet';
 
 export default function OpenedBetCard({ bet }: { bet: Bet }): JSX.Element {
@@ -50,7 +51,7 @@ export default function OpenedBetCard({ bet }: { bet: Bet }): JSX.Element {
 						<TeamsAvatars homeTeam={homeTeam} awayTeam={awayTeam} />
 					</Box>
 					<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-						<b>{t('bet')}:</b> {betTitle}
+						<b>{t('bet')}:</b> {getFullBetTitle(betTitle)}
 					</Box>
 					<Box sx={{ textAlign: 'left', ml: 0.5 }}>
 						<b>{t('coef')}:</b> {betOdds?.toFixed(2)}, <b>{t('amount')}:</b> {betSize}
