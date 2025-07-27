@@ -1,3 +1,4 @@
+import BetTitle from './BetTitle';
 import GameResult from './GameResult';
 
 export default interface UpdatedBet {
@@ -7,7 +8,7 @@ export default interface UpdatedBet {
 	matchDay: string;
 	homeTeamId: string | undefined;
 	awayTeamId: string | undefined;
-	betTitle: string | undefined;
+	betTitle: BetTitle;
 	betOdds: number;
 	betSize: number;
 	gameResult?: GameResult | null;

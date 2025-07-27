@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import League from '../leagues/types/League';
+import Team from '../teams/types/Team';
 import Season from './types/Season';
 
 export async function dbUpdate(): Promise<{ seasons: Season[] }> {
@@ -190,7 +190,7 @@ export async function addTeamToLeagueInSeason(
 	seasonId: string,
 	leagueId: string,
 	teamId: string
-): Promise<League> {
+): Promise<Team> {
 	let url = `${
 		import.meta.env.VITE_PRODUCT_SERVER || ''
 	}/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`;

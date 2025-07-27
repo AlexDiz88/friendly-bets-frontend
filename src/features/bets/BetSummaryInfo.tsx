@@ -9,6 +9,7 @@ import {
 	transformToGameResult,
 } from '../../components/utils/gameResultValidation';
 import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
+import { getFullBetTitle } from '../../components/utils/stringTransform';
 import BetSummary from './types/BetSummary';
 
 export default function BetSummaryInfo({
@@ -18,7 +19,6 @@ export default function BetSummaryInfo({
 	matchDay,
 	homeTeam,
 	awayTeam,
-	isNot,
 	betTitle,
 	betOdds,
 	betSize,
@@ -50,7 +50,7 @@ export default function BetSummaryInfo({
 				<b>{t('awayTeam')}:</b>
 				<TeamAvatar team={awayTeam} />
 			</Box>
-			<b>{t('bet')}:</b> {betTitle} {isNot ? t('not') : ''} <br />
+			<b>{t('bet')}:</b> {getFullBetTitle(betTitle)} <br />
 			<b>{t('coef')}:</b> {betOdds} <br />
 			<b>{t('amount')}:</b> {betSize} <br />
 			{betStatus && betStatus !== 'OPENED' && (

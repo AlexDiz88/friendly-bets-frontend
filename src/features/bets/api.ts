@@ -160,10 +160,10 @@ export async function getAllBets(
 	return result.json();
 }
 
-export async function updateBet(betId: string, editedBet: UpdatedBet): Promise<Bet> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/${betId}`;
+export async function updateBet(editedBetId: string, editedBet: UpdatedBet): Promise<Bet> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/${editedBetId}`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = `/api/bets/${betId}`;
+		url = `/api/bets/${editedBetId}`;
 	}
 	const result = await fetch(`${url}`, {
 		method: 'PUT',
@@ -196,6 +196,21 @@ export async function deleteBet(
 			'Content-Type': 'application/json',
 		},
 	});
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function getBetTitleCodeLabelMap(): Promise<{
+	betTitleCodeLabelMap: Record<number, string>;
+}> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/betTitleCodeLabelMap`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/bets/betTitleCodeLabelMap`;
+	}
+	const result = await fetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);

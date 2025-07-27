@@ -11,6 +11,7 @@ const initialState: BetsState = {
 	openedBets: [],
 	completedBets: [],
 	allBets: [],
+	betTitleCodeLabelMap: undefined,
 	totalPages: 1,
 	error: undefined,
 };
@@ -68,8 +69,8 @@ export const getAllBets = createAsyncThunk(
 
 export const updateBet = createAsyncThunk(
 	'bets/updateBet',
-	async ({ betId, editedBet }: { betId: string; editedBet: UpdatedBet }) =>
-		api.updateBet(betId, editedBet)
+	async ({ editedBetId, editedBet }: { editedBetId: string; editedBet: UpdatedBet }) =>
+		api.updateBet(editedBetId, editedBet)
 );
 
 export const deleteBet = createAsyncThunk(
@@ -85,6 +86,10 @@ export const deleteBet = createAsyncThunk(
 		leagueId: string;
 		calendarNodeId: string;
 	}) => api.deleteBet(betId, seasonId, leagueId, calendarNodeId)
+);
+
+export const getBetTitleCodeLabelMap = createAsyncThunk('bets/fetchBetTitleMap', async () =>
+	api.getBetTitleCodeLabelMap()
 );
 
 const betsSlice = createSlice({
@@ -152,6 +157,9 @@ const betsSlice = createSlice({
 			})
 			.addCase(deleteBet.rejected, (state, action) => {
 				state.error = action.error.message;
+			})
+			.addCase(getBetTitleCodeLabelMap.fulfilled, (state, action) => {
+				state.betTitleCodeLabelMap = action.payload;
 			});
 	},
 });

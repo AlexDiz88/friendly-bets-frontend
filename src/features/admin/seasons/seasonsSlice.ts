@@ -162,14 +162,6 @@ const seasonsSlice = createSlice({
 			})
 			.addCase(addLeagueToSeason.rejected, (state, action) => {
 				state.error = action.error.message;
-			})
-			.addCase(addTeamToLeagueInSeason.fulfilled, (state, action) => {
-				//   state.seasons = state.seasons.map((season) =>
-				//     season.id === action.payload.id ? action.payload : season
-				//   );
-			})
-			.addCase(addTeamToLeagueInSeason.rejected, (state, action) => {
-				state.error = action.error.message;
 			});
 	},
 });

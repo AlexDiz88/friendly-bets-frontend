@@ -26,6 +26,7 @@ import {
 	gameScoreValidation,
 	transformToGameResult,
 } from '../../components/utils/gameResultValidation';
+import { getFullBetTitle } from '../../components/utils/stringTransform';
 import {
 	BET_STATUS_EMPTY,
 	BET_STATUS_LOST,
@@ -51,6 +52,7 @@ import BetSummaryInfo from './BetSummaryInfo';
 import MatchDayForm from './MatchDayForm';
 import { updateBet } from './betsSlice';
 import Bet from './types/Bet';
+import BetTitle from './types/BetTitle';
 import GameResult from './types/GameResult';
 
 const statuses = [BET_STATUS_WON, BET_STATUS_RETURNED, BET_STATUS_LOST];
@@ -72,10 +74,7 @@ export default function BetEditForm({
 	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(bet.matchDay);
 	const [updatedHomeTeam, setUpdatedHomeTeam] = useState<Team | undefined>(bet.homeTeam);
 	const [updatedAwayTeam, setUpdatedAwayTeam] = useState<Team | undefined>(bet.awayTeam);
-	const [updatedBetTitle, setUpdatedBetTitle] = useState<string | undefined>(
-		bet.betTitle?.endsWith(t('not')) ? bet.betTitle.split(t('not'))[0].trim() : bet.betTitle
-	);
-	const [isNot, setIsNot] = useState<boolean | undefined>(bet.betTitle?.endsWith(t('not')));
+	const [updatedBetTitle, setUpdatedBetTitle] = useState<BetTitle | undefined>(bet.betTitle);
 	const [updatedBetOdds, setUpdatedBetOdds] = useState<string | undefined>(bet.betOdds?.toString());
 	const [updatedBetSize, setUpdatedBetSize] = useState<string>(bet.betSize.toString());
 	const [updatedBetStatus, setUpdatedBetStatus] = useState<string>(bet.betStatus);
@@ -94,7 +93,7 @@ export default function BetEditForm({
 		const betOddsToNumber = Number(updatedBetOdds?.trim().replace(',', '.'));
 		const dispatchResult = await dispatch(
 			updateBet({
-				betId: bet.id,
+				editedBetId: bet.id,
 				editedBet: {
 					seasonId: bet.seasonId,
 					leagueId: bet.leagueId,
@@ -102,7 +101,9 @@ export default function BetEditForm({
 					matchDay: updatedMatchDay,
 					homeTeamId: updatedHomeTeam?.id,
 					awayTeamId: updatedAwayTeam?.id,
-					betTitle: isNot ? `${updatedBetTitle || ''}${t('not')}` : updatedBetTitle,
+					betTitle: updatedBetTitle
+						? updatedBetTitle
+						: { code: 0, label: 'EMPTY BET', isNot: false },
 					betOdds: betOddsToNumber,
 					betSize: Number(updatedBetSize),
 					betStatus: updatedBetStatus,
@@ -134,7 +135,6 @@ export default function BetEditForm({
 		updatedHomeTeam,
 		updatedAwayTeam,
 		updatedBetTitle,
-		isNot,
 		updatedBetOdds,
 		updatedBetSize,
 		updatedBetStatus,
@@ -165,16 +165,18 @@ export default function BetEditForm({
 	};
 
 	const handleBetCancel = (): void => {
-		setUpdatedBetTitle('');
+		setUpdatedBetTitle(undefined);
 	};
 
-	const handleBetTitleSelection = (betTitle: string): void => {
-		setUpdatedBetTitle(betTitle);
+	const handleBetTitleSelection = (code: number, label: string): void => {
+		setUpdatedBetTitle({ code, label, isNot: updatedBetTitle?.isNot ?? false });
 	};
 
 	const handleIsNotChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const { checked } = event.target;
-		setIsNot(checked);
+		if (updatedBetTitle) {
+			setUpdatedBetTitle({ ...updatedBetTitle, isNot: checked });
+		}
 	};
 
 	const handleBetStatusSelection = (event: SelectChangeEvent): void => {
@@ -231,6 +233,11 @@ export default function BetEditForm({
 				boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.7)',
 			}}
 		>
+			<Box>
+				<Typography sx={{ m: 0.5, fontSize: '0.85rem' }}>
+					<b>BetID:</b> {bet.id}
+				</Typography>
+			</Box>
 			<BetInputPlayer defaultValue={bet.player} onUserSelect={handleUserSelection} />
 			<MatchDayForm matchDay={bet.matchDay} onMatchDay={handleMatchDaySelection} />
 			{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}
@@ -259,7 +266,7 @@ export default function BetEditForm({
 								borderRadius: '4px',
 							}}
 						>
-							{updatedBetTitle}
+							{getFullBetTitle(updatedBetTitle)}
 						</Typography>
 						<IconButton onClick={handleBetCancel}>
 							<Dangerous color="error" sx={{ mt: -1.75, ml: -1.5, fontSize: '3rem' }} />
@@ -267,7 +274,7 @@ export default function BetEditForm({
 					</Box>
 					<Checkbox
 						sx={{ pt: 0.5 }}
-						checked={isNot}
+						checked={updatedBetTitle?.isNot ?? false}
 						onChange={handleIsNotChange}
 						inputProps={{ 'aria-label': 'controlled' }}
 					/>
@@ -352,8 +359,7 @@ export default function BetEditForm({
 							matchDay={updatedMatchDay}
 							homeTeam={updatedHomeTeam}
 							awayTeam={updatedAwayTeam}
-							isNot={isNot || false}
-							betTitle={updatedBetTitle || ''}
+							betTitle={updatedBetTitle}
 							betOdds={updatedBetOdds || ''}
 							betSize={updatedBetSize}
 							betStatus={updatedBetStatus}

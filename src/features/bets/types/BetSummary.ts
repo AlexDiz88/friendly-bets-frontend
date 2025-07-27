@@ -1,5 +1,6 @@
 import Team from '../../admin/teams/types/Team';
 import SimpleUser from '../../auth/types/SimpleUser';
+import BetTitle from './BetTitle';
 
 export default interface BetSummary {
 	message: string;
@@ -8,8 +9,7 @@ export default interface BetSummary {
 	matchDay: string;
 	homeTeam: Team | undefined;
 	awayTeam: Team | undefined;
-	betTitle: string;
-	isNot: boolean;
+	betTitle: BetTitle | undefined;
 	betOdds: string;
 	betSize: string;
 	gameResultInput?: string;

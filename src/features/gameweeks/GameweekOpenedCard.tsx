@@ -1,5 +1,6 @@
 import { Avatar, Box } from '@mui/material';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
+import { getFullBetTitle } from '../../components/utils/stringTransform';
 import {
 	GAMEWEEK_CARD_HEIGHT,
 	GAMEWEEK_CARD_MAX_WIDTH,
@@ -67,13 +68,13 @@ const GameweekOpenedCard = ({ bet, onClick }: { bet: Bet; onClick: () => void })
 						sx={{
 							textAlign: 'center',
 							fontWeight: 600,
-							fontSize: (bet.betTitle?.length || 0) > 16 ? '0.8rem' : '1.1rem',
-							lineHeight: (bet.betTitle?.length || 0) > 16 ? 0.8 : 1,
+							fontSize: (bet.betTitle?.label.length || 0) > 16 ? '0.8rem' : '1.1rem',
+							lineHeight: (bet.betTitle?.label.length || 0) > 16 ? 0.8 : 1,
 							pb: 0.5,
 							pt: 0.1,
 						}}
 					>
-						{bet.betTitle}
+						{getFullBetTitle(bet.betTitle)}
 					</Box>
 				)}
 			</Box>
