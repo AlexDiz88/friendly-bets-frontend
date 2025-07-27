@@ -160,10 +160,10 @@ export async function getAllBets(
 	return result.json();
 }
 
-export async function updateBet(betId: string, editedBet: UpdatedBet): Promise<Bet> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/${betId}`;
+export async function updateBet(editedBetId: string, editedBet: UpdatedBet): Promise<Bet> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/${editedBetId}`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = `/api/bets/${betId}`;
+		url = `/api/bets/${editedBetId}`;
 	}
 	const result = await fetch(`${url}`, {
 		method: 'PUT',

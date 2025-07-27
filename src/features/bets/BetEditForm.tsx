@@ -93,7 +93,7 @@ export default function BetEditForm({
 		const betOddsToNumber = Number(updatedBetOdds?.trim().replace(',', '.'));
 		const dispatchResult = await dispatch(
 			updateBet({
-				betId: bet.id,
+				editedBetId: bet.id,
 				editedBet: {
 					seasonId: bet.seasonId,
 					leagueId: bet.leagueId,
@@ -233,6 +233,11 @@ export default function BetEditForm({
 				boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.7)',
 			}}
 		>
+			<Box>
+				<Typography sx={{ m: 0.5, fontSize: '0.85rem' }}>
+					<b>BetID:</b> {bet.id}
+				</Typography>
+			</Box>
 			<BetInputPlayer defaultValue={bet.player} onUserSelect={handleUserSelection} />
 			<MatchDayForm matchDay={bet.matchDay} onMatchDay={handleMatchDaySelection} />
 			{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}

@@ -69,8 +69,8 @@ export const getAllBets = createAsyncThunk(
 
 export const updateBet = createAsyncThunk(
 	'bets/updateBet',
-	async ({ betId, editedBet }: { betId: string; editedBet: UpdatedBet }) =>
-		api.updateBet(betId, editedBet)
+	async ({ editedBetId, editedBet }: { editedBetId: string; editedBet: UpdatedBet }) =>
+		api.updateBet(editedBetId, editedBet)
 );
 
 export const deleteBet = createAsyncThunk(
