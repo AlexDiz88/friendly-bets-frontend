@@ -1,10 +1,12 @@
 export interface BetTitleGroup {
 	title: string;
-	subgroups?: BetSubgroup[];
-	codes?: number[];
+	codes?: number[]; // ручной список
+	range?: [number, number]; // [min, max] включительно
+	subgroups?: BetTitleSubgroup[];
 }
 
-export interface BetSubgroup {
+export interface BetTitleSubgroup {
 	title: string;
-	codes: number[];
+	codes?: number[];
+	range?: [number, number];
 }
