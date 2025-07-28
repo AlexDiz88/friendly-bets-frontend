@@ -23,7 +23,7 @@ import {
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import {
-	gameScoreValidation,
+	gameScoreInputStringValidation,
 	transformToGameResult,
 } from '../../components/utils/gameResultValidation';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
@@ -53,7 +53,7 @@ import MatchDayForm from './MatchDayForm';
 import { updateBet } from './betsSlice';
 import Bet from './types/Bet';
 import BetTitle from './types/BetTitle';
-import GameResult from './types/GameResult';
+import GameScore from './types/GameScore';
 
 const statuses = [BET_STATUS_WON, BET_STATUS_RETURNED, BET_STATUS_LOST];
 
@@ -78,9 +78,7 @@ export default function BetEditForm({
 	const [updatedBetOdds, setUpdatedBetOdds] = useState<string | undefined>(bet.betOdds?.toString());
 	const [updatedBetSize, setUpdatedBetSize] = useState<string>(bet.betSize.toString());
 	const [updatedBetStatus, setUpdatedBetStatus] = useState<string>(bet.betStatus);
-	const [updatedGameResult, setUpdatedGameResult] = useState<GameResult | undefined>(
-		bet.gameResult
-	);
+	const [updatedGameResult, setUpdatedGameResult] = useState<GameScore | undefined>(bet.gameScore);
 	const [gameResultInput, setGameResultInput] = useState<string>(gameResultAsString);
 	const [betUpdateOpenDialog, setBetUpdateOpenDialog] = useState<boolean>(false);
 
@@ -188,7 +186,7 @@ export default function BetEditForm({
 	};
 
 	const handleBetUpdateOpenDialog = (inputStr: string): void => {
-		const checkedGameResult = gameScoreValidation(inputStr);
+		const checkedGameResult = gameScoreInputStringValidation(inputStr);
 		const gameResultObj = transformToGameResult(checkedGameResult);
 		setUpdatedGameResult(gameResultObj);
 		setBetUpdateOpenDialog(true);

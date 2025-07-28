@@ -18,7 +18,7 @@ const GameweekCompletedCard = ({
 	bet: Bet;
 	onClick: () => void;
 }): JSX.Element => {
-	const gameResultView = getGameResultView(bet.gameResult, false);
+	const gameResultView = getGameResultView(bet.gameScore, false);
 
 	const index = gameResultView.indexOf('[');
 

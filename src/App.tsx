@@ -23,6 +23,7 @@ import { getProfile } from './features/auth/authSlice';
 import { selectUser } from './features/auth/selectors';
 import BetEditList from './features/bets/BetEditList';
 import BetInputContainer from './features/bets/BetInputContainer';
+import BetsAutoCheck from './features/bets/BetsAutoCheck';
 import BetsCheck from './features/bets/BetsCheck';
 import BetsList from './features/bets/BetsList';
 import CompletedBetsList from './features/bets/CompletedBetsList';
@@ -77,6 +78,10 @@ function App(): JSX.Element {
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
 					<Route path="/bets/check" element={<BetsCheck />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/bets/check/auto" element={<BetsAutoCheck />} />
 				</Route>
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>

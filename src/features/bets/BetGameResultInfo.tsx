@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { t } from 'i18next';
 import {
-	gameScoreValidation,
+	gameScoreInputStringValidation,
 	getGameResultView,
 	transformToGameResult,
 } from '../../components/utils/gameResultValidation';
@@ -11,7 +11,7 @@ export default function BetGameResultInfo({
 }: {
 	gameResultInput: string | undefined;
 }): JSX.Element {
-	const checkedGameResult = gameScoreValidation(gameResultInput);
+	const checkedGameResult = gameScoreInputStringValidation(gameResultInput);
 	const gameResultObj = transformToGameResult(checkedGameResult);
 	const gameScoreView = getGameResultView(gameResultObj);
 	return (

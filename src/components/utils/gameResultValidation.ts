@@ -1,5 +1,6 @@
 import { t } from 'i18next';
-import GameResult from '../../features/bets/types/GameResult';
+import GameScore from '../../features/bets/types/GameScore';
+import { ValidationResult } from '../../features/bets/types/ValidationResult';
 
 export const removeUnnecessarySymbols = (str: string): string => {
 	if (!str) {
@@ -93,7 +94,7 @@ const isGameScoreValid = (gameScore: string): boolean => {
 	return false;
 };
 
-export const gameScoreValidation = (gameScore: string | undefined): string => {
+export const gameScoreInputStringValidation = (gameScore: string | undefined): string => {
 	if (!gameScore || gameScore === '') {
 		return t('notSpecified');
 	}
@@ -107,8 +108,8 @@ export const gameScoreValidation = (gameScore: string | undefined): string => {
 };
 
 // main function
-export const transformToGameResult = (gameScoreInput: string): GameResult => {
-	const result: GameResult = {
+export const transformToGameResult = (gameScoreInput: string): GameScore => {
+	const result: GameScore = {
 		fullTime: null,
 		firstTime: null,
 		overTime: null,
@@ -137,7 +138,7 @@ export const transformToGameResult = (gameScoreInput: string): GameResult => {
 };
 
 // function for transform GameResult into good-looking view
-export const getGameResultView = (gameRes: GameResult | undefined, isFullView = true): string => {
+export const getGameResultView = (gameRes: GameScore | undefined, isFullView = true): string => {
 	if (!gameRes || !gameRes.fullTime || !gameRes.firstTime) {
 		return t('notSpecified');
 	}
@@ -152,7 +153,7 @@ export const getGameResultView = (gameRes: GameResult | undefined, isFullView = 
 			: '';
 		const penaltyPart = gameRes.penalty
 			? isFullView
-				? `${t('penalty')}${gameRes.penalty}`
+				? `${t('pen')}${gameRes.penalty}`
 				: gameRes.penalty
 			: '';
 
@@ -162,7 +163,7 @@ export const getGameResultView = (gameRes: GameResult | undefined, isFullView = 
 	return result;
 };
 
-export const convertGameResultToString = (gameResult: GameResult | undefined): string => {
+export const convertGameResultToString = (gameResult: GameScore | undefined): string => {
 	if (!gameResult) {
 		return t('notSpecified');
 	}
@@ -181,3 +182,41 @@ export const convertGameResultToString = (gameResult: GameResult | undefined): s
 
 	return res.trim();
 };
+
+export const parseScore = (score: string | null): [number, number] => {
+	if (!score) return [0, 0];
+	const [home, away] = score.split(':').map(Number);
+	return [home || 0, away || 0];
+};
+
+export function validateGameResult(result: GameScore): ValidationResult {
+	const errors: ValidationResult['errors'] = {};
+	const [ftH, ftA] = parseScore(result.fullTime);
+	const [htH, htA] = parseScore(result.firstTime);
+	const [otH, otA] = parseScore(result.overTime);
+	const [penH, penA] = parseScore(result.penalty);
+
+	// 1. Half-time goals can't exceed full-time
+	if (htH > ftH) errors.fullTime = 'Голы хозяев: 1й тайм > Осн.время';
+	if (htA > ftA) errors.fullTime = 'Голы гостей: 1й тайм > Осн.время';
+
+	// 2. Penalty allowed only if overtime is a draw
+	if (result.penalty && result.overTime && otH !== otA) {
+		errors.penalty = 'Пенальти возможны, только если ОТ закончился вничью';
+	}
+
+	// 3. Penalty goal diff max 3
+	if (result.penalty && Math.abs(penH - penA) > 3) {
+		errors.penalty = 'Разница мячей в серии пенальти больше 3';
+	}
+
+	// 4. Penalty can't be draw
+	if (result.penalty && penH === penA) {
+		errors.penalty = 'Серия пенальти не может закончится вничью';
+	}
+
+	return {
+		valid: Object.keys(errors).length === 0,
+		errors,
+	};
+}

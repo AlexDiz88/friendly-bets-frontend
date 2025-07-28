@@ -18,7 +18,8 @@
 	"signUp": "Anmelden",
 	"byMatchDay": "Nach Spieltag",
 	"addBet": "Wette hinzufügen",
-	"summaryResults": "Zusammenfassung",
+	"summaryAutoResults": "Zusammenfassung (auto)",
+	"summaryResults": "Zusammenfassung (manuell)",
 	"editBet": "Wette bearbeiten",
 	"adminPanel": "Verwaltungskonsole",
 	"myStats": "Meine Statistik",
@@ -51,7 +52,10 @@
 		"edit": "Bearbeiten",
 		"delete": "Löschen",
 		"update": "Aktualisieren",
-		"signUp": "Anmelden"
+		"signUp": "Anmelden",
+		"enterScore": "Spielstand eingeben",
+		"resetScore": "Zurücksetzen",
+		"reset": "Reset"
 	},
 	"actualSeason": "Aktuelle Saison",
 	"contentInProgress": "Inhalt in Entwicklung",
@@ -331,9 +335,17 @@
 	"updateInProgress": "Das Datenbank-Update läuft. Dies kann einige Minuten dauern...",
 	"noGameScore": "Spielergebnis fehlt!",
 	"ot": "ot.",
-	"penalty": "p.",
+	"pen": "p.",
+	"fullTime": "Endstand",
+	"halfTime": "Halbzeitstand",
+	"overtime": "Spielverlängerung",
+	"penalty": "Elfmeterschießen",
 	"statsWillBeAddedWhenGameweekFinished": "Die Tabelle des Spieltags wird hinzugefügt, nachdem alle Spiele abgeschlossen sind",
 	"userAvatarWasUploaded": "Benutzerfoto wurde erfolgreich hochgeladen",
 	"siteLanguageSuccessfullyChanged": "Sprache der Seite wurde erfolgreich geändert",
-	"maxBetsPerMatchday": "Wettlimit"
+	"maxBetsPerMatchday": "Wettlimit",
+	"enteredScore": "Endstand des Spiels",
+	"enterMatchResults": "Zusammenfassung der Spiele",
+	"sendGameResults": "Ergebnisse senden",
+	"addExtraTimes": "Verlängerung hinzufügen"
 }

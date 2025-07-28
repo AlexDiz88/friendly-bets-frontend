@@ -1,6 +1,6 @@
-import GameResult from './GameResult';
+import GameScore from './GameScore';
 
 export default interface BetResult {
-	gameResult: GameResult | undefined;
+	gameScore: GameScore | undefined;
 	betStatus: string;
 }

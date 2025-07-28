@@ -1,4 +1,4 @@
-const allBetsTitles = {
+export const allBetsTitles = {
 	popular: [
 		'П1',
 		'Х',
@@ -710,5 +710,3 @@ const allBetsTitles = {
 		],
 	},
 };
-
-export default allBetsTitles;

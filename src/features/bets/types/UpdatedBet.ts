@@ -1,5 +1,5 @@
 import BetTitle from './BetTitle';
-import GameResult from './GameResult';
+import GameScore from './GameScore';
 
 export default interface UpdatedBet {
 	seasonId: string;
@@ -11,7 +11,7 @@ export default interface UpdatedBet {
 	betTitle: BetTitle;
 	betOdds: number;
 	betSize: number;
-	gameResult?: GameResult | null;
+	gameResult?: GameScore | null;
 	betStatus: string;
 	prevCalendarNodeId?: string | undefined;
 	calendarNodeId: string | undefined;

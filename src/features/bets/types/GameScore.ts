@@ -1,4 +1,4 @@
-export default interface GameResult {
+export default interface GameScore {
 	fullTime: string | null;
 	firstTime: string | null;
 	overTime: string | null;

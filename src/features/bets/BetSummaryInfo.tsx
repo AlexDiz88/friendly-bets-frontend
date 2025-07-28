@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
 import TeamAvatar from '../../components/custom/avatar/TeamAvatar';
 import {
-	gameScoreValidation,
+	gameScoreInputStringValidation,
 	getGameResultView,
 	transformToGameResult,
 } from '../../components/utils/gameResultValidation';
@@ -29,7 +29,7 @@ export default function BetSummaryInfo({
 	const currentLanguage = i18n.language;
 	const transformedTitle = matchDayTitleViewTransform(matchDay, currentLanguage);
 
-	const score = gameScoreValidation(gameResultInput);
+	const score = gameScoreInputStringValidation(gameResultInput);
 
 	return (
 		<Box sx={{ minWidth: '15rem', m: 0, p: 0, fontWeight: 400 }}>

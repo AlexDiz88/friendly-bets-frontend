@@ -46,7 +46,7 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 
 	const handleEditBet = (): void => {
 		setShowEditForm(!showEditForm);
-		const gameResultAsString = convertGameResultToString(bet.gameResult);
+		const gameResultAsString = convertGameResultToString(bet.gameScore);
 		setTransformedGameResult(gameResultAsString);
 	};
 

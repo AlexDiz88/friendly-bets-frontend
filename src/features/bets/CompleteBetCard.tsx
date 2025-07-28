@@ -29,7 +29,7 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 		betTitle,
 		betOdds,
 		betSize,
-		gameResult,
+		gameScore: gameResult,
 		betStatus,
 		balanceChange,
 	} = bet;

@@ -18,7 +18,8 @@
 	"signUp": "Зарегистрироваться",
 	"byMatchDay": "По турам",
 	"addBet": "Добавить ставку",
-	"summaryResults": "Подвести итоги",
+	"summaryAutoResults": "Подвести итоги (авто)",
+	"summaryResults": "Подвести итоги (вручную)",
 	"editBet": "Редактировать ставку",
 	"adminPanel": "Админ кабинет",
 	"myStats": "Моя статистика",
@@ -51,7 +52,10 @@
 		"edit": "Редактировать",
 		"delete": "Удалить",
 		"update": "Обновить",
-		"signUp": "Зарегистрироваться"
+		"signUp": "Зарегистрироваться",
+		"enterScore": "Ввести счёт матча",
+		"resetScore": "Сброс счёта",
+		"reset": "Сбросить"
 	},
 	"actualSeason": "Текущий сезон",
 	"contentInProgress": "Контент в разработке",
@@ -331,9 +335,17 @@
 	"updateInProgress": "Идёт процесс обновления базы данных. Это может занять несколько минут...",
 	"noGameScore": "Результат матча отсутствует!",
 	"ot": "доп.",
-	"penalty": "пен.",
+	"pen": "пен.",
+	"fullTime": "Основное время",
+	"halfTime": "1й тайм",
+	"overtime": "Доп.время",
+	"penalty": "Серия пенальти",
 	"statsWillBeAddedWhenGameweekFinished": "Итоговая таблица игрового тура будет добавлена после окончания всех его матчей",
 	"userAvatarWasUploaded": "Фотография пользователя была успешно загружена",
 	"siteLanguageSuccessfullyChanged": "Язык сайта успешно изменён",
-	"maxBetsPerMatchday": "Макс.Ставок"
+	"maxBetsPerMatchday": "Макс.Ставок",
+	"enteredScore": "Итоговый счёт",
+	"enterMatchResults": "Подведение итогов матчей",
+	"sendGameResults": "Отправить результаты",
+	"addExtraTimes": "Доп.время/Пенальти"
 }

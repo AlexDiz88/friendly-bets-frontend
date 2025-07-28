@@ -18,7 +18,8 @@
 	"signUp": "Sign Up",
 	"byMatchDay": "By Matchday",
 	"addBet": "Add bet",
-	"summaryResults": "Summary results",
+	"summaryAutoResults": "Summary results (auto)",
+	"summaryResults": "Summary results (manually)",
 	"editBet": "Edit Bet",
 	"adminPanel": "Admin panel",
 	"myStats": "My stats",
@@ -51,7 +52,10 @@
 		"edit": "Edit",
 		"delete": "Delete",
 		"update": "Update",
-		"signUp": "Sign Up"
+		"signUp": "Sign Up",
+		"enterScore": "Enter game score",
+		"resetScore": "Reset score",
+		"reset": "Reset"
 	},
 	"actualSeason": "Actual Season",
 	"contentInProgress": "Content in progress",
@@ -331,9 +335,17 @@
 	"updateInProgress": "The database update is in progress. This may take a few minutes...",
 	"noGameScore": "Match result is missing!",
 	"ot": "ot.",
-	"penalty": "p.",
+	"pen": "p.",
+	"fullTime": "Full time",
+	"halfTime": "1st half",
+	"overtime": "Overtime",
+	"penalty": "Penalty",
 	"statsWillBeAddedWhenGameweekFinished": "Standings for the gameweek will be added after all its games are completed",
 	"userAvatarWasUploaded": "User's photo was successfully uploaded",
 	"siteLanguageSuccessfullyChanged": "Site language successfully changed",
-	"maxBetsPerMatchday": "Bets limit"
+	"maxBetsPerMatchday": "Bets limit",
+	"enteredScore": "Final score",
+	"enterMatchResults": "Enter game scores",
+	"sendGameResults": "Send results",
+	"addExtraTimes": "Add extra times"
 }
