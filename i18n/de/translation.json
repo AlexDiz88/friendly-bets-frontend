@@ -150,6 +150,7 @@
 	"chooseFinishedSeasonForDetailedStatistik": "Wählen Sie abgeschlossene Saison aus, um die Statistiken anzusehen",
 	"loading": "Laden...",
 	"loadingError": "Fehler beim Laden! Bitte versuchen Sie, die Seite neu zu laden",
+	"processing": "Die Ergebnisse werden verarbeitet...",
 	"chooseLeagueForDetailedStatistik": "Wählen Sie Liga aus, um detaillierte Statistiken anzusehen",
 	"statsWasSuccessfullyRecalculated": "Statistiken wurden erfolgreich neu berechnet",
 	"seasonWasSuccessfullyCreated": "Saison wurde erfolgreich erstellt",
@@ -210,6 +211,7 @@
 	"emptyBetWasSuccessfullyAdded": "Leere Wette wurde erfolgreich hinzugefügt",
 	"twoEmptyBetsWasSuccessfullyAdded": "2 leere Wetten wurden erfolgreich hinzugefügt",
 	"betWasSuccessfullyProcessed": "Wette wurde erfolgreich bearbeitet",
+	"betsWereSuccessfullyProcessed": "Alle Wetten wurden erfolgreich bearbeitet",
 	"noActiveSeasonWasFounded": "Saison mit dem Status AKTIVE nicht gefunden",
 	"noScheduledSeasonWasFounded": "Saison mit dem Status SCHEDULED nicht gefunden",
 	"moreDetails": "Mehr Details",
@@ -347,5 +349,6 @@
 	"enteredScore": "Endstand des Spiels",
 	"enterMatchResults": "Zusammenfassung der Spiele",
 	"sendGameResults": "Ergebnisse senden",
-	"addExtraTimes": "Verlängerung hinzufügen"
+	"addExtraTimes": "Verlängerung hinzufügen",
+	"noBets": "Es gibt derzeit keine Wetten"
 }

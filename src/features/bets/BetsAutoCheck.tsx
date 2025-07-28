@@ -39,6 +39,7 @@ export default function BetsAutoCheck(): JSX.Element {
 	const [selectedMatchKey, setSelectedMatchKey] = useState<string | null>(null);
 	const [scoreValidities, setScoreValidities] = useState<Record<string, boolean>>({});
 	const [scoreErrors, setScoreErrors] = useState<Record<string, string | null>>({});
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 
@@ -96,6 +97,7 @@ export default function BetsAutoCheck(): JSX.Element {
 	};
 
 	const handleSubmitResults = async (): Promise<void> => {
+		setIsSubmitting(true);
 		const gameResults: GameResult[] = [];
 
 		for (const game of uniqueGames) {
@@ -111,14 +113,17 @@ export default function BetsAutoCheck(): JSX.Element {
 		}
 
 		if (!activeSeasonId) {
+			setIsSubmitting(false);
 			throw new Error('Активный сезон не определен');
 		}
 		const dispatchResult = await dispatch(
 			sendGameResults({ seasonId: activeSeasonId, gameResults })
 		);
 
+		setIsSubmitting(false);
+
 		if (sendGameResults.fulfilled.match(dispatchResult)) {
-			dispatch(showInfoSnackbar({ message: t('matchResultsSentSuccessfully') }));
+			dispatch(showInfoSnackbar({ message: t('betsWereSuccessfullyProcessed') }));
 			setInputValues({});
 		} else {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
@@ -145,158 +150,170 @@ export default function BetsAutoCheck(): JSX.Element {
 	if (loadingError) return <CustomLoadingError />;
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				justifyContent: 'center',
-				alignItems: 'center',
-				flexDirection: 'column',
-			}}
-		>
-			<Typography textAlign="center" mt={1} sx={{ fontFamily: 'Exo 2' }}>
-				{t('enterMatchResults')}
-			</Typography>
+		<>
+			{isSubmitting ? (
+				<CustomLoading text={t('processing')} />
+			) : (
+				<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						flexDirection: 'column',
+					}}
+				>
+					<Typography textAlign="center" mt={1} sx={{ fontFamily: 'Exo 2' }}>
+						{t('enterMatchResults')}
+					</Typography>
 
-			{uniqueGames.map((game) => {
-				const isSelected = selectedMatchKey === game.key;
-				const currentInput = inputValues[game.key];
+					{uniqueGames.map((game) => {
+						const isSelected = selectedMatchKey === game.key;
+						const currentInput = inputValues[game.key];
 
-				return (
-					<Box
-						key={game.key}
-						sx={{
-							px: 2,
-							py: 1,
-							my: 1.5,
-							width: '100%',
-							maxWidth: '26rem',
-							transition: '0.2s',
-							border: '2px solid',
-							borderRadius: 2,
-							bgcolor: isSelected ? '#FFEDD9B9' : '#EDD1C03F',
-							boxShadow: '1px 4px 7px rgba(0, 0, 60, 0.4), 0px 4px 8px rgba(0, 0, 0, 0.7)',
-						}}
-					>
-						<Box
-							display="flex"
-							justifyContent="space-between"
-							alignItems="center"
-							flexDirection="column"
-						>
-							<LeagueAvatar
-								leagueCode={game.leagueCode}
-								matchDay={game.matchDay}
-								height={22}
-								sx={{ fontSize: '0.85rem', mb: 0.5 }}
-							/>
-							<TeamsAvatars homeTeam={game.homeTeam} awayTeam={game.awayTeam} height={32} />
-						</Box>
-
-						{currentInput && (
-							<Typography
+						return (
+							<Box
+								key={game.key}
 								sx={{
-									display: 'flex',
-									justifyContent: 'center',
-									mt: 1,
-									color: scoreErrors[game.key] ? '#B00020' : '#1F8300FF',
-									fontWeight: 600,
-									fontSize: '1.05rem',
+									px: 2,
+									py: 1,
+									my: 1.5,
+									width: '100%',
+									maxWidth: '26rem',
+									transition: '0.2s',
+									border: '2px solid',
+									borderRadius: 2,
+									bgcolor: isSelected ? '#FFEDD9B9' : '#EDD1C03F',
+									boxShadow: '1px 4px 7px rgba(0, 0, 60, 0.4), 0px 4px 8px rgba(0, 0, 0, 0.7)',
 								}}
 							>
-								{t('enteredScore')} - {currentInput.fullTime} ({currentInput.firstTime}
-								{currentInput.overTime ? `, доп. ${currentInput.overTime}` : ''}
-								{currentInput.penalty ? `, пен. ${currentInput.penalty}` : ''})
-							</Typography>
-						)}
-
-						{/* Ошибка счёта матча */}
-						{scoreErrors[game.key] && (
-							<Typography
-								sx={{
-									textAlign: 'center',
-									mt: 0.5,
-									color: '#B00020',
-									fontWeight: 500,
-									fontSize: '0.9rem',
-								}}
-							>
-								{scoreErrors[game.key]}
-							</Typography>
-						)}
-
-						<Box>
-							{!isSelected ? (
 								<Box
-									sx={{
-										display: 'flex',
-										justifyContent: 'center',
-										mt: 1,
-									}}
+									display="flex"
+									justifyContent="space-between"
+									alignItems="center"
+									flexDirection="column"
 								>
-									<CustomButton
-										buttonText={t('btnText.enterScore')}
-										onClick={() => setSelectedMatchKey(game.key)}
-										buttonColor="info"
-										buttonSize="small"
-										textSize="0.75rem"
-										sx={{ mr: 2 }}
+									<LeagueAvatar
+										leagueCode={game.leagueCode}
+										matchDay={game.matchDay}
+										height={22}
+										sx={{ fontSize: '0.85rem', mb: 0.5 }}
 									/>
-									<CustomButton
-										buttonText={t('btnText.resetScore')}
-										onClick={() => handleScoreChange(game.key, null)}
-										buttonColor="warning"
-										buttonSize="small"
-										textSize="0.75rem"
-									/>
+									<TeamsAvatars homeTeam={game.homeTeam} awayTeam={game.awayTeam} height={32} />
 								</Box>
-							) : (
-								<>
-									<ScoreSelector
-										key={game.key}
-										keyId={game.key}
-										initialValue={inputValues[game.key]}
-										onSave={(val) => handleScoreChange(game.key, val)}
-										onValidationChange={(isValid) =>
-											setScoreValidities((prev) => ({ ...prev, [game.key]: isValid }))
-										}
-										onValidationError={(error) =>
-											setScoreErrors((prev) => ({ ...prev, [game.key]: error }))
-										}
-									/>
-									<Box mt={1} display="flex" justifyContent="flex-end">
-										<CustomButton
-											buttonText={t('btnText.reset')}
-											onClick={() => {
-												handleScoreChange(game.key, null);
-												setSelectedMatchKey(null);
-											}}
-											buttonSize="small"
-											sx={{ bgcolor: '#DB3833FF', mr: 1 }}
-										/>
-										<CustomButton
-											buttonText={t('btnText.accept')}
-											onClick={() => setSelectedMatchKey(null)}
-											buttonSize="small"
-											buttonColor="success"
-										/>
-									</Box>
-								</>
-							)}
-						</Box>
-					</Box>
-				);
-			})}
 
-			<CustomButton
-				onClick={handleSubmitResults}
-				buttonText={t('sendGameResults')}
-				buttonColor="secondary"
-				disabled={
-					Object.keys(inputValues).length === 0 ||
-					Object.entries(inputValues).some(([key]) => scoreValidities[key] === false)
-				}
-				sx={{ mt: 2 }}
-			/>
-		</Box>
+								{currentInput && (
+									<Typography
+										sx={{
+											display: 'flex',
+											justifyContent: 'center',
+											mt: 1,
+											color: scoreErrors[game.key] ? '#B00020' : '#1F8300FF',
+											fontWeight: 600,
+											fontSize: '1.05rem',
+										}}
+									>
+										{t('enteredScore')} - {currentInput.fullTime} ({currentInput.firstTime}
+										{currentInput.overTime ? `, доп. ${currentInput.overTime}` : ''}
+										{currentInput.penalty ? `, пен. ${currentInput.penalty}` : ''})
+									</Typography>
+								)}
+
+								{/* Ошибка счёта матча */}
+								{scoreErrors[game.key] && (
+									<Typography
+										sx={{
+											textAlign: 'center',
+											mt: 0.5,
+											color: '#B00020',
+											fontWeight: 500,
+											fontSize: '0.9rem',
+										}}
+									>
+										{scoreErrors[game.key]}
+									</Typography>
+								)}
+
+								<Box>
+									{!isSelected ? (
+										<Box
+											sx={{
+												display: 'flex',
+												justifyContent: 'center',
+												mt: 1,
+											}}
+										>
+											<CustomButton
+												buttonText={t('btnText.enterScore')}
+												onClick={() => setSelectedMatchKey(game.key)}
+												buttonColor="info"
+												buttonSize="small"
+												textSize="0.75rem"
+												sx={{ mr: 2 }}
+											/>
+											<CustomButton
+												buttonText={t('btnText.resetScore')}
+												onClick={() => handleScoreChange(game.key, null)}
+												buttonColor="warning"
+												buttonSize="small"
+												textSize="0.75rem"
+											/>
+										</Box>
+									) : (
+										<>
+											<ScoreSelector
+												key={game.key}
+												keyId={game.key}
+												initialValue={inputValues[game.key]}
+												onSave={(val) => handleScoreChange(game.key, val)}
+												onValidationChange={(isValid) =>
+													setScoreValidities((prev) => ({ ...prev, [game.key]: isValid }))
+												}
+												onValidationError={(error) =>
+													setScoreErrors((prev) => ({ ...prev, [game.key]: error }))
+												}
+											/>
+											<Box mt={1} display="flex" justifyContent="flex-end">
+												<CustomButton
+													buttonText={t('btnText.reset')}
+													onClick={() => {
+														handleScoreChange(game.key, null);
+														setSelectedMatchKey(null);
+													}}
+													buttonSize="small"
+													sx={{ bgcolor: '#DB3833FF', mr: 1 }}
+												/>
+												<CustomButton
+													buttonText={t('btnText.accept')}
+													onClick={() => setSelectedMatchKey(null)}
+													buttonSize="small"
+													buttonColor="success"
+												/>
+											</Box>
+										</>
+									)}
+								</Box>
+							</Box>
+						);
+					})}
+
+					{openedBets.length > 0 ? (
+						<>
+							<CustomButton
+								onClick={handleSubmitResults}
+								buttonText={t('sendGameResults')}
+								buttonColor="secondary"
+								disabled={
+									Object.keys(inputValues).length === 0 ||
+									Object.entries(inputValues).some(([key]) => scoreValidities[key] === false)
+								}
+								sx={{ mt: 2 }}
+							/>
+						</>
+					) : (
+						<Box sx={{ color: '#731212FF', fontWeight: 600, mt: 3 }}>{t('noBets')}</Box>
+					)}
+				</Box>
+			)}
+		</>
 	);
 }

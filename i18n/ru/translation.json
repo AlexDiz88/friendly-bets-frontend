@@ -150,6 +150,7 @@
 	"chooseFinishedSeasonForDetailedStatistik": "Выберите завершившийся сезон для просмотра статистики",
 	"loading": "Загрузка...",
 	"loadingError": "Ошибка загрузки! Попробуйте обновить страницу",
+	"processing": "Идет обработка результатов...",
 	"chooseLeagueForDetailedStatistik": "Выберите лигу для просмотра детальной статистики по ней",
 	"statsWasSuccessfullyRecalculated": "Статистика успешно пересчитана",
 	"seasonWasSuccessfullyCreated": "Сезон был успешно создан",
@@ -210,6 +211,7 @@
 	"emptyBetWasSuccessfullyAdded": "Пустая ставка была успешно добавлена",
 	"twoEmptyBetsWasSuccessfullyAdded": "2 пустые ставки были успешно добавлены",
 	"betWasSuccessfullyProcessed": "Ставка была успешно обработана",
+	"betsWereSuccessfullyProcessed": "Все ставки были успешно обработаны",
 	"noActiveSeasonWasFounded": "Сезон со статусом ACTIVE не найден",
 	"noScheduledSeasonWasFounded": "Сезон со статусом SCHEDULED не найден",
 	"moreDetails": "Подробнее",
@@ -347,5 +349,6 @@
 	"enteredScore": "Итоговый счёт",
 	"enterMatchResults": "Подведение итогов матчей",
 	"sendGameResults": "Отправить результаты",
-	"addExtraTimes": "Доп.время/Пенальти"
+	"addExtraTimes": "Доп.время/Пенальти",
+	"noBets": "В настоящий момент ставок нет"
 }

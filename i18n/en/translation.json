@@ -150,6 +150,7 @@
 	"chooseFinishedSeasonForDetailedStatistik": "Select completed season to view statistics",
 	"loading": "Loading...",
 	"loadingError": "Loading error! Try refreshing page",
+	"processing": "Results are being processed...",
 	"chooseLeagueForDetailedStatistik": "Select league to view detailed statistics",
 	"statsWasSuccessfullyRecalculated": "Statistics have been successfully recalculated",
 	"seasonWasSuccessfullyCreated": "Season has been successfully created",
@@ -210,6 +211,7 @@
 	"emptyBetWasSuccessfullyAdded": "Empty bet has been successfully added",
 	"twoEmptyBetsWasSuccessfullyAdded": "2 empty bets have been successfully added",
 	"betWasSuccessfullyProcessed": "Bet has been successfully processed",
+	"betsWereSuccessfullyProcessed": "All bets have been successfully processed",
 	"noActiveSeasonWasFounded": "Season with status ACTIVE not found",
 	"noScheduledSeasonWasFounded": "Season with status SCHEDULED not found",
 	"moreDetails": "More details",
@@ -347,5 +349,6 @@
 	"enteredScore": "Final score",
 	"enterMatchResults": "Enter game scores",
 	"sendGameResults": "Send results",
-	"addExtraTimes": "Add extra times"
+	"addExtraTimes": "Add extra times",
+	"noBets": "There are no bets at the moment"
 }
