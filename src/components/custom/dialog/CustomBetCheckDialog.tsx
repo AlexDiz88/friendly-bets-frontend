@@ -1,6 +1,6 @@
 import { Box, Dialog, DialogActions, DialogContent, Typography } from '@mui/material';
 import { t } from 'i18next';
-import BetGameResultInfo from '../../../features/bets/BetGameResultInfo';
+import BetGameScoreInfo from '../../../features/bets/BetGameScoreInfo';
 import Bet from '../../../features/bets/types/Bet';
 import { getFullBetTitle } from '../../utils/stringTransform';
 import TeamAvatar from '../avatar/TeamAvatar';
@@ -11,7 +11,7 @@ interface DialogProps {
 	open: boolean;
 	onClose: () => void;
 	onSave: () => void;
-	gameResultInput: string | undefined;
+	gameScoreInput: string | undefined;
 	bet?: Bet;
 	buttonColor?: 'success' | 'error' | 'warning' | 'info' | 'primary' | 'secondary';
 	buttonText: string;
@@ -22,7 +22,7 @@ export default function CustomBetCheckDialog({
 	open,
 	onClose,
 	onSave,
-	gameResultInput,
+	gameScoreInput,
 	bet,
 	buttonColor = 'primary',
 	buttonText,
@@ -32,7 +32,7 @@ export default function CustomBetCheckDialog({
 		<Dialog open={open} onClose={onClose}>
 			<DialogContent>
 				<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
-					<BetGameResultInfo gameResultInput={gameResultInput} />
+					<BetGameScoreInfo gameScoreInput={gameScoreInput} />
 				</Box>
 				<Box sx={{ display: 'flex', alignItems: 'center' }}>
 					<b>{t('homeTeam')}:</b>

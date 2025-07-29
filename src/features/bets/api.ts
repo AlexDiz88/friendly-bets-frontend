@@ -2,7 +2,7 @@
 import Bet, { BetId } from './types/Bet';
 import BetResult from './types/BetResult';
 import BetsPage from './types/BetsPage';
-import GameResult from './types/GameResults';
+import GameResult from './types/GameResult';
 import NewEmptyBet from './types/NewEmptyBet';
 import NewOpenedBet from './types/NewOpenedBet';
 import UpdatedBet from './types/UpdatedBet';

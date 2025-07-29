@@ -11,7 +11,7 @@ export default interface UpdatedBet {
 	betTitle: BetTitle;
 	betOdds: number;
 	betSize: number;
-	gameResult?: GameScore | null;
+	gameScore?: GameScore | null;
 	betStatus: string;
 	prevCalendarNodeId?: string | undefined;
 	calendarNodeId: string | undefined;

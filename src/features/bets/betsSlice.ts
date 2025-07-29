@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import * as api from './api';
 import BetResult from './types/BetResult';
 import BetsState from './types/BetsState';
-import GameResult from './types/GameResults';
+import GameResult from './types/GameResult';
 import NewEmptyBet from './types/NewEmptyBet';
 import NewOpenedBet from './types/NewOpenedBet';
 import UpdatedBet from './types/UpdatedBet';

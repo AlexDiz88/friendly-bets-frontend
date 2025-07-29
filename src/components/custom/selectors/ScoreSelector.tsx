@@ -3,7 +3,7 @@ import { Box, Collapse, FormControlLabel, IconButton, Switch, Typography } from 
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import GameScore from '../../../features/bets/types/GameScore';
-import { parseScore, validateGameResult } from '../../utils/gameResultValidation';
+import { parseScore, validateGameScore } from '../../utils/gameScoreValidation';
 
 interface ScoreFieldProps {
 	label: string;
@@ -76,7 +76,7 @@ export default function ScoreSelector({
 			overTime: showExtra ? overTime : null,
 			penalty: showExtra && parseScore(overTime)[0] === parseScore(overTime)[1] ? penalty : null,
 		};
-		const validation = validateGameResult(result);
+		const validation = validateGameScore(result);
 		setIsValid(validation.valid);
 		setError(Object.values(validation.errors)[0] ?? null);
 		onSave(result);

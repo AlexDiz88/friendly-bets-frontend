@@ -17,7 +17,7 @@ import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selec
 import Team from '../admin/teams/types/Team';
 import { getOpenedBets, sendGameResults } from './betsSlice';
 import { selectOpenedBets } from './selectors';
-import GameResult from './types/GameResults';
+import GameResult from './types/GameResult';
 import GameScore from './types/GameScore';
 
 interface MatchInfo {

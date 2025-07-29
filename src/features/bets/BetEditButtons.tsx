@@ -8,7 +8,7 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
-import { convertGameResultToString } from '../../components/utils/gameResultValidation';
+import { convertGameScoreToString } from '../../components/utils/gameScoreValidation';
 import { getSeasonCalendarHasBetsNodes } from '../admin/calendars/calendarsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import BetEditForm from './BetEditForm';
@@ -20,7 +20,7 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const [showEditForm, setShowEditForm] = useState(false);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-	const [transformedGameResult, setTransformedGameResult] = useState<string>('');
+	const [transformedGameScore, setTransformedGameScore] = useState<string>('');
 
 	const handleBetDeleteSave = useCallback(async () => {
 		setOpenDeleteDialog(false);
@@ -42,12 +42,12 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 		if (deleteBet.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
-	}, [bet, transformedGameResult]);
+	}, [bet, transformedGameScore]);
 
 	const handleEditBet = (): void => {
 		setShowEditForm(!showEditForm);
-		const gameResultAsString = convertGameResultToString(bet.gameScore);
-		setTransformedGameResult(gameResultAsString);
+		const gameScoreAsString = convertGameScoreToString(bet.gameScore);
+		setTransformedGameScore(gameScoreAsString);
 	};
 
 	const handleDeleteBetOpenDialog = (): void => {
@@ -76,7 +76,7 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 			{showEditForm && bet.betStatus !== 'EMPTY' && (
 				<BetEditForm
 					bet={bet}
-					gameResultAsString={transformedGameResult}
+					gameScoreAsString={transformedGameScore}
 					handleEditBet={handleEditBet}
 				/>
 			)}

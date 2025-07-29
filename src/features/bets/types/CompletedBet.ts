@@ -16,7 +16,7 @@ export default interface CompletedBet {
 	betOdds: number;
 	betSize: number;
 	betResultAddedAt: Date;
-	gameResult: GameScore;
+	gameScore: GameScore;
 	betStatus: string;
 	balanceChange: number;
 	updatedAt?: Date;

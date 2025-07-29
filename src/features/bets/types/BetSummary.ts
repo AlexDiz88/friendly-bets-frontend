@@ -12,6 +12,6 @@ export default interface BetSummary {
 	betTitle: BetTitle | undefined;
 	betOdds: string;
 	betSize: string;
-	gameResultInput?: string;
 	betStatus?: string;
+	gameScoreInput?: string;
 }

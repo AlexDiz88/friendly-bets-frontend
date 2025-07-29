@@ -104,11 +104,11 @@ export const gameScoreInputStringValidation = (gameScore: string | undefined): s
 		return cleanedGameScore;
 	}
 
-	return t('error.incorrectGameResult');
+	return t('error.incorrectGameScore');
 };
 
 // main function
-export const transformToGameResult = (gameScoreInput: string): GameScore => {
+export const transformToGameScore = (gameScoreInput: string): GameScore => {
 	const result: GameScore = {
 		fullTime: null,
 		firstTime: null,
@@ -137,47 +137,47 @@ export const transformToGameResult = (gameScoreInput: string): GameScore => {
 	return result;
 };
 
-// function for transform GameResult into good-looking view
-export const getGameResultView = (gameRes: GameScore | undefined, isFullView = true): string => {
-	if (!gameRes || !gameRes.fullTime || !gameRes.firstTime) {
+// function for transform GameScore into good-looking view
+export const getGameScoreView = (gameScore: GameScore | undefined, isFullView = true): string => {
+	if (!gameScore || !gameScore.fullTime || !gameScore.firstTime) {
 		return t('notSpecified');
 	}
 
-	let result = `${gameRes.fullTime} (${gameRes.firstTime})`;
+	let result = `${gameScore.fullTime} (${gameScore.firstTime})`;
 
-	if (gameRes.overTime || gameRes.penalty) {
-		const otPart = gameRes.overTime
+	if (gameScore.overTime || gameScore.penalty) {
+		const otPart = gameScore.overTime
 			? isFullView
-				? `${t('ot')}${gameRes.overTime}`
-				: gameRes.overTime
+				? `${t('ot')}${gameScore.overTime}`
+				: gameScore.overTime
 			: '';
-		const penaltyPart = gameRes.penalty
+		const penaltyPart = gameScore.penalty
 			? isFullView
-				? `${t('pen')}${gameRes.penalty}`
-				: gameRes.penalty
+				? `${t('pen')}${gameScore.penalty}`
+				: gameScore.penalty
 			: '';
 
-		result += gameRes.penalty ? ` [${otPart} ${penaltyPart}]` : ` [${otPart}]`;
+		result += gameScore.penalty ? ` [${otPart} ${penaltyPart}]` : ` [${otPart}]`;
 	}
 
 	return result;
 };
 
-export const convertGameResultToString = (gameResult: GameScore | undefined): string => {
-	if (!gameResult) {
+export const convertGameScoreToString = (gameScore: GameScore | undefined): string => {
+	if (!gameScore) {
 		return t('notSpecified');
 	}
-	if (!gameResult.fullTime || !gameResult.firstTime) {
-		return t('error.incorrectGameResult');
+	if (!gameScore.fullTime || !gameScore.firstTime) {
+		return t('error.incorrectGameScore');
 	}
 
-	let res = `${gameResult.fullTime} ${gameResult.firstTime}`;
+	let res = `${gameScore.fullTime} ${gameScore.firstTime}`;
 
-	if (gameResult.overTime) {
-		res += ` ${gameResult.overTime}`;
+	if (gameScore.overTime) {
+		res += ` ${gameScore.overTime}`;
 	}
-	if (gameResult.penalty) {
-		res += ` ${gameResult.penalty}`;
+	if (gameScore.penalty) {
+		res += ` ${gameScore.penalty}`;
 	}
 
 	return res.trim();
@@ -189,7 +189,7 @@ export const parseScore = (score: string | null): [number, number] => {
 	return [home || 0, away || 0];
 };
 
-export function validateGameResult(result: GameScore): ValidationResult {
+export function validateGameScore(result: GameScore): ValidationResult {
 	const errors: ValidationResult['errors'] = {};
 	const [ftH, ftA] = parseScore(result.fullTime);
 	const [htH, htA] = parseScore(result.firstTime);
