@@ -5,7 +5,10 @@ import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import { selectCompletedBets } from '../features/bets/selectors';
 import PlayersStats from '../features/stats/PlayersStats';
 import { selectPlayersStats } from '../features/stats/selectors';
-import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
+import {
+	getAllPlayersStatsBySeason,
+	getAllStatsByBetTitlesInSeason,
+} from '../features/stats/statsSlice';
 import CustomLoading from './custom/loading/CustomLoading';
 import CustomLoadingError from './custom/loading/CustomLoadingError';
 import useFetchActiveSeason from './hooks/useFetchActiveSeason';
@@ -68,6 +71,20 @@ export default function Homepage(): JSX.Element {
 				.catch(() => {
 					setLoadingError(true);
 					setLoading(false);
+				});
+		}
+	}, [activeSeasonId]);
+
+	useEffect(() => {
+		console.log('homepage');
+
+		if (activeSeasonId) {
+			dispatch(getAllStatsByBetTitlesInSeason(activeSeasonId))
+				.then((response) => {
+					console.log(response.payload);
+				})
+				.catch(() => {
+					setLoadingError(true);
 				});
 		}
 	}, [activeSeasonId]);
