@@ -220,6 +220,47 @@
 	"generalRules": "Allgemeine Regeln für alle Turniere",
 	"noActiveSeasonsAtThisMoment": "Derzeit gibt es keine aktiven Turniere",
 	"unknownError": "Unbekannter Fehler",
+
+	"betTitleCategory": {
+		"GAME_RESULTS": "Spielergebnisse",
+		"TOTALS": "Tore Gesamt",
+		"HANDICAPS": "Handicaps",
+		"GAME_RESULT_AND_TOTALS": "Ergebnis + Tore Gesamt",
+		"SCORES": "Exakte Ergebnisse",
+		"GOALS": "Tore",
+		"HALFTIMES": "Halbzeiten",
+		"SPECIALS": "Spezialwetten"
+	},
+	"betTitleSubCategory": {
+		"SUMMARY": "Übersicht",
+		"HOME_WIN": "Heimsieg",
+		"DRAW": "Unentschieden",
+		"AWAY_WIN": "Auswärtssieg",
+		"OTHER_RESULTS": "Andere Ergebnisse",
+		"TOTAL_UNDER": "Unter",
+		"TOTAL_OVER": "Über",
+		"HANDICAP_HOME": "Handicap Heim",
+		"HANDICAP_AWAY": "Handicap Auswärts",
+		"GAME_RESULT_TOTAL_UNDER": "Ergebnis + Unter",
+		"GAME_RESULT_TOTAL_OVER": "Ergebnis + Über",
+		"SCORE_0_0_TO_3_3": "Ergebnis 0:0 bis 3:3",
+		"SCORE_OTHER": "Andere Ergebnisse",
+		"BOTH_SCORES": "Beide treffen",
+		"BOTH_SCORES_AND_GAME_RESULT": "Beide treffen + Ergebnis",
+		"BOTH_SCORES_AND_TOTAL_GOALS": "Beide treffen + Gesamt Tore",
+		"OTHER": "Sonstiges",
+		"GAME_RESULT": "Ergebnis(HZ)",
+		"HALF_FULL_FIRST_SECOND": "HZ/Endstand, 1.HZ/2.HZ",
+		"GAME_SCORE": "Halbzeitergebnis",
+		"HANDICAP": "Handicap(HZ)",
+		"TOTAL": "Tore(HZ)",
+		"COMBO_CONDITION": "Kombi-Wette(HZ)",
+		"GOALS_HALFTIME": "Tore(HZ)",
+		"CLEAN_WIN": "Zu-Null-Sieg",
+		"GOALS_DIFFERENCE": "Tordifferenz",
+		"PLAYOFF": "Playoff"
+	},
+
 	"error": {
 		"unknownError": "Unbekannter Fehler",
 		"logoutSuccess": "Erfolgreich abgemeldet",
@@ -319,6 +360,7 @@
 		"failedToConvertHeicImage": "Fehler beim Konvertieren des HEIC-Bildes",
 		"languageNotSupported": "Sprache wird nicht unterstützt"
 	},
+
 	"matchdayCalendar": "Spielplan",
 	"matchdayStartDate": "Startdatum des Spieltags",
 	"matchdayEndDate": "Enddatum des Spieltags",

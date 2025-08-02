@@ -220,6 +220,47 @@
 	"generalRules": "Общие правила для всех турниров",
 	"noActiveSeasonsAtThisMoment": "В данный момент нет активных турниров",
 	"unknownError": "Неизвестная ошибка",
+
+	"betTitleCategory": {
+		"GAME_RESULTS": "Исход матчей",
+		"TOTALS": "Тоталы",
+		"HANDICAPS": "Форы",
+		"GAME_RESULT_AND_TOTALS": "Результат + Тотал",
+		"SCORES": "Точный счёт",
+		"GOALS": "Голы",
+		"HALFTIMES": "По таймам",
+		"SPECIALS": "Особые ставки"
+	},
+	"betTitleSubCategory": {
+		"SUMMARY": "Итого",
+		"HOME_WIN": "Победа хозяев",
+		"DRAW": "Ничья",
+		"AWAY_WIN": "Победа гостей",
+		"OTHER_RESULTS": "Другие исходы (1Х,12,Х2)",
+		"TOTAL_UNDER": "Тотал меньше",
+		"TOTAL_OVER": "Тотал больше",
+		"HANDICAP_HOME": "Фора на хозяев",
+		"HANDICAP_AWAY": "Фора на гостей",
+		"GAME_RESULT_TOTAL_UNDER": "Результат + тотал меньше",
+		"GAME_RESULT_TOTAL_OVER": "Результат + тотал больше",
+		"SCORE_0_0_TO_3_3": "Счёт от 0:0 до 3:3",
+		"SCORE_OTHER": "Прочие счета",
+		"BOTH_SCORES": "Обе забьют",
+		"BOTH_SCORES_AND_GAME_RESULT": "Обе забьют + исход матча",
+		"BOTH_SCORES_AND_TOTAL_GOALS": "Обе забьют + тотал",
+		"OTHER": "Прочее",
+		"GAME_RESULT": "Результат 1-го тайма",
+		"HALF_FULL_FIRST_SECOND": "Тайм/матч, 1й/2й тайм",
+		"GAME_SCORE": "Счёт(тайм)",
+		"HANDICAP": "Фора(тайм)",
+		"TOTAL": "Тотал(тайм)",
+		"COMBO_CONDITION": "Комбинированные(тайм)",
+		"GOALS_HALFTIME": "Голы(тайм)",
+		"CLEAN_WIN": "Победа всухую",
+		"GOALS_DIFFERENCE": "Точная разница голов",
+		"PLAYOFF": "Плей-офф"
+	},
+
 	"error": {
 		"unknownError": "Неизвестная ошибка",
 		"logoutSuccess": "Выход выполнен успешно",
@@ -319,6 +360,7 @@
 		"failedToConvertHeicImage": "Не удалось конвертировать изображение HEIC",
 		"languageNotSupported": "Язык не поддерживается"
 	},
+
 	"matchdayCalendar": "Календарь туров",
 	"matchdayStartDate": "Дата начала тура",
 	"matchdayEndDate": "Дата окончания тура",

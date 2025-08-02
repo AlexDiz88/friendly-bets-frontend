@@ -1,6 +1,6 @@
 export interface PlayerStatsByBetTitles {
 	seasonId: string;
-	leagueStats: boolean;
+	userId: string;
 	betTitleCategoryStats: CategoryStats[];
 }
 

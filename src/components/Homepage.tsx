@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import { selectCompletedBets } from '../features/bets/selectors';
+import PlayerBetStatsByBetTitles from '../features/stats/PlayerBetStatsByBetTitles';
 import PlayersStats from '../features/stats/PlayersStats';
-import { selectPlayersStats } from '../features/stats/selectors';
+import { selectAllStatsByBetTitlesInSeason, selectPlayersStats } from '../features/stats/selectors';
 import {
 	getAllPlayersStatsBySeason,
 	getAllStatsByBetTitlesInSeason,
@@ -16,6 +17,7 @@ import useFetchActiveSeason from './hooks/useFetchActiveSeason';
 export default function Homepage(): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const playersStats = useAppSelector(selectPlayersStats);
+	const playersStatsByBetTitles = useAppSelector(selectAllStatsByBetTitlesInSeason);
 	const completedBets = useAppSelector(selectCompletedBets);
 	const dispatch = useAppDispatch();
 	const [loading, setLoading] = useState(true);
@@ -106,6 +108,7 @@ export default function Homepage(): JSX.Element {
 							}}
 						>
 							<PlayersStats playersStats={sortedPlayersStats} />
+							<PlayerBetStatsByBetTitles playersStatsByBetTitles={playersStatsByBetTitles} />
 							{/* <Box sx={{ py: 3, px: 1 }}>
 								Fetch Results:
 								{externalDataError ? (
