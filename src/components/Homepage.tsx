@@ -3,13 +3,9 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import { selectCompletedBets } from '../features/bets/selectors';
-import PlayerBetStatsByBetTitles from '../features/stats/PlayerBetStatsByBetTitles';
 import PlayersStats from '../features/stats/PlayersStats';
-import { selectAllStatsByBetTitlesInSeason, selectPlayersStats } from '../features/stats/selectors';
-import {
-	getAllPlayersStatsBySeason,
-	getAllStatsByBetTitlesInSeason,
-} from '../features/stats/statsSlice';
+import { selectPlayersStats } from '../features/stats/selectors';
+import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
 import CustomLoading from './custom/loading/CustomLoading';
 import CustomLoadingError from './custom/loading/CustomLoadingError';
 import useFetchActiveSeason from './hooks/useFetchActiveSeason';
@@ -17,7 +13,6 @@ import useFetchActiveSeason from './hooks/useFetchActiveSeason';
 export default function Homepage(): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const playersStats = useAppSelector(selectPlayersStats);
-	const playersStatsByBetTitles = useAppSelector(selectAllStatsByBetTitlesInSeason);
 	const completedBets = useAppSelector(selectCompletedBets);
 	const dispatch = useAppDispatch();
 	const [loading, setLoading] = useState(true);
@@ -77,20 +72,6 @@ export default function Homepage(): JSX.Element {
 		}
 	}, [activeSeasonId]);
 
-	useEffect(() => {
-		console.log('homepage');
-
-		if (activeSeasonId) {
-			dispatch(getAllStatsByBetTitlesInSeason(activeSeasonId))
-				.then((response) => {
-					console.log(response.payload);
-				})
-				.catch(() => {
-					setLoadingError(true);
-				});
-		}
-	}, [activeSeasonId]);
-
 	return (
 		<Box>
 			{loading ? (
@@ -108,7 +89,6 @@ export default function Homepage(): JSX.Element {
 							}}
 						>
 							<PlayersStats playersStats={sortedPlayersStats} />
-							<PlayerBetStatsByBetTitles playersStatsByBetTitles={playersStatsByBetTitles} />
 							{/* <Box sx={{ py: 3, px: 1 }}>
 								Fetch Results:
 								{externalDataError ? (

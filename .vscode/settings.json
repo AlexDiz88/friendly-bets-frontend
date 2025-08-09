@@ -12,6 +12,11 @@
 		"source.formatDocument": "explicit",
 		"source.fixAll.eslint": "explicit"
 	},
+	{
+  "key": "ctrl+shift+i",
+  "command": "extension.wrapTag",
+  "when": "editorTextFocus"
+},
 	"cSpell.words": [
 		"Aris",
 		"Atletico",

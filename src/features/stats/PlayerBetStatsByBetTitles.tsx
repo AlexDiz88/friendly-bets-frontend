@@ -25,12 +25,12 @@ function SubcategoryCard({ sub }: { sub: SubCategoryStats }): JSX.Element {
 		<Box
 			sx={{
 				minWidth: '200px',
+				background: '#0f2a00', // очень тёмный зелёный
+				color: '#a8c97d', // мягкий зелёный, чуть светлее, чем подкатегории
+				boxShadow: '0 0 12px #3b7d00cc',
+				border: 1,
 				p: 2,
 				borderRadius: 3,
-				bgcolor: '#32353AFF',
-				color: '#F7F9F1FF',
-				boxShadow: '0 0 10px #38bdf8',
-				mb: 1.5,
 				fontWeight: 600,
 			}}
 		>
@@ -71,29 +71,43 @@ function CategoryCard({
 	betTitleCategoryStats: CategoryStats;
 }): JSX.Element {
 	const [open, setOpen] = useState(false);
+	// Храним состояние раскрытия подкатегорий в объекте, где ключ — subCategory
+	const [openSubs, setOpenSubs] = useState<Record<string, boolean>>({});
+
+	const toggleSub = (subCategory: string): void => {
+		setOpenSubs((prev) => ({
+			...prev,
+			[subCategory]: !prev[subCategory],
+		}));
+	};
+
 	const summary = betTitleCategoryStats.stats.find((sub) => sub.subCategory === 'SUMMARY');
 
 	return (
 		<Card
 			sx={{
-				bgcolor: '#273244FF',
-				color: 'white',
-				p: 2,
-				border: '1px solid white',
-				borderRadius: 3,
+				background: 'linear-gradient(135deg, #1c2e07, #3b5410)',
+				color: '#e6e9d1',
+				p: 1.5,
+				border: 1,
 			}}
 		>
 			<Box
 				onClick={() => setOpen(!open)}
-				display="flex"
-				alignItems="center"
-				justifyContent="space-between"
-				sx={{ cursor: 'pointer' }}
+				sx={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					cursor: 'pointer',
+					outline: 'none', // убирает контур при фокусе
+					WebkitTapHighlightColor: 'transparent', // убирает подсветку при тапе на мобильных
+					userSelect: 'none',
+				}}
 			>
 				<Box sx={{ display: 'flex' }}>
 					<ExpandMoreIcon
 						sx={{
-							color: '#38bdf8',
+							color: '#ffffff',
 							transform: open ? 'rotate(180deg)' : 'none',
 							transition: '0.3s',
 						}}
@@ -102,52 +116,80 @@ function CategoryCard({
 						{t(`betTitleCategory.${betTitleCategoryStats.category}`)}
 					</Typography>
 				</Box>
-				<Box>
-					<Typography
-						sx={{
-							fontWeight: 600,
-							color:
-								summary?.actualBalance == null
-									? '#ffffff'
-									: summary.actualBalance > 0
-									? '#4ade80'
-									: summary.actualBalance < 0
-									? '#F94B4BFF'
-									: '#ffffff',
-						}}
-					>
-						{summary?.actualBalance.toFixed(2)} €
-					</Typography>
-				</Box>
+				<Typography
+					sx={{
+						fontWeight: 600,
+						color:
+							summary?.actualBalance == null
+								? '#ffffff'
+								: summary.actualBalance > 0
+								? '#4ade80'
+								: summary.actualBalance < 0
+								? '#F94B4BFF'
+								: '#ffffff',
+					}}
+				>
+					{summary?.actualBalance.toFixed(2)} €
+				</Typography>
 			</Box>
 			<Collapse in={open} timeout="auto" unmountOnExit>
 				<Box sx={{ mt: 2 }}>
 					{betTitleCategoryStats.stats
 						.filter((subCategoryStats) => subCategoryStats.subCategory !== 'SUMMARY')
 						.map((sub) => (
-							<Accordion
-								key={sub.subCategory}
-								sx={{
-									bgcolor: '#0f172a',
-									color: '#f1f5f9',
-									mb: 1,
-									borderRadius: 2,
-									boxShadow: '0 0 10px #38bdf8',
-									'&::before': { display: 'none' },
-								}}
-							>
-								<AccordionSummary
-									expandIcon={<ExpandMoreIcon sx={{ color: '#38bdf8' }} />}
+							<Accordion key={sub.subCategory} expanded={!!openSubs[sub.subCategory]}>
+								<Box
+									onClick={() => toggleSub(sub.subCategory)}
 									sx={{
+										display: 'flex',
+										justifyContent: 'space-between',
+										alignItems: 'center',
+										cursor: 'pointer',
+										background: '#42610eff',
+										color: '#d9f0b4',
 										px: 2,
 										minHeight: 48,
+										borderRadius: 1,
+										outline: 'none', // убирает контур при фокусе
+										WebkitTapHighlightColor: 'transparent', // убирает подсветку при тапе на мобильных
+										userSelect: 'none',
 									}}
 								>
-									<Typography fontWeight={700}>
-										{t(`betTitleSubCategory.${sub.subCategory}`)}
+									<Box sx={{ display: 'flex' }}>
+										<ExpandMoreIcon
+											sx={{
+												ml: -1,
+												color: '#ffffff',
+												transform: openSubs[sub.subCategory] ? 'rotate(180deg)' : 'none',
+												transition: '0.3s',
+											}}
+										/>
+										<Typography fontWeight={700}>
+											{t(`betTitleSubCategory.${sub.subCategory}`)}
+										</Typography>
+									</Box>
+
+									<Typography
+										sx={{
+											fontSize: '0.75rem',
+											fontWeight: 600,
+											textDecoration: 'outlined',
+											color:
+												sub.actualBalance == null
+													? '#ffffff'
+													: sub.actualBalance > 0
+													? '#a6f24d'
+													: sub.actualBalance < 0
+													? '#f96e6eff'
+													: '#ffffff',
+											textShadow: '0 0 4px rgba(0,0,0,1)',
+										}}
+									>
+										{sub?.actualBalance.toFixed(2)} €
 									</Typography>
-								</AccordionSummary>
-								<AccordionDetails sx={{ px: 2, pt: 0 }}>
+								</Box>
+
+								<AccordionDetails sx={{ p: 0.5 }}>
 									<SubcategoryCard sub={sub} />
 								</AccordionDetails>
 							</Accordion>
@@ -167,16 +209,22 @@ export default function PlayerBetStatsByBetTitles({ playersStatsByBetTitles }: P
 	const players = activeSeason?.players;
 
 	return (
-		<Box sx={{ width: '100%', mt: 2 }}>
+		<Box sx={{ width: '100%' }}>
 			{playersStatsByBetTitles.map((playerStats) => {
 				const player = players?.find((p) => p.id === playerStats.userId);
 				if (!player) return null;
 
 				return (
-					<Accordion key={playerStats.userId} sx={{ bgcolor: '#18264BFF', color: '#f1f5f9' }}>
-						<AccordionSummary expandIcon={null} sx={{ px: 2 }}>
+					<Accordion
+						key={playerStats.userId}
+						sx={{
+							background: 'linear-gradient(135deg, #2b4d19ff 0%, #269e3eff 100%)',
+							color: '#ffffff',
+						}}
+					>
+						<AccordionSummary disableRipple expandIcon={null} sx={{ px: 2 }}>
 							<Box display="flex" alignItems="center" gap={2}>
-								<ExpandMoreIcon sx={{ color: '#FFFFFFFF' }} />
+								<ExpandMoreIcon sx={{ color: '#ffffff' }} />
 								<Avatar src={avatarBase64Converter(player.avatar)} />
 								<Box>
 									<Typography fontWeight={700}>{player.username}</Typography>

@@ -31,6 +31,7 @@ import OpenedBetsList from './features/bets/OpenedBetsList';
 import Gameweek from './features/gameweeks/Gameweek';
 import LeaguesStatsPage from './features/stats/LeaguesStatsPage';
 import TeamsStatsPage from './features/stats/TeamsStatsPage';
+import BetTitlesStatsPage from './features/stats/BetTitlesStatsPage';
 
 function App(): JSX.Element {
 	useAppSelector((state) => state.language);
@@ -107,6 +108,7 @@ function App(): JSX.Element {
 
 				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
+				<Route path="/stats/bet-titles" element={<BetTitlesStatsPage />} />
 				<Route path="/gameweeks" element={<Gameweek />} />
 				<Route path="/news" element={<News />} />
 				<Route path="/rules" element={<RulesPage />} />
