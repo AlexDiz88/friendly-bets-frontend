@@ -25,8 +25,8 @@ function SubcategoryCard({ sub }: { sub: SubCategoryStats }): JSX.Element {
 		<Box
 			sx={{
 				minWidth: '200px',
-				background: '#0f2a00', // очень тёмный зелёный
-				color: '#a8c97d', // мягкий зелёный, чуть светлее, чем подкатегории
+				background: '#0B2100FF',
+				color: '#E2F1CFFF',
 				boxShadow: '0 0 12px #3b7d00cc',
 				border: 1,
 				p: 2,
@@ -56,8 +56,11 @@ function SubcategoryCard({ sub }: { sub: SubCategoryStats }): JSX.Element {
 				{t('averageWinCoef')}: <b>{sub.averageWonBetOdds.toFixed(2)}</b>
 			</Typography>
 			<Typography
-				fontSize="0.9rem"
-				sx={{ color: sub.actualBalance >= 0 ? '#4ade80' : '#F94B4BFF' }}
+				fontSize="1rem"
+				sx={{
+					color:
+						sub.actualBalance == 0 ? '#ffffff' : sub.actualBalance > 0 ? '#4ade80' : '#F94B4BFF',
+				}}
 			>
 				{t('balance')}: <b>{sub.actualBalance.toFixed(2)}€</b>
 			</Typography>
@@ -127,6 +130,7 @@ function CategoryCard({
 								: summary.actualBalance < 0
 								? '#F94B4BFF'
 								: '#ffffff',
+						textShadow: '0 0 4px rgba(0,0,0,1)',
 					}}
 				>
 					{summary?.actualBalance.toFixed(2)} €
@@ -171,9 +175,8 @@ function CategoryCard({
 
 									<Typography
 										sx={{
-											fontSize: '0.75rem',
+											fontSize: '0.8rem',
 											fontWeight: 600,
-											textDecoration: 'outlined',
 											color:
 												sub.actualBalance == null
 													? '#ffffff'
@@ -210,35 +213,38 @@ export default function PlayerBetStatsByBetTitles({ playersStatsByBetTitles }: P
 
 	return (
 		<Box sx={{ width: '100%' }}>
-			{playersStatsByBetTitles.map((playerStats) => {
-				const player = players?.find((p) => p.id === playerStats.userId);
-				if (!player) return null;
+			{playersStatsByBetTitles
+				.slice()
+				.sort((a, b) => b.actualBalance - a.actualBalance)
+				.map((playerStats) => {
+					const player = players?.find((p) => p.id === playerStats.userId);
+					if (!player) return null;
 
-				return (
-					<Accordion
-						key={playerStats.userId}
-						sx={{
-							background: 'linear-gradient(135deg, #2b4d19ff 0%, #269e3eff 100%)',
-							color: '#ffffff',
-						}}
-					>
-						<AccordionSummary disableRipple expandIcon={null} sx={{ px: 2 }}>
-							<Box display="flex" alignItems="center" gap={2}>
-								<ExpandMoreIcon sx={{ color: '#ffffff' }} />
-								<Avatar src={avatarBase64Converter(player.avatar)} />
-								<Box>
-									<Typography fontWeight={700}>{player.username}</Typography>
+					return (
+						<Accordion
+							key={playerStats.userId}
+							sx={{
+								background: 'linear-gradient(135deg, #2b4d19ff 0%, #269e3eff 100%)',
+								color: '#ffffff',
+							}}
+						>
+							<AccordionSummary disableRipple expandIcon={null} sx={{ px: 2 }}>
+								<Box display="flex" alignItems="center" gap={2}>
+									<ExpandMoreIcon sx={{ color: '#ffffff' }} />
+									<Avatar src={avatarBase64Converter(player.avatar)} />
+									<Box>
+										<Typography fontWeight={700}>{player.username}</Typography>
+									</Box>
 								</Box>
-							</Box>
-						</AccordionSummary>
-						<AccordionDetails>
-							{playerStats.betTitleCategoryStats.map((stats) => (
-								<CategoryCard key={stats.category} betTitleCategoryStats={stats} />
-							))}
-						</AccordionDetails>
-					</Accordion>
-				);
-			})}
+							</AccordionSummary>
+							<AccordionDetails>
+								{playerStats.betTitleCategoryStats.map((stats) => (
+									<CategoryCard key={stats.category} betTitleCategoryStats={stats} />
+								))}
+							</AccordionDetails>
+						</Accordion>
+					);
+				})}
 		</Box>
 	);
 }

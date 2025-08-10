@@ -33,7 +33,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 	}),
 }));
 
-export default function StartSeason2425(): JSX.Element {
+export default function StartSeason2526(): JSX.Element {
 	const [expanded, setExpanded] = useState(false);
 	const [isLiked, setIsLiked] = useState(false);
 
@@ -57,17 +57,17 @@ export default function StartSeason2425(): JSX.Element {
 				<CardHeader
 					avatar={
 						<Avatar sx={{ bgcolor: green[500] }} aria-label="news-title">
-							3
+							4
 						</Avatar>
 					}
-					title={t('siteNews:Season2425.title')}
-					subheader={t('siteNews:Season2425.date')}
+					title={t('siteNews:Season2526.title')}
+					subheader={t('siteNews:Season2526.date')}
 				/>
 				<CardMedia
 					component="img"
 					height="320"
-					image="/upload/img/2425-season-start.gif"
-					alt="2425-season-start"
+					image="/upload/img/season25-26.png"
+					alt="season25-26"
 				/>
 				<CardContent>
 					<Typography variant="body2" color="text.secondary">

@@ -1,33 +1,41 @@
-import { Box, Typography } from '@mui/material';
+import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectActiveSeasonId } from '../admin/seasons/selectors';
-import { selectAllStatsByBetTitlesInSeason } from './selectors';
-import { getAllStatsByBetTitlesInSeason } from './statsSlice';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
+import { getSeasons } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
 import PlayerBetStatsByBetTitles from './PlayerBetStatsByBetTitles';
-import { t } from 'i18next';
+import { selectAllStatsByBetTitlesInSeason } from './selectors';
+import { getAllStatsByBetTitlesInSeason } from './statsSlice';
 
 export default function BetTitlesStatsPage(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
+	const allSeasons = useAppSelector(selectSeasons);
 	const playersStatsByBetTitles = useAppSelector(selectAllStatsByBetTitlesInSeason);
+
+	const [selectedSeasonId, setSelectedSeasonId] = useState<string>(activeSeasonId || '');
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 
 	useEffect(() => {
-		if (activeSeasonId) {
-			dispatch(getAllStatsByBetTitlesInSeason(activeSeasonId))
-				.then(() => {
-					setLoading(false);
-				})
+		if (selectedSeasonId) {
+			setLoading(true);
+			setLoadingError(false);
+			dispatch(getAllStatsByBetTitlesInSeason(selectedSeasonId))
+				.then(() => setLoading(false))
 				.catch(() => {
 					setLoadingError(true);
 					setLoading(false);
 				});
 		}
-	}, [activeSeasonId]);
+	}, [selectedSeasonId]);
+
+	useEffect(() => {
+		dispatch(getSeasons());
+	}, []);
 
 	return (
 		<Box>
@@ -38,29 +46,69 @@ export default function BetTitlesStatsPage(): JSX.Element {
 					{loadingError ? (
 						<CustomLoadingError />
 					) : (
-						<Box
-							sx={{
-								maxWidth: '25rem',
-								margin: '0 auto',
-								boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
-								bgcolor: '#283229ff',
-								border: 2,
-								borderRadius: 2,
-							}}
-						>
+						<>
 							<Box
 								sx={{
 									display: 'flex',
 									alignItems: 'center',
 									justifyContent: 'center',
-									color: '#fff',
+									fontWeight: 600,
 									py: 1.25,
 								}}
 							>
 								{t('betTitlesStatsByPlayers')}
 							</Box>
-							<PlayerBetStatsByBetTitles playersStatsByBetTitles={playersStatsByBetTitles} />
-						</Box>
+
+							{selectedSeasonId && (
+								<Box sx={{ maxWidth: 300, mx: 'auto', mb: 2 }}>
+									<FormControl fullWidth size="small">
+										<InputLabel>{t('season')}</InputLabel>
+										<Select
+											value={
+												allSeasons.some((season) => season.id === selectedSeasonId)
+													? selectedSeasonId
+													: ''
+											}
+											label={t('season')}
+											onChange={(e) => setSelectedSeasonId(e.target.value)}
+										>
+											{allSeasons.map((season) => (
+												<MenuItem key={season.id} value={season.id}>
+													{season.title}
+												</MenuItem>
+											))}
+										</Select>
+									</FormControl>
+								</Box>
+							)}
+
+							<Box
+								sx={{
+									maxWidth: '25rem',
+									margin: '0 auto',
+									py: 0.5,
+									boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
+									bgcolor: '#283229ff',
+									border: 2,
+									borderRadius: 2,
+								}}
+							>
+								{playersStatsByBetTitles.length === 0 ? (
+									<Box
+										sx={{
+											textAlign: 'center',
+											fontWeight: 600,
+											color: '#ffffff',
+											fontSize: 16,
+										}}
+									>
+										{t('noBetTitlesStats')}
+									</Box>
+								) : (
+									<PlayerBetStatsByBetTitles playersStatsByBetTitles={playersStatsByBetTitles} />
+								)}
+							</Box>
+						</>
 					)}
 				</Box>
 			)}

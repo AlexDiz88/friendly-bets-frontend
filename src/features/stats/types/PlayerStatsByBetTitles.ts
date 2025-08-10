@@ -1,6 +1,7 @@
 export interface PlayerStatsByBetTitles {
 	seasonId: string;
 	userId: string;
+	actualBalance: number;
 	betTitleCategoryStats: CategoryStats[];
 }
 

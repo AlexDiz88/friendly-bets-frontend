@@ -167,6 +167,8 @@ export default function StatsRecalculating({
 	const handleCloseDialog = (): void => {
 		setOpenRecalculatePlayerStatsDialog(false);
 		setOpenRecalculateTeamStatsDialog(false);
+		setOpenRecalculateBetTitlesStatsDialog(false);
+		setOpenRecalculateGameweekStatsDialog(false);
 	};
 
 	useEffect(() => {
