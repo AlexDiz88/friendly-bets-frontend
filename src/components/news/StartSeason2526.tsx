@@ -71,7 +71,7 @@ export default function StartSeason2526(): JSX.Element {
 				/>
 				<CardContent>
 					<Typography variant="body2" color="text.secondary">
-						{t('siteNews:Season2425.header')}
+						{t('siteNews:Season2526.header')}
 					</Typography>
 				</CardContent>
 				<CardActions disableSpacing sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -80,7 +80,7 @@ export default function StartSeason2526(): JSX.Element {
 					</IconButton>
 					<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 						<Typography sx={{ fontSize: '0.85rem' }}>
-							{t('siteNews:Season2425.showSchedule')}
+							{t('siteNews:Season2526.showSchedule')}
 						</Typography>
 						<ExpandMore
 							expand={expanded}
@@ -94,77 +94,45 @@ export default function StartSeason2526(): JSX.Element {
 				</CardActions>
 				<Collapse in={expanded} timeout="auto" unmountOnExit>
 					<CardContent>
-						<Typography paragraph>
-							<i>{t('siteNews:Season2425.topic')}:</i>
-						</Typography>
+						<Typography paragraph>{t('siteNews:Season2526.topic')}</Typography>
 						<Typography paragraph sx={{ color: 'brown' }}>
-							<b>{t('siteNews:Season2425.text.1')}</b>
+							<b>{t('siteNews:Season2526.text.1')}</b>
 						</Typography>
-						<Typography paragraph sx={{ px: 1, pt: 1 }}>
-							{t('siteNews:Season2425.text.2')}
-							<b>{t('siteNews:Season2425.text.3')}</b>
-							{t('siteNews:Season2425.text.4')}
-							<b>{t('siteNews:Season2425.text.5')}</b>
-							{t('siteNews:Season2425.text.6')}
+						<Typography paragraph>{t('siteNews:Season2526.text.2')}</Typography>
+						<Typography>{t('siteNews:Season2526.text.3')}</Typography>
+						<Typography sx={{ pt: 1 }}>
+							<b>{t('siteNews:Season2526.text.4')}</b>
 						</Typography>
-						<Typography sx={{ px: 1, pt: 0 }}>{t('siteNews:Season2425.text.7')}</Typography>
+						<Typography sx={{ pt: 1 }}>{t('siteNews:Season2526.text.5')}</Typography>
 
-						<Typography paragraph sx={{ color: 'brown', pt: 3 }}>
-							<b>{t('siteNews:Season2425.text.8')}</b>
+						<Typography paragraph sx={{ mt: 2, color: 'brown' }}>
+							<b>{t('siteNews:Season2526.text.6')}</b>
 						</Typography>
-						<Typography paragraph sx={{ px: 1, pt: 1 }}>
-							{t('siteNews:Season2425.text.9')}
-						</Typography>
+						<CardMedia
+							component="img"
+							image="/upload/img/findBetTitlesPage.png"
+							alt="byGameweek_table_img"
+							sx={{
+								border: 1,
+								width: 175,
+								height: 175,
+								objectFit: 'contain',
+							}}
+						/>
+						<Typography>{t('siteNews:Season2526.text.7')}</Typography>
+						<Typography paragraph>{t('siteNews:Season2526.text.8')}</Typography>
 						<CardMedia
 							sx={{ border: 1 }}
 							component="img"
-							image="/upload/img/byGameweek.png"
+							image="/upload/img/byBetTitles.png"
 							alt="byGameweek_table_img"
 							content="contain"
 						/>
 						<Typography paragraph sx={{ px: 1, pt: 1 }}>
-							{t('siteNews:Season2425.text.9a')}
+							{t('siteNews:Season2526.text.9')}
 						</Typography>
-						<Typography paragraph sx={{ px: 1, pt: 1 }}>
-							{t('siteNews:Season2425.text.10')}
-						</Typography>
-
-						<Typography paragraph sx={{ color: 'brown', pt: 2 }}>
-							<b>{t('siteNews:Season2425.text.11')}</b>
-						</Typography>
-						<Typography paragraph sx={{ px: 1, pt: 1 }}>
-							{t('siteNews:Season2425.text.12')}
-						</Typography>
-						<Typography paragraph sx={{ px: 1, pt: 0 }}>
-							{t('siteNews:Season2425.text.13')}
-						</Typography>
-						<CardMedia
-							sx={{ border: 1 }}
-							component="img"
-							image="/upload/img/languages_feature.png"
-							alt="languages_feature"
-							content="contain"
-						/>
-						<Typography paragraph sx={{ px: 1, pt: 1 }}>
-							{t('siteNews:Season2425.text.14')}
-						</Typography>
-
-						<Typography paragraph sx={{ color: 'brown', pt: 2 }}>
-							<b>{t('siteNews:Season2425.text.15')}</b>
-						</Typography>
-						<Typography paragraph sx={{ px: 1, pt: 1 }}>
-							{t('siteNews:Season2425.text.16a')}
-							<b>{t('siteNews:Season2425.text.16b')}</b>
-							{t('siteNews:Season2425.text.16c')}
-							<b>{t('siteNews:Season2425.text.16d')}</b>
-							{t('siteNews:Season2425.text.16e')}
-						</Typography>
-						<Typography paragraph sx={{ px: 1, pt: 0 }}>
-							{t('siteNews:Season2425.text.17')}
-						</Typography>
-
 						<Typography paragraph sx={{ color: 'green', px: 2, pt: 2 }}>
-							<b>{t('siteNews:Season2425.text.18')}</b>
+							<b>{t('siteNews:Season2526.text.10')}</b>
 						</Typography>
 
 						<CardActions disableSpacing sx={{ display: 'flex', justifyContent: 'end' }}>
