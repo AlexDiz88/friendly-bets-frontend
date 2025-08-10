@@ -1,4 +1,5 @@
 export default interface PlayerStats {
+	userId: string;
 	avatar: string;
 	username: string;
 	totalBets: number;

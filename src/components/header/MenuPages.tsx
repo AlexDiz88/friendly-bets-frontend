@@ -27,6 +27,7 @@ export default function MenuPages(): JSX.Element {
 	const pages = [
 		t('news'),
 		t('byGameweeks'),
+		t('byBetTitles'),
 		t('byLeagues'),
 		t('byTeams'),
 		t('archive'),
@@ -45,6 +46,12 @@ export default function MenuPages(): JSX.Element {
 			case t('news'):
 				navigate('/news');
 				break;
+			case t('byGameweeks'):
+				navigate('/gameweeks');
+				break;
+			case t('byBetTitles'):
+				navigate('/stats/bet-titles');
+				break;
 			case t('byLeagues'):
 				navigate('/stats/leagues');
 				break;
@@ -56,9 +63,6 @@ export default function MenuPages(): JSX.Element {
 				break;
 			case t('rules'):
 				navigate('/rules');
-				break;
-			case t('byGameweeks'):
-				navigate('/gameweeks');
 				break;
 			default:
 				break;

@@ -2,6 +2,7 @@
 import Bet, { BetId } from './types/Bet';
 import BetResult from './types/BetResult';
 import BetsPage from './types/BetsPage';
+import GameResult from './types/GameResult';
 import NewEmptyBet from './types/NewEmptyBet';
 import NewOpenedBet from './types/NewOpenedBet';
 import UpdatedBet from './types/UpdatedBet';
@@ -45,6 +46,8 @@ export async function addEmptyBet(newEmptyBet: NewEmptyBet): Promise<Bet> {
 }
 
 export async function setBetResult(betId: string, betResult: BetResult): Promise<Bet> {
+	console.log(betResult);
+
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/${betId}/set-bet-result`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/${betId}/set-bet-result`;
@@ -52,6 +55,28 @@ export async function setBetResult(betId: string, betResult: BetResult): Promise
 	const result = await fetch(`${url}`, {
 		method: 'PUT',
 		body: JSON.stringify(betResult),
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function sendGameResults(
+	seasonId: string,
+	gameResults: GameResult[]
+): Promise<{ bets: Bet[] }> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/set-auto-bet-results`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/bets/set-auto-bet-results`;
+	}
+	const result = await fetch(`${url}`, {
+		method: 'POST',
+		body: JSON.stringify({ seasonId, gameResults }),
 		headers: {
 			'Content-Type': 'application/json',
 		},

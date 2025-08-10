@@ -23,6 +23,7 @@ import { getProfile } from './features/auth/authSlice';
 import { selectUser } from './features/auth/selectors';
 import BetEditList from './features/bets/BetEditList';
 import BetInputContainer from './features/bets/BetInputContainer';
+import BetsAutoCheck from './features/bets/BetsAutoCheck';
 import BetsCheck from './features/bets/BetsCheck';
 import BetsList from './features/bets/BetsList';
 import CompletedBetsList from './features/bets/CompletedBetsList';
@@ -30,6 +31,7 @@ import OpenedBetsList from './features/bets/OpenedBetsList';
 import Gameweek from './features/gameweeks/Gameweek';
 import LeaguesStatsPage from './features/stats/LeaguesStatsPage';
 import TeamsStatsPage from './features/stats/TeamsStatsPage';
+import BetTitlesStatsPage from './features/stats/BetTitlesStatsPage';
 
 function App(): JSX.Element {
 	useAppSelector((state) => state.language);
@@ -80,6 +82,10 @@ function App(): JSX.Element {
 				</Route>
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/bets/check/auto" element={<BetsAutoCheck />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
 					<Route path="/bets/edit" element={<BetEditList />} />
 				</Route>
 
@@ -102,6 +108,7 @@ function App(): JSX.Element {
 
 				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
+				<Route path="/stats/bet-titles" element={<BetTitlesStatsPage />} />
 				<Route path="/gameweeks" element={<Gameweek />} />
 				<Route path="/news" element={<News />} />
 				<Route path="/rules" element={<RulesPage />} />

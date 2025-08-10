@@ -1,6 +1,8 @@
+import GameScore from './GameScore';
+
 export default interface GameResult {
-	fullTime: string | null;
-	firstTime: string | null;
-	overTime: string | null;
-	penalty: string | null;
+	leagueId: string;
+	homeTeamId: string;
+	awayTeamId: string;
+	gameScore: GameScore;
 }

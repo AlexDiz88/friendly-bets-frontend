@@ -7,10 +7,12 @@ const TeamsAvatars = ({
 	homeTeam,
 	awayTeam,
 	height = 27,
+	sx,
 }: {
 	homeTeam: Team | undefined;
 	awayTeam: Team | undefined;
 	height?: number;
+	sx?: {};
 }): JSX.Element => {
 	return (
 		<Box
@@ -19,6 +21,7 @@ const TeamsAvatars = ({
 				justifyContent: 'center',
 				alignItems: 'center',
 				fontSize: '0.9rem',
+				...sx,
 			}}
 		>
 			<Avatar

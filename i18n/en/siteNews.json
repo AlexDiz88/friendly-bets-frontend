@@ -1,79 +1,98 @@
 {
-  "Season2324": {
-    "title": "Start of the 2023-2024 Season",
-    "date": "August 11, 2023",
-    "header": "Happy to announce the start of the new football season! This year we have a new website. All details are available at the click of a button",
-    "topic": "Main features of our new website",
-    "paragraph": {
-      "1": "1. Authorization. Each participant now has the opportunity to register on the website, use their personal account, and change their display name at will. In the near future, you will also be able to upload your photo.",
-      "3": "3. The entire site interface design is based on the voting preferences of all participants for ease of use specifically on smartphones. Therefore, not all pages of the site may display beautifully on large monitor screens at the moment. There may also be various minor display issues on very small smartphone screens. If you encounter crooked tables/pages, let me know in private.",
-      "4": "4. We now have website news (like this one you are reading now :D). They will be rare, but now you can always come back and read some useful or interesting information about our website, tournament, or any innovations and changes.",
-      "5": "5. As you may have noticed, many site pages are still unavailable. In the near future, many different tables, interesting statistics, filters, and sorts for different tournaments, participants, etc., will appear, always up-to-date. At the moment, there is the necessary minimum in the form of the main table, bet list, bet results, and personal account.",
-      "6": "6. Almost any visual and technical changes to the site are possible. Therefore, if you have suggestions and ideas on how to improve the site, do not hesitate to write to me or in the general chat. We will discuss everything and implement the most interesting and useful ideas!",
-      "2a": "2. Managing seasons and bets is now done directly from the site, not in Excel or GoogleSheets tables as before. All data is stored on the official website",
-      "2b": "Adding and processing bets is now done online. As soon as any bet is added or processed by the moderator, all results, including the main table, are instantly updated in real time."
-    },
-    "text": {
-      "1": "Participant Requirements",
-      "2": "To participate in the tournament you need to",
-      "3": "Register on the website. To do this, click on the photo of the guy in glasses and select the option",
-      "4": "Register",
-      "5": "Your password must be at least 6 characters long.",
-      "6": "Then go to your personal account (also through this guy) and select the option",
-      "7": "My profile",
-      "8": "Then click",
-      "9": "Change name",
-      "10": "and choose a nickname on the site. Do not write too long names. Only letters/numbers, spaces, and symbols can be used in the name",
-      "11": "You can change your name at any time later.",
-      "12": "Again, through the guy, select",
-      "13": "Tournament registration",
-      "14": "In the opened window, click the registration button.",
-      "15": "Congratulations! Everything is ready :D",
-      "16": "Site Security",
-      "17": "The site is developed using modern security technologies. All data transmission is carried out through a secure SSL certificate using https connection. Also, for example, when entering a password, a secure keyboard is used, in addition, all passwords are encrypted using a reliable BCrypt system and stored in the database as a hash. It is physically impossible to hack (i.e., decode back) such a password even if access to the database is obtained. Therefore, you can safely use any passwords to register on the site and be sure that they will be reliably protected.",
-      "18": "Later, the ability to register and log in to the site using a Google account will be added",
-      "19": "That's all! Good luck to everyone in our competition!"
-    }
-  },
-  "ScheduleEuro2024": {
-    "title": "EURO 2024 Group Stage Schedule",
-    "date": "June 13, 2024",
-    "header": "Here you can see the dates and start times of all group stage matches.",
-    "showSchedule": "Show Schedule",
-    "text": {
-      "1": "Good luck to everyone in the tournament!"
-    }
-  },
-  "Season2425": {
-    "title": "Start of the 2024-2025 Season",
-    "date": "August 15, 2024",
-    "header": "The new football season is about to begin! You can read about the new features and changes by clicking the 'More details' button",
-    "showSchedule": "More details",
-    "topic": "Key changes in this season",
-    "text": {
-      "1": "1. Changes in the tournament rules, in section No. 3.",
-      "2": "To avoid turning our competition into a lottery, starting from this season, the increased bet amount will only apply ",
-      "3": "to the final games of tournaments ",
-      "4": " and will equal twice the bet amount - ",
-      "5": "20 units ",
-      "6": "(instead of 30 as before).",
-      "7": "Thus, the standard bet amount of 10 units now applies to all semifinals. This change is due to the fact that in the regular season there are too many semifinal matches (as many as 8!!! - 4 in the CL + 4 in the EL), while the EC and WC are generally quite short tournaments where it's already difficult to create a lead over competitors.",
-      "8": "2. New 'By Matchday' page",
-      "9": "On this page, you can conveniently track the status of all participants' bets for the current matchday. You can also view the statistics of any previous matchday. The convenience lies in the fact that in one place you can see which bets were submitted by whom, and depending on the bet status (won/lost/missed), only the useful information about it is displayed.",
-      "10": "You can find this page by clicking on the 'hamburger' in the top left corner and selecting the corresponding link.",
-      "11": "3. The site is now multilingual!",
-      "12": "Each user now has the option to choose a comfortable language.",
-      "13": "The available options are Russian, English, and German. At the moment, almost 100% of the site is translated, including menus, news, rules, team names, leagues, etc.",
-      "14": "The only thing that remains untranslated for now are the names of the bets (there are some complexities there, so I postponed this issue due to lack of time, but they will be translated during this season).",
-      "15": "4. New site logo and optimization",
-      "17": "And the new logo, I hope, adds some style :)",
-      "18": "That's all! Good luck to everyone in the new season!!!",
-      "9a": "Here, you can also check the balance of participants in a specific matchday (it is displayed next to the participant's name). Participants, by the way, are sorted by profit, which makes it very easy to see who was the best on a given week.",
-      "16a": "Various works were carried out to improve the speed of the site. Now the pages ",
-      "16b": "'Bets' ",
-      "16c": "and ",
-      "16d": "'By Teams' ",
-      "16e": "load noticeably faster than before, and viewing them is no longer accompanied by long loading times."
-    }
-  }
+	"Season2324": {
+		"title": "Start of the 2023-2024 Season",
+		"date": "August 11, 2023",
+		"header": "Happy to announce the start of the new football season! This year we have a new website. All details are available at the click of a button",
+		"topic": "Main features of our new website",
+		"paragraph": {
+			"1": "1. Authorization. Each participant now has the opportunity to register on the website, use their personal account, and change their display name at will. In the near future, you will also be able to upload your photo.",
+			"3": "3. The entire site interface design is based on the voting preferences of all participants for ease of use specifically on smartphones. Therefore, not all pages of the site may display beautifully on large monitor screens at the moment. There may also be various minor display issues on very small smartphone screens. If you encounter crooked tables/pages, let me know in private.",
+			"4": "4. We now have website news (like this one you are reading now :D). They will be rare, but now you can always come back and read some useful or interesting information about our website, tournament, or any innovations and changes.",
+			"5": "5. As you may have noticed, many site pages are still unavailable. In the near future, many different tables, interesting statistics, filters, and sorts for different tournaments, participants, etc., will appear, always up-to-date. At the moment, there is the necessary minimum in the form of the main table, bet list, bet results, and personal account.",
+			"6": "6. Almost any visual and technical changes to the site are possible. Therefore, if you have suggestions and ideas on how to improve the site, do not hesitate to write to me or in the general chat. We will discuss everything and implement the most interesting and useful ideas!",
+			"2a": "2. Managing seasons and bets is now done directly from the site, not in Excel or GoogleSheets tables as before. All data is stored on the official website",
+			"2b": "Adding and processing bets is now done online. As soon as any bet is added or processed by the moderator, all results, including the main table, are instantly updated in real time."
+		},
+		"text": {
+			"1": "Participant Requirements",
+			"2": "To participate in the tournament you need to",
+			"3": "Register on the website. To do this, click on the photo of the guy in glasses and select the option",
+			"4": "Register",
+			"5": "Your password must be at least 6 characters long.",
+			"6": "Then go to your personal account (also through this guy) and select the option",
+			"7": "My profile",
+			"8": "Then click",
+			"9": "Change name",
+			"10": "and choose a nickname on the site. Do not write too long names. Only letters/numbers, spaces, and symbols can be used in the name",
+			"11": "You can change your name at any time later.",
+			"12": "Again, through the guy, select",
+			"13": "Tournament registration",
+			"14": "In the opened window, click the registration button.",
+			"15": "Congratulations! Everything is ready :D",
+			"16": "Site Security",
+			"17": "The site is developed using modern security technologies. All data transmission is carried out through a secure SSL certificate using https connection. Also, for example, when entering a password, a secure keyboard is used, in addition, all passwords are encrypted using a reliable BCrypt system and stored in the database as a hash. It is physically impossible to hack (i.e., decode back) such a password even if access to the database is obtained. Therefore, you can safely use any passwords to register on the site and be sure that they will be reliably protected.",
+			"18": "Later, the ability to register and log in to the site using a Google account will be added",
+			"19": "That's all! Good luck to everyone in our competition!"
+		}
+	},
+	"ScheduleEuro2024": {
+		"title": "EURO 2024 Group Stage Schedule",
+		"date": "June 13, 2024",
+		"header": "Here you can see the dates and start times of all group stage matches.",
+		"showSchedule": "Show Schedule",
+		"text": {
+			"1": "Good luck to everyone in the tournament!"
+		}
+	},
+	"Season2425": {
+		"title": "Start of the 2024-2025 Season",
+		"date": "August 15, 2024",
+		"header": "The new football season is about to begin! You can read about the new features and changes by clicking the 'More details' button",
+		"showSchedule": "More details",
+		"topic": "Key changes in this season",
+		"text": {
+			"1": "1. Changes in the tournament rules, in section No. 3.",
+			"2": "To avoid turning our competition into a lottery, starting from this season, the increased bet amount will only apply ",
+			"3": "to the final games of tournaments ",
+			"4": " and will equal twice the bet amount - ",
+			"5": "20 units ",
+			"6": "(instead of 30 as before).",
+			"7": "Thus, the standard bet amount of 10 units now applies to all semifinals. This change is due to the fact that in the regular season there are too many semifinal matches (as many as 8!!! - 4 in the CL + 4 in the EL), while the EC and WC are generally quite short tournaments where it's already difficult to create a lead over competitors.",
+			"8": "2. New 'By Matchday' page",
+			"9": "On this page, you can conveniently track the status of all participants' bets for the current matchday. You can also view the statistics of any previous matchday. The convenience lies in the fact that in one place you can see which bets were submitted by whom, and depending on the bet status (won/lost/missed), only the useful information about it is displayed.",
+			"10": "You can find this page by clicking on the 'hamburger' in the top left corner and selecting the corresponding link.",
+			"11": "3. The site is now multilingual!",
+			"12": "Each user now has the option to choose a comfortable language.",
+			"13": "The available options are Russian, English, and German. At the moment, almost 100% of the site is translated, including menus, news, rules, team names, leagues, etc.",
+			"14": "The only thing that remains untranslated for now are the names of the bets (there are some complexities there, so I postponed this issue due to lack of time, but they will be translated during this season).",
+			"15": "4. New site logo and optimization",
+			"17": "And the new logo, I hope, adds some style :)",
+			"18": "That's all! Good luck to everyone in the new season!!!",
+			"9a": "Here, you can also check the balance of participants in a specific matchday (it is displayed next to the participant's name). Participants, by the way, are sorted by profit, which makes it very easy to see who was the best on a given week.",
+			"16a": "Various works were carried out to improve the speed of the site. Now the pages ",
+			"16b": "'Bets' ",
+			"16c": "and ",
+			"16d": "'By Teams' ",
+			"16e": "load noticeably faster than before, and viewing them is no longer accompanied by long loading times."
+		}
+	},
+	"Season2526": {
+		"title": "Start of the 2025-2026 Season",
+		"date": "August 10, 2025",
+		"header": "Another football season kicks off on August 15! You can read about the updates and changes by clicking the 'More details' button.",
+		"showSchedule": "More details",
+		"topic": "This season there will be no changes to the rules or the tournament format. Everything will proceed in the same way as last season. The new features only concern updates to our website.",
+		"text": {
+			"1": "1. Automation of bet results processing.",
+			"2": "This is an extremely important change for moderators, as it will greatly simplify bet processing. Previously, verification took considerable time, since after the matches ended, the moderator had to manually enter the match score for each bet separately, and then also analyze it and decide whether it was won, refunded, or lost.",
+			"3": "Starting this season, the moderator only needs to enter the match score — and the system will automatically determine the bet result based on the score and the built-in processing function. This happens simultaneously for all bets related to the match. In total, more than 800 such processors have been added!",
+			"4": "Therefore, a big request — please check each of your bets after the results are processed (at least for the first period), as we need to ensure there are no errors in the new system.",
+			"5": "The old system is still in place and can be used by the moderator if necessary (in case there are errors in the new automated system).",
+			"6": "2. Added statistics by bet types",
+			"7": "Have you ever wondered how often your draws win? Or, for example, handicaps? Or how profitable it is in the end to bet on the exact score?",
+			"8": "Starting this season, this information has become available! Now at any time you can check the efficiency of your own or others’ bets on various events.",
+			"9": "This statistic is also available for past seasons. You can always retrospectively evaluate the performance of bets in previous seasons and adjust your strategy for the new one.",
+			"10": "That’s all! Good luck to everyone in the new season!!!"
+		}
+	}
 }

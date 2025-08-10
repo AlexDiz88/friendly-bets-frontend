@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import * as api from './api';
 import BetResult from './types/BetResult';
 import BetsState from './types/BetsState';
+import GameResult from './types/GameResult';
 import NewEmptyBet from './types/NewEmptyBet';
 import NewOpenedBet from './types/NewOpenedBet';
 import UpdatedBet from './types/UpdatedBet';
@@ -30,6 +31,11 @@ export const setBetResult = createAsyncThunk(
 	'bets/setBetResult',
 	async ({ betId, betResult }: { betId: string; betResult: BetResult }) =>
 		api.setBetResult(betId, betResult)
+);
+export const sendGameResults = createAsyncThunk(
+	'bets/sendGameResults',
+	async ({ seasonId, gameResults }: { seasonId: string; gameResults: GameResult[] }) =>
+		api.sendGameResults(seasonId, gameResults)
 );
 
 export const getOpenedBets = createAsyncThunk(
@@ -88,7 +94,7 @@ export const deleteBet = createAsyncThunk(
 	}) => api.deleteBet(betId, seasonId, leagueId, calendarNodeId)
 );
 
-export const getBetTitleCodeLabelMap = createAsyncThunk('bets/fetchBetTitleMap', async () =>
+export const getBetTitleCodeLabelMap = createAsyncThunk('bets/getBetTitleCodeLabelMap', async () =>
 	api.getBetTitleCodeLabelMap()
 );
 
@@ -118,6 +124,13 @@ const betsSlice = createSlice({
 				state.openedBets = state.openedBets.filter((bet) => bet.id !== action.payload.id);
 			})
 			.addCase(setBetResult.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
+			.addCase(sendGameResults.fulfilled, (state, action) => {
+				const processedBetIds = new Set(action.payload.bets.map((bet) => bet.id));
+				state.openedBets = state.openedBets.filter((bet) => !processedBetIds.has(bet.id));
+			})
+			.addCase(sendGameResults.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
 			.addCase(getOpenedBets.fulfilled, (state, action) => {

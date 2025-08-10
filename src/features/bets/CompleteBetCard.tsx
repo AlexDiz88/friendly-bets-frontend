@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
 import TeamsAvatars from '../../components/custom/avatar/TeamsAvatars';
 import UserAvatar from '../../components/custom/avatar/UserAvatar';
-import { getGameResultView } from '../../components/utils/gameResultValidation';
+import { getGameScoreView } from '../../components/utils/gameScoreValidation';
 import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
 import { BET_STATUS_RETURNED, BET_STATUS_WON } from '../../constants';
@@ -29,12 +29,12 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 		betTitle,
 		betOdds,
 		betSize,
-		gameResult,
+		gameScore,
 		betStatus,
 		balanceChange,
 	} = bet;
 
-	const gameResultView = getGameResultView(gameResult);
+	const gameScoreView = getGameScoreView(gameScore);
 
 	return (
 		<Box
@@ -67,7 +67,7 @@ export default function CompleteBetCard({ bet }: { bet: Bet }): JSX.Element {
 				<LeagueAvatar leagueCode={leagueCode} matchDay={matchDayTitle} />
 			</Box>
 			<TeamsAvatars homeTeam={homeTeam} awayTeam={awayTeam} />
-			<Box sx={{ textAlign: 'center', fontSize: '1.4rem', fontWeight: 600 }}>{gameResultView}</Box>
+			<Box sx={{ textAlign: 'center', fontSize: '1.4rem', fontWeight: 600 }}>{gameScoreView}</Box>
 			<Box sx={{ textAlign: 'left', ml: 0.5 }}>
 				<b>{t('bet')}:</b> {getFullBetTitle(betTitle)}
 			</Box>

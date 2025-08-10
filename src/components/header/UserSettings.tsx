@@ -16,6 +16,7 @@ export default function UserSettings(): JSX.Element {
 
 	const adminSettings = [
 		t('inputBet'),
+		t('summaryAutoResults'),
 		t('summaryResults'),
 		t('matchdayCalendar'),
 		t('editBet'),
@@ -25,6 +26,7 @@ export default function UserSettings(): JSX.Element {
 	];
 	const moderSettings = [
 		t('inputBet'),
+		t('summaryAutoResults'),
 		t('summaryResults'),
 		t('matchdayCalendar'),
 		t('editBet'),
@@ -118,6 +120,8 @@ export default function UserSettings(): JSX.Element {
 								navigate('/season/register');
 							} else if (setting === t('summaryResults')) {
 								navigate('/bets/check');
+							} else if (setting === t('summaryAutoResults')) {
+								navigate('/bets/check/auto');
 							} else if (setting === t('editBet')) {
 								navigate('/bets/edit');
 							} else if (setting === t('matchdayCalendar')) {

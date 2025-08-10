@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
 import TeamAvatar from '../../components/custom/avatar/TeamAvatar';
 import {
-	gameScoreValidation,
-	getGameResultView,
-	transformToGameResult,
-} from '../../components/utils/gameResultValidation';
+	gameScoreInputStringValidation,
+	getGameScoreView,
+	transformToGameScore,
+} from '../../components/utils/gameScoreValidation';
 import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
 import BetSummary from './types/BetSummary';
@@ -23,13 +23,13 @@ export default function BetSummaryInfo({
 	betOdds,
 	betSize,
 	betStatus = '',
-	gameResultInput = '',
+	gameScoreInput = '',
 }: BetSummary): JSX.Element {
 	const { i18n } = useTranslation();
 	const currentLanguage = i18n.language;
 	const transformedTitle = matchDayTitleViewTransform(matchDay, currentLanguage);
 
-	const score = gameScoreValidation(gameResultInput);
+	const score = gameScoreInputStringValidation(gameScoreInput);
 
 	return (
 		<Box sx={{ minWidth: '15rem', m: 0, p: 0, fontWeight: 400 }}>
@@ -61,18 +61,18 @@ export default function BetSummaryInfo({
 					<Box
 						sx={{
 							color:
-								score === t('notSpecified') || score === t('error.incorrectGameResult')
+								score === t('notSpecified') || score === t('error.incorrectGameScore')
 									? 'brown'
 									: 'inherit',
 							fontWeight:
-								score === t('notSpecified') || score === t('error.incorrectGameResult') ? 600 : 400,
+								score === t('notSpecified') || score === t('error.incorrectGameScore') ? 600 : 400,
 						}}
 					>
 						{score === t('notSpecified')
 							? t('notSpecified')
-							: score === t('error.incorrectGameResult')
-							? t('error.incorrectGameResult')
-							: getGameResultView(transformToGameResult(score))}
+							: score === t('error.incorrectGameScore')
+							? t('error.incorrectGameScore')
+							: getGameScoreView(transformToGameScore(score))}
 					</Box>
 				</Box>
 			)}
