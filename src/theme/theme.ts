@@ -93,3 +93,36 @@ const theme = createTheme({
 	},
 });
 export default theme;
+
+const betTitleTableThemes = [
+	{
+		cardBg: 'linear-gradient(135deg, #1c2e07, #3b5410)',
+		cardText: '#e6e9d1',
+		headerBg: '#42610eff',
+		headerText: '#d9f0b4',
+		win: '#4ade80',
+		loss: '#F94B4BFF',
+		neutral: '#ffffff',
+		shadow: '0 0 12px #3b7d00cc',
+	},
+	{
+		cardBg: 'linear-gradient(135deg, #1f1f1f, #3a3a3a)',
+		cardText: '#f0f0f0',
+		headerBg: '#2d2d2d',
+		headerText: '#bbbbbb',
+		win: '#00ff9d',
+		loss: '#ff4d4d',
+		neutral: '#ffffff',
+		shadow: '0 0 12px #444',
+	},
+	{
+		cardBg: 'linear-gradient(135deg, #001f3f, #003366)',
+		cardText: '#cce7ff',
+		headerBg: '#004080',
+		headerText: '#99ccff',
+		win: '#33ccff',
+		loss: '#ff3366',
+		neutral: '#ffffff',
+		shadow: '0 0 12px #005599cc',
+	},
+] as const;

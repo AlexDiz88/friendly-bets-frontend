@@ -11,9 +11,8 @@ import {
 } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
-import { useAppSelector } from '../../app/hooks';
 import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
-import { selectActiveSeason } from '../admin/seasons/selectors';
+import User from '../auth/types/User';
 import {
 	CategoryStats,
 	PlayerStatsByBetTitles,
@@ -25,9 +24,9 @@ function SubcategoryCard({ sub }: { sub: SubCategoryStats }): JSX.Element {
 		<Box
 			sx={{
 				minWidth: '200px',
-				background: '#0B2100FF',
-				color: '#E2F1CFFF',
-				boxShadow: '0 0 12px #3b7d00cc',
+				background: '#064B60FF',
+				color: '#C0EEF5FF',
+				boxShadow: '0 0 10px #000D39FF',
 				border: 1,
 				p: 2,
 				borderRadius: 3,
@@ -74,7 +73,6 @@ function CategoryCard({
 	betTitleCategoryStats: CategoryStats;
 }): JSX.Element {
 	const [open, setOpen] = useState(false);
-	// Храним состояние раскрытия подкатегорий в объекте, где ключ — subCategory
 	const [openSubs, setOpenSubs] = useState<Record<string, boolean>>({});
 
 	const toggleSub = (subCategory: string): void => {
@@ -89,7 +87,7 @@ function CategoryCard({
 	return (
 		<Card
 			sx={{
-				background: 'linear-gradient(135deg, #1c2e07, #3b5410)',
+				background: 'linear-gradient(135deg, #082935FF, #106D6DFF)',
 				color: '#e6e9d1',
 				p: 1.5,
 				border: 1,
@@ -110,14 +108,16 @@ function CategoryCard({
 				<Box sx={{ display: 'flex' }}>
 					<ExpandMoreIcon
 						sx={{
-							color: '#ffffff',
 							transform: open ? 'rotate(180deg)' : 'none',
 							transition: '0.3s',
 						}}
 					/>
-					<Typography fontWeight={700}>
+					<Box sx={{ display: 'flex', alignItems: 'center', fontWeight: 600 }}>
 						{t(`betTitleCategory.${betTitleCategoryStats.category}`)}
-					</Typography>
+						<Typography sx={{ color: '#FFDC7BFF', ml: 0.5, fontWeight: 600 }}>
+							[{betTitleCategoryStats.stats.reduce((total, s) => total + s.betCount, 0) / 2}]
+						</Typography>
+					</Box>
 				</Box>
 				<Typography
 					sx={{
@@ -149,8 +149,8 @@ function CategoryCard({
 										justifyContent: 'space-between',
 										alignItems: 'center',
 										cursor: 'pointer',
-										background: '#42610eff',
-										color: '#d9f0b4',
+										background: '#093654FF',
+										color: '#C6D8DAFF',
 										px: 2,
 										minHeight: 48,
 										borderRadius: 1,
@@ -163,14 +163,18 @@ function CategoryCard({
 										<ExpandMoreIcon
 											sx={{
 												ml: -1,
-												color: '#ffffff',
 												transform: openSubs[sub.subCategory] ? 'rotate(180deg)' : 'none',
 												transition: '0.3s',
 											}}
 										/>
-										<Typography fontWeight={700}>
-											{t(`betTitleSubCategory.${sub.subCategory}`)}
-										</Typography>
+										<Box sx={{ display: 'flex', alignItems: 'center', fontWeight: 600 }}>
+											{t(`betTitleSubCategory.${sub.subCategory}`)}{' '}
+											<Typography
+												sx={{ ml: 0.5, color: '#68F5FFFF', fontSize: '0.9rem', fontWeight: 600 }}
+											>
+												[{sub.betCount}]
+											</Typography>
+										</Box>
 									</Box>
 
 									<Typography
@@ -205,12 +209,13 @@ function CategoryCard({
 
 interface Props {
 	playersStatsByBetTitles: PlayerStatsByBetTitles[];
+	players: User[];
 }
 
-export default function PlayerBetStatsByBetTitles({ playersStatsByBetTitles }: Props): JSX.Element {
-	const activeSeason = useAppSelector(selectActiveSeason);
-	const players = activeSeason?.players;
-
+export default function PlayerBetStatsByBetTitles({
+	playersStatsByBetTitles,
+	players,
+}: Props): JSX.Element {
 	return (
 		<Box sx={{ width: '100%' }}>
 			{playersStatsByBetTitles
@@ -224,13 +229,13 @@ export default function PlayerBetStatsByBetTitles({ playersStatsByBetTitles }: P
 						<Accordion
 							key={playerStats.userId}
 							sx={{
-								background: 'linear-gradient(135deg, #2b4d19ff 0%, #269e3eff 100%)',
+								background: 'linear-gradient(135deg, #061744FF 0%, #267A9EFF 100%)',
 								color: '#ffffff',
 							}}
 						>
 							<AccordionSummary disableRipple expandIcon={null} sx={{ px: 2 }}>
 								<Box display="flex" alignItems="center" gap={2}>
-									<ExpandMoreIcon sx={{ color: '#ffffff' }} />
+									<ExpandMoreIcon />
 									<Avatar src={avatarBase64Converter(player.avatar)} />
 									<Box>
 										<Typography fontWeight={700}>{player.username}</Typography>
