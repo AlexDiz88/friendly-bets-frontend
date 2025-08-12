@@ -11,9 +11,8 @@ import {
 } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
-import { useAppSelector } from '../../app/hooks';
 import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
-import { selectActiveSeason } from '../admin/seasons/selectors';
+import User from '../auth/types/User';
 import {
 	CategoryStats,
 	PlayerStatsByBetTitles,
@@ -74,7 +73,6 @@ function CategoryCard({
 	betTitleCategoryStats: CategoryStats;
 }): JSX.Element {
 	const [open, setOpen] = useState(false);
-	// Храним состояние раскрытия подкатегорий в объекте, где ключ — subCategory
 	const [openSubs, setOpenSubs] = useState<Record<string, boolean>>({});
 
 	const toggleSub = (subCategory: string): void => {
@@ -116,7 +114,8 @@ function CategoryCard({
 						}}
 					/>
 					<Typography fontWeight={700}>
-						{t(`betTitleCategory.${betTitleCategoryStats.category}`)}
+						{t(`betTitleCategory.${betTitleCategoryStats.category}`)} [
+						{betTitleCategoryStats.stats.reduce((total, s) => total + s.betCount, 0) / 2}]
 					</Typography>
 				</Box>
 				<Typography
@@ -168,9 +167,14 @@ function CategoryCard({
 												transition: '0.3s',
 											}}
 										/>
-										<Typography fontWeight={700}>
-											{t(`betTitleSubCategory.${sub.subCategory}`)}
-										</Typography>
+										<Box sx={{ display: 'flex', alignItems: 'center', fontWeight: 600 }}>
+											{t(`betTitleSubCategory.${sub.subCategory}`)}{' '}
+											<Typography
+												sx={{ ml: 0.5, color: '#FFDC7BFF', fontSize: '0.95rem', fontWeight: 600 }}
+											>
+												[{sub.betCount}]
+											</Typography>
+										</Box>
 									</Box>
 
 									<Typography
@@ -205,12 +209,13 @@ function CategoryCard({
 
 interface Props {
 	playersStatsByBetTitles: PlayerStatsByBetTitles[];
+	players: User[];
 }
 
-export default function PlayerBetStatsByBetTitles({ playersStatsByBetTitles }: Props): JSX.Element {
-	const activeSeason = useAppSelector(selectActiveSeason);
-	const players = activeSeason?.players;
-
+export default function PlayerBetStatsByBetTitles({
+	playersStatsByBetTitles,
+	players,
+}: Props): JSX.Element {
 	return (
 		<Box sx={{ width: '100%' }}>
 			{playersStatsByBetTitles
