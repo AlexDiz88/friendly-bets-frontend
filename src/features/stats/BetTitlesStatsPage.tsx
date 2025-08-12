@@ -23,31 +23,35 @@ export default function BetTitlesStatsPage(): JSX.Element {
 	const [loadingError, setLoadingError] = useState(false);
 
 	useEffect(() => {
-		if (selectedSeasonId) {
-			setLoading(true);
-			setLoadingError(false);
-			const selectedSeason = allSeasons.find((s) => s.id === selectedSeasonId);
-			setPlayers(selectedSeason?.players);
-			dispatch(getAllStatsByBetTitlesInSeason(selectedSeasonId))
-				.then(() => setLoading(false))
-				.catch(() => {
-					setLoadingError(true);
-					setLoading(false);
-				});
-		} else {
-			setLoading(false);
-		}
-	}, [selectedSeasonId]);
-
-	useEffect(() => {
-		if (!selectedSeasonId && allSeasons.length > 0) {
-			setSelectedSeasonId(activeSeasonId || allSeasons[allSeasons.length - 1].id);
-		}
-	}, [activeSeasonId, allSeasons]);
-
-	useEffect(() => {
 		dispatch(getSeasons());
 	}, []);
+
+	useEffect(() => {
+		if (selectedSeasonId || allSeasons.length === 0) return;
+
+		if (activeSeasonId) {
+			setSelectedSeasonId(activeSeasonId);
+		} else {
+			setSelectedSeasonId(allSeasons[allSeasons.length - 1].id);
+		}
+	}, [activeSeasonId, allSeasons, selectedSeasonId]);
+
+	useEffect(() => {
+		if (!selectedSeasonId) return;
+
+		setLoading(true);
+		setLoadingError(false);
+
+		const selectedSeason = allSeasons.find((s) => s.id === selectedSeasonId);
+		setPlayers(selectedSeason?.players);
+
+		dispatch(getAllStatsByBetTitlesInSeason(selectedSeasonId))
+			.then(() => setLoading(false))
+			.catch(() => {
+				setLoadingError(true);
+				setLoading(false);
+			});
+	}, [selectedSeasonId, allSeasons]);
 
 	return (
 		<Box>
