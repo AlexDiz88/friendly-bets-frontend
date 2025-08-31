@@ -1,8 +1,7 @@
-import { Avatar, Box, Card, Typography } from '@mui/material';
-import { t } from 'i18next';
+import { Box } from '@mui/material';
 import { FC } from 'react';
+import TeamsAvatars from '../../../components/custom/avatar/TeamsAvatars';
 import { getGameScoreView } from '../../../components/utils/gameScoreValidation';
-import { pathToLogoImage } from '../../../components/utils/imgBase64Converter';
 import Team from '../../admin/teams/types/Team';
 import GameScore from '../../bets/types/GameScore';
 import { fakeMatchesData2 } from './fakeMatchesData2';
@@ -70,22 +69,39 @@ const GameList: FC = () => {
 	});
 
 	return (
-		<Box display="flex" flexDirection="column" gap={1}>
+		<Box
+			sx={{
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+				boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.5), 0px 4px 8px rgba(0, 0, 0, 0.7)',
+				minWidth: 350,
+				maxWidth: 450,
+				mx: 'auto',
+				py: 1,
+				border: 1,
+				borderRadius: 1,
+			}}
+		>
 			{preparedMatches.map(({ match, date, homeTeam, awayTeam, gameScoreView }) => (
-				<Card
+				<Box
 					key={match.id}
-					variant="outlined"
 					sx={{
-						p: 0,
-						boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.7)',
-						minWidth: 350,
-						maxWidth: 550,
-						mx: 'auto',
-						border: 1,
-						borderRadius: 1,
+						flex: 'display',
+						justifyContent: 'center',
+						borderBottom: 1,
+						py: 0.5,
+						minWidth: 300,
+						maxWidth: 450,
 					}}
 				>
-					<Box sx={{ p: 0.5 }}>
+					<TeamsAvatars height={24} homeTeam={homeTeam} awayTeam={awayTeam} />
+					<Box sx={{ textAlign: 'center', fontSize: '1.1rem', fontWeight: 600 }}>
+						{gameScoreView}
+					</Box>
+
+					{/* Другой дизайн */}
+					{/* <Box sx={{ p: 0.5 }}>
 						<Box display="flex" justifyContent="space-between" mb={0}>
 							<Typography fontWeight={600} variant="caption">
 								{date}
@@ -106,7 +122,6 @@ const GameList: FC = () => {
 								alignItems: 'center',
 							}}
 						>
-							{/* Home Team */}
 							<Box
 								sx={{
 									display: 'flex',
@@ -126,7 +141,6 @@ const GameList: FC = () => {
 								/>
 							</Box>
 
-							{/* Score */}
 							<Box
 								sx={{
 									flex: '0 0 20%',
@@ -138,7 +152,6 @@ const GameList: FC = () => {
 								{gameScoreView}
 							</Box>
 
-							{/* Away Team */}
 							<Box
 								sx={{
 									display: 'flex',
@@ -158,8 +171,8 @@ const GameList: FC = () => {
 								{t(`teams:${awayTeam?.title || ''}`)}
 							</Box>
 						</Box>
-					</Box>
-				</Card>
+					</Box> */}
+				</Box>
 			))}
 		</Box>
 	);
