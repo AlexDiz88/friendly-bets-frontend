@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { KeyboardArrowRight } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Avatar } from '@mui/material';
@@ -17,7 +18,7 @@ import CustomMenuPageText from '../custom/CustomMenuPageText';
 
 export default function MenuPages(): JSX.Element {
 	const user = useAppSelector(selectUser);
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	useAppSelector((state) => state.language);
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
@@ -28,6 +29,7 @@ export default function MenuPages(): JSX.Element {
 		t('news'),
 		t('byGameweeks'),
 		t('byBetTitles'),
+		t('footballData'),
 		t('byLeagues'),
 		t('byTeams'),
 		t('archive'),
@@ -40,6 +42,7 @@ export default function MenuPages(): JSX.Element {
 		{ code: 'de', name: 'Deutsch', img: 'german.png' },
 		{ code: 'ru', name: 'Русский', img: 'russian.png' },
 	];
+	const currentLang = languages.find((l) => l.code === i18n.language);
 
 	const handleNavigate = (page: string): void => {
 		switch (page) {
@@ -51,6 +54,9 @@ export default function MenuPages(): JSX.Element {
 				break;
 			case t('byBetTitles'):
 				navigate('/stats/bet-titles');
+				break;
+			case t('footballData'):
+				navigate('/stats/football-data');
 				break;
 			case t('byLeagues'):
 				navigate('/stats/leagues');
@@ -149,7 +155,20 @@ export default function MenuPages(): JSX.Element {
 									  }
 							}
 						>
-							<Typography sx={{ fontWeight: 600 }}>{page}</Typography>
+							{page === t('language') ? (
+								<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+									<Avatar
+										sx={{ mr: -0.5, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
+										alt="language_flag"
+										src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${
+											currentLang?.img ?? 'default.png'
+										}`}
+									/>
+									<Typography sx={{ fontWeight: 600 }}>{page}</Typography>
+								</Box>
+							) : (
+								<Typography sx={{ fontWeight: 600 }}>{page}</Typography>
+							)}
 							{page === t('language') && <KeyboardArrowRight />}
 						</MenuItem>
 					))}
@@ -161,21 +180,38 @@ export default function MenuPages(): JSX.Element {
 				<CustomMenuPageText onClick={scrollToTop} href="#" title={t('table')} />
 				<CustomMenuPageText onClick={scrollToTop} href="#/bets/opened" title={t('bets')} />
 				<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-					{pages.map((page) => (
-						<CustomMenuPageText
-							key={page}
-							onClickCapture={(event) => {
-								if (page === t('language')) {
+					{pages.map((page) =>
+						page === t('language') ? (
+							<Box
+								key={page}
+								sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', ml: 2 }}
+								onClick={(event) => {
 									handleOpenLangMenu(event);
-								} else {
+									scrollToTop();
+									handleCloseNavMenu();
+								}}
+							>
+								<Avatar
+									sx={{ mr: -1, width: 26, height: 18, border: 0.5, borderRadius: 0 }}
+									alt="language_flag"
+									src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${
+										currentLang?.img ?? 'default.png'
+									}`}
+								/>
+								<CustomMenuPageText title={page} />
+							</Box>
+						) : (
+							<CustomMenuPageText
+								key={page}
+								onClickCapture={() => {
 									handleNavigate(page);
-								}
-								scrollToTop();
-								handleCloseNavMenu();
-							}}
-							title={page}
-						/>
-					))}
+									scrollToTop();
+									handleCloseNavMenu();
+								}}
+								title={page}
+							/>
+						)
+					)}
 				</Box>
 			</Box>
 
@@ -193,7 +229,6 @@ export default function MenuPages(): JSX.Element {
 							<Avatar
 								sx={{ mr: 0.5, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
 								alt="language_flag"
-								// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 								src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${lang.img}`}
 							/>
 							{lang.name}
