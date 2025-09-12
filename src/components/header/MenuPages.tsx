@@ -29,7 +29,7 @@ export default function MenuPages(): JSX.Element {
 		t('news'),
 		t('byGameweeks'),
 		t('byBetTitles'),
-		t('footballData'),
+		// t('footballData'),
 		t('byLeagues'),
 		t('byTeams'),
 		t('archive'),
