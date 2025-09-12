@@ -16,7 +16,9 @@ import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlic
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import { getOpenedBets, sendGameResults } from './betsSlice';
+import { externalTeamIdMap } from './externalTeamIdMap';
 import { selectOpenedBets } from './selectors';
+import { ExternalMatchdayData } from './types/ExternalMatchData';
 import GameResult from './types/GameResult';
 import GameScore from './types/GameScore';
 
@@ -95,6 +97,27 @@ export default function BetsAutoCheck(): JSX.Element {
 			};
 		});
 	};
+
+	const fetchExternalResults = async (matchday: number): Promise<ExternalMatchdayData> => {
+		const apiKey = process.env.FOOTBALL_DATA_API_KEY;
+		if (!apiKey) throw new Error('FOOTBALL_DATA_API_KEY is not defined');
+
+		const url = `http://api.football-data.org/v4/competitions/PL/matches?matchday=${matchday}`;
+		const res = await fetch(url, {
+			headers: { 'X-Auth-Token': apiKey },
+		});
+
+		const data = await res.json();
+		return data;
+	};
+
+	// Запуск автообновления каждые 5 минут (300000 ms)
+	useEffect(() => {
+		if (!activeSeasonId) return;
+		// fetchExternalResults(); // первый запуск сразу
+		const interval = setInterval(fetchExternalResults, 300_000);
+		return () => clearInterval(interval);
+	}, [activeSeasonId, uniqueGames, inputValues]);
 
 	const handleSubmitResults = async (): Promise<void> => {
 		setIsSubmitting(true);
