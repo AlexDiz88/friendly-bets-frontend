@@ -47,7 +47,6 @@ export default function BetsAutoCheck(): JSX.Element {
 
 	useFetchCurrentUser();
 
-	// [ADDED] состояние для выбранного турнира
 	const [selectedLeague, setSelectedLeague] = useState(t('all'));
 	const handleLeagueChange = (leagueCode: string): void => {
 		setSelectedLeague(leagueCode);
