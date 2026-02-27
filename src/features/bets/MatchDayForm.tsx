@@ -42,27 +42,27 @@ export default function MatchDayForm({
 	const playoffRoundsList: string[] = ['', '1', '2', '3', '4'];
 
 	const championsLeaguePlayoffMappings: Record<string, string> = {
-		'7': '1/8',
-		'8': '1/8',
-		'9': '1/8',
-		'10': '1/8',
-		'11': '1/4',
-		'12': '1/4',
-		'13': '1/2',
-		'14': '1/2',
-		'15': MATCHDAY_TITLE_FINAL,
+		'9': '1/16',
+		'10': '1/16',
+		'11': '1/8',
+		'12': '1/8',
+		'13': '1/4',
+		'14': '1/4',
+		'15': '1/2',
+		'16': '1/2',
+		'17': MATCHDAY_TITLE_FINAL,
 	};
 
 	const championsLeaguePlayoffRoundMappings: Record<string, string> = {
-		'7': '1',
-		'8': '2',
-		'9': '3',
-		'10': '4',
+		'9': '1',
+		'10': '2',
 		'11': '1',
 		'12': '2',
 		'13': '1',
 		'14': '2',
-		'15': '',
+		'15': '1',
+		'16': '2',
+		'17': '',
 	};
 
 	useEffect(() => {
@@ -112,7 +112,7 @@ export default function MatchDayForm({
 		setUpdatedIsPlayoff(flag);
 
 		const matchDayTransform = flag
-			? championsLeaguePlayoffMappings[updatedMatchDay] || '1/8'
+			? championsLeaguePlayoffMappings[updatedMatchDay] || '1/16'
 			: getIsPlayoff(matchDay)
 			? '1'
 			: matchDay;
