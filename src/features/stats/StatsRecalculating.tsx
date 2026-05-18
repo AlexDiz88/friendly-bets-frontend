@@ -10,6 +10,7 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
+import { apiFetch } from '../../shared/apiClient';
 import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import { playersStatsFullRecalculation } from './statsSlice';
@@ -65,7 +66,7 @@ export default function StatsRecalculating({
 					if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 						url = `/api/stats/season/${activeSeasonId}/recalculation/teams`;
 					}
-					const response = await fetch(`${url}`);
+					const response = await apiFetch(`${url}`);
 
 					if (response.ok) {
 						dispatch(showSuccessSnackbar({ message: t('statsWasSuccessfullyRecalculated') }));
@@ -97,7 +98,7 @@ export default function StatsRecalculating({
 					if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 						url = `/api/stats/season/${activeSeasonId}/recalculation/bet-titles`;
 					}
-					const response = await fetch(`${url}`);
+					const response = await apiFetch(`${url}`);
 
 					if (response.ok) {
 						dispatch(showSuccessSnackbar({ message: t('statsWasSuccessfullyRecalculated') }));
@@ -129,7 +130,7 @@ export default function StatsRecalculating({
 					if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 						url = `/api/stats/season/${activeSeasonId}/recalculation/gameweeks`;
 					}
-					const response = await fetch(`${url}`);
+					const response = await apiFetch(`${url}`);
 
 					if (response.ok) {
 						dispatch(showSuccessSnackbar({ message: t('statsWasSuccessfullyRecalculated') }));

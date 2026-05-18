@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { apiFetch } from '../../../shared/apiClient';
 import Team from '../teams/types/Team';
 import Season from './types/Season';
 
@@ -7,7 +8,7 @@ export async function dbUpdate(): Promise<{ seasons: Season[] }> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/db-update';
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -20,7 +21,7 @@ export async function addSeason(title: string, betCountPerMatchDay: number): Pro
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons';
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		body: JSON.stringify({ title, betCountPerMatchDay }),
 		headers: {
@@ -39,7 +40,7 @@ export async function getSeasons(): Promise<{ seasons: Season[] }> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons';
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -52,7 +53,7 @@ export async function getSeasonStatusList(): Promise<string[]> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/statuses';
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -65,7 +66,7 @@ export async function getLeagueCodeList(): Promise<string[]> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/leagues/codes';
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -78,7 +79,7 @@ export async function changeSeasonStatus(id: string, status: string): Promise<Se
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${id}`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'PATCH',
 		body: JSON.stringify(status),
 		headers: {
@@ -97,7 +98,7 @@ export async function getActiveSeason(): Promise<Season> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/active';
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
@@ -111,7 +112,7 @@ export async function getActiveSeasonId(): Promise<{ value: string }> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/active/id';
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
@@ -125,7 +126,7 @@ export async function getScheduledSeason(): Promise<Season> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons/scheduled';
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
@@ -139,7 +140,7 @@ export async function registrationInSeason(seasonId: string): Promise<Season> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/registration/${seasonId}`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -157,7 +158,7 @@ export async function registrationInSeason(seasonId: string): Promise<Season> {
 //   if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 //     url = '/login';
 //   }
-//   const result = await fetch(`/api/seasons/${seasonId}/leagues`);
+//   const result = await apiFetch(`/api/seasons/${seasonId}/leagues`);
 //   if (result.status >= 400) {
 //     const { message }: { message: string } = await result.json();
 //     throw new Error(message);
@@ -170,7 +171,7 @@ export async function addLeagueToSeason(seasonId: string, leagueCode: string): P
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${seasonId}/leagues`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		body: JSON.stringify({
 			leagueCode,
@@ -197,7 +198,7 @@ export async function addTeamToLeagueInSeason(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${seasonId}/leagues/${leagueId}/teams/${teamId}`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',

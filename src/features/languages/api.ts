@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-
+import { apiFetch } from '../../shared/apiClient';
 import User from '../auth/types/User';
 
 export async function changeLanguage(language: string): Promise<User> {
@@ -7,7 +7,7 @@ export async function changeLanguage(language: string): Promise<User> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/users/my/profile/language`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'PUT',
 		body: language,
 		headers: {

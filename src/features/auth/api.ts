@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { apiFetch } from '../../shared/apiClient';
 import Credentials from './types/Credentials';
 import RegisterData from './types/RegisterData';
 import ResponseDto from './types/ResponseDto';
@@ -9,7 +10,7 @@ export async function getProfile(): Promise<User> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/users/my/profile';
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -22,11 +23,15 @@ export async function login(credentials: Credentials): Promise<User> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/login';
 	}
-	const result = await fetch(`${url}`, {
+	const body = new URLSearchParams({
+		username: credentials.email,
+		password: credentials.password,
+		'remember-me': 'true',
+	});
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		mode: 'cors',
-		credentials: 'include',
-		body: `username=${credentials.email}&password=${credentials.password}`,
+		body: body.toString(),
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
@@ -43,7 +48,7 @@ export async function register(data: RegisterData): Promise<User> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/register';
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		body: JSON.stringify(data),
 		headers: {
@@ -62,7 +67,7 @@ export async function logout(): Promise<void> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/logout';
 	}
-	await fetch(`${url}`, {
+	await apiFetch(`${url}`, {
 		method: 'PUT',
 	});
 }
@@ -72,7 +77,7 @@ export async function editEmail({ newEmail }: { newEmail: string }): Promise<Use
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/users/my/profile/email';
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'PUT',
 		body: JSON.stringify({ newEmail }),
 		headers: {
@@ -97,7 +102,7 @@ export async function editPassword({
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/users/my/profile/password';
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'PUT',
 		body: JSON.stringify({ currentPassword, newPassword }),
 		headers: {
@@ -116,7 +121,7 @@ export async function editUsername({ newUsername }: { newUsername: string }): Pr
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/users/my/profile/username';
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'PUT',
 		body: JSON.stringify({ newUsername }),
 		headers: {
@@ -146,7 +151,7 @@ export async function uploadFile({
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/files/upload';
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		body: formData,
 	});
@@ -165,7 +170,7 @@ export async function uploadUserAvatar({ file }: { file: File }): Promise<Respon
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/files/upload/avatars';
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		body: formData,
 	});

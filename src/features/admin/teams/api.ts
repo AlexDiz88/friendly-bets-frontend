@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { apiFetch } from '../../../shared/apiClient';
 import Team from './types/Team';
 
 export async function createTeam(title: string, country: string): Promise<Team> {
@@ -6,7 +7,7 @@ export async function createTeam(title: string, country: string): Promise<Team> 
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/teams';
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		body: JSON.stringify({ title, country }),
 		headers: {
@@ -25,7 +26,7 @@ export async function getAllTeams(): Promise<{ teams: Team[] }> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/teams';
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -38,7 +39,7 @@ export async function getLeagueTeams(leagueId: string): Promise<{ teams: Team[] 
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/teams/${leagueId}`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);

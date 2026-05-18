@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { apiFetch } from '../../shared/apiClient';
 import Bet, { BetId } from './types/Bet';
 import BetResult from './types/BetResult';
 import BetsPage from './types/BetsPage';
@@ -12,7 +13,7 @@ export async function addOpenedBet(newOpenedBet: NewOpenedBet): Promise<Bet> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/add`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		body: JSON.stringify(newOpenedBet),
 		headers: {
@@ -31,7 +32,7 @@ export async function addEmptyBet(newEmptyBet: NewEmptyBet): Promise<Bet> {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/add/empty`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		body: JSON.stringify(newEmptyBet),
 		headers: {
@@ -52,7 +53,7 @@ export async function setBetResult(betId: string, betResult: BetResult): Promise
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/${betId}/set-bet-result`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'PUT',
 		body: JSON.stringify(betResult),
 		headers: {
@@ -74,7 +75,7 @@ export async function sendGameResults(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/set-auto-bet-results`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		body: JSON.stringify({ seasonId, gameResults }),
 		headers: {
@@ -93,7 +94,7 @@ export async function getOpenedBets(seasonId: string): Promise<{ bets: Bet[] }> 
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/opened/seasons/${seasonId}`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -123,7 +124,7 @@ export async function getOpenedBets(seasonId: string): Promise<{ bets: Bet[] }> 
 // 		queryString ? `?${queryString}` : ''
 // 	}`;
 
-// 	const result = await fetch(url);
+// 	const result = await apiFetch(url);
 
 // 	if (result.status >= 400) {
 // 		const { message }: { message: string } = await result.json();
@@ -153,7 +154,7 @@ export async function getCompletedBets(
 	if (queryString) {
 		url += `?${queryString}`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -177,7 +178,7 @@ export async function getAllBets(
 	if (queryString) {
 		url += `?${queryString}`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -190,7 +191,7 @@ export async function updateBet(editedBetId: string, editedBet: UpdatedBet): Pro
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/${editedBetId}`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'PUT',
 		body: JSON.stringify(editedBet),
 		headers: {
@@ -214,7 +215,7 @@ export async function deleteBet(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/${betId}`;
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'DELETE',
 		body: JSON.stringify({ seasonId, leagueId, calendarNodeId }),
 		headers: {
@@ -235,7 +236,7 @@ export async function getBetTitleCodeLabelMap(): Promise<{
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/betTitleCodeLabelMap`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
