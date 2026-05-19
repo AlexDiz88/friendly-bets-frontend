@@ -21,6 +21,18 @@
 	"externalMatchSyncCompleted": "Тур завершён",
 	"externalMatchSyncPolling": "Идёт тур",
 	"externalMatchSyncProgress": "{{finished}} / {{total}} матчей",
+	"matchStatus": {
+		"SCHEDULED": "Запланирован",
+		"TIMED": "По расписанию",
+		"IN_PLAY": "Идёт",
+		"PAUSE": "Пауза",
+		"HALFTIME": "Перерыв",
+		"FINISHED": "Завершён",
+		"AWARDED": "Присуждён",
+		"CANCELLED": "Отменён",
+		"POSTPONED": "Перенесён",
+		"SUSPENDED": "Приостановлен"
+	},
 	"userSettings": "Настройки пользователя",
 	"openedBets": "Открытые",
 	"completedBets": "Завершенные",

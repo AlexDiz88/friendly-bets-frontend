@@ -21,6 +21,18 @@
 	"externalMatchSyncCompleted": "Spieltag abgeschlossen",
 	"externalMatchSyncPolling": "Spieltag läuft",
 	"externalMatchSyncProgress": "{{finished}} / {{total}} Spiele",
+	"matchStatus": {
+		"SCHEDULED": "Geplant",
+		"TIMED": "Anstehend",
+		"IN_PLAY": "Läuft",
+		"PAUSE": "Pause",
+		"HALFTIME": "Halbzeit",
+		"FINISHED": "Beendet",
+		"AWARDED": "Zugesprochen",
+		"CANCELLED": "Abgesagt",
+		"POSTPONED": "Verschoben",
+		"SUSPENDED": "Unterbrochen"
+	},
 	"userSettings": "Benutzereinstellungen",
 	"openedBets": "Öffnene",
 	"completedBets": "Fertige",

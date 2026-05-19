@@ -1,24 +1,29 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
+	Avatar,
 	Box,
-	Button,
 	Chip,
 	CircularProgress,
-	FormControl,
-	InputLabel,
+	IconButton,
 	MenuItem,
 	Select,
+	SelectChangeEvent,
+	Tooltip,
 	Typography,
 } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import TeamsAvatars from '../../components/custom/avatar/TeamsAvatars';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
+import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
+import LeagueSelect from '../../components/selectors/LeagueSelect';
 import { getGameScoreView } from '../../components/utils/gameScoreValidation';
+import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { getActiveSeason } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import { selectUser } from '../auth/selectors';
 import GameScore from '../bets/types/GameScore';
@@ -28,6 +33,7 @@ import {
 	FOOTBALL_DATA_COMPETITIONS,
 } from './competitionOptions';
 import { getMatchdayFromCache, syncMatchdayFromApi } from './footballDataApi';
+import { translateMatchStatus } from './matchStatusI18n';
 import { ExternalMatch, ExternalMatchdayPage as MatchdayPageData } from './types/ExternalMatch';
 
 function toDisplayTeam(name: string): Team {
@@ -41,14 +47,138 @@ function statusColor(status: string): 'success' | 'warning' | 'default' {
 	return 'default';
 }
 
+const MATCH_ROW_AVATAR = 26;
+
+function CompactMatchRow({
+	homeTeam,
+	awayTeam,
+	scoreView,
+}: {
+	homeTeam: Team;
+	awayTeam: Team;
+	scoreView: string;
+}): JSX.Element {
+	return (
+		<Box
+			sx={{
+				display: 'flex',
+				alignItems: 'center',
+				gap: 0.5,
+				minHeight: MATCH_ROW_AVATAR,
+			}}
+		>
+			<Box
+				sx={{
+					flex: 1,
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'flex-end',
+					gap: 0.4,
+					minWidth: 0,
+				}}
+			>
+				<Typography
+					variant="body2"
+					sx={{
+						fontSize: '0.78rem',
+						fontWeight: 600,
+						lineHeight: 1.2,
+						textAlign: 'right',
+						overflow: 'hidden',
+						textOverflow: 'ellipsis',
+						whiteSpace: 'nowrap',
+					}}
+				>
+					{t(`teams:${homeTeam.title}`)}
+				</Typography>
+				<Avatar
+					variant="square"
+					src={pathToLogoImage(homeTeam.title)}
+					alt=""
+					sx={{ width: MATCH_ROW_AVATAR, height: MATCH_ROW_AVATAR, flexShrink: 0 }}
+				/>
+			</Box>
+
+			<Typography
+				sx={{
+					flex: '0 0 auto',
+					px: 0.5,
+					fontWeight: 700,
+					fontSize: '0.85rem',
+					lineHeight: 1.2,
+					textAlign: 'center',
+					whiteSpace: 'nowrap',
+				}}
+			>
+				{scoreView}
+			</Typography>
+
+			<Box
+				sx={{
+					flex: 1,
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'flex-start',
+					gap: 0.4,
+					minWidth: 0,
+				}}
+			>
+				<Avatar
+					variant="square"
+					src={pathToLogoImage(awayTeam.title)}
+					alt=""
+					sx={{ width: MATCH_ROW_AVATAR, height: MATCH_ROW_AVATAR, flexShrink: 0 }}
+				/>
+				<Typography
+					variant="body2"
+					sx={{
+						fontSize: '0.78rem',
+						fontWeight: 600,
+						lineHeight: 1.2,
+						textAlign: 'left',
+						overflow: 'hidden',
+						textOverflow: 'ellipsis',
+						whiteSpace: 'nowrap',
+					}}
+				>
+					{t(`teams:${awayTeam.title}`)}
+				</Typography>
+			</Box>
+		</Box>
+	);
+}
+
+const SUPPORTED_LEAGUE_CODES = new Set(FOOTBALL_DATA_COMPETITIONS.map((c) => c.leagueCode));
+
+function leagueCodeToCompetition(leagueCode: string): string {
+	return (
+		FOOTBALL_DATA_COMPETITIONS.find((c) => c.leagueCode === leagueCode)?.competitionCode ?? 'PL'
+	);
+}
+
 export default function ExternalMatchdayPage(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const user = useAppSelector(selectUser);
+	const activeSeason = useAppSelector(selectActiveSeason);
 	const canSync = user?.role === 'ADMIN' || user?.role === 'MODERATOR';
 
-	const [competitionCode, setCompetitionCode] = useState(FOOTBALL_DATA_COMPETITIONS[0].competitionCode);
+	useFetchActiveSeason(activeSeason?.id);
+
+	const footballDataLeagues = useMemo(
+		() => activeSeason?.leagues.filter((l) => SUPPORTED_LEAGUE_CODES.has(l.leagueCode)) ?? [],
+		[activeSeason?.leagues]
+	);
+
+	const [selectedLeagueCode, setSelectedLeagueCode] = useState(
+		FOOTBALL_DATA_COMPETITIONS[0].leagueCode
+	);
 	const [matchday, setMatchday] = useState(1);
 	const [season, setSeason] = useState(DEFAULT_FOOTBALL_DATA_SEASON);
+
+	const competitionCode = useMemo(
+		() => leagueCodeToCompetition(selectedLeagueCode),
+		[selectedLeagueCode]
+	);
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [syncing, setSyncing] = useState(false);
@@ -71,8 +201,28 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [competitionCode, matchday, season, dispatch]);
 
 	useEffect(() => {
+		if (!activeSeason) {
+			dispatch(getActiveSeason());
+		}
+	}, [activeSeason, dispatch]);
+
+	useEffect(() => {
+		if (footballDataLeagues.length > 0) {
+			setSelectedLeagueCode((prev) =>
+				footballDataLeagues.some((l) => l.leagueCode === prev)
+					? prev
+					: footballDataLeagues[0].leagueCode
+			);
+		}
+	}, [footballDataLeagues]);
+
+	useEffect(() => {
 		loadCache();
 	}, [loadCache]);
+
+	const handleLeagueChange = (e: SelectChangeEvent): void => {
+		setSelectedLeagueCode(e.target.value);
+	};
 
 	const handleSyncFromApi = async (): Promise<void> => {
 		setSyncing(true);
@@ -106,113 +256,131 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				width: '100%',
 				maxWidth: 430,
 				mx: 'auto',
-				px: 1.5,
-				pb: 4,
+				px: 0.5,
+				pb: 0,
 				minHeight: 'calc(100vh - 80px)',
 			}}
 		>
-			<Typography
-				variant="h6"
-				sx={{ fontWeight: 700, textAlign: 'center', mb: 2, fontSize: '1.25rem' }}
-			>
-				{t('externalMatchResults')}
-			</Typography>
-
 			<Box
 				sx={{
 					display: 'flex',
 					flexDirection: 'column',
 					gap: 1.5,
-					mb: 2,
+					mb: 1,
 					p: 1.5,
 					borderRadius: 2,
 					bgcolor: 'background.paper',
 					boxShadow: 1,
 				}}
 			>
-				<FormControl fullWidth size="small">
-					<InputLabel id="fd-league-label">{t('league')}</InputLabel>
-					<Select
-						labelId="fd-league-label"
-						value={competitionCode}
-						label={t('league')}
-						onChange={(e) => setCompetitionCode(e.target.value)}
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						position: 'relative',
+						minHeight: 36,
+					}}
+				>
+					<Typography
+						variant="h6"
+						sx={{ fontWeight: 700, textAlign: 'center', fontSize: '1rem' }}
 					>
-						{FOOTBALL_DATA_COMPETITIONS.map((c) => (
-							<MenuItem key={c.competitionCode} value={c.competitionCode}>
-								{t(`leagueShortName.${c.leagueCode}`)}
+						{t('externalMatchResults')}
+					</Typography>
+					{canSync && (
+						<Tooltip title={t('externalMatchSyncFromApi')}>
+							<span>
+								<IconButton
+									color="secondary"
+									size="small"
+									disabled={syncing || loading}
+									onClick={handleSyncFromApi}
+									aria-label={t('externalMatchSyncFromApi')}
+									sx={{ position: 'absolute', right: 0 }}
+								>
+									{syncing ? <CircularProgress size={20} color="inherit" /> : <RefreshIcon />}
+								</IconButton>
+							</span>
+						</Tooltip>
+					)}
+				</Box>
+
+				<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						flexWrap: 'nowrap',
+						gap: 0.5,
+					}}
+				>
+					<LeagueSelect
+						value={selectedLeagueCode}
+						onChange={handleLeagueChange}
+						leagues={footballDataLeagues}
+						withoutAll
+					/>
+					<Select
+						size="small"
+						value={matchday}
+						onChange={(e) => setMatchday(Number(e.target.value))}
+						sx={{ minWidth: '3.25rem', fontSize: '0.9rem' }}
+						aria-label={t('matchday')}
+					>
+						{Array.from({ length: 38 }, (_, i) => i + 1).map((md) => (
+							<MenuItem key={md} value={md}>
+								{md}
 							</MenuItem>
 						))}
 					</Select>
-				</FormControl>
-
-				<Box sx={{ display: 'flex', gap: 1 }}>
-					<FormControl fullWidth size="small">
-						<InputLabel id="fd-matchday-label">{t('matchday')}</InputLabel>
-						<Select
-							labelId="fd-matchday-label"
-							value={matchday}
-							label={t('matchday')}
-							onChange={(e) => setMatchday(Number(e.target.value))}
-						>
-							{Array.from({ length: 38 }, (_, i) => i + 1).map((md) => (
-								<MenuItem key={md} value={md}>
-									{md}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
-
-					<FormControl sx={{ minWidth: 100 }} size="small">
-						<InputLabel id="fd-season-label">{t('season')}</InputLabel>
-						<Select
-							labelId="fd-season-label"
-							value={season}
-							label={t('season')}
-							onChange={(e) => setSeason(e.target.value)}
-						>
-							{['2024', '2025', '2026'].map((y) => (
-								<MenuItem key={y} value={y}>
-									{y}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
+					<Select
+						size="small"
+						value={season}
+						onChange={(e) => setSeason(e.target.value)}
+						sx={{ minWidth: '4.25rem', fontSize: '0.9rem' }}
+						aria-label={t('season')}
+					>
+						{['2024', '2025', '2026'].map((y) => (
+							<MenuItem key={y} value={y}>
+								{y}
+							</MenuItem>
+						))}
+					</Select>
 				</Box>
 
 				{data?.sync && (
-					<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center' }}>
+					<Box
+						sx={{
+							display: 'flex',
+							flexWrap: 'wrap',
+							gap: 0.5,
+							alignItems: 'center',
+							justifyContent: 'center',
+							px: 1,
+						}}
+					>
 						<Chip
-							size="small"
+							size="medium"
 							label={
 								data.sync.syncStatus === 'COMPLETED'
 									? t('externalMatchSyncCompleted')
 									: t('externalMatchSyncPolling')
 							}
 							color={data.sync.syncStatus === 'COMPLETED' ? 'success' : 'warning'}
+							sx={{
+								height: 25,
+								fontSize: '0.8rem',
+								'& .MuiChip-label': { p: 1 },
+							}}
 						/>
-						<Typography variant="caption" color="text.secondary">
+						<Typography variant="caption" color="text.secondary" sx={{ px: 1 }}>
 							{t('externalMatchSyncProgress', {
 								finished: data.sync.finishedMatchCount,
 								total: data.sync.expectedMatchCount,
 							})}
 						</Typography>
 					</Box>
-				)}
-
-				{canSync && (
-					<Button
-						fullWidth
-						variant="contained"
-						color="secondary"
-						size="large"
-						disabled={syncing || loading}
-						startIcon={syncing ? <CircularProgress size={20} color="inherit" /> : <RefreshIcon />}
-						onClick={handleSyncFromApi}
-						sx={{ py: 1.25, fontWeight: 600, fontSize: '0.95rem' }}
-					>
-						{t('externalMatchSyncFromApi')}
-					</Button>
 				)}
 			</Box>
 
@@ -241,7 +409,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						const homeTeam = toDisplayTeam(match.homeTeamName);
 						const awayTeam = toDisplayTeam(match.awayTeamName);
 						const gameScore: GameScore | null = match.gameScore ?? null;
-						const scoreView = gameScore ? getGameScoreView(gameScore) : '—';
+						const scoreView = gameScore ? getGameScoreView(gameScore, false) : '—';
 						const matchDate = match.utcDate
 							? new Date(match.utcDate).toLocaleString(undefined, {
 									day: '2-digit',
@@ -255,8 +423,8 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							<Box
 								key={match.externalMatchId}
 								sx={{
-									px: 1.5,
-									py: 1.25,
+									px: 1,
+									py: 0.6,
 									borderBottom: index < sortedMatches.length - 1 ? 1 : 0,
 									borderColor: 'divider',
 								}}
@@ -266,31 +434,33 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										display: 'flex',
 										justifyContent: 'space-between',
 										alignItems: 'center',
-										mb: 0.5,
+										mb: 0.25,
+										gap: 0.5,
 									}}
 								>
-									<Typography variant="caption" color="text.secondary">
+									<Typography
+										variant="caption"
+										color="text.secondary"
+										sx={{ fontSize: '0.68rem', lineHeight: 1.2 }}
+									>
 										{matchDate}
 									</Typography>
 									<Chip
 										size="small"
-										label={match.status}
+										label={translateMatchStatus(match.status, t)}
 										color={statusColor(match.status)}
-										sx={{ height: 22, fontSize: '0.7rem' }}
+										sx={{
+											height: 18,
+											fontSize: '0.58rem',
+											'& .MuiChip-label': { px: 0.5, py: 0 },
+										}}
 									/>
 								</Box>
-								<TeamsAvatars homeTeam={homeTeam} awayTeam={awayTeam} height={28} />
-								<Typography
-									sx={{
-										textAlign: 'center',
-										fontWeight: 700,
-										fontSize: '1.15rem',
-										mt: 0.5,
-										letterSpacing: 0.5,
-									}}
-								>
-									{scoreView}
-								</Typography>
+								<CompactMatchRow
+									homeTeam={homeTeam}
+									awayTeam={awayTeam}
+									scoreView={scoreView}
+								/>
 							</Box>
 						);
 					})}
