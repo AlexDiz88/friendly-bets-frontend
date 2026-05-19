@@ -28,6 +28,7 @@ import BetsCheck from './features/bets/BetsCheck';
 import BetsList from './features/bets/BetsList';
 import CompletedBetsList from './features/bets/CompletedBetsList';
 import OpenedBetsList from './features/bets/OpenedBetsList';
+import ExternalMatchdayPage from './features/football-data/ExternalMatchdayPage';
 import GameList from './features/football-data/gameResults/GameList';
 import Gameweek from './features/gameweeks/Gameweek';
 import BetTitlesStatsPage from './features/stats/BetTitlesStatsPage';
@@ -111,6 +112,7 @@ function App(): JSX.Element {
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
 				<Route path="/stats/bet-titles" element={<BetTitlesStatsPage />} />
 				<Route path="/stats/football-data" element={<GameList />} />
+				<Route path="/football-data/matchday" element={<ExternalMatchdayPage />} />
 				<Route path="/gameweeks" element={<Gameweek />} />
 				<Route path="/news" element={<News />} />
 				<Route path="/rules" element={<RulesPage />} />

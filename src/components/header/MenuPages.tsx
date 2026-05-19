@@ -29,7 +29,7 @@ export default function MenuPages(): JSX.Element {
 		t('news'),
 		t('byGameweeks'),
 		t('byBetTitles'),
-		// t('footballData'),
+		t('externalMatchResults'),
 		t('byLeagues'),
 		t('byTeams'),
 		t('archive'),
@@ -57,6 +57,9 @@ export default function MenuPages(): JSX.Element {
 				break;
 			case t('footballData'):
 				navigate('/stats/football-data');
+				break;
+			case t('externalMatchResults'):
+				navigate('/football-data/matchday');
 				break;
 			case t('byLeagues'):
 				navigate('/stats/leagues');
