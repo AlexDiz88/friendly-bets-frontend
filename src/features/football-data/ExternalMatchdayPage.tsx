@@ -257,7 +257,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				maxWidth: 430,
 				mx: 'auto',
 				px: 0.5,
-				pb: 0,
+				mt: -1,
 				minHeight: 'calc(100vh - 80px)',
 			}}
 		>
@@ -265,9 +265,9 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				sx={{
 					display: 'flex',
 					flexDirection: 'column',
-					gap: 1.5,
-					mb: 1,
-					p: 1.5,
+					gap: 0.5,
+					mb: 0.5,
+					p: 0.5,
 					borderRadius: 2,
 					bgcolor: 'background.paper',
 					boxShadow: 1,
@@ -275,34 +275,55 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			>
 				<Box
 					sx={{
-						display: 'flex',
+						display: 'grid',
+						gridTemplateColumns: '2rem 1fr 2rem',
 						alignItems: 'center',
-						justifyContent: 'center',
-						position: 'relative',
-						minHeight: 36,
+						columnGap: 0.5,
 					}}
 				>
+					<Box aria-hidden />
 					<Typography
-						variant="h6"
-						sx={{ fontWeight: 700, textAlign: 'center', fontSize: '1rem' }}
+						sx={{
+							fontWeight: 700,
+							textAlign: 'center',
+							fontSize: '1rem',
+							lineHeight: 1.25,
+							py: 0.15,
+						}}
 					>
 						{t('externalMatchResults')}
 					</Typography>
-					{canSync && (
+					{canSync ? (
 						<Tooltip title={t('externalMatchSyncFromApi')}>
-							<span>
+							<Box component="span" sx={{ display: 'flex', justifyContent: 'flex-end' }}>
 								<IconButton
-									color="secondary"
 									size="small"
 									disabled={syncing || loading}
 									onClick={handleSyncFromApi}
 									aria-label={t('externalMatchSyncFromApi')}
-									sx={{ position: 'absolute', right: 0 }}
+									sx={{
+										width: 26,
+										height: 26,
+										p: 0,
+										bgcolor: 'secondary.main',
+										color: 'common.white',
+										'&:hover': { bgcolor: 'secondary.dark' },
+										'&.Mui-disabled': {
+											bgcolor: 'action.disabledBackground',
+											color: 'action.disabled',
+										},
+									}}
 								>
-									{syncing ? <CircularProgress size={20} color="inherit" /> : <RefreshIcon />}
+									{syncing ? (
+										<CircularProgress size={18} sx={{ color: 'common.white' }} />
+									) : (
+										<RefreshIcon sx={{ fontSize: 20, color: 'common.white' }} />
+									)}
 								</IconButton>
-							</span>
+							</Box>
 						</Tooltip>
+					) : (
+						<Box aria-hidden />
 					)}
 				</Box>
 
