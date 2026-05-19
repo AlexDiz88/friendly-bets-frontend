@@ -9,7 +9,21 @@ interface LeagueSelectProps {
 	leagues: League[] | undefined;
 	withoutAll?: boolean;
 	fullLeagueNames?: boolean;
+	compact?: boolean;
 }
+
+const compactSelectSx = {
+	height: 30,
+	fontSize: '0.8rem',
+	'& .MuiSelect-select': {
+		py: 0.25,
+		px: 0.75,
+		minHeight: 'unset !important',
+		display: 'flex',
+		alignItems: 'center',
+		lineHeight: 1.2,
+	},
+};
 
 const LeagueSelect = ({
 	value,
@@ -17,12 +31,21 @@ const LeagueSelect = ({
 	leagues,
 	withoutAll,
 	fullLeagueNames,
+	compact,
 }: LeagueSelectProps): JSX.Element => {
+	const avatarHeight = compact ? 20 : 27;
+	const menuMinWidth = compact ? '5rem' : '6.5rem';
+
 	return (
 		<Select
 			autoWidth
 			size="small"
-			sx={{ minWidth: fullLeagueNames ? '15rem' : '7rem', ml: -0.2 }}
+			sx={{
+				minWidth: fullLeagueNames ? '15rem' : compact ? '4.75rem' : '7rem',
+				maxWidth: compact ? '5.5rem' : undefined,
+				ml: compact ? 0 : -0.2,
+				...(compact ? compactSelectSx : {}),
+			}}
 			labelId="league-label"
 			id="league-select"
 			value={value}
@@ -46,11 +69,16 @@ const LeagueSelect = ({
 
 			{leagues &&
 				leagues.map((l) => (
-					<MenuItem sx={{ ml: -0.5, minWidth: '6.5rem' }} key={l.id} value={l.leagueCode}>
+					<MenuItem
+						sx={{ ml: compact ? 0 : -0.5, minWidth: menuMinWidth, py: compact ? 0.5 : undefined }}
+						key={l.id}
+						value={l.leagueCode}
+					>
 						<LeagueAvatar
 							leagueCode={l.leagueCode}
-							sx={{ justifyContent: 'start' }}
-							avasx={{ mr: 1 }}
+							height={avatarHeight}
+							sx={{ justifyContent: 'start', mr: compact ? 0.25 : 1, fontSize: compact ? '0.8rem' : undefined }}
+							avasx={{ mr: compact ? 0.25 : 1 }}
 							fullName={fullLeagueNames}
 						/>
 					</MenuItem>

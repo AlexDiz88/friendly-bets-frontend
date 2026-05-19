@@ -11,7 +11,7 @@
 	"language": "Язык",
 	"switchToLightTheme": "Светлая тема",
 	"switchToDarkTheme": "Тёмная тема",
-	"externalMatchResults": "Результаты туров",
+	"externalMatchResults": "Результаты матчей",
 	"externalMatchSyncFromApi": "Загрузить с football-data.org",
 	"externalMatchSyncSuccess": "Результаты тура обновлены",
 	"externalMatchSyncError": "Не удалось загрузить данные",

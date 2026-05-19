@@ -49,6 +49,17 @@ function statusColor(status: string): 'success' | 'warning' | 'default' {
 
 const MATCH_ROW_AVATAR = 26;
 
+const compactFilterSelectSx = {
+	height: 30,
+	fontSize: '0.8rem',
+	'& .MuiSelect-select': {
+		py: 0.25,
+		px: 0.75,
+		minHeight: 'unset !important',
+		lineHeight: 1.2,
+	},
+};
+
 function CompactMatchRow({
 	homeTeam,
 	awayTeam,
@@ -253,21 +264,27 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	return (
 		<Box
 			sx={{
+				flex: 1,
+				display: 'flex',
+				flexDirection: 'column',
+				minHeight: 0,
 				width: '100%',
 				maxWidth: 430,
 				mx: 'auto',
 				px: 0.5,
-				mt: -1,
-				minHeight: 'calc(100vh - 80px)',
+				mt: -1.5,
 			}}
 		>
 			<Box
 				sx={{
+					flexShrink: 0,
 					display: 'flex',
 					flexDirection: 'column',
 					gap: 0.5,
-					mb: 0.5,
-					p: 0.5,
+					mb: 1,
+					px: 0.5,
+					pt: 0.25,
+					pb: 0.5,
 					borderRadius: 2,
 					bgcolor: 'background.paper',
 					boxShadow: 1,
@@ -287,8 +304,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							fontWeight: 700,
 							textAlign: 'center',
 							fontSize: '1rem',
-							lineHeight: 1.25,
-							py: 0.15,
+							lineHeight: 1.2,
 						}}
 					>
 						{t('externalMatchResults')}
@@ -333,7 +349,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						justifyContent: 'center',
 						alignItems: 'center',
 						flexWrap: 'nowrap',
-						gap: 0.5,
+						gap: 0.35,
 					}}
 				>
 					<LeagueSelect
@@ -341,16 +357,17 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						onChange={handleLeagueChange}
 						leagues={footballDataLeagues}
 						withoutAll
+						compact
 					/>
 					<Select
 						size="small"
 						value={matchday}
 						onChange={(e) => setMatchday(Number(e.target.value))}
-						sx={{ minWidth: '3.25rem', fontSize: '0.9rem' }}
+						sx={{ ...compactFilterSelectSx, minWidth: '2.5rem' }}
 						aria-label={t('matchday')}
 					>
 						{Array.from({ length: 38 }, (_, i) => i + 1).map((md) => (
-							<MenuItem key={md} value={md}>
+							<MenuItem key={md} value={md} sx={{ py: 0.5, fontSize: '0.8rem' }}>
 								{md}
 							</MenuItem>
 						))}
@@ -359,11 +376,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						size="small"
 						value={season}
 						onChange={(e) => setSeason(e.target.value)}
-						sx={{ minWidth: '4.25rem', fontSize: '0.9rem' }}
+						sx={{ ...compactFilterSelectSx, minWidth: '3.25rem' }}
 						aria-label={t('season')}
 					>
 						{['2024', '2025', '2026'].map((y) => (
-							<MenuItem key={y} value={y}>
+							<MenuItem key={y} value={y} sx={{ py: 0.5, fontSize: '0.8rem' }}>
 								{y}
 							</MenuItem>
 						))}
@@ -375,10 +392,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						sx={{
 							display: 'flex',
 							flexWrap: 'wrap',
-							gap: 0.5,
+							gap: 0.25,
 							alignItems: 'center',
 							justifyContent: 'center',
-							px: 1,
+							px: 0.5,
 						}}
 					>
 						<Chip
@@ -390,9 +407,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							}
 							color={data.sync.syncStatus === 'COMPLETED' ? 'success' : 'warning'}
 							sx={{
-								height: 25,
-								fontSize: '0.8rem',
-								'& .MuiChip-label': { p: 1 },
+								height: 22,
+								my: 0.5,
+								fontSize: '0.75rem',
+								'& .MuiChip-label': { p: 0.75 },
 							}}
 						/>
 						<Typography variant="caption" color="text.secondary" sx={{ px: 1 }}>
@@ -406,13 +424,17 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			</Box>
 
 			{loading && (
-				<Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+				<Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 					<CircularProgress />
 				</Box>
 			)}
 
 			{!loading && sortedMatches.length === 0 && (
-				<Typography textAlign="center" color="text.secondary" sx={{ py: 3, px: 1 }}>
+				<Typography
+					textAlign="center"
+					color="text.secondary"
+					sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', px: 1 }}
+				>
 					{canSync ? t('externalMatchNoDataHintModerator') : t('externalMatchNoDataHint')}
 				</Typography>
 			)}
@@ -420,10 +442,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			{!loading && sortedMatches.length > 0 && (
 				<Box
 					sx={{
+						flex: 1,
+						minHeight: 0,
+						overflowY: 'auto',
 						borderRadius: 2,
-						overflow: 'hidden',
 						boxShadow: 2,
 						bgcolor: 'background.paper',
+						WebkitOverflowScrolling: 'touch',
 					}}
 				>
 					{sortedMatches.map((match: ExternalMatch, index: number) => {
@@ -445,7 +470,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 								key={match.externalMatchId}
 								sx={{
 									px: 1,
-									py: 0.6,
+									py: 0.45,
 									borderBottom: index < sortedMatches.length - 1 ? 1 : 0,
 									borderColor: 'divider',
 								}}
