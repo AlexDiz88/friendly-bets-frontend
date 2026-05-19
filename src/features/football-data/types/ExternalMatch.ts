@@ -33,4 +33,6 @@ export interface ExternalMatchdayPage {
 export interface FootballDataCompetitionOption {
 	competitionCode: string;
 	leagueCode: string;
+	/** Число туров в регулярном сезоне / групповом этапе (football-data.org). */
+	matchdayCount: number;
 }

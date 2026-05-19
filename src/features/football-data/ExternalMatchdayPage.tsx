@@ -19,7 +19,8 @@ import {
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
-import { getGameScoreView } from '../../components/utils/gameScoreValidation';
+import MatchdayGridSelect from '../../components/selectors/MatchdayGridSelect';
+import { getExternalMatchScoreView } from './externalMatchScoreView';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
@@ -31,20 +32,19 @@ import { teamNameMap } from './gameResults/teamMap';
 import {
 	DEFAULT_FOOTBALL_DATA_SEASON,
 	FOOTBALL_DATA_COMPETITIONS,
+	getMatchdayCountForLeague,
 } from './competitionOptions';
 import { getMatchdayFromCache, syncMatchdayFromApi } from './footballDataApi';
-import { translateMatchStatus } from './matchStatusI18n';
+import {
+	getMatchStatusChipColor,
+	isMatchdayNotStarted,
+	translateMatchStatus,
+} from './matchStatusI18n';
 import { ExternalMatch, ExternalMatchdayPage as MatchdayPageData } from './types/ExternalMatch';
 
 function toDisplayTeam(name: string): Team {
 	const title = teamNameMap[name] ?? name;
 	return { id: `ext-${title}`, title };
-}
-
-function statusColor(status: string): 'success' | 'warning' | 'default' {
-	if (status === 'FINISHED' || status === 'AWARDED') return 'success';
-	if (status === 'IN_PLAY' || status === 'PAUSE' || status === 'HALFTIME') return 'warning';
-	return 'default';
 }
 
 const MATCH_ROW_AVATAR = 26;
@@ -190,6 +190,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		() => leagueCodeToCompetition(selectedLeagueCode),
 		[selectedLeagueCode]
 	);
+	const matchdayCount = useMemo(
+		() => getMatchdayCountForLeague(selectedLeagueCode),
+		[selectedLeagueCode]
+	);
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [syncing, setSyncing] = useState(false);
@@ -228,6 +232,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [footballDataLeagues]);
 
 	useEffect(() => {
+		setMatchday((prev) => Math.min(prev, matchdayCount));
+	}, [matchdayCount]);
+
+	useEffect(() => {
 		loadCache();
 	}, [loadCache]);
 
@@ -261,18 +269,28 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		});
 	}, [data?.matches]);
 
+	const matchdayNotStarted = useMemo(() => isMatchdayNotStarted(sortedMatches), [sortedMatches]);
+
+	const syncChip = useMemo(() => {
+		if (!data?.sync) return null;
+		if (data.sync.syncStatus === 'COMPLETED') {
+			return { label: t('externalMatchSyncCompleted'), color: 'success' as const };
+		}
+		if (matchdayNotStarted) {
+			return { label: t('externalMatchSyncNotStarted'), color: 'default' as const };
+		}
+		return { label: t('externalMatchSyncPolling'), color: 'warning' as const };
+	}, [data?.sync, matchdayNotStarted]);
+
 	return (
 		<Box
 			sx={{
-				flex: 1,
-				display: 'flex',
-				flexDirection: 'column',
-				minHeight: 0,
 				width: '100%',
 				maxWidth: 430,
 				mx: 'auto',
 				px: 0.5,
 				mt: -1.5,
+				pb: 1,
 			}}
 		>
 			<Box
@@ -359,19 +377,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						withoutAll
 						compact
 					/>
-					<Select
-						size="small"
+					<MatchdayGridSelect
 						value={matchday}
-						onChange={(e) => setMatchday(Number(e.target.value))}
-						sx={{ ...compactFilterSelectSx, minWidth: '2.5rem' }}
+						matchdayCount={matchdayCount}
+						onChange={setMatchday}
 						aria-label={t('matchday')}
-					>
-						{Array.from({ length: 38 }, (_, i) => i + 1).map((md) => (
-							<MenuItem key={md} value={md} sx={{ py: 0.5, fontSize: '0.8rem' }}>
-								{md}
-							</MenuItem>
-						))}
-					</Select>
+					/>
 					<Select
 						size="small"
 						value={season}
@@ -387,7 +398,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					</Select>
 				</Box>
 
-				{data?.sync && (
+				{data?.sync && syncChip && (
 					<Box
 						sx={{
 							display: 'flex',
@@ -400,12 +411,8 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					>
 						<Chip
 							size="medium"
-							label={
-								data.sync.syncStatus === 'COMPLETED'
-									? t('externalMatchSyncCompleted')
-									: t('externalMatchSyncPolling')
-							}
-							color={data.sync.syncStatus === 'COMPLETED' ? 'success' : 'warning'}
+							label={syncChip.label}
+							color={syncChip.color}
 							sx={{
 								height: 22,
 								my: 0.5,
@@ -424,17 +431,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			</Box>
 
 			{loading && (
-				<Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+				<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
 					<CircularProgress />
 				</Box>
 			)}
 
 			{!loading && sortedMatches.length === 0 && (
-				<Typography
-					textAlign="center"
-					color="text.secondary"
-					sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', px: 1 }}
-				>
+				<Typography textAlign="center" color="text.secondary" sx={{ py: 3, px: 1 }}>
 					{canSync ? t('externalMatchNoDataHintModerator') : t('externalMatchNoDataHint')}
 				</Typography>
 			)}
@@ -442,20 +445,16 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			{!loading && sortedMatches.length > 0 && (
 				<Box
 					sx={{
-						flex: 1,
-						minHeight: 0,
-						overflowY: 'auto',
 						borderRadius: 2,
 						boxShadow: 2,
 						bgcolor: 'background.paper',
-						WebkitOverflowScrolling: 'touch',
 					}}
 				>
 					{sortedMatches.map((match: ExternalMatch, index: number) => {
 						const homeTeam = toDisplayTeam(match.homeTeamName);
 						const awayTeam = toDisplayTeam(match.awayTeamName);
 						const gameScore: GameScore | null = match.gameScore ?? null;
-						const scoreView = gameScore ? getGameScoreView(gameScore, false) : '—';
+						const scoreView = getExternalMatchScoreView(gameScore, match.status);
 						const matchDate = match.utcDate
 							? new Date(match.utcDate).toLocaleString(undefined, {
 									day: '2-digit',
@@ -494,7 +493,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 									<Chip
 										size="small"
 										label={translateMatchStatus(match.status, t)}
-										color={statusColor(match.status)}
+										color={getMatchStatusChipColor(match.status)}
 										sx={{
 											height: 18,
 											fontSize: '0.58rem',
