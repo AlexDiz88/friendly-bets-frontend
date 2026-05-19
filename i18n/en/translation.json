@@ -9,6 +9,8 @@
 	"rules": "Rules",
 	"bets": "Bets",
 	"language": "Language",
+	"switchToLightTheme": "Light theme",
+	"switchToDarkTheme": "Dark theme",
 	"userSettings": "User settings",
 	"openedBets": "Opened",
 	"completedBets": "Completed",

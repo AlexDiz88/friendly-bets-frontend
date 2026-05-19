@@ -9,6 +9,8 @@
 	"rules": "Regeln",
 	"bets": "Wetten",
 	"language": "Sprache",
+	"switchToLightTheme": "Helles Design",
+	"switchToDarkTheme": "Dunkles Design",
 	"userSettings": "Benutzereinstellungen",
 	"openedBets": "Öffnene",
 	"completedBets": "Fertige",

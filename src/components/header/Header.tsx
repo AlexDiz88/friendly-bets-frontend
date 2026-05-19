@@ -1,12 +1,14 @@
+import { Box } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
-import UserSettings from './UserSettings';
+import Toolbar from '@mui/material/Toolbar';
+import ThemeModeToggle from '../../theme/ThemeModeToggle';
 import MenuPages from './MenuPages';
+import UserSettings from './UserSettings';
 
 export default function Header(): JSX.Element {
 	return (
-		<AppBar position="fixed" sx={{ bgcolor: '#1e3471' }}>
+		<AppBar position="fixed" color="primary" sx={{ bgcolor: 'primary.dark' }}>
 			<Container
 				maxWidth="xl"
 				sx={{
@@ -16,7 +18,10 @@ export default function Header(): JSX.Element {
 			>
 				<Toolbar disableGutters>
 					<MenuPages />
-					<UserSettings />
+					<Box sx={{ display: 'flex', alignItems: 'center' }}>
+						<ThemeModeToggle />
+						<UserSettings />
+					</Box>
 				</Toolbar>
 			</Container>
 		</AppBar>

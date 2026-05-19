@@ -1,26 +1,22 @@
-import { ThemeProvider } from '@mui/material/styles';
 // eslint-disable-next-line import/default
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { store } from './app/store';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { HashRouter } from 'react-router-dom';
+import { store } from './app/store';
 import App from './App';
 import SnackbarProvider from './components/custom/snackbar/SnackbarProvider';
 import './i18n';
 import './index.css';
-import theme from './theme/theme';
+import { ThemeModeProvider } from './theme/ThemeModeContext';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<>
 		<Provider store={store}>
 			<HashRouter>
-				<ThemeProvider theme={theme}>
-					<CssBaseline />
+				<ThemeModeProvider>
 					<App />
 					<SnackbarProvider />
-				</ThemeProvider>
+				</ThemeModeProvider>
 			</HashRouter>
 		</Provider>
 	</>

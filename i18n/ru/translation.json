@@ -9,6 +9,8 @@
 	"rules": "Правила",
 	"bets": "Ставки",
 	"language": "Язык",
+	"switchToLightTheme": "Светлая тема",
+	"switchToDarkTheme": "Тёмная тема",
 	"userSettings": "Настройки пользователя",
 	"openedBets": "Открытые",
 	"completedBets": "Завершенные",

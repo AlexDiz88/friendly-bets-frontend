@@ -6,7 +6,16 @@ export default function Layout(): JSX.Element {
 	return (
 		<>
 			<Header />
-			<Box sx={{ mt: 9, mb: 3, mx: 0.5 }}>
+			<Box
+				sx={{
+					mt: 9,
+					mb: 3,
+					mx: 0.5,
+					minHeight: 'calc(100vh - 72px)',
+					bgcolor: 'background.default',
+					color: 'text.primary',
+				}}
+			>
 				<Outlet />
 			</Box>
 		</>
