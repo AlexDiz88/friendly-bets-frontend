@@ -34,13 +34,17 @@ import {
 	FOOTBALL_DATA_COMPETITIONS,
 	getMatchdayCountForLeague,
 } from './competitionOptions';
-import { getMatchdayFromCache, syncMatchdayFromApi } from './footballDataApi';
+import { getCompetitionInfo, getMatchdayFromCache, syncMatchdayFromApi } from './footballDataApi';
 import {
 	getMatchStatusChipColor,
 	isMatchdayNotStarted,
 	translateMatchStatus,
 } from './matchStatusI18n';
-import { ExternalMatch, ExternalMatchdayPage as MatchdayPageData } from './types/ExternalMatch';
+import {
+	ExternalCompetitionInfo,
+	ExternalMatch,
+	ExternalMatchdayPage as MatchdayPageData,
+} from './types/ExternalMatch';
 
 function toDisplayTeam(name: string): Team {
 	const title = teamNameMap[name] ?? name;
@@ -184,15 +188,17 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		FOOTBALL_DATA_COMPETITIONS[0].leagueCode
 	);
 	const [matchday, setMatchday] = useState(1);
+	const [matchdayTouched, setMatchdayTouched] = useState(false);
 	const [season, setSeason] = useState(DEFAULT_FOOTBALL_DATA_SEASON);
 
 	const competitionCode = useMemo(
 		() => leagueCodeToCompetition(selectedLeagueCode),
 		[selectedLeagueCode]
 	);
+	const [competitionInfo, setCompetitionInfo] = useState<ExternalCompetitionInfo | null>(null);
 	const matchdayCount = useMemo(
-		() => getMatchdayCountForLeague(selectedLeagueCode),
-		[selectedLeagueCode]
+		() => competitionInfo?.matchdayCount ?? getMatchdayCountForLeague(selectedLeagueCode),
+		[competitionInfo, selectedLeagueCode]
 	);
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(false);
@@ -232,6 +238,31 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [footballDataLeagues]);
 
 	useEffect(() => {
+		let cancelled = false;
+		getCompetitionInfo(competitionCode, season)
+			.then((info) => {
+				if (!cancelled) {
+					setCompetitionInfo(info);
+				}
+			})
+			.catch(() => {
+				if (!cancelled) {
+					setCompetitionInfo(null);
+				}
+			});
+		return () => {
+			cancelled = true;
+		};
+	}, [competitionCode, season]);
+
+	useEffect(() => {
+		if (matchdayTouched || !competitionInfo) {
+			return;
+		}
+		setMatchday(competitionInfo.currentMatchday);
+	}, [competitionInfo, matchdayTouched]);
+
+	useEffect(() => {
 		setMatchday((prev) => Math.min(prev, matchdayCount));
 	}, [matchdayCount]);
 
@@ -240,7 +271,18 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [loadCache]);
 
 	const handleLeagueChange = (e: SelectChangeEvent): void => {
+		setMatchdayTouched(false);
 		setSelectedLeagueCode(e.target.value);
+	};
+
+	const handleSeasonChange = (e: SelectChangeEvent): void => {
+		setMatchdayTouched(false);
+		setSeason(e.target.value);
+	};
+
+	const handleMatchdayChange = (md: number): void => {
+		setMatchdayTouched(true);
+		setMatchday(md);
 	};
 
 	const handleSyncFromApi = async (): Promise<void> => {
@@ -380,13 +422,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					<MatchdayGridSelect
 						value={matchday}
 						matchdayCount={matchdayCount}
-						onChange={setMatchday}
+						onChange={handleMatchdayChange}
 						aria-label={t('matchday')}
 					/>
 					<Select
 						size="small"
 						value={season}
-						onChange={(e) => setSeason(e.target.value)}
+						onChange={handleSeasonChange}
 						sx={{ ...compactFilterSelectSx, minWidth: '3.25rem' }}
 						aria-label={t('season')}
 					>
