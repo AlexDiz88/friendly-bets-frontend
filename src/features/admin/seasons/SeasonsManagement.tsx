@@ -12,6 +12,7 @@ import {
 import SeasonInfo from './SeasonInfo';
 import { addSeason, getLeagueCodeList, getSeasonStatusList, getSeasons } from './seasonsSlice';
 import { selectSeasons } from './selectors';
+import { FALLBACK_DEFAULT_BET_SIZE } from '../../bets/betSizeDefaults';
 import Season from './types/Season';
 
 export default function SeasonsManagement(): JSX.Element {
@@ -19,6 +20,7 @@ export default function SeasonsManagement(): JSX.Element {
 	const seasons: Season[] = useAppSelector(selectSeasons);
 	const [seasonTitle, setSeasonTitle] = useState<string>('');
 	const [seasonBetCount, setSeasonBetCount] = useState<string>('');
+	const [seasonBetSize, setSeasonBetSize] = useState<string>(String(FALLBACK_DEFAULT_BET_SIZE));
 	const [showCreateSeason, setShowCreateSeason] = useState(false);
 	const [showAllSeasons, setShowAllSeasons] = useState(false);
 
@@ -29,6 +31,7 @@ export default function SeasonsManagement(): JSX.Element {
 				addSeason({
 					title: seasonTitle,
 					betCountPerMatchDay: Number(seasonBetCount),
+					defaultBetSize: Number(seasonBetSize),
 				})
 			);
 
@@ -36,6 +39,7 @@ export default function SeasonsManagement(): JSX.Element {
 				dispatch(showSuccessSnackbar({ message: t('seasonWasSuccessfullyCreated') }));
 				setSeasonTitle('');
 				setSeasonBetCount('');
+				setSeasonBetSize(String(FALLBACK_DEFAULT_BET_SIZE));
 				setShowCreateSeason(false);
 				setShowAllSeasons(true);
 				dispatch(getSeasons());
@@ -44,7 +48,7 @@ export default function SeasonsManagement(): JSX.Element {
 				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 			}
 		},
-		[seasonBetCount, seasonTitle]
+		[seasonBetCount, seasonBetSize, seasonTitle]
 	);
 
 	const handleShowAllSeasons = (): void => {
@@ -70,6 +74,10 @@ export default function SeasonsManagement(): JSX.Element {
 		setSeasonBetCount(event.target.value);
 	};
 
+	const handleSeasonBetSizeChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+		setSeasonBetSize(event.target.value);
+	};
+
 	return (
 		<Box sx={{ margin: '0 auto', textAlign: 'center', width: '20rem', borderBottom: 2 }}>
 			<Box sx={{ fontSize: 22, fontWeight: 600, my: 1.5 }}>{t('SeasonsManagement')}</Box>
@@ -93,15 +101,27 @@ export default function SeasonsManagement(): JSX.Element {
 								onChange={handleSeasonTitleChange}
 							/>
 						</Box>
-						<Box sx={{ mb: 2, maxWidth: '11.5rem' }}>
+						<Box sx={{ mb: 2, display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
 							<TextField
 								required
 								type="number"
 								id="season-bets-count"
 								label={t('BetsCountPerMatchday')}
 								size="small"
+								sx={{ maxWidth: '11.5rem', mb: 0.5 }}
 								value={seasonBetCount}
 								onChange={handleSeasonBetCountChange}
+							/>
+							<TextField
+								required
+								type="number"
+								id="season-bet-size"
+								label={t('DefaultBetSizePerMatchday')}
+								size="small"
+								sx={{ maxWidth: '11.5rem' }}
+								value={seasonBetSize}
+								onChange={handleSeasonBetSizeChange}
+								inputProps={{ min: 1 }}
 							/>
 						</Box>
 						<Box sx={{ mb: 2 }}>

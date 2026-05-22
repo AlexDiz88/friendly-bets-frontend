@@ -16,14 +16,25 @@ export const dbUpdate = createAsyncThunk('seasons/dbUpdate', async () => api.dbU
 
 export const addSeason = createAsyncThunk(
 	'seasons/addSeason',
-	async ({ title, betCountPerMatchDay }: { title: string; betCountPerMatchDay: number }) => {
+	async ({
+		title,
+		betCountPerMatchDay,
+		defaultBetSize,
+	}: {
+		title: string;
+		betCountPerMatchDay: number;
+		defaultBetSize: number;
+	}) => {
 		if (!title.trim()) {
 			throw new Error('Название сезона не должно быть пустым');
 		}
 		if (betCountPerMatchDay && betCountPerMatchDay <= 0) {
 			throw new Error('Количество ставок на игровой день должно быть больше 0');
 		}
-		return api.addSeason(title, betCountPerMatchDay);
+		if (defaultBetSize && defaultBetSize <= 0) {
+			throw new Error('Размер ставки должен быть больше 0');
+		}
+		return api.addSeason(title, betCountPerMatchDay, defaultBetSize);
 	}
 );
 

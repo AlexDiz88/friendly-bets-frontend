@@ -151,6 +151,8 @@
 	"leaguesList": "Ligenliste",
 	"SeasonName": "Name der Saison",
 	"BetsCountPerMatchday": "Wetten pro Spieltag",
+	"DefaultBetSizePerMatchday": "Standard-Einsatz",
+	"maxBetSizePerMatchday": "Einsatz",
 	"SeasonsManagement": "Saisonverwaltung",
 	"showAllSeasons": "Alle Saisons anzeigen",
 	"hide": "Verbergen",

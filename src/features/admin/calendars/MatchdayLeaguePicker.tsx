@@ -1,13 +1,16 @@
 import { AddCircle, DoDisturbOn, RemoveCircle } from '@mui/icons-material';
 import { Avatar, Box, IconButton, Switch, Typography } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
 import CustomLeagueButton from '../../../components/custom/btn/CustomLeagueButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import CustomErrorMessage from '../../../components/custom/CustomErrorMessage';
 import { pathToLogoImage } from '../../../components/utils/imgBase64Converter';
 import { MATCHDAY_TITLE_FINAL } from '../../../constants';
+import {
+	suggestedBetSizeForCalendarMatchday,
+} from '../../bets/betSizeDefaults';
 import MatchDayForm from '../../bets/MatchDayForm';
 import League from '../leagues/types/League';
 import LeagueMatchdayNode from './types/LeagueMatchdayNode';
@@ -17,6 +20,7 @@ interface MatchdayLeaguePickerProps {
 	setLeagueMatchdayNodes: (leagueMatchdayNodes: LeagueMatchdayNode[]) => void;
 	leagueMatchdayNodes: LeagueMatchdayNode[];
 	defaultSeasonBetLimit: number;
+	defaultSeasonBetSize: number;
 }
 
 const MatchdayLeaguePicker = ({
@@ -24,8 +28,8 @@ const MatchdayLeaguePicker = ({
 	setLeagueMatchdayNodes,
 	leagueMatchdayNodes,
 	defaultSeasonBetLimit,
+	defaultSeasonBetSize,
 }: MatchdayLeaguePickerProps): JSX.Element => {
-	const hiddenButtonRef = useRef<HTMLButtonElement>(null);
 	const [selectedLeague, setSelectedLeague] = useState<League | undefined>(undefined);
 	const [showLeagues, setShowLeagues] = useState<boolean>(true);
 	const [showMatchDayForm, setShowMatchDayForm] = useState<boolean>(false);
@@ -33,6 +37,33 @@ const MatchdayLeaguePicker = ({
 	const [matchDay, setMatchDay] = useState<string>('1');
 	const [betLimit, setBetLimit] = useState<number>(defaultSeasonBetLimit);
 	const [isLimitEnabled, setIsLimitEnabled] = useState(false);
+	const [betSizeLimit, setBetSizeLimit] = useState<number>(
+		suggestedBetSizeForCalendarMatchday(defaultSeasonBetSize, '1')
+	);
+	const [isBetSizeLimitEnabled, setIsBetSizeLimitEnabled] = useState(false);
+
+	const resolveBetCountLimit = (): number => {
+		if (!isLimitEnabled) {
+			return defaultSeasonBetLimit;
+		}
+		return betLimit > 0 ? betLimit : defaultSeasonBetLimit;
+	};
+
+	const resolveDefaultBetSize = (): number => {
+		if (!isBetSizeLimitEnabled) {
+			return suggestedBetSizeForCalendarMatchday(defaultSeasonBetSize, matchDay);
+		}
+		return betSizeLimit > 0
+			? betSizeLimit
+			: suggestedBetSizeForCalendarMatchday(defaultSeasonBetSize, matchDay);
+	};
+
+	const resetBetLimitForm = (): void => {
+		setBetLimit(defaultSeasonBetLimit);
+		setIsLimitEnabled(false);
+		setBetSizeLimit(suggestedBetSizeForCalendarMatchday(defaultSeasonBetSize, matchDay));
+		setIsBetSizeLimitEnabled(false);
+	};
 
 	const handleAddLeague = (): void => {
 		if (selectedLeague) {
@@ -49,7 +80,8 @@ const MatchdayLeaguePicker = ({
 				leagueId: selectedLeague.id,
 				leagueCode: selectedLeague.leagueCode,
 				matchDay,
-				betCountLimit: betLimit,
+				betCountLimit: resolveBetCountLimit(),
+				defaultBetSize: resolveDefaultBetSize(),
 				bets: [],
 			};
 
@@ -67,7 +99,9 @@ const MatchdayLeaguePicker = ({
 		setSelectedLeague(league);
 		setShowLeagues(false);
 		setShowMatchDayForm(true);
+		setShowAddLeagueError(false);
 		setMatchDay(league.currentMatchDay);
+		resetBetLimitForm();
 	};
 
 	const handleCancelLeaguePick = (): void => {
@@ -76,11 +110,14 @@ const MatchdayLeaguePicker = ({
 		setShowMatchDayForm(false);
 		setShowAddLeagueError(false);
 		setMatchDay('1');
-		setBetLimit(0);
+		resetBetLimitForm();
 	};
 
 	const handleMatchDay = (title: string): void => {
 		setMatchDay(title);
+		if (!isBetSizeLimitEnabled) {
+			setBetSizeLimit(suggestedBetSizeForCalendarMatchday(defaultSeasonBetSize, title));
+		}
 	};
 
 	const handleRemoveLeagueMatchdayNode = (leagueMatchdayNode: LeagueMatchdayNode): void => {
@@ -97,12 +134,20 @@ const MatchdayLeaguePicker = ({
 	};
 
 	useEffect(() => {
-		setTimeout(() => {
-			if (hiddenButtonRef.current) {
-				hiddenButtonRef.current.focus();
-			}
-		}, 0);
-	}, [selectedLeague]);
+		if (!isLimitEnabled) {
+			setBetLimit(defaultSeasonBetLimit);
+		}
+	}, [defaultSeasonBetLimit, isLimitEnabled]);
+
+	useEffect(() => {
+		if (!isBetSizeLimitEnabled) {
+			setBetSizeLimit(suggestedBetSizeForCalendarMatchday(defaultSeasonBetSize, matchDay));
+		}
+	}, [defaultSeasonBetSize, isBetSizeLimitEnabled, matchDay]);
+
+	const displayedBetSize = isBetSizeLimitEnabled
+		? betSizeLimit
+		: suggestedBetSizeForCalendarMatchday(defaultSeasonBetSize, matchDay);
 
 	return (
 		<Box>
@@ -131,7 +176,13 @@ const MatchdayLeaguePicker = ({
 					>
 						<Switch
 							checked={isLimitEnabled}
-							onChange={(e) => setIsLimitEnabled(e.target.checked)}
+							onChange={(e) => {
+								const checked = e.target.checked;
+								setIsLimitEnabled(checked);
+								if (checked && betLimit < 1) {
+									setBetLimit(defaultSeasonBetLimit);
+								}
+							}}
 							color="secondary"
 						/>
 						<Box
@@ -146,9 +197,48 @@ const MatchdayLeaguePicker = ({
 									<RemoveCircle color="secondary" sx={{ fontSize: '1.75rem', m: 0, p: 0 }} />
 								</IconButton>
 							)}
-							<Typography sx={{ fontWeight: 600, mx: 0.15 }}>{betLimit}</Typography>
+							<Typography sx={{ fontWeight: 600, mx: 0.15 }}>
+								{isLimitEnabled ? betLimit : defaultSeasonBetLimit}
+							</Typography>
 							{isLimitEnabled && (
 								<IconButton sx={{ p: 0, m: 0 }} onClick={() => setBetLimit((prev) => prev + 1)}>
+									<AddCircle color="secondary" sx={{ fontSize: '1.75rem', m: 0, p: 0 }} />
+								</IconButton>
+							)}
+						</Box>
+						<Switch
+							checked={isBetSizeLimitEnabled}
+							onChange={(e) => {
+								const checked = e.target.checked;
+								setIsBetSizeLimitEnabled(checked);
+								if (checked && betSizeLimit < 1) {
+									setBetSizeLimit(
+										suggestedBetSizeForCalendarMatchday(defaultSeasonBetSize, matchDay)
+									);
+								}
+							}}
+							color="secondary"
+						/>
+						<Box
+							sx={{ display: 'flex', alignItems: 'center', justifyContent: 'right', height: 20 }}
+						>
+							<Typography sx={{ mr: 0.5, fontWeight: 600 }}>
+								{t('maxBetSizePerMatchday')}:
+							</Typography>
+							{isBetSizeLimitEnabled && (
+								<IconButton
+									sx={{ p: 0, m: 0 }}
+									onClick={() => setBetSizeLimit((prev) => Math.max(1, prev - 1))}
+								>
+									<RemoveCircle color="secondary" sx={{ fontSize: '1.75rem', m: 0, p: 0 }} />
+								</IconButton>
+							)}
+							<Typography sx={{ fontWeight: 600, mx: 0.15 }}>{displayedBetSize}</Typography>
+							{isBetSizeLimitEnabled && (
+								<IconButton
+									sx={{ p: 0, m: 0 }}
+									onClick={() => setBetSizeLimit((prev) => prev + 1)}
+								>
 									<AddCircle color="secondary" sx={{ fontSize: '1.75rem', m: 0, p: 0 }} />
 								</IconButton>
 							)}
@@ -190,20 +280,26 @@ const MatchdayLeaguePicker = ({
 								borderRadius: 2,
 							}}
 						>
-							<Box sx={{ display: 'flex', alignItems: 'center' }}>
-								<Avatar
-									variant="square"
-									sx={{ width: 27, height: 27 }}
-									alt="league_logo"
-									src={pathToLogoImage(lmn.leagueCode)}
-								/>
-								<Typography
-									sx={{ mx: 0.5, fontWeight: 600, fontFamily: "'Exo 2'", color: '#123456' }}
-								>
-									{t(`leagueFullName.${lmn.leagueCode}`)} -{' '}
-									{lmn.matchDay === MATCHDAY_TITLE_FINAL
-										? t(`playoffRound.${lmn.matchDay}`)
-										: lmn.matchDay}
+							<Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+								<Box sx={{ display: 'flex', alignItems: 'center' }}>
+									<Avatar
+										variant="square"
+										sx={{ width: 27, height: 27 }}
+										alt="league_logo"
+										src={pathToLogoImage(lmn.leagueCode)}
+									/>
+									<Typography
+										sx={{ mx: 0.5, fontWeight: 600, fontFamily: "'Exo 2'", color: '#123456' }}
+									>
+										{t(`leagueFullName.${lmn.leagueCode}`)} -{' '}
+										{lmn.matchDay === MATCHDAY_TITLE_FINAL
+											? t(`playoffRound.${lmn.matchDay}`)
+											: lmn.matchDay}
+									</Typography>
+								</Box>
+								<Typography sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
+									{t('maxBetsPerMatchday')}: {lmn.betCountLimit}, {t('amount')}:{' '}
+									{lmn.defaultBetSize}
 								</Typography>
 							</Box>
 							{leagueMatchdayNodes.length === index + 1 && (
@@ -217,12 +313,6 @@ const MatchdayLeaguePicker = ({
 						</Box>
 					))}
 			</Box>
-			{/* <Box aria-hidden="true">
-				<Button
-					ref={hiddenButtonRef}
-					style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
-				/>
-			</Box> */}
 		</Box>
 	);
 };

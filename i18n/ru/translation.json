@@ -151,6 +151,8 @@
 	"leaguesList": "Список лиг",
 	"SeasonName": "Название сезона",
 	"BetsCountPerMatchday": "Ставок на тур",
+	"DefaultBetSizePerMatchday": "Размер ставки (по умолчанию)",
+	"maxBetSizePerMatchday": "Размер ставки",
 	"SeasonsManagement": "Управление сезонами",
 	"showAllSeasons": "Показать все сезоны",
 	"hide": "Скрыть",

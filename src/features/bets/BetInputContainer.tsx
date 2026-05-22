@@ -1,7 +1,7 @@
 import { Dangerous } from '@mui/icons-material';
 import { Box, Checkbox, IconButton, Switch, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomBetInputDialog from '../../components/custom/dialog/CustomBetInputDialog';
@@ -20,6 +20,12 @@ import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
+import {
+	FALLBACK_DEFAULT_BET_SIZE,
+	findLeagueMatchdayInCalendars,
+	resolveBetSizeForBetInput,
+	resolveSeasonDefaultBetSize,
+} from './betSizeDefaults';
 import BetInputLeague from './BetInputLeague';
 import BetInputOdds from './BetInputOdds';
 import BetInputPlayer from './BetInputPlayer';
@@ -41,7 +47,9 @@ export default function BetInputContainer(): JSX.Element {
 	const [matchDay, setMatchDay] = useState<string>('1');
 	const [selectedHomeTeam, setSelectedHomeTeam] = useState<Team | undefined>(undefined);
 	const [selectedAwayTeam, setSelectedAwayTeam] = useState<Team | undefined>(undefined);
-	const [selectedEmptyBetSize, setSelectedEmptyBetSize] = useState<string>('10');
+	const [selectedEmptyBetSize, setSelectedEmptyBetSize] = useState<string>(
+		String(resolveSeasonDefaultBetSize(season ?? undefined))
+	);
 	const [resetTeams, setResetTeams] = useState(false);
 	const [isEmptyBet, setIsEmptyBet] = useState(false);
 	const [selectedBetTitle, setSelectedBetTitle] = useState<BetTitle>();
@@ -161,6 +169,7 @@ export default function BetInputContainer(): JSX.Element {
 	const handleLeagueSelection = (league: League): void => {
 		setSelectedLeague(league);
 		setSelectedLeagueId(league.id);
+		setMatchDay(league.currentMatchDay || '1');
 		setSelectedHomeTeam(undefined);
 		setSelectedAwayTeam(undefined);
 		setSelectedBetTitle(undefined);
@@ -231,22 +240,43 @@ export default function BetInputContainer(): JSX.Element {
 		setOpenDialogTwoEmptyBet(false);
 	};
 
-	useEffect(() => {
-		const res = calendarNodes.find((c) =>
-			c.leagueMatchdayNodes.some((n) => {
-				if (n.leagueCode === selectedLeague?.leagueCode) {
-					return n.matchDay === matchDay;
-				}
-			})
-		);
-		setCalendar(res);
-	}, [selectedLeague, matchDay]);
+	const calendarMatch = useMemo(
+		() =>
+			findLeagueMatchdayInCalendars(
+				calendarNodes,
+				selectedLeague?.leagueCode,
+				matchDay
+			),
+		[calendarNodes, selectedLeague?.leagueCode, matchDay]
+	);
 
 	useEffect(() => {
-		if (season) {
-			dispatch(getAllSeasonCalendarNodes(season?.id));
+		setCalendar(calendarMatch?.calendar);
+	}, [calendarMatch]);
+
+	const resolvedDefaultBetSize = useMemo(() => {
+		if (!season) {
+			return String(FALLBACK_DEFAULT_BET_SIZE);
 		}
-	}, [season]);
+		return String(
+			resolveBetSizeForBetInput(
+				resolveSeasonDefaultBetSize(season),
+				matchDay,
+				calendarMatch?.node
+			)
+		);
+	}, [season, calendarMatch, matchDay]);
+
+	useEffect(() => {
+		setSelectedEmptyBetSize(resolvedDefaultBetSize);
+		setSelectedBetSize(resolvedDefaultBetSize);
+	}, [resolvedDefaultBetSize]);
+
+	useEffect(() => {
+		if (season?.id) {
+			dispatch(getAllSeasonCalendarNodes(season.id));
+		}
+	}, [dispatch, season?.id]);
 
 	useEffect(() => {
 		if (!season) {
@@ -339,7 +369,12 @@ export default function BetInputContainer(): JSX.Element {
 							{t('not')}
 						</Box>
 					)}
-					{selectedBetTitle && <BetInputOdds onOddsSelect={handleOddsSelection} />}
+					{selectedBetTitle && (
+						<BetInputOdds
+							defaultBetSize={selectedBetSize || resolvedDefaultBetSize}
+							onOddsSelect={handleOddsSelection}
+						/>
+					)}
 					{showSendButton && selectedBetOdds && selectedBetSize && (
 						<CustomButton
 							sx={{ mt: 3, height: '3rem', px: 6 }}

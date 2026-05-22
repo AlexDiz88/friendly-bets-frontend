@@ -16,14 +16,18 @@ export async function dbUpdate(): Promise<{ seasons: Season[] }> {
 	return result.json();
 }
 
-export async function addSeason(title: string, betCountPerMatchDay: number): Promise<Season> {
+export async function addSeason(
+	title: string,
+	betCountPerMatchDay: number,
+	defaultBetSize: number
+): Promise<Season> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons';
 	}
 	const result = await apiFetch(`${url}`, {
 		method: 'POST',
-		body: JSON.stringify({ title, betCountPerMatchDay }),
+		body: JSON.stringify({ title, betCountPerMatchDay, defaultBetSize }),
 		headers: {
 			'Content-Type': 'application/json',
 		},

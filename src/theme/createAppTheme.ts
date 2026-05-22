@@ -20,7 +20,7 @@ function getComponentOverrides(mode: AppThemeMode): ThemeOptions['components'] {
 						border: '1px solid white',
 						'&.Mui-expanded': {
 							margin: 0,
-							backgroundColor: '#dd701e',
+							backgroundColor: '#9c27b0',
 						},
 					},
 				},
@@ -180,7 +180,9 @@ function getPalette(mode: AppThemeMode): ThemeOptions['palette'] {
 				light: '#6b8fd4',
 			},
 			secondary: {
-				main: '#dd701e',
+				main: '#9c27b0',
+				dark: '#7b1fa2',
+				light: '#ba68c8',
 			},
 			background: {
 				default: '#f4f5f8',
@@ -198,6 +200,8 @@ function getPalette(mode: AppThemeMode): ThemeOptions['palette'] {
 		},
 		secondary: {
 			main: '#dd701e',
+			dark: '#b85a18',
+			light: '#e89a4a',
 		},
 		background: {
 			default: '#12141c',

@@ -151,6 +151,8 @@
 	"leaguesList": "Leagues list",
 	"SeasonName": "Season name",
 	"BetsCountPerMatchday": "Bets per matchday",
+	"DefaultBetSizePerMatchday": "Default bet size",
+	"maxBetSizePerMatchday": "Bet size",
 	"SeasonsManagement": "Seasons management",
 	"showAllSeasons": "Show all seasons",
 	"hide": "Hide",

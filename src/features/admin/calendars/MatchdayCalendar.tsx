@@ -16,6 +16,7 @@ import CalendarsList from './CalendarsList';
 import { createCalendarNode } from './calendarsSlice';
 import DateRangePicker from './DateRangePicker';
 import MatchdayCalendarSaveDialog from './MatchdayCalendarSaveDialog';
+import { resolveSeasonDefaultBetSize } from '../../bets/betSizeDefaults';
 import MatchdayLeaguePicker from './MatchdayLeaguePicker';
 import LeagueMatchdayNode from './types/LeagueMatchdayNode';
 import NewCalendar from './types/NewCalendar';
@@ -111,6 +112,7 @@ const MatchdayCalendar = (): JSX.Element => {
 						leagueMatchdayNodes={leagueMatchdayNodes}
 						setLeagueMatchdayNodes={setLeagueMatchdayNodes}
 						defaultSeasonBetLimit={activeSeason.betCountPerMatchDay}
+						defaultSeasonBetSize={resolveSeasonDefaultBetSize(activeSeason)}
 					/>
 					<MatchdayCalendarSaveDialog
 						leagueMatchdayNodes={leagueMatchdayNodes}

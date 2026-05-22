@@ -5,6 +5,7 @@ export default interface Season {
 	id: string;
 	title: string;
 	betCountPerMatchDay: number;
+	defaultBetSize: number;
 	status: string;
 	players: User[];
 	leagues: League[];
