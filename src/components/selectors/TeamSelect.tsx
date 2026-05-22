@@ -39,6 +39,23 @@ const TeamSelect = ({ label, value, onChange, teams }: TeamSelectProps): JSX.Ele
 		requestAnimationFrame(blurActiveElement);
 	};
 
+	const handleClose = (): void => {
+		setOpen(false);
+		requestAnimationFrame(blurActiveElement);
+	};
+
+	const selectSx = {
+		minWidth: '15rem',
+		mb: 1,
+		'& .MuiOutlinedInput-notchedOutline': {
+			borderColor: 'rgba(0, 0, 0, 0.23)',
+		},
+		'&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+			borderWidth: '1px',
+			borderColor: open ? 'primary.main' : 'rgba(0, 0, 0, 0.23)',
+		},
+	};
+
 	return (
 		<Box sx={{ textAlign: 'left' }}>
 			<Typography sx={{ mx: 1, fontWeight: '600' }}>{t(label)}</Typography>
@@ -47,8 +64,8 @@ const TeamSelect = ({ label, value, onChange, teams }: TeamSelectProps): JSX.Ele
 				size="small"
 				open={open}
 				onOpen={() => setOpen(true)}
-				onClose={() => setOpen(false)}
-				sx={{ minWidth: '15rem', mb: 1 }}
+				onClose={handleClose}
+				sx={selectSx}
 				labelId={`${label}-label`}
 				id={`${label}-select`}
 				value={value}

@@ -6,7 +6,9 @@ import {
 	Box,
 	Button,
 	Typography,
+	useTheme,
 } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 import { t } from 'i18next';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -16,7 +18,110 @@ import betTitleGroups from './betTitleGroups';
 import { selectBetTitleCodeLabelMap } from './selectors';
 import { BetTitleGroup } from './types/BetTitleGroup';
 
-const ACCORDION_TRANSITION = { unmountOnExit: true, timeout: 120 };
+const BET_TITLE_PANEL_WIDTH = '20rem';
+const GROUP_SUMMARY_HEIGHT = 48;
+const NESTED_SUMMARY_HEIGHT = 44;
+
+/** Без анимации высоты — только контент появляется/исчезает, заголовки не двигаются */
+const ACCORDION_TRANSITION = { unmountOnExit: true, timeout: 0 };
+
+type BetTitleAccordionPalette = {
+	groupBg: string;
+	nestedBg: string;
+	text: string;
+	detailsBg: string;
+};
+
+const getBetTitleAccordionPalette = (mode: 'light' | 'dark'): BetTitleAccordionPalette => {
+	if (mode === 'light') {
+		return {
+			groupBg: '#2a4a8a',
+			nestedBg: '#4d72c7',
+			text: '#ffffff',
+			detailsBg: '#e0dfe4',
+		};
+	}
+	return {
+		groupBg: '#2a4a8a',
+		nestedBg: '#2d6a6e',
+		text: '#f5f5f5',
+		detailsBg: '#2d3142',
+	};
+};
+
+const createBetTitleAccordionSx = (headerBg: string): SxProps<Theme> => ({
+	width: '100%',
+	boxShadow: 'none',
+	backgroundImage: 'none',
+	color: '#fff',
+	backgroundColor: headerBg,
+	'&:before': { display: 'none' },
+	'&.Mui-expanded': {
+		margin: 0,
+		backgroundColor: headerBg,
+	},
+	'& .MuiCollapse-root': {
+		transition: 'none !important',
+	},
+});
+
+const createGroupSummarySx = (palette: BetTitleAccordionPalette): SxProps<Theme> => ({
+	flexShrink: 0,
+	minHeight: GROUP_SUMMARY_HEIGHT,
+	height: GROUP_SUMMARY_HEIGHT,
+	maxHeight: GROUP_SUMMARY_HEIGHT,
+	px: 1.5,
+	boxSizing: 'border-box',
+	bgcolor: palette.groupBg,
+	color: palette.text,
+	'&.Mui-expanded': {
+		minHeight: GROUP_SUMMARY_HEIGHT,
+		height: GROUP_SUMMARY_HEIGHT,
+		maxHeight: GROUP_SUMMARY_HEIGHT,
+		bgcolor: palette.groupBg,
+	},
+	'& .MuiAccordionSummary-content': {
+		my: 0,
+		'&.Mui-expanded': { my: 0 },
+	},
+	'& .MuiAccordionSummary-expandIconWrapper': {
+		color: 'inherit',
+	},
+});
+
+const createNestedSummarySx = (palette: BetTitleAccordionPalette): SxProps<Theme> => ({
+	flexShrink: 0,
+	minHeight: NESTED_SUMMARY_HEIGHT,
+	height: NESTED_SUMMARY_HEIGHT,
+	maxHeight: NESTED_SUMMARY_HEIGHT,
+	px: 1.5,
+	boxSizing: 'border-box',
+	bgcolor: palette.nestedBg,
+	color: palette.text,
+	'&.Mui-expanded': {
+		minHeight: NESTED_SUMMARY_HEIGHT,
+		height: NESTED_SUMMARY_HEIGHT,
+		maxHeight: NESTED_SUMMARY_HEIGHT,
+		bgcolor: palette.nestedBg,
+	},
+	'& .MuiAccordionSummary-content': {
+		my: 0,
+		'&.Mui-expanded': { my: 0 },
+	},
+	'& .MuiAccordionSummary-expandIconWrapper': {
+		color: 'inherit',
+	},
+});
+
+const createBetTitleDetailsSx = (palette: BetTitleAccordionPalette): SxProps<Theme> => ({
+	px: 0.5,
+	py: 0.5,
+	boxSizing: 'border-box',
+	width: '100%',
+	display: 'block',
+	bgcolor: palette.detailsBg,
+	color: palette.detailsBg === '#e0dfe4' ? 'text.primary' : palette.text,
+});
 
 type ResolvedSubgroup = { title: string; codes: number[] };
 type ResolvedGroup = { title: string; codes: number[]; subgroups?: ResolvedSubgroup[] };
@@ -38,7 +143,12 @@ const BetTitleCodeButtons = memo(function BetTitleCodeButtons({
 	onSelect: (code: number, label: string) => void;
 }): JSX.Element {
 	return (
-		<Box display="flex" flexWrap="wrap" justifyContent="center">
+		<Box
+			display="flex"
+			flexWrap="wrap"
+			justifyContent="center"
+			sx={{ width: '100%', boxSizing: 'border-box' }}
+		>
 			{codes.map((code) => {
 				const label = labels?.[code] ?? String(code);
 				return (
@@ -66,12 +176,14 @@ const NestedBetTitleAccordion = memo(function NestedBetTitleAccordion({
 	onChange,
 	labels,
 	onSelect,
+	palette,
 }: {
 	subgroup: ResolvedSubgroup;
 	expanded: boolean;
 	onChange: (title: string) => (_: React.SyntheticEvent, isExpanded: boolean) => void;
 	labels: Record<number, string> | undefined;
 	onSelect: (code: number, label: string) => void;
+	palette: BetTitleAccordionPalette;
 }): JSX.Element | null {
 	if (subgroup.codes.length === 0) {
 		return null;
@@ -80,18 +192,23 @@ const NestedBetTitleAccordion = memo(function NestedBetTitleAccordion({
 	return (
 		<Accordion
 			disableGutters
+			elevation={0}
+			square
+			sx={createBetTitleAccordionSx(palette.nestedBg)}
 			TransitionProps={ACCORDION_TRANSITION}
 			expanded={expanded}
 			onChange={onChange(subgroup.title)}
 		>
-			<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-				<Typography variant="body2">{subgroup.title}</Typography>
+			<AccordionSummary expandIcon={<ExpandMoreIcon />} sx={createNestedSummarySx(palette)}>
+				<Typography variant="body2" noWrap>
+					{subgroup.title}
+				</Typography>
 			</AccordionSummary>
-			{expanded && (
-				<AccordionDetails sx={{ py: 0.5 }}>
+			<AccordionDetails sx={createBetTitleDetailsSx(palette)}>
+				{expanded ? (
 					<BetTitleCodeButtons codes={subgroup.codes} labels={labels} onSelect={onSelect} />
-				</AccordionDetails>
-			)}
+				) : null}
+			</AccordionDetails>
 		</Accordion>
 	);
 });
@@ -104,6 +221,7 @@ const BetTitleGroupAccordion = memo(function BetTitleGroupAccordion({
 	onNestedChange,
 	labels,
 	onSelect,
+	palette,
 }: {
 	group: ResolvedGroup;
 	expanded: boolean;
@@ -112,6 +230,7 @@ const BetTitleGroupAccordion = memo(function BetTitleGroupAccordion({
 	onNestedChange: (title: string) => (_: React.SyntheticEvent, isExpanded: boolean) => void;
 	labels: Record<number, string> | undefined;
 	onSelect: (code: number, label: string) => void;
+	palette: BetTitleAccordionPalette;
 }): JSX.Element {
 	const hasContent =
 		group.codes.length > 0 || (group.subgroups?.some((s) => s.codes.length > 0) ?? false);
@@ -123,19 +242,22 @@ const BetTitleGroupAccordion = memo(function BetTitleGroupAccordion({
 	return (
 		<Accordion
 			disableGutters
+			elevation={0}
+			square
+			sx={createBetTitleAccordionSx(palette.groupBg)}
 			TransitionProps={ACCORDION_TRANSITION}
 			expanded={expanded}
 			onChange={onGroupChange(group.title)}
 		>
-			<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-				<Typography>{group.title}</Typography>
+			<AccordionSummary expandIcon={<ExpandMoreIcon />} sx={createGroupSummarySx(palette)}>
+				<Typography noWrap>{group.title}</Typography>
 			</AccordionSummary>
-			{expanded && (
-				<AccordionDetails sx={{ py: 0.5 }}>
-					{group.codes.length > 0 && (
-						<BetTitleCodeButtons codes={group.codes} labels={labels} onSelect={onSelect} />
-					)}
-					{group.subgroups?.map((sub) => (
+			<AccordionDetails sx={createBetTitleDetailsSx(palette)}>
+				{expanded && group.codes.length > 0 && (
+					<BetTitleCodeButtons codes={group.codes} labels={labels} onSelect={onSelect} />
+				)}
+				{expanded &&
+					group.subgroups?.map((sub) => (
 						<NestedBetTitleAccordion
 							key={sub.title}
 							subgroup={sub}
@@ -143,10 +265,10 @@ const BetTitleGroupAccordion = memo(function BetTitleGroupAccordion({
 							onChange={onNestedChange}
 							labels={labels}
 							onSelect={onSelect}
+							palette={palette}
 						/>
 					))}
-				</AccordionDetails>
-			)}
+			</AccordionDetails>
 		</Accordion>
 	);
 });
@@ -178,8 +300,13 @@ export default function BetInputTitle({
 }: {
 	onBetTitleSelect: (code: number, label: string) => void;
 }): JSX.Element {
+	const theme = useTheme();
 	const dispatch = useAppDispatch();
 	const betTitleCodeLabelMap = useAppSelector(selectBetTitleCodeLabelMap);
+	const accordionPalette = useMemo(
+		() => getBetTitleAccordionPalette(theme.palette.mode),
+		[theme.palette.mode]
+	);
 	const [expandedAccordion, setExpandedAccordion] = useState<string | false>(false);
 	const [expandedNestedAccordion, setExpandedNestedAccordion] = useState<string | false>(false);
 
@@ -217,24 +344,37 @@ export default function BetInputTitle({
 
 	return (
 		<Box
-			sx={{ textAlign: 'center', maxWidth: '20rem', position: 'relative', zIndex: 1 }}
+			sx={{
+				mt: 2,
+				textAlign: 'center',
+				width: BET_TITLE_PANEL_WIDTH,
+				minWidth: BET_TITLE_PANEL_WIDTH,
+				maxWidth: BET_TITLE_PANEL_WIDTH,
+				boxSizing: 'border-box',
+				scrollbarGutter: 'stable',
+				position: 'relative',
+				zIndex: 1,
+			}}
 			onPointerDownCapture={handlePointerDownCapture}
 		>
 			<Typography sx={{ textAlign: 'left', mx: 1, mt: 1, fontWeight: '600' }}>
 				{t('bet')}
 			</Typography>
-			{resolvedGroups.map((group) => (
-				<BetTitleGroupAccordion
-					key={group.title}
-					group={group}
-					expanded={expandedAccordion === group.title}
-					nestedExpanded={expandedNestedAccordion}
-					onGroupChange={handleAccordionChange}
-					onNestedChange={handleNestedAccordionChange}
-					labels={betTitleCodeLabelMap}
-					onSelect={onBetTitleSelect}
-				/>
-			))}
+			<Box sx={{ width: '100%', boxSizing: 'border-box' }}>
+				{resolvedGroups.map((group) => (
+					<BetTitleGroupAccordion
+						key={group.title}
+						group={group}
+						expanded={expandedAccordion === group.title}
+						nestedExpanded={expandedNestedAccordion}
+						onGroupChange={handleAccordionChange}
+						onNestedChange={handleNestedAccordionChange}
+						labels={betTitleCodeLabelMap}
+						onSelect={onBetTitleSelect}
+						palette={accordionPalette}
+					/>
+				))}
+			</Box>
 		</Box>
 	);
 }

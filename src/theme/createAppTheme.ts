@@ -15,12 +15,12 @@ function getComponentOverrides(mode: AppThemeMode): ThemeOptions['components'] {
 			MuiAccordion: {
 				styleOverrides: {
 					root: {
-						backgroundColor: '#446bc4',
+						backgroundColor: '#2a4a8a',
 						color: 'white',
 						border: '1px solid white',
 						'&.Mui-expanded': {
 							margin: 0,
-							backgroundColor: '#9c27b0',
+							backgroundColor: '#2a4a8a',
 						},
 					},
 				},
@@ -32,7 +32,7 @@ function getComponentOverrides(mode: AppThemeMode): ThemeOptions['components'] {
 						color: 'black',
 						padding: 0,
 						'& .MuiAccordion-root': {
-							backgroundColor: '#38868b',
+							backgroundColor: '#4d72c7',
 							color: 'white',
 						},
 						'&.Mui-expanded': {
