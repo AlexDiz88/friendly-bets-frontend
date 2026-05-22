@@ -5,6 +5,7 @@ export default interface League {
 	leagueCode: string;
 	name: string;
 	currentMatchDay: string;
+	tournamentFormatId?: string;
 	teams: Team[];
 }
 

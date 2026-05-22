@@ -37,9 +37,18 @@ export interface FootballDataCompetitionOption {
 	matchdayCount: number;
 }
 
+export interface ExternalMatchdaySlot {
+	value: number;
+	slotId?: string;
+	label: string;
+	kind: 'REGULAR' | 'KNOCKOUT';
+}
+
 export interface ExternalCompetitionInfo {
 	competitionCode: string;
 	season: string;
+	leagueId?: string;
 	currentMatchday: number;
 	matchdayCount: number;
+	matchdaySlots?: ExternalMatchdaySlot[];
 }

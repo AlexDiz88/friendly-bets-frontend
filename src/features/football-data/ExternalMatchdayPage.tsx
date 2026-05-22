@@ -30,11 +30,19 @@ import { selectUser } from '../auth/selectors';
 import GameScore from '../bets/types/GameScore';
 import { teamNameMap } from './gameResults/teamMap';
 import {
+	buildMatchdaySlotsForLeague,
 	DEFAULT_FOOTBALL_DATA_SEASON,
 	FOOTBALL_DATA_COMPETITIONS,
-	getMatchdayCountForLeague,
+	externalSlotsToMatchdaySlots,
+	MatchdaySlot,
 } from './competitionOptions';
-import { getCompetitionInfo, getMatchdayFromCache, syncMatchdayFromApi } from './footballDataApi';
+import League from '../admin/leagues/types/League';
+import {
+	getCompetitionInfo,
+	getLeagueExternalCompetitionInfo,
+	getMatchdayFromCache,
+	syncMatchdayFromApi,
+} from './footballDataApi';
 import {
 	getMatchStatusChipColor,
 	isMatchdayNotStarted,
@@ -185,7 +193,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	);
 
 	const [selectedLeagueCode, setSelectedLeagueCode] = useState(
-		FOOTBALL_DATA_COMPETITIONS[0].leagueCode
+		footballDataLeagues[0]?.leagueCode ?? FOOTBALL_DATA_COMPETITIONS[0].leagueCode
+	);
+
+	const selectedLeague: League | undefined = useMemo(
+		() => footballDataLeagues.find((l) => l.leagueCode === selectedLeagueCode),
+		[footballDataLeagues, selectedLeagueCode]
 	);
 	const [matchday, setMatchday] = useState(1);
 	const [matchdayTouched, setMatchdayTouched] = useState(false);
@@ -196,10 +209,14 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		[selectedLeagueCode]
 	);
 	const [competitionInfo, setCompetitionInfo] = useState<ExternalCompetitionInfo | null>(null);
-	const matchdayCount = useMemo(
-		() => competitionInfo?.matchdayCount ?? getMatchdayCountForLeague(selectedLeagueCode),
-		[competitionInfo, selectedLeagueCode]
-	);
+	const matchdaySlots = useMemo((): MatchdaySlot[] => {
+		if (competitionInfo?.matchdaySlots && competitionInfo.matchdaySlots.length > 0) {
+			return externalSlotsToMatchdaySlots(competitionInfo.matchdaySlots);
+		}
+		return buildMatchdaySlotsForLeague(selectedLeagueCode);
+	}, [competitionInfo?.matchdaySlots, selectedLeagueCode]);
+
+	const matchdayCount = matchdaySlots.length;
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [syncing, setSyncing] = useState(false);
@@ -239,21 +256,24 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	useEffect(() => {
 		let cancelled = false;
-		getCompetitionInfo(competitionCode, season)
-			.then((info) => {
-				if (!cancelled) {
-					setCompetitionInfo(info);
+		const loadInfo = async (): Promise<void> => {
+			try {
+				if (selectedLeague?.id && selectedLeague.tournamentFormatId) {
+					const info = await getLeagueExternalCompetitionInfo(selectedLeague.id, season);
+					if (!cancelled) setCompetitionInfo(info);
+					return;
 				}
-			})
-			.catch(() => {
-				if (!cancelled) {
-					setCompetitionInfo(null);
-				}
-			});
+				const info = await getCompetitionInfo(competitionCode, season);
+				if (!cancelled) setCompetitionInfo(info);
+			} catch {
+				if (!cancelled) setCompetitionInfo(null);
+			}
+		};
+		loadInfo();
 		return () => {
 			cancelled = true;
 		};
-	}, [competitionCode, season]);
+	}, [competitionCode, season, selectedLeague?.id, selectedLeague?.tournamentFormatId]);
 
 	useEffect(() => {
 		if (matchdayTouched || !competitionInfo) {
@@ -288,7 +308,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const handleSyncFromApi = async (): Promise<void> => {
 		setSyncing(true);
 		try {
-			const page = await syncMatchdayFromApi(competitionCode, matchday, season);
+			const page = await syncMatchdayFromApi(
+				competitionCode,
+				matchday,
+				season,
+				selectedLeague?.id
+			);
 			setData(page);
 			dispatch(showSuccessSnackbar({ message: t('externalMatchSyncSuccess') }));
 		} catch (error) {
@@ -422,6 +447,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					<MatchdayGridSelect
 						value={matchday}
 						matchdayCount={matchdayCount}
+						slots={matchdaySlots}
 						onChange={handleMatchdayChange}
 						aria-label={t('matchday')}
 					/>

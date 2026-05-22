@@ -6,6 +6,8 @@ import DatabaseUpdate from '../../components/DatabaseUpdate';
 import StatsRecalculating from '../stats/StatsRecalculating';
 import SeasonsManagement from './seasons/SeasonsManagement';
 import TeamsManagement from './teams/TeamsManagement';
+import LeagueFormatAssignment from './leagues/LeagueFormatAssignment';
+import TournamentFormatsManagement from './tournament-formats/TournamentFormatsManagement';
 import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 
 export default function AdminCabinet(): JSX.Element {
@@ -25,6 +27,8 @@ export default function AdminCabinet(): JSX.Element {
 					<Typography sx={{ borderBottom: 1, pb: 1 }}>Admin Panel</Typography>
 
 					<SeasonsManagement />
+					<TournamentFormatsManagement />
+					<LeagueFormatAssignment />
 					<TeamsManagement />
 					<StatsRecalculating startLoading={handleStartLoading} stopLoading={handleStopLoading} />
 					<DatabaseUpdate startLoading={handleStartLoading} stopLoading={handleStopLoading} />

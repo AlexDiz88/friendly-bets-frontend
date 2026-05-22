@@ -77,11 +77,19 @@ export const registrationInSeason = createAsyncThunk(
 
 export const addLeagueToSeason = createAsyncThunk(
 	'seasons/addLeagueToSeason',
-	async ({ seasonId, leagueCode }: { seasonId: string; leagueCode: string }) => {
+	async ({
+		seasonId,
+		leagueCode,
+		tournamentFormatId,
+	}: {
+		seasonId: string;
+		leagueCode: string;
+		tournamentFormatId?: string;
+	}) => {
 		if (!leagueCode.trim()) {
 			throw new Error('Название лиги не должно быть пустым');
 		}
-		return api.addLeagueToSeason(seasonId, leagueCode);
+		return api.addLeagueToSeason(seasonId, leagueCode, tournamentFormatId?.trim() || undefined);
 	}
 );
 

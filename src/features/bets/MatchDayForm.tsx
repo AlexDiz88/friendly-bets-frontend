@@ -22,7 +22,7 @@ const getMatchday = (title: string): string => {
 	return index !== -1 ? title.substring(0, index).trim() : title;
 };
 
-const getPlayoffRound = (title: string): string => {
+const getPlayoffLeg = (title: string): string => {
 	const index = title.indexOf('[');
 	return index !== -1 ? title[index + 1] : '';
 };
@@ -36,10 +36,10 @@ export default function MatchDayForm({
 }): JSX.Element {
 	const [updatedIsPlayoff, setUpdatedIsPlayoff] = useState<boolean>(getIsPlayoff(matchDay));
 	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(getMatchday(matchDay));
-	const [updatedPlayoffRound, setUpdatedPlayoffRound] = useState<string>(getPlayoffRound(matchDay));
+	const [updatedPlayoffLeg, setUpdatedPlayoffLeg] = useState<string>(getPlayoffLeg(matchDay));
 
 	const playoffMatchDayList: string[] = ['1/16', '1/8', '1/4', '1/2', MATCHDAY_TITLE_FINAL];
-	const playoffRoundsList: string[] = ['', '1', '2', '3', '4'];
+	const playoffLegsList: string[] = ['', '1', '2', '3', '4'];
 
 	const championsLeaguePlayoffMappings: Record<string, string> = {
 		'9': '1/16',
@@ -53,7 +53,7 @@ export default function MatchDayForm({
 		'17': MATCHDAY_TITLE_FINAL,
 	};
 
-	const championsLeaguePlayoffRoundMappings: Record<string, string> = {
+	const championsLeaguePlayoffLegMappings: Record<string, string> = {
 		'9': '1',
 		'10': '2',
 		'11': '1',
@@ -67,11 +67,11 @@ export default function MatchDayForm({
 
 	useEffect(() => {
 		let res = updatedMatchDay;
-		if (updatedIsPlayoff && updatedPlayoffRound !== '') {
-			res = updatedMatchDay + ' [' + updatedPlayoffRound + ']';
+		if (updatedIsPlayoff && updatedPlayoffLeg !== '') {
+			res = updatedMatchDay + ' [' + updatedPlayoffLeg + ']';
 		}
 		onMatchDay(res);
-	}, [updatedIsPlayoff, updatedMatchDay, updatedPlayoffRound]);
+	}, [updatedIsPlayoff, updatedMatchDay, updatedPlayoffLeg]);
 
 	const handleIncrement = (): void => {
 		setUpdatedMatchDay((prevValue) => {
@@ -98,13 +98,13 @@ export default function MatchDayForm({
 
 	const handleMatchDaySelect = (e: SelectChangeEvent): void => {
 		if (e.target.value === MATCHDAY_TITLE_FINAL) {
-			setUpdatedPlayoffRound('');
+			setUpdatedPlayoffLeg('');
 		}
 		setUpdatedMatchDay(e.target.value);
 	};
 
-	const handlePlayoffRoundSelect = (e: SelectChangeEvent): void => {
-		setUpdatedPlayoffRound(e.target.value);
+	const handlePlayoffLegSelect = (e: SelectChangeEvent): void => {
+		setUpdatedPlayoffLeg(e.target.value);
 	};
 
 	const handleIsPlayoffBet = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -117,12 +117,12 @@ export default function MatchDayForm({
 			? '1'
 			: matchDay;
 
-		const playoffRoundValue = flag
-			? championsLeaguePlayoffRoundMappings[updatedMatchDay] || ''
-			: getPlayoffRound(matchDay);
+		const playoffLegValue = flag
+			? championsLeaguePlayoffLegMappings[updatedMatchDay] || ''
+			: getPlayoffLeg(matchDay);
 
 		setUpdatedMatchDay(matchDayTransform);
-		setUpdatedPlayoffRound(playoffRoundValue);
+		setUpdatedPlayoffLeg(playoffLegValue);
 	};
 
 	return (
@@ -178,7 +178,7 @@ export default function MatchDayForm({
 							<MenuItem key={value} sx={{ ml: -0.5, minWidth: '6rem' }} value={value}>
 								<Box style={{ display: 'flex', alignItems: 'center' }}>
 									<Typography sx={{ mx: 1, fontSize: '1rem' }}>
-										{t(`playoffRound.${value}`)}
+										{t(`playoffStage.${value}`)}
 									</Typography>
 								</Box>
 							</MenuItem>
@@ -189,12 +189,12 @@ export default function MatchDayForm({
 						autoWidth
 						size="small"
 						sx={{ minWidth: '4rem', mt: 1.5, mb: 0.6 }}
-						labelId="playoff-round-label"
-						id="playoff-round-select"
-						value={updatedPlayoffRound}
-						onChange={handlePlayoffRoundSelect}
+						labelId="playoff-leg-label"
+						id="playoff-leg-select"
+						value={updatedPlayoffLeg}
+						onChange={handlePlayoffLegSelect}
 					>
-						{playoffRoundsList.map((value) => (
+						{playoffLegsList.map((value) => (
 							<MenuItem key={value} sx={{ ml: -0.5, minWidth: '6rem' }} value={value}>
 								<Box style={{ display: 'flex', alignItems: 'center' }}>
 									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{value}</Typography>

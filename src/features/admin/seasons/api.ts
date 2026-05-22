@@ -170,16 +170,22 @@ export async function registrationInSeason(seasonId: string): Promise<Season> {
 //   return result.json();
 // }
 
-export async function addLeagueToSeason(seasonId: string, leagueCode: string): Promise<Season> {
+export async function addLeagueToSeason(
+	seasonId: string,
+	leagueCode: string,
+	tournamentFormatId?: string
+): Promise<Season> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER || ''}/api/seasons/${seasonId}/leagues`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/seasons/${seasonId}/leagues`;
 	}
+	const body: { leagueCode: string; tournamentFormatId?: string } = { leagueCode };
+	if (tournamentFormatId) {
+		body.tournamentFormatId = tournamentFormatId;
+	}
 	const result = await apiFetch(`${url}`, {
 		method: 'POST',
-		body: JSON.stringify({
-			leagueCode,
-		}),
+		body: JSON.stringify(body),
 		headers: {
 			'Content-Type': 'application/json',
 		},

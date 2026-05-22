@@ -8,12 +8,14 @@ const CustomSuccessButton = ({
 	buttonText = t('btnText.accept'),
 	sx,
 	textSize = '0.9rem',
+	disabled = false,
 }: {
 	onClick(event: React.MouseEvent<HTMLButtonElement>): void;
 	buttonVariant?: 'text' | 'contained' | 'outlined';
 	buttonText?: string;
 	sx?: {};
 	textSize?: string;
+	disabled?: boolean;
 }): JSX.Element => {
 	return (
 		<Button
@@ -21,6 +23,7 @@ const CustomSuccessButton = ({
 			variant={buttonVariant}
 			color="success"
 			onClick={onClick}
+			disabled={disabled}
 		>
 			<Typography variant="button" fontWeight="600" fontSize={textSize} fontFamily="Shantell Sans">
 				{buttonText}

@@ -19,7 +19,7 @@ const getEnglishOrdinalSuffix = (num: number): string => {
 
 const matchDayTitleViewTransform = (title: string, currentLanguage: string): string => {
 	if (title === MATCHDAY_TITLE_FINAL) {
-		return t(`playoffRound.final`);
+		return t(`playoffStage.final`);
 	}
 
 	if (title.startsWith('1/')) {

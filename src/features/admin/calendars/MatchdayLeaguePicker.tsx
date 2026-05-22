@@ -293,7 +293,7 @@ const MatchdayLeaguePicker = ({
 									>
 										{t(`leagueFullName.${lmn.leagueCode}`)} -{' '}
 										{lmn.matchDay === MATCHDAY_TITLE_FINAL
-											? t(`playoffRound.${lmn.matchDay}`)
+											? t(`playoffStage.${lmn.matchDay}`)
 											: lmn.matchDay}
 									</Typography>
 								</Box>

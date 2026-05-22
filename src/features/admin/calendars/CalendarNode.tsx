@@ -55,7 +55,7 @@ const CalendarNode = ({
 												}}
 											>
 												{node.matchDay === MATCHDAY_TITLE_FINAL
-													? t(`playoffRound.${node.matchDay}`)
+													? t(`playoffStage.${node.matchDay}`)
 													: node.matchDay}
 											</Typography>
 										</Box>

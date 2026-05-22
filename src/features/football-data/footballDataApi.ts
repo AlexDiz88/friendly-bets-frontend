@@ -42,13 +42,32 @@ export async function getMatchdayFromCache(
 	return result.json();
 }
 
+export async function getLeagueExternalCompetitionInfo(
+	leagueId: string,
+	season: string
+): Promise<ExternalCompetitionInfo> {
+	const params = new URLSearchParams({ season });
+	const result = await apiFetch(
+		apiUrl(`/api/leagues/${leagueId}/external-competition-info?${params}`)
+	);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 /** Принудительная загрузка тура с football-data.org и сохранение в БД. */
 export async function syncMatchdayFromApi(
 	competitionCode: string,
 	matchday: number,
-	season: string
+	season: string,
+	leagueId?: string
 ): Promise<ExternalMatchdayPage> {
 	const params = new URLSearchParams({ season });
+	if (leagueId) {
+		params.set('leagueId', leagueId);
+	}
 	const syncResult = await apiFetch(
 		apiUrl(`/api/football-data/competitions/${competitionCode}/matchdays/${matchday}/sync?${params}`),
 		{ method: 'POST' }
