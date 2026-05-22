@@ -186,6 +186,12 @@ export default function BetInputContainer(): JSX.Element {
 
 	const handleAwayTeamSelection = (awayTeam: Team): void => {
 		setSelectedAwayTeam(awayTeam);
+		requestAnimationFrame(() => {
+			const active = document.activeElement;
+			if (active instanceof HTMLElement) {
+				active.blur();
+			}
+		});
 	};
 
 	const handleBetCancel = (): void => {
