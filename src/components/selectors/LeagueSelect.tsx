@@ -35,11 +35,14 @@ const LeagueSelect = ({
 }: LeagueSelectProps): JSX.Element => {
 	const avatarHeight = compact ? 23: 27;
 	const menuMinWidth = compact ? '5.5rem' : '6.5rem';
+	const leagueCodes = leagues?.map((l) => l.leagueCode) ?? [];
+	const safeValue = leagueCodes.includes(value) ? value : '';
 
 	return (
 		<Select
 			autoWidth
 			size="small"
+			displayEmpty={withoutAll}
 			sx={{
 				minWidth: fullLeagueNames ? '15rem' : compact ? '6rem' : '7rem',
 				maxWidth: compact ? '6rem' : undefined,
@@ -47,7 +50,7 @@ const LeagueSelect = ({
 			}}
 			labelId="league-label"
 			id="league-select"
-			value={value}
+			value={safeValue}
 			onChange={onChange}
 		>
 			{!withoutAll && (

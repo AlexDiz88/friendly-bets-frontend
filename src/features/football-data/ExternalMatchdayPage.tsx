@@ -1,3 +1,5 @@
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
 	Avatar,
@@ -31,7 +33,6 @@ import GameScore from '../bets/types/GameScore';
 import { teamNameMap } from './gameResults/teamMap';
 import {
 	buildMatchdaySlotsForLeague,
-	DEFAULT_FOOTBALL_DATA_SEASON,
 	FOOTBALL_DATA_COMPETITIONS,
 	externalSlotsToMatchdaySlots,
 	MatchdaySlot,
@@ -49,6 +50,10 @@ import {
 	translateMatchStatus,
 } from './matchStatusI18n';
 import {
+	resolveDefaultExternalSeason,
+	resolveExternalSeasonYearOptions,
+} from './seasonExternalYear';
+import {
 	ExternalCompetitionInfo,
 	ExternalMatch,
 	ExternalMatchdayPage as MatchdayPageData,
@@ -61,14 +66,17 @@ function toDisplayTeam(name: string): Team {
 
 const MATCH_ROW_AVATAR = 26;
 
-const compactFilterSelectSx = {
-	height: 30,
-	fontSize: '0.8rem',
+const seasonSelectSx = {
+	height: 24,
+	fontSize: '0.72rem',
 	'& .MuiSelect-select': {
-		py: 0.25,
-		px: 0.75,
+		py: 0,
+		px: 0.5,
 		minHeight: 'unset !important',
 		lineHeight: 1.2,
+	},
+	'& .MuiOutlinedInput-notchedOutline': {
+		borderWidth: 1,
 	},
 };
 
@@ -202,7 +210,20 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	);
 	const [matchday, setMatchday] = useState(1);
 	const [matchdayTouched, setMatchdayTouched] = useState(false);
-	const [season, setSeason] = useState(DEFAULT_FOOTBALL_DATA_SEASON);
+	const [season, setSeason] = useState('');
+	const [seasonTouched, setSeasonTouched] = useState(false);
+
+	const externalSeasonYearOptions = useMemo(
+		() => resolveExternalSeasonYearOptions(activeSeason),
+		[activeSeason]
+	);
+
+	const effectiveSeason = useMemo(() => {
+		if (season && externalSeasonYearOptions.includes(season)) {
+			return season;
+		}
+		return resolveDefaultExternalSeason(activeSeason);
+	}, [season, externalSeasonYearOptions, activeSeason]);
 
 	const competitionCode = useMemo(
 		() => leagueCodeToCompetition(selectedLeagueCode),
@@ -217,6 +238,28 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [competitionInfo?.matchdaySlots, selectedLeagueCode]);
 
 	const matchdayCount = matchdaySlots.length;
+
+	const effectiveLeagueCode = useMemo(() => {
+		if (footballDataLeagues.length === 0) {
+			return '';
+		}
+		if (footballDataLeagues.some((l) => l.leagueCode === selectedLeagueCode)) {
+			return selectedLeagueCode;
+		}
+		return footballDataLeagues[0].leagueCode;
+	}, [footballDataLeagues, selectedLeagueCode]);
+
+	const effectiveMatchday = useMemo(() => {
+		if (matchdaySlots.length === 0) {
+			return 1;
+		}
+		const values = matchdaySlots.map((s) => s.value);
+		if (values.includes(matchday)) {
+			return matchday;
+		}
+		return values[values.length - 1];
+	}, [matchday, matchdaySlots]);
+
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [syncing, setSyncing] = useState(false);
@@ -224,7 +267,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const loadCache = useCallback(async () => {
 		setLoading(true);
 		try {
-			const page = await getMatchdayFromCache(competitionCode, matchday, season);
+			const page = await getMatchdayFromCache(competitionCode, effectiveMatchday, effectiveSeason);
 			setData(page);
 		} catch (error) {
 			setData(null);
@@ -236,13 +279,20 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		} finally {
 			setLoading(false);
 		}
-	}, [competitionCode, matchday, season, dispatch]);
+	}, [competitionCode, effectiveMatchday, season, dispatch]);
 
 	useEffect(() => {
 		if (!activeSeason) {
 			dispatch(getActiveSeason());
 		}
 	}, [activeSeason, dispatch]);
+
+	useEffect(() => {
+		if (seasonTouched) {
+			return;
+		}
+		setSeason(resolveDefaultExternalSeason(activeSeason));
+	}, [activeSeason, seasonTouched]);
 
 	useEffect(() => {
 		if (footballDataLeagues.length > 0) {
@@ -259,11 +309,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		const loadInfo = async (): Promise<void> => {
 			try {
 				if (selectedLeague?.id && selectedLeague.tournamentFormatId) {
-					const info = await getLeagueExternalCompetitionInfo(selectedLeague.id, season);
+					const info = await getLeagueExternalCompetitionInfo(selectedLeague.id, effectiveSeason);
 					if (!cancelled) setCompetitionInfo(info);
 					return;
 				}
-				const info = await getCompetitionInfo(competitionCode, season);
+				const info = await getCompetitionInfo(competitionCode, effectiveSeason);
 				if (!cancelled) setCompetitionInfo(info);
 			} catch {
 				if (!cancelled) setCompetitionInfo(null);
@@ -273,7 +323,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return () => {
 			cancelled = true;
 		};
-	}, [competitionCode, season, selectedLeague?.id, selectedLeague?.tournamentFormatId]);
+	}, [competitionCode, effectiveSeason, selectedLeague?.id, selectedLeague?.tournamentFormatId]);
 
 	useEffect(() => {
 		if (matchdayTouched || !competitionInfo) {
@@ -283,8 +333,16 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [competitionInfo, matchdayTouched]);
 
 	useEffect(() => {
-		setMatchday((prev) => Math.min(prev, matchdayCount));
-	}, [matchdayCount]);
+		if (effectiveLeagueCode && effectiveLeagueCode !== selectedLeagueCode) {
+			setSelectedLeagueCode(effectiveLeagueCode);
+		}
+	}, [effectiveLeagueCode, selectedLeagueCode]);
+
+	useEffect(() => {
+		if (effectiveMatchday !== matchday) {
+			setMatchday(effectiveMatchday);
+		}
+	}, [effectiveMatchday, matchday]);
 
 	useEffect(() => {
 		loadCache();
@@ -292,12 +350,17 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const handleLeagueChange = (e: SelectChangeEvent): void => {
 		setMatchdayTouched(false);
+		setCompetitionInfo(null);
 		setSelectedLeagueCode(e.target.value);
+		setMatchday(1);
 	};
 
 	const handleSeasonChange = (e: SelectChangeEvent): void => {
+		setSeasonTouched(true);
 		setMatchdayTouched(false);
+		setCompetitionInfo(null);
 		setSeason(e.target.value);
+		setMatchday(1);
 	};
 
 	const handleMatchdayChange = (md: number): void => {
@@ -310,7 +373,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		try {
 			const page = await syncMatchdayFromApi(
 				competitionCode,
-				matchday,
+				effectiveMatchday,
 				season,
 				selectedLeague?.id
 			);
@@ -349,6 +412,26 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return { label: t('externalMatchSyncPolling'), color: 'warning' as const };
 	}, [data?.sync, matchdayNotStarted]);
 
+	const currentSlotIndex = useMemo(
+		() => matchdaySlots.findIndex((s) => s.value === effectiveMatchday),
+		[matchdaySlots, effectiveMatchday]
+	);
+	const canGoPrevMatchday = currentSlotIndex > 0;
+	const canGoNextMatchday =
+		currentSlotIndex >= 0 && currentSlotIndex < matchdaySlots.length - 1;
+
+	const goPrevMatchday = (): void => {
+		if (!canGoPrevMatchday) return;
+		setMatchdayTouched(true);
+		setMatchday(matchdaySlots[currentSlotIndex - 1].value);
+	};
+
+	const goNextMatchday = (): void => {
+		if (!canGoNextMatchday) return;
+		setMatchdayTouched(true);
+		setMatchday(matchdaySlots[currentSlotIndex + 1].value);
+	};
+
 	return (
 		<Box
 			sx={{
@@ -356,7 +439,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				maxWidth: 430,
 				mx: 'auto',
 				px: 0.5,
-				mt: -1.5,
+				mt: { xs: -1.5, md: 0 },
 				pb: 1,
 			}}
 		>
@@ -377,26 +460,57 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			>
 				<Box
 					sx={{
-						display: 'grid',
-						gridTemplateColumns: '2rem 1fr 2rem',
+						position: 'relative',
+						display: 'flex',
 						alignItems: 'center',
-						columnGap: 0.5,
+						justifyContent: 'center',
+						minHeight: 28,
+						px: 0.25,
 					}}
 				>
-					<Box aria-hidden />
+					<Select
+						size="small"
+						value={effectiveSeason}
+						onChange={handleSeasonChange}
+						sx={{
+							...seasonSelectSx,
+							position: 'absolute',
+							left: 0,
+							top: '50%',
+							transform: 'translateY(-50%)',
+							minWidth: '2.85rem',
+						}}
+						aria-label={t('externalApiSeasonYear')}
+					>
+						{externalSeasonYearOptions.map((y) => (
+							<MenuItem key={y} value={y} sx={{ py: 0.35, fontSize: '0.75rem' }}>
+								{y}
+							</MenuItem>
+						))}
+					</Select>
 					<Typography
 						sx={{
 							fontWeight: 700,
 							textAlign: 'center',
 							fontSize: '1rem',
 							lineHeight: 1.2,
+							px: 4.5,
 						}}
 					>
 						{t('externalMatchResults')}
 					</Typography>
 					{canSync ? (
 						<Tooltip title={t('externalMatchSyncFromApi')}>
-							<Box component="span" sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+							<Box
+								component="span"
+								sx={{
+									position: 'absolute',
+									right: 0,
+									top: '50%',
+									transform: 'translateY(-50%)',
+									display: 'flex',
+								}}
+							>
 								<IconButton
 									size="small"
 									disabled={syncing || loading}
@@ -423,47 +537,81 @@ export default function ExternalMatchdayPage(): JSX.Element {
 								</IconButton>
 							</Box>
 						</Tooltip>
-					) : (
-						<Box aria-hidden />
-					)}
+					) : null}
 				</Box>
 
 				<Box
 					sx={{
 						display: 'flex',
-						justifyContent: 'center',
 						alignItems: 'center',
+						justifyContent: 'center',
+						gap: 2,
 						flexWrap: 'nowrap',
-						gap: 0.35,
 					}}
 				>
-					<LeagueSelect
-						value={selectedLeagueCode}
-						onChange={handleLeagueChange}
-						leagues={footballDataLeagues}
-						withoutAll
-						compact
-					/>
-					<MatchdayGridSelect
-						value={matchday}
-						matchdayCount={matchdayCount}
-						slots={matchdaySlots}
-						onChange={handleMatchdayChange}
-						aria-label={t('matchday')}
-					/>
-					<Select
-						size="small"
-						value={season}
-						onChange={handleSeasonChange}
-						sx={{ ...compactFilterSelectSx, minWidth: '3.25rem' }}
-						aria-label={t('season')}
+					<Box sx={{ flex: '1 1 auto', display: 'flex', justifyContent: 'flex-end', minWidth: 0 }}>
+						<LeagueSelect
+							value={effectiveLeagueCode}
+							onChange={handleLeagueChange}
+							leagues={footballDataLeagues}
+							withoutAll
+							compact
+						/>
+					</Box>
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: 0.25,
+							flex: '1 1 auto',
+							justifyContent: 'flex-start',
+							minWidth: 0,
+						}}
 					>
-						{['2024', '2025', '2026'].map((y) => (
-							<MenuItem key={y} value={y} sx={{ py: 0.5, fontSize: '0.8rem' }}>
-								{y}
-							</MenuItem>
-						))}
-					</Select>
+						<Tooltip title={t('previousMatchday')}>
+							<span>
+								<IconButton
+									disabled={!canGoPrevMatchday}
+									onClick={goPrevMatchday}
+									aria-label={t('previousMatchday')}
+									sx={{
+										width: 40,
+										height: 40,
+										flexShrink: 0,
+										borderColor: 'divider',
+										borderRadius: 1,
+									}}
+								>
+									<ChevronLeftIcon sx={{ fontSize: 28 }} />
+								</IconButton>
+							</span>
+						</Tooltip>
+						<MatchdayGridSelect
+							value={effectiveMatchday}
+							matchdayCount={matchdayCount}
+							slots={matchdaySlots}
+							onChange={handleMatchdayChange}
+							aria-label={t('matchday')}
+						/>
+						<Tooltip title={t('nextMatchday')}>
+							<span>
+								<IconButton
+									disabled={!canGoNextMatchday}
+									onClick={goNextMatchday}
+									aria-label={t('nextMatchday')}
+									sx={{
+										width: 40,
+										height: 40,
+										flexShrink: 0,
+										borderColor: 'divider',
+										borderRadius: 1,
+									}}
+								>
+									<ChevronRightIcon sx={{ fontSize: 28 }} />
+								</IconButton>
+							</span>
+						</Tooltip>
+					</Box>
 				</Box>
 
 				{data?.sync && syncChip && (

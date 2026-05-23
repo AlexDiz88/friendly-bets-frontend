@@ -19,7 +19,9 @@ export async function dbUpdate(): Promise<{ seasons: Season[] }> {
 export async function addSeason(
 	title: string,
 	betCountPerMatchDay: number,
-	defaultBetSize: number
+	defaultBetSize: number,
+	startDate: string,
+	endDate: string
 ): Promise<Season> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
@@ -27,7 +29,7 @@ export async function addSeason(
 	}
 	const result = await apiFetch(`${url}`, {
 		method: 'POST',
-		body: JSON.stringify({ title, betCountPerMatchDay, defaultBetSize }),
+		body: JSON.stringify({ title, betCountPerMatchDay, defaultBetSize, startDate, endDate }),
 		headers: {
 			'Content-Type': 'application/json',
 		},

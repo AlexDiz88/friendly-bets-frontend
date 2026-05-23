@@ -21,6 +21,8 @@ export default function SeasonsManagement(): JSX.Element {
 	const [seasonTitle, setSeasonTitle] = useState<string>('');
 	const [seasonBetCount, setSeasonBetCount] = useState<string>('');
 	const [seasonBetSize, setSeasonBetSize] = useState<string>(String(FALLBACK_DEFAULT_BET_SIZE));
+	const [seasonStartDate, setSeasonStartDate] = useState('');
+	const [seasonEndDate, setSeasonEndDate] = useState('');
 	const [showCreateSeason, setShowCreateSeason] = useState(false);
 	const [showAllSeasons, setShowAllSeasons] = useState(false);
 
@@ -32,6 +34,8 @@ export default function SeasonsManagement(): JSX.Element {
 					title: seasonTitle,
 					betCountPerMatchDay: Number(seasonBetCount),
 					defaultBetSize: Number(seasonBetSize),
+					startDate: seasonStartDate,
+					endDate: seasonEndDate,
 				})
 			);
 
@@ -40,6 +44,8 @@ export default function SeasonsManagement(): JSX.Element {
 				setSeasonTitle('');
 				setSeasonBetCount('');
 				setSeasonBetSize(String(FALLBACK_DEFAULT_BET_SIZE));
+				setSeasonStartDate('');
+				setSeasonEndDate('');
 				setShowCreateSeason(false);
 				setShowAllSeasons(true);
 				dispatch(getSeasons());
@@ -48,7 +54,7 @@ export default function SeasonsManagement(): JSX.Element {
 				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 			}
 		},
-		[seasonBetCount, seasonBetSize, seasonTitle]
+		[seasonBetCount, seasonBetSize, seasonTitle, seasonStartDate, seasonEndDate, dispatch]
 	);
 
 	const handleShowAllSeasons = (): void => {
@@ -124,9 +130,37 @@ export default function SeasonsManagement(): JSX.Element {
 								inputProps={{ min: 1 }}
 							/>
 						</Box>
+						<Box sx={{ mb: 1.5, display: 'flex', flexDirection: 'column', gap: 1 }}>
+							<TextField
+								required
+								type="date"
+								id="season-start-date"
+								label={t('seasonStartDate')}
+								size="small"
+								value={seasonStartDate}
+								onChange={(e) => setSeasonStartDate(e.target.value)}
+								InputLabelProps={{ shrink: true }}
+								inputProps={{ max: seasonEndDate || undefined }}
+							/>
+							<TextField
+								required
+								type="date"
+								id="season-end-date"
+								label={t('seasonEndDate')}
+								size="small"
+								value={seasonEndDate}
+								onChange={(e) => setSeasonEndDate(e.target.value)}
+								InputLabelProps={{ shrink: true }}
+								inputProps={{ min: seasonStartDate || undefined }}
+							/>
+						</Box>
 						<Box sx={{ mb: 2 }}>
 							<CustomCancelButton onClick={handleShowCreateNewSeason} />
-							<CustomSuccessButton onClick={handleSubmit} buttonText={t('btnText.create')} />
+							<CustomSuccessButton
+								onClick={handleSubmit}
+								buttonText={t('btnText.create')}
+								disabled={!seasonStartDate || !seasonEndDate}
+							/>
 						</Box>
 					</FormControl>
 				</>

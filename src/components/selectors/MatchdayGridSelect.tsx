@@ -5,13 +5,16 @@ import {
 	MatchdaySlot,
 } from '../../features/football-data/competitionOptions';
 
+/** Высота и отступы как у compact LeagueSelect */
 const compactSelectSx = {
-	height: 30,
+	height: 34,
 	fontSize: '0.8rem',
 	'& .MuiSelect-select': {
-		py: 0.25,
-		px: 0.75,
+		py: 0.5,
+		px: 0.5,
 		minHeight: 'unset !important',
+		display: 'flex',
+		alignItems: 'center',
 		lineHeight: 1.2,
 	},
 };
@@ -55,7 +58,9 @@ export default function MatchdayGridSelect({
 				}));
 
 	const columns = getGridColumnsForMatchdayCount(resolvedSlots.length);
-	const selectedSlot = resolvedSlots.find((s) => s.value === value);
+	const slotValues = resolvedSlots.map((s) => s.value);
+	const safeValue = slotValues.includes(value) ? value : (resolvedSlots[0]?.value ?? 1);
+	const selectedSlot = resolvedSlots.find((s) => s.value === safeValue);
 
 	const handleChange = (e: SelectChangeEvent<number>): void => {
 		onChange(Number(e.target.value));
@@ -64,19 +69,24 @@ export default function MatchdayGridSelect({
 	return (
 		<Select
 			size="small"
-			value={value}
+			value={safeValue}
 			onChange={handleChange}
 			aria-label={ariaLabel}
-			renderValue={() => (selectedSlot ? formatSlotLabel(selectedSlot) : String(value))}
+			renderValue={() => (selectedSlot ? formatSlotLabel(selectedSlot) : String(safeValue))}
 			sx={{ ...compactSelectSx, minWidth: '2.75rem' }}
 			MenuProps={{
-				PaperProps: { sx: { maxHeight: 360 } },
+				PaperProps: {
+					sx: {
+						maxHeight: 420,
+						width: 'min(100vw - 1.5rem, 22rem)',
+					},
+				},
 				MenuListProps: {
 					sx: {
 						display: 'grid',
-						gridTemplateColumns: `repeat(${columns}, minmax(2.1rem, 1fr))`,
-						gap: 0.35,
-						p: 0.75,
+						gridTemplateColumns: `repeat(${columns}, minmax(2.75rem, 1fr))`,
+						gap: 0.5,
+						p: 1,
 						justifyContent: 'center',
 					},
 				},
@@ -89,11 +99,12 @@ export default function MatchdayGridSelect({
 					sx={{
 						minWidth: 0,
 						width: '100%',
-						minHeight: '2.1rem',
+						minHeight: '2.75rem',
 						justifyContent: 'center',
-						p: 0,
-						fontSize: '0.75rem',
-						fontWeight: value === slot.value ? 700 : 500,
+						px: 0.25,
+						py: 0.5,
+						fontSize: '0.85rem',
+						fontWeight: safeValue === slot.value ? 700 : 600,
 						whiteSpace: 'nowrap',
 					}}
 				>
