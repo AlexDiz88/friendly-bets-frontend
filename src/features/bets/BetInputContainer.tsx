@@ -10,6 +10,12 @@ import {
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
+import {
+	isValidBetOddsInput,
+	isValidBetSizeInput,
+	parseDecimalInput,
+	isAllowedIntegerInput,
+} from '../../components/utils/decimalInput';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
 import CalendarNode from '../admin/calendars/CalendarNode';
 import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
@@ -70,7 +76,11 @@ export default function BetInputContainer(): JSX.Element {
 	const handleSaveClick = useCallback(async () => {
 		setOpenDialog(false);
 		if (season && selectedUser && selectedHomeTeam && selectedAwayTeam) {
-			const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
+			if (!isValidBetOddsInput(selectedBetOdds) || !isValidBetSizeInput(selectedBetSize)) {
+				dispatch(showErrorSnackbar({ message: 'betCoefIsNotNumber' }));
+				return;
+			}
+			const betOddsToNumber = parseDecimalInput(selectedBetOdds);
 
 			const dispatchResult = await dispatch(
 				addOpenedBet({
@@ -116,6 +126,7 @@ export default function BetInputContainer(): JSX.Element {
 		selectedUser,
 		t,
 		calendar,
+		dispatch,
 	]);
 
 	// добавление пустой ставки
@@ -217,6 +228,9 @@ export default function BetInputContainer(): JSX.Element {
 
 	const handleEmptyBetSize = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const size = event.target.value;
+		if (!isAllowedIntegerInput(size)) {
+			return;
+		}
 		setSelectedEmptyBetSize(size);
 	};
 
@@ -381,7 +395,9 @@ export default function BetInputContainer(): JSX.Element {
 							onOddsSelect={handleOddsSelection}
 						/>
 					)}
-					{showSendButton && selectedBetOdds && selectedBetSize && (
+					{showSendButton &&
+						isValidBetOddsInput(selectedBetOdds) &&
+						isValidBetSizeInput(selectedBetSize) && (
 						<CustomButton
 							sx={{ mt: 3, height: '3rem', px: 6 }}
 							onClick={handleOpenDialog}
@@ -404,7 +420,12 @@ export default function BetInputContainer(): JSX.Element {
 					>
 						<Typography sx={{ ml: 2, mr: 0.5, fontWeight: '600' }}> {t('amount')}</Typography>
 						<Box component="form" autoComplete="off" sx={{ width: '3rem', pt: 0 }}>
-							<TextField size="small" value={selectedEmptyBetSize} onChange={handleEmptyBetSize} />
+							<TextField
+								size="small"
+								value={selectedEmptyBetSize}
+								onChange={handleEmptyBetSize}
+								inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+							/>
 						</Box>
 					</Box>
 					<CustomButton

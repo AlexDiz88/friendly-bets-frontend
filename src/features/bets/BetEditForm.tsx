@@ -23,6 +23,11 @@ import {
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import {
+	isValidBetOddsInput,
+	isValidBetSizeInput,
+	parseDecimalInput,
+} from '../../components/utils/decimalInput';
+import {
 	gameScoreInputStringValidation,
 	transformToGameScore,
 } from '../../components/utils/gameScoreValidation';
@@ -88,7 +93,11 @@ export default function BetEditForm({
 
 	const handleBetUpdateSave = useCallback(async () => {
 		setBetUpdateOpenDialog(false);
-		const betOddsToNumber = Number(updatedBetOdds?.trim().replace(',', '.'));
+		if (!isValidBetOddsInput(updatedBetOdds ?? '') || !isValidBetSizeInput(updatedBetSize ?? '')) {
+			dispatch(showErrorSnackbar({ message: 'betCoefIsNotNumber' }));
+			return;
+		}
+		const betOddsToNumber = parseDecimalInput(updatedBetOdds ?? '');
 		const dispatchResult = await dispatch(
 			updateBet({
 				editedBetId: bet.id,

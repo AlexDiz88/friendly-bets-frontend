@@ -2,6 +2,7 @@ import { Box, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomErrorMessage from '../../components/custom/CustomErrorMessage';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
@@ -22,6 +23,7 @@ import GameweekStats from './GameweekStats';
 
 const Gameweek = (): JSX.Element => {
 	const dispatch = useAppDispatch();
+	const location = useLocation();
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const calendarNodes: Calendar[] = useAppSelector(selectCalendarNodesHasBets);
 	const [selectedCalendarNode, setSelectedCalendarNode] = useState<Calendar | undefined>(undefined);
@@ -61,7 +63,11 @@ const Gameweek = (): JSX.Element => {
 	}, [selectedCalendarNode]);
 
 	useEffect(() => {
-		if (calendarNodes.length > 0 && !selectedCalendarNode) {
+		if (calendarNodes.length === 0) {
+			return;
+		}
+
+		if (!selectedCalendarNode?.id) {
 			const now = dayjs().add(-1, 'day');
 
 			const activeNode = calendarNodes.find(
@@ -83,24 +89,38 @@ const Gameweek = (): JSX.Element => {
 				});
 				setSelectedCalendarNode(closestNode);
 			}
+			return;
 		}
-	}, [calendarNodes]);
+
+		const freshNode = calendarNodes.find((node) => node.id === selectedCalendarNode.id);
+		if (
+			freshNode &&
+			(freshNode.isFinished !== selectedCalendarNode.isFinished ||
+				freshNode.gameweekStats.length !== selectedCalendarNode.gameweekStats.length)
+		) {
+			setSelectedCalendarNode(freshNode);
+		}
+	}, [calendarNodes, selectedCalendarNode?.id, selectedCalendarNode?.isFinished, selectedCalendarNode?.gameweekStats.length]);
 
 	useEffect(() => {
-		if (activeSeason) {
-			setLoading(true);
-			dispatch(getSeasonCalendarHasBetsNodes(activeSeason?.id))
-				.then(() => {
-					setLoading(false);
-				})
-				.catch(() => {
-					setLoadingError(true);
-					setLoading(false);
-				});
-		} else {
-			setLoading(false);
+		if (!activeSeason?.id || location.pathname !== '/gameweeks') {
+			if (!activeSeason?.id) {
+				setLoading(false);
+			}
+			return;
 		}
-	}, [activeSeason]);
+
+		setLoading(true);
+		setLoadingError(false);
+		dispatch(getSeasonCalendarHasBetsNodes(activeSeason.id))
+			.then(() => {
+				setLoading(false);
+			})
+			.catch(() => {
+				setLoadingError(true);
+				setLoading(false);
+			});
+	}, [activeSeason?.id, location.pathname, dispatch]);
 
 	return (
 		<>

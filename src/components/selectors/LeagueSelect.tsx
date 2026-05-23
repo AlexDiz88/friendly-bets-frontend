@@ -36,7 +36,13 @@ const LeagueSelect = ({
 	const avatarHeight = compact ? 23: 27;
 	const menuMinWidth = compact ? '5.5rem' : '6.5rem';
 	const leagueCodes = leagues?.map((l) => l.leagueCode) ?? [];
-	const safeValue = leagueCodes.includes(value) ? value : '';
+	const allValue = t('all');
+	const safeValue =
+		!withoutAll && value === allValue
+			? allValue
+			: leagueCodes.includes(value)
+				? value
+				: '';
 
 	return (
 		<Select
