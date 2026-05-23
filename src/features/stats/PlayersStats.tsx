@@ -1,5 +1,4 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
 	Box,
 	Collapse,
@@ -18,12 +17,15 @@ import { avatarBase64Converter } from '../../components/utils/imgBase64Converter
 import StatsTableIdentityCell from './StatsTableIdentityCell';
 import PlayerStats from './types/PlayerStats';
 
-const expandableRowSx = {
-	'& > *': { borderBottom: 'unset' },
-	cursor: 'pointer',
-	userSelect: 'none',
-	WebkitTapHighlightColor: 'transparent',
-} as const;
+const expandableRowSx = (open: boolean) =>
+	({
+		'& > *': { borderBottom: 'unset' },
+		cursor: 'pointer',
+		userSelect: 'none',
+		WebkitTapHighlightColor: 'transparent',
+		transition: 'background-color 0.35s ease',
+		bgcolor: open ? 'rgba(25, 118, 210, 0.06)' : 'transparent',
+	}) as const;
 
 function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 	const [open, setOpen] = useState(false);
@@ -42,20 +44,23 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 						toggleOpen();
 					}
 				}}
-				sx={expandableRowSx}
+				sx={expandableRowSx(open)}
 				tabIndex={0}
 			>
 				<StatsTableIdentityCell
+					expanded={open}
 					leading={
-						open ? (
-							<KeyboardArrowUpIcon sx={{ fontSize: 24 }} />
-						) : (
-							<KeyboardArrowDownIcon sx={{ fontSize: 24 }} />
-						)
+						<KeyboardArrowDownIcon
+							sx={{
+								fontSize: 24,
+								transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+								transition: 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
+							}}
+						/>
 					}
 					avatarSrc={avatarBase64Converter(pStats.avatar)}
 					avatarAlt="user_avatar"
-					avatarSize={55}
+					avatarSize={50}
 					label={pStats.username}
 					labelSx={{ fontSize: '0.9rem', maxWidth: '4.8rem' }}
 				/>
@@ -83,7 +88,7 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 					sx={{ py: 0, borderTop: 0 }}
 					style={{ paddingBottom: 0, paddingTop: 0 }}
 				>
-					<Collapse in={open} timeout="auto" unmountOnExit>
+					<Collapse in={open} timeout={400} unmountOnExit>
 						<Box sx={{ margin: 0, textAlign: 'center' }}>
 							<Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 0.5 }} component="div">
 								{t('additionalStats')} ({pStats.username})
