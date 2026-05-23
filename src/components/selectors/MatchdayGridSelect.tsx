@@ -1,20 +1,20 @@
-import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Box, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
 import {
 	getGridColumnsForMatchdayCount,
 	MatchdaySlot,
 } from '../../features/football-data/competitionOptions';
 
-/** Высота и отступы как у compact LeagueSelect */
+/** Высота и отступы как у compact LeagueSelect; значение по центру между краями и стрелкой */
 const compactSelectSx = {
 	height: 34,
 	fontSize: '0.8rem',
 	'& .MuiSelect-select': {
-		py: 0.5,
-		px: 0.5,
 		minHeight: 'unset !important',
 		display: 'flex',
 		alignItems: 'center',
+		justifyContent: 'center',
+		textAlign: 'center',
 		lineHeight: 1.2,
 	},
 };
@@ -38,6 +38,7 @@ interface MatchdayGridSelectProps {
 	matchdayCount: number;
 	slots?: MatchdaySlot[];
 	onChange: (matchday: number) => void;
+	disabled?: boolean;
 	'aria-label'?: string;
 }
 
@@ -46,6 +47,7 @@ export default function MatchdayGridSelect({
 	matchdayCount,
 	slots,
 	onChange,
+	disabled = false,
 	'aria-label': ariaLabel,
 }: MatchdayGridSelectProps): JSX.Element {
 	const resolvedSlots: MatchdaySlot[] =
@@ -71,9 +73,14 @@ export default function MatchdayGridSelect({
 			size="small"
 			value={safeValue}
 			onChange={handleChange}
+			disabled={disabled}
 			aria-label={ariaLabel}
-			renderValue={() => (selectedSlot ? formatSlotLabel(selectedSlot) : String(safeValue))}
-			sx={{ ...compactSelectSx, minWidth: '2.75rem' }}
+			renderValue={() => (
+				<Box component="span" sx={{ width: '100%', textAlign: 'center' }}>
+					{selectedSlot ? formatSlotLabel(selectedSlot) : String(safeValue)}
+				</Box>
+			)}
+			sx={{ ...compactSelectSx, minWidth: '3.5rem' }}
 			MenuProps={{
 				PaperProps: {
 					sx: {

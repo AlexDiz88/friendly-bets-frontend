@@ -7,8 +7,6 @@ import {
 	Chip,
 	CircularProgress,
 	IconButton,
-	MenuItem,
-	Select,
 	SelectChangeEvent,
 	Tooltip,
 	Typography,
@@ -49,10 +47,7 @@ import {
 	isMatchdayNotStarted,
 	translateMatchStatus,
 } from './matchStatusI18n';
-import {
-	resolveDefaultExternalSeason,
-	resolveExternalSeasonYearOptions,
-} from './seasonExternalYear';
+import { resolveDefaultExternalSeason } from './seasonExternalYear';
 import {
 	ExternalCompetitionInfo,
 	ExternalMatch,
@@ -65,20 +60,6 @@ function toDisplayTeam(name: string): Team {
 }
 
 const MATCH_ROW_AVATAR = 26;
-
-const seasonSelectSx = {
-	height: 24,
-	fontSize: '0.72rem',
-	'& .MuiSelect-select': {
-		py: 0,
-		px: 0.5,
-		minHeight: 'unset !important',
-		lineHeight: 1.2,
-	},
-	'& .MuiOutlinedInput-notchedOutline': {
-		borderWidth: 1,
-	},
-};
 
 function CompactMatchRow({
 	homeTeam,
@@ -210,20 +191,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	);
 	const [matchday, setMatchday] = useState(1);
 	const [matchdayTouched, setMatchdayTouched] = useState(false);
-	const [season, setSeason] = useState('');
-	const [seasonTouched, setSeasonTouched] = useState(false);
 
-	const externalSeasonYearOptions = useMemo(
-		() => resolveExternalSeasonYearOptions(activeSeason),
+	const externalSeason = useMemo(
+		() => resolveDefaultExternalSeason(activeSeason),
 		[activeSeason]
 	);
-
-	const effectiveSeason = useMemo(() => {
-		if (season && externalSeasonYearOptions.includes(season)) {
-			return season;
-		}
-		return resolveDefaultExternalSeason(activeSeason);
-	}, [season, externalSeasonYearOptions, activeSeason]);
 
 	const competitionCode = useMemo(
 		() => leagueCodeToCompetition(selectedLeagueCode),
@@ -262,37 +234,16 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(false);
 	const [syncing, setSyncing] = useState(false);
 
-	const loadCache = useCallback(async () => {
-		setLoading(true);
-		try {
-			const page = await getMatchdayFromCache(competitionCode, effectiveMatchday, effectiveSeason);
-			setData(page);
-		} catch (error) {
-			setData(null);
-			dispatch(
-				showErrorSnackbar({
-					message: error instanceof Error ? error.message : t('externalMatchLoadError'),
-				})
-			);
-		} finally {
-			setLoading(false);
-		}
-	}, [competitionCode, effectiveMatchday, season, dispatch]);
+	const matchesLoading = competitionInfoLoading || loading;
 
 	useEffect(() => {
 		if (!activeSeason) {
 			dispatch(getActiveSeason());
 		}
 	}, [activeSeason, dispatch]);
-
-	useEffect(() => {
-		if (seasonTouched) {
-			return;
-		}
-		setSeason(resolveDefaultExternalSeason(activeSeason));
-	}, [activeSeason, seasonTouched]);
 
 	useEffect(() => {
 		if (footballDataLeagues.length > 0) {
@@ -306,31 +257,85 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	useEffect(() => {
 		let cancelled = false;
+		setCompetitionInfoLoading(true);
+		setCompetitionInfo(null);
+
 		const loadInfo = async (): Promise<void> => {
 			try {
 				if (selectedLeague?.id && selectedLeague.tournamentFormatId) {
-					const info = await getLeagueExternalCompetitionInfo(selectedLeague.id, effectiveSeason);
+					const info = await getLeagueExternalCompetitionInfo(selectedLeague.id, externalSeason);
 					if (!cancelled) setCompetitionInfo(info);
 					return;
 				}
-				const info = await getCompetitionInfo(competitionCode, effectiveSeason);
+				const info = await getCompetitionInfo(competitionCode, externalSeason);
 				if (!cancelled) setCompetitionInfo(info);
 			} catch {
 				if (!cancelled) setCompetitionInfo(null);
+			} finally {
+				if (!cancelled) setCompetitionInfoLoading(false);
 			}
 		};
 		loadInfo();
 		return () => {
 			cancelled = true;
 		};
-	}, [competitionCode, effectiveSeason, selectedLeague?.id, selectedLeague?.tournamentFormatId]);
+	}, [competitionCode, externalSeason, selectedLeague?.id, selectedLeague?.tournamentFormatId]);
 
 	useEffect(() => {
-		if (matchdayTouched || !competitionInfo) {
+		if (competitionInfoLoading) {
 			return;
 		}
-		setMatchday(competitionInfo.currentMatchday);
-	}, [competitionInfo, matchdayTouched]);
+		if (!matchdayTouched && !competitionInfo) {
+			return;
+		}
+
+		const targetMatchday = matchdayTouched
+			? effectiveMatchday
+			: competitionInfo!.currentMatchday;
+
+		if (!matchdayTouched && matchday !== targetMatchday) {
+			setMatchday(targetMatchday);
+			return;
+		}
+
+		let cancelled = false;
+		const loadMatches = async (): Promise<void> => {
+			setLoading(true);
+			try {
+				const page = await getMatchdayFromCache(
+					competitionCode,
+					targetMatchday,
+					externalSeason
+				);
+				if (!cancelled) setData(page);
+			} catch (error) {
+				if (!cancelled) {
+					setData(null);
+					dispatch(
+						showErrorSnackbar({
+							message:
+								error instanceof Error ? error.message : t('externalMatchLoadError'),
+						})
+					);
+				}
+			} finally {
+				if (!cancelled) setLoading(false);
+			}
+		};
+		loadMatches();
+		return () => {
+			cancelled = true;
+		};
+	}, [
+		competitionInfoLoading,
+		competitionInfo,
+		matchdayTouched,
+		effectiveMatchday,
+		matchday,
+		competitionCode,
+		externalSeason,
+		dispatch,
+	]);
 
 	useEffect(() => {
 		if (effectiveLeagueCode && effectiveLeagueCode !== selectedLeagueCode) {
@@ -339,28 +344,18 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [effectiveLeagueCode, selectedLeagueCode]);
 
 	useEffect(() => {
+		if (matchdayTouched || competitionInfoLoading || !competitionInfo) {
+			return;
+		}
 		if (effectiveMatchday !== matchday) {
 			setMatchday(effectiveMatchday);
 		}
-	}, [effectiveMatchday, matchday]);
-
-	useEffect(() => {
-		loadCache();
-	}, [loadCache]);
+	}, [effectiveMatchday, matchday, matchdayTouched, competitionInfoLoading, competitionInfo]);
 
 	const handleLeagueChange = (e: SelectChangeEvent): void => {
 		setMatchdayTouched(false);
-		setCompetitionInfo(null);
 		setSelectedLeagueCode(e.target.value);
-		setMatchday(1);
-	};
-
-	const handleSeasonChange = (e: SelectChangeEvent): void => {
-		setSeasonTouched(true);
-		setMatchdayTouched(false);
-		setCompetitionInfo(null);
-		setSeason(e.target.value);
-		setMatchday(1);
+		setData(null);
 	};
 
 	const handleMatchdayChange = (md: number): void => {
@@ -374,7 +369,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			const page = await syncMatchdayFromApi(
 				competitionCode,
 				effectiveMatchday,
-				season,
+				externalSeason,
 				selectedLeague?.id
 			);
 			setData(page);
@@ -468,33 +463,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						px: 0.25,
 					}}
 				>
-					<Select
-						size="small"
-						value={effectiveSeason}
-						onChange={handleSeasonChange}
-						sx={{
-							...seasonSelectSx,
-							position: 'absolute',
-							left: 0,
-							top: '50%',
-							transform: 'translateY(-50%)',
-							minWidth: '2.85rem',
-						}}
-						aria-label={t('externalApiSeasonYear')}
-					>
-						{externalSeasonYearOptions.map((y) => (
-							<MenuItem key={y} value={y} sx={{ py: 0.35, fontSize: '0.75rem' }}>
-								{y}
-							</MenuItem>
-						))}
-					</Select>
 					<Typography
 						sx={{
 							fontWeight: 700,
 							textAlign: 'center',
 							fontSize: '1rem',
 							lineHeight: 1.2,
-							px: 4.5,
+							px: canSync ? 4 : 0,
 						}}
 					>
 						{t('externalMatchResults')}
@@ -571,7 +546,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						<Tooltip title={t('previousMatchday')}>
 							<span>
 								<IconButton
-									disabled={!canGoPrevMatchday}
+									disabled={competitionInfoLoading || !canGoPrevMatchday}
 									onClick={goPrevMatchday}
 									aria-label={t('previousMatchday')}
 									sx={{
@@ -591,12 +566,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							matchdayCount={matchdayCount}
 							slots={matchdaySlots}
 							onChange={handleMatchdayChange}
+							disabled={competitionInfoLoading}
 							aria-label={t('matchday')}
 						/>
 						<Tooltip title={t('nextMatchday')}>
 							<span>
 								<IconButton
-									disabled={!canGoNextMatchday}
+									disabled={competitionInfoLoading || !canGoNextMatchday}
 									onClick={goNextMatchday}
 									aria-label={t('nextMatchday')}
 									sx={{
@@ -614,7 +590,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					</Box>
 				</Box>
 
-				{data?.sync && syncChip && (
+				{!matchesLoading && data?.sync && syncChip && (
 					<Box
 						sx={{
 							display: 'flex',
@@ -646,19 +622,19 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				)}
 			</Box>
 
-			{loading && (
+			{matchesLoading && (
 				<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
 					<CircularProgress />
 				</Box>
 			)}
 
-			{!loading && sortedMatches.length === 0 && (
+			{!matchesLoading && sortedMatches.length === 0 && (
 				<Typography textAlign="center" color="text.secondary" sx={{ py: 3, px: 1 }}>
 					{canSync ? t('externalMatchNoDataHintModerator') : t('externalMatchNoDataHint')}
 				</Typography>
 			)}
 
-			{!loading && sortedMatches.length > 0 && (
+			{!matchesLoading && sortedMatches.length > 0 && (
 				<Box
 					sx={{
 						borderRadius: 2,

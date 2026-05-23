@@ -1,10 +1,8 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
-	Avatar,
 	Box,
 	Collapse,
-	IconButton,
 	Paper,
 	Table,
 	TableBody,
@@ -17,57 +15,61 @@ import {
 import { t } from 'i18next';
 import { useState } from 'react';
 import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
+import StatsTableIdentityCell from './StatsTableIdentityCell';
 import PlayerStats from './types/PlayerStats';
+
+const expandableRowSx = {
+	'& > *': { borderBottom: 'unset' },
+	cursor: 'pointer',
+	userSelect: 'none',
+	WebkitTapHighlightColor: 'transparent',
+} as const;
 
 function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 	const [open, setOpen] = useState(false);
+	const toggleOpen = (): void => setOpen((prev) => !prev);
 
 	return (
 		<>
-			<TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-				<TableCell sx={{ px: 2 }}>
-					<IconButton
-						aria-label="expand row"
-						size="medium"
-						onClick={() => setOpen(!open)}
-						sx={{ p: 0 }}
-					>
-						{open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-					</IconButton>
-				</TableCell>
-				<TableCell
-					component="th"
-					scope="row"
-					align="center"
-					sx={{
-						ml: -2,
-						p: 0,
-						height: '4rem',
-						display: 'flex',
-						alignItems: 'center',
-						fontWeight: 600,
-					}}
-				>
-					<Avatar
-						sx={{ mr: 0.5, width: 50, height: 50, border: 0 }}
-						alt="user_avatar"
-						src={avatarBase64Converter(pStats.avatar)}
-					/>
-					<Box sx={{ fontSize: '0.95rem', textAlign: 'left', maxWidth: '4.8rem' }}>
-						{pStats.username}
-					</Box>
-				</TableCell>
-				<TableCell align="center" sx={{ px: 0.5 }}>
+			<TableRow
+				hover
+				aria-expanded={open}
+				aria-label={t('expandRow')}
+				onClick={toggleOpen}
+				onKeyDown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault();
+						toggleOpen();
+					}
+				}}
+				sx={expandableRowSx}
+				tabIndex={0}
+			>
+				<StatsTableIdentityCell
+					leading={
+						open ? (
+							<KeyboardArrowUpIcon sx={{ fontSize: 24 }} />
+						) : (
+							<KeyboardArrowDownIcon sx={{ fontSize: 24 }} />
+						)
+					}
+					avatarSrc={avatarBase64Converter(pStats.avatar)}
+					avatarAlt="user_avatar"
+					avatarSize={55}
+					label={pStats.username}
+					labelSx={{ fontSize: '0.9rem', maxWidth: '4.8rem' }}
+				/>
+				<TableCell align="center" sx={{ px: 0.25 }}>
 					{pStats.betCount} ({pStats.totalBets})
 				</TableCell>
-				<TableCell align="center" sx={{ px: 0.5 }}>
+				<TableCell align="center" sx={{ px: 0.25 }}>
 					{pStats.winRate.toFixed(0)}
 				</TableCell>
 				<TableCell
 					align="center"
 					sx={{
 						px: 1,
-						fontSize: '1.1rem',
+						fontSize: '1rem',
 						fontWeight: 600,
 						color: pStats.actualBalance >= 0 ? 'green' : 'red',
 					}}
@@ -76,7 +78,11 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 				</TableCell>
 			</TableRow>
 			<TableRow>
-				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+				<TableCell
+					colSpan={4}
+					sx={{ py: 0, borderTop: 0 }}
+					style={{ paddingBottom: 0, paddingTop: 0 }}
+				>
 					<Collapse in={open} timeout="auto" unmountOnExit>
 						<Box sx={{ margin: 0, textAlign: 'center' }}>
 							<Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 0.5 }} component="div">
@@ -156,10 +162,9 @@ export default function PlayersStats({
 			<Table aria-label="collapsible table">
 				<TableHead sx={{ bgcolor: '#2d2d32', border: 2 }}>
 					<TableRow>
-						<TableCell />
 						<TableCell
 							align="left"
-							sx={{ color: 'white', fontWeight: 600, py: 0.5, borderColor: 'black' }}
+							sx={{ color: 'white', fontWeight: 600, py: 0.5, pl: 3.5, borderColor: 'black' }}
 						>
 							{t('playerName')}
 						</TableCell>

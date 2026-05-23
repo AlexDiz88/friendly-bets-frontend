@@ -1,10 +1,8 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
-	Avatar,
 	Box,
 	Collapse,
-	IconButton,
 	Paper,
 	Table,
 	TableBody,
@@ -17,6 +15,7 @@ import {
 import { t } from 'i18next';
 import { useState } from 'react';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
+import StatsTableIdentityCell from './StatsTableIdentityCell';
 import PlayerStatsByTeams from './types/PlayerStatsByTeams';
 import TeamStats from './types/TeamStats';
 
@@ -24,52 +23,47 @@ interface RowProps {
 	tStats: TeamStats;
 }
 
+const expandableRowSx = {
+	'& > *': { borderBottom: 'unset' },
+	cursor: 'pointer',
+	userSelect: 'none',
+	WebkitTapHighlightColor: 'transparent',
+} as const;
+
 function Row({ tStats }: RowProps): JSX.Element {
 	const [open, setOpen] = useState(false);
+	const toggleOpen = (): void => setOpen((prev) => !prev);
 
 	return (
 		<>
-			<TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-				<TableCell sx={{ px: 0 }}>
-					<IconButton
-						aria-label="expand row"
-						size="small"
-						onClick={() => setOpen(!open)}
-						sx={{ ml: 0, px: 0 }}
-					>
-						{open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-					</IconButton>
-				</TableCell>
-				<TableCell
-					component="th"
-					scope="row"
-					align="center"
-					size="small"
-					sx={{
-						ml: -1.5,
-						p: 0,
-						height: '2rem',
-						display: 'flex',
-						alignItems: 'center',
-						fontWeight: 600,
-					}}
-				>
-					<Avatar
-						sx={{ mx: 0.5, width: 27, height: 27, border: 0 }}
-						alt="team_logo"
-						src={pathToLogoImage(tStats.team.title)}
-					/>
-					<Box
-						sx={{
-							fontSize: '0.9rem',
-							textAlign: 'left',
-							maxWidth: '6.5rem',
-							textOverflow: 'hidden',
-						}}
-					>
-						{t(`teams:${tStats.team.title}`)}
-					</Box>
-				</TableCell>
+			<TableRow
+				hover
+				aria-expanded={open}
+				aria-label={t('expandRow')}
+				onClick={toggleOpen}
+				onKeyDown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault();
+						toggleOpen();
+					}
+				}}
+				sx={expandableRowSx}
+				tabIndex={0}
+			>
+				<StatsTableIdentityCell
+					leading={
+						open ? (
+							<KeyboardArrowUpIcon sx={{ fontSize: 22 }} />
+						) : (
+							<KeyboardArrowDownIcon sx={{ fontSize: 22 }} />
+						)
+					}
+					avatarSrc={pathToLogoImage(tStats.team.title)}
+					avatarAlt="team_logo"
+					avatarSize={27}
+					label={t(`teams:${tStats.team.title}`)}
+					labelSx={{ fontSize: '0.9rem', maxWidth: '6.5rem' }}
+				/>
 				<TableCell align="center" sx={{ px: 0, mx: 0 }}>
 					[{tStats.wonBetCount}-{tStats.returnedBetCount}-{tStats.lostBetCount}]
 				</TableCell>
@@ -90,7 +84,11 @@ function Row({ tStats }: RowProps): JSX.Element {
 				</TableCell>
 			</TableRow>
 			<TableRow>
-				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+				<TableCell
+					colSpan={4}
+					sx={{ py: 0, borderTop: 0 }}
+					style={{ paddingBottom: 0, paddingTop: 0 }}
+				>
 					<Collapse in={open} timeout="auto" unmountOnExit>
 						<Box sx={{ margin: 0, textAlign: 'center' }}>
 							<Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 0.5 }} component="div">
@@ -164,8 +162,7 @@ export default function TeamsStats({
 			<Table aria-label="collapsible table">
 				<TableHead sx={{ bgcolor: '#2d2d32', border: 2 }}>
 					<TableRow>
-						<TableCell />
-						<TableCell align="left" sx={{ color: 'white', fontWeight: 600, py: 0.5 }}>
+						<TableCell align="left" sx={{ color: 'white', fontWeight: 600, py: 0.5, pl: 3.5 }}>
 							{t('team')}
 						</TableCell>
 						<TableCell
