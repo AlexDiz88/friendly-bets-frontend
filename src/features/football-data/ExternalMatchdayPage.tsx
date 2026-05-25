@@ -1,5 +1,3 @@
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
 	Avatar,
@@ -19,7 +17,7 @@ import {
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
-import MatchdayGridSelect from '../../components/selectors/MatchdayGridSelect';
+import MatchdayNavigator from '../../components/matchday/MatchdayNavigator';
 import { getExternalMatchScoreView } from './externalMatchScoreView';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -208,8 +206,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		}
 		return buildMatchdaySlotsForLeague(selectedLeagueCode);
 	}, [competitionInfo?.matchdaySlots, selectedLeagueCode]);
-
-	const matchdayCount = matchdaySlots.length;
 
 	const effectiveLeagueCode = useMemo(() => {
 		if (footballDataLeagues.length === 0) {
@@ -407,26 +403,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return { label: t('externalMatchSyncPolling'), color: 'warning' as const };
 	}, [data?.sync, matchdayNotStarted]);
 
-	const currentSlotIndex = useMemo(
-		() => matchdaySlots.findIndex((s) => s.value === effectiveMatchday),
-		[matchdaySlots, effectiveMatchday]
-	);
-	const canGoPrevMatchday = currentSlotIndex > 0;
-	const canGoNextMatchday =
-		currentSlotIndex >= 0 && currentSlotIndex < matchdaySlots.length - 1;
-
-	const goPrevMatchday = (): void => {
-		if (!canGoPrevMatchday) return;
-		setMatchdayTouched(true);
-		setMatchday(matchdaySlots[currentSlotIndex - 1].value);
-	};
-
-	const goNextMatchday = (): void => {
-		if (!canGoNextMatchday) return;
-		setMatchdayTouched(true);
-		setMatchday(matchdaySlots[currentSlotIndex + 1].value);
-	};
-
 	return (
 		<Box
 			sx={{
@@ -543,50 +519,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							minWidth: 0,
 						}}
 					>
-						<Tooltip title={t('previousMatchday')}>
-							<span>
-								<IconButton
-									disabled={competitionInfoLoading || !canGoPrevMatchday}
-									onClick={goPrevMatchday}
-									aria-label={t('previousMatchday')}
-									sx={{
-										width: 40,
-										height: 40,
-										flexShrink: 0,
-										borderColor: 'divider',
-										borderRadius: 1,
-									}}
-								>
-									<ChevronLeftIcon sx={{ fontSize: 28 }} />
-								</IconButton>
-							</span>
-						</Tooltip>
-						<MatchdayGridSelect
+						<MatchdayNavigator
 							value={effectiveMatchday}
-							matchdayCount={matchdayCount}
 							slots={matchdaySlots}
-							onChange={handleMatchdayChange}
+							onChange={(md) => handleMatchdayChange(md)}
 							disabled={competitionInfoLoading}
-							aria-label={t('matchday')}
 						/>
-						<Tooltip title={t('nextMatchday')}>
-							<span>
-								<IconButton
-									disabled={competitionInfoLoading || !canGoNextMatchday}
-									onClick={goNextMatchday}
-									aria-label={t('nextMatchday')}
-									sx={{
-										width: 40,
-										height: 40,
-										flexShrink: 0,
-										borderColor: 'divider',
-										borderRadius: 1,
-									}}
-								>
-									<ChevronRightIcon sx={{ fontSize: 28 }} />
-								</IconButton>
-							</span>
-						</Tooltip>
 					</Box>
 				</Box>
 

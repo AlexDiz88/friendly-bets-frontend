@@ -2,6 +2,7 @@ import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@m
 import { t } from 'i18next';
 import League from '../../features/admin/leagues/types/League';
 import LeagueAvatar from '../custom/avatar/LeagueAvatar';
+import { compactLeagueSelectSx } from './compactSelectSx';
 
 interface LeagueSelectProps {
 	value: string;
@@ -11,19 +12,6 @@ interface LeagueSelectProps {
 	fullLeagueNames?: boolean;
 	compact?: boolean;
 }
-
-const compactSelectSx = {
-	height: 34,
-	fontSize: '0.8rem',
-	'& .MuiSelect-select': {
-		py: 0.5,
-		px: 0.5,
-		minHeight: 'unset !important',
-		display: 'flex',
-		alignItems: 'center',
-		lineHeight: 1.2,
-	},
-};
 
 const LeagueSelect = ({
 	value,
@@ -52,7 +40,7 @@ const LeagueSelect = ({
 			sx={{
 				minWidth: fullLeagueNames ? '15rem' : compact ? '6rem' : '7rem',
 				maxWidth: compact ? '6rem' : undefined,
-				...(compact ? compactSelectSx : {}),
+				...(compact ? compactLeagueSelectSx : {}),
 			}}
 			labelId="league-label"
 			id="league-select"

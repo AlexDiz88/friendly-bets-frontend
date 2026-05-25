@@ -169,6 +169,7 @@ const MatchdayLeaguePicker = ({
 				<>
 					<MatchDayForm
 						matchDay={matchDay}
+						leagueCode={selectedLeague?.leagueCode}
 						matchdaySlots={selectedLeague?.matchdaySlots}
 						onMatchDay={handleMatchDay}
 					/>

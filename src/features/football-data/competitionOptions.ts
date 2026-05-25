@@ -1,22 +1,9 @@
+import { externalSlotsToMatchdaySlots } from '../../components/matchday/slotMappers';
+import type { MatchdaySlot } from '../../components/matchday/types';
 import { FootballDataCompetitionOption } from './types/ExternalMatch';
 
-export interface MatchdaySlot {
-	value: number;
-	slotId?: string;
-	label: string;
-	kind: 'REGULAR' | 'KNOCKOUT';
-}
-
-export function externalSlotsToMatchdaySlots(
-	slots: { value: number; slotId?: string; label: string; kind: string }[]
-): MatchdaySlot[] {
-	return slots.map((s) => ({
-		value: s.value,
-		slotId: s.slotId ?? s.label,
-		label: s.label,
-		kind: s.kind === 'KNOCKOUT' ? 'KNOCKOUT' : 'REGULAR',
-	}));
-}
+export type { MatchdaySlot };
+export { externalSlotsToMatchdaySlots };
 
 /** football-data.org competition code ↔ наш LeagueCode */
 export const FOOTBALL_DATA_COMPETITIONS: FootballDataCompetitionOption[] = [
@@ -57,6 +44,7 @@ export function buildMatchdaySlotsForLeague(leagueCode: string): MatchdaySlot[] 
 	const regular = REGULAR_MATCHDAYS[leagueCode] ?? DEFAULT_MATCHDAY_COUNT;
 	const slots: MatchdaySlot[] = Array.from({ length: regular }, (_, i) => ({
 		value: i + 1,
+		slotId: String(i + 1),
 		label: String(i + 1),
 		kind: 'REGULAR' as const,
 	}));
@@ -66,9 +54,4 @@ export function buildMatchdaySlotsForLeague(leagueCode: string): MatchdaySlot[] 
 	return slots;
 }
 
-/** Колонок в сетке тура — меньше колонок = крупнее ячейки для тач-экранов. */
-export function getGridColumnsForMatchdayCount(count: number): number {
-	if (count <= 12) return 4;
-	if (count <= 24) return 5;
-	return 6;
-}
+export { getGridColumnsForMatchdayCount } from '../../components/matchday/types';

@@ -249,6 +249,7 @@ export default function BetEditForm({
 			<BetInputPlayer defaultValue={bet.player} onUserSelect={handleUserSelection} />
 			<MatchDayForm
 				matchDay={updatedMatchDay ?? bet.matchDay}
+				leagueCode={activeSeason?.leagues?.find((l) => l.id === bet.leagueId)?.leagueCode}
 				matchdaySlots={
 					activeSeason?.leagues?.find((l) => l.id === bet.leagueId)?.matchdaySlots
 				}

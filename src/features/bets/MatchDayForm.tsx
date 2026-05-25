@@ -1,47 +1,72 @@
 import { Box, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useMemo } from 'react';
-import MatchdaySlotSelect from '../../components/selectors/MatchdaySlotSelect';
+import MatchdayNavigator from '../../components/matchday/MatchdayNavigator';
 import {
-	formatMatchdaySlotLabel,
-	resolveDefaultMatchDay,
-} from '../../components/utils/matchdaySlots';
+	matchDayStringToSlotValue,
+	resolveMatchdaySlotsForBetInput,
+	slotValueToMatchDayString,
+} from '../../components/matchday/slotMappers';
+import { resolveDefaultMatchDay } from '../../components/utils/matchdaySlots';
 import type { ExpandedMatchdaySlot } from '../admin/tournament-formats/types/TournamentFormat';
 
 type MatchDayFormProps = {
 	matchDay: string;
+	leagueCode?: string;
 	matchdaySlots?: ExpandedMatchdaySlot[];
 	onMatchDay: (matchDay: string) => void;
 };
 
 /**
- * Tour selection for bets: uses TournamentFormat slots when available, otherwise legacy numeric input.
+ * Tour selection for bets: grid navigator (as on match results page) when slots are known.
  */
 export default function MatchDayForm({
 	matchDay,
+	leagueCode,
 	matchdaySlots,
 	onMatchDay,
 }: MatchDayFormProps): JSX.Element {
-	const hasFormatSlots = (matchdaySlots?.length ?? 0) > 0;
-	const slots = useMemo(() => matchdaySlots ?? [], [matchdaySlots]);
+	const gridSlots = useMemo(
+		() => resolveMatchdaySlotsForBetInput(matchdaySlots, leagueCode),
+		[matchdaySlots, leagueCode]
+	);
+
+	const hasGrid = gridSlots.length > 0;
 
 	useEffect(() => {
-		if (!hasFormatSlots) {
+		if (!matchdaySlots?.length) {
 			return;
 		}
-		const resolved = resolveDefaultMatchDay(matchDay, slots);
+		const resolved = resolveDefaultMatchDay(matchDay, matchdaySlots);
 		if (resolved !== matchDay) {
 			onMatchDay(resolved);
 		}
-	}, [hasFormatSlots, matchDay, slots, onMatchDay]);
+	}, [matchdaySlots, matchDay, onMatchDay]);
 
-	if (hasFormatSlots) {
+	const slotValue = useMemo(
+		() => (hasGrid ? matchDayStringToSlotValue(matchDay, gridSlots) : 1),
+		[hasGrid, matchDay, gridSlots]
+	);
+
+	const handleSlotChange = (value: number): void => {
+		onMatchDay(slotValueToMatchDayString(value, gridSlots));
+	};
+
+	if (hasGrid) {
 		return (
-			<Box>
-				<Typography sx={{ mx: 1, fontWeight: 600 }}>{t('matchday')}</Typography>
-				<Box sx={{ mt: 1 }}>
-					<MatchdaySlotSelect value={matchDay} slots={slots} onChange={onMatchDay} />
-				</Box>
+			<Box
+				sx={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					gap: 0.75,
+					mt: 1,
+					mx: 1,
+					flexWrap: 'nowrap',
+				}}
+			>
+				<Typography sx={{ fontWeight: 600, flexShrink: 0 }}>{t('matchday')}</Typography>
+				<MatchdayNavigator value={slotValue} slots={gridSlots} onChange={handleSlotChange} />
 			</Box>
 		);
 	}
@@ -60,5 +85,3 @@ export default function MatchDayForm({
 		</Box>
 	);
 }
-
-export { formatMatchdaySlotLabel };

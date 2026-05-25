@@ -336,7 +336,8 @@ export default function BetInputContainer(): JSX.Element {
 							<MatchDayForm
 								key={selectedLeague.id}
 								matchDay={matchDay}
-								matchdaySlots={selectedLeague?.matchdaySlots}
+								leagueCode={selectedLeague.leagueCode}
+								matchdaySlots={selectedLeague.matchdaySlots}
 								onMatchDay={handleMatchDay}
 							/>
 							{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}
