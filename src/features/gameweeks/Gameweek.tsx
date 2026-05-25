@@ -25,9 +25,9 @@ import GameweekCalendarSelect from './GameweekCalendarSelect';
 import GameweekPlayerContainer from './GameweekPlayersContainer';
 import GameweekStats from './GameweekStats';
 import {
+	GAMEWEEK_NEIGHBOR_PREFETCH_DELAY_MS,
 	pickDefaultCalendarNode,
-	readLastGameweekNodeId,
-	writeLastGameweekNodeId,
+	prefetchGameweekNeighborBets,
 } from './gameweekCalendarUtils';
 
 const Gameweek = (): JSX.Element => {
@@ -68,7 +68,6 @@ const Gameweek = (): JSX.Element => {
 				return;
 			}
 			setSelectedCalendarNode(node);
-			writeLastGameweekNodeId(seasonId, node.id);
 			if (!options?.skipBetsFetch) {
 				loadBetsForNode(node.id);
 			}
@@ -97,13 +96,7 @@ const Gameweek = (): JSX.Element => {
 			setOverviewError(false);
 
 			try {
-				const lastNodeId = readLastGameweekNodeId(seasonId);
-				const result = await dispatch(
-					fetchGameweeksOverview({
-						seasonId,
-						calendarNodeId: lastNodeId ?? undefined,
-					})
-				);
+				const result = await dispatch(fetchGameweeksOverview({ seasonId }));
 
 				if (cancelled) {
 					return;
@@ -116,25 +109,18 @@ const Gameweek = (): JSX.Element => {
 				}
 
 				const nodes = result.payload.calendarNodes;
-				const bundledBets = result.payload.bets;
 
 				if (nodes.length === 0) {
 					setSelectedCalendarNode(undefined);
 					return;
 				}
 
-				const defaultNode = pickDefaultCalendarNode(nodes, lastNodeId ?? undefined);
-				const skipBetsFetch = Boolean(
-					lastNodeId && bundledBets && defaultNode?.id === lastNodeId
-				);
+				const defaultNode = pickDefaultCalendarNode(nodes);
 
 				if (defaultNode) {
 					setSelectedCalendarNode(defaultNode);
-					writeLastGameweekNodeId(seasonId, defaultNode.id);
-					if (!skipBetsFetch) {
-						if (!store.getState().calendars.betsByCalendarNodeId[defaultNode.id]) {
-							void dispatch(fetchGameweekBets(defaultNode.id));
-						}
+					if (!store.getState().calendars.betsByCalendarNodeId[defaultNode.id]) {
+						void dispatch(fetchGameweekBets(defaultNode.id));
 					}
 				} else {
 					setSelectedCalendarNode(undefined);
@@ -171,6 +157,30 @@ const Gameweek = (): JSX.Element => {
 		selectedCalendarNode?.isFinished,
 		selectedCalendarNode?.gameweekStats.length,
 	]);
+
+	useEffect(() => {
+		if (location.pathname !== '/gameweeks') {
+			return;
+		}
+		if (!selectedNodeId || calendarNodes.length === 0) {
+			return;
+		}
+		if (cachedBets === undefined) {
+			return;
+		}
+
+		const timeoutId = window.setTimeout(() => {
+			prefetchGameweekNeighborBets(calendarNodes, selectedNodeId, (neighborId) => {
+				if (!store.getState().calendars.betsByCalendarNodeId[neighborId]) {
+					void dispatch(fetchGameweekBets(neighborId));
+				}
+			});
+		}, GAMEWEEK_NEIGHBOR_PREFETCH_DELAY_MS);
+
+		return () => {
+			window.clearTimeout(timeoutId);
+		};
+	}, [location.pathname, selectedNodeId, cachedBets, calendarNodes, dispatch]);
 
 	const gameweekCardsCount =
 		selectedCalendarNode?.leagueMatchdayNodes?.reduce((sum, node) => sum + (node.betCountLimit ?? 0), 0) ??

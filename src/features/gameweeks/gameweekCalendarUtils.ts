@@ -1,41 +1,14 @@
 import dayjs, { Dayjs } from 'dayjs';
 import Calendar from '../admin/calendars/types/Calendar';
 
-const LAST_NODE_STORAGE_PREFIX = 'gameweek:lastNode:';
-
-export function lastGameweekNodeStorageKey(seasonId: string): string {
-	return `${LAST_NODE_STORAGE_PREFIX}${seasonId}`;
-}
-
-export function readLastGameweekNodeId(seasonId: string): string | null {
-	try {
-		return localStorage.getItem(lastGameweekNodeStorageKey(seasonId));
-	} catch {
-		return null;
-	}
-}
-
-export function writeLastGameweekNodeId(seasonId: string, nodeId: string): void {
-	try {
-		localStorage.setItem(lastGameweekNodeStorageKey(seasonId), nodeId);
-	} catch {
-		// ignore quota / private mode
-	}
-}
-
-export function pickDefaultCalendarNode(
-	calendarNodes: Calendar[],
-	preferredNodeId?: string | null
-): Calendar | undefined {
+/**
+ * Тур по умолчанию при открытии «По турам»:
+ * 1) текущий по датам start/end (с учётом «вчера»);
+ * 2) иначе ближайший к сегодня по startDate.
+ */
+export function pickDefaultCalendarNode(calendarNodes: Calendar[]): Calendar | undefined {
 	if (calendarNodes.length === 0) {
 		return undefined;
-	}
-
-	if (preferredNodeId) {
-		const preferred = calendarNodes.find((n) => n.id === preferredNodeId);
-		if (preferred) {
-			return preferred;
-		}
 	}
 
 	const now: Dayjs = dayjs().add(-1, 'day');
@@ -56,4 +29,26 @@ export function pickDefaultCalendarNode(
 		const currDiff = curr.startDate ? Math.abs(now.diff(curr.startDate)) : Infinity;
 		return currDiff < prevDiff ? curr : prev;
 	});
+}
+
+export const GAMEWEEK_NEIGHBOR_PREFETCH_DELAY_MS = 1500;
+
+/** Предыдущий и следующий тур в списке (порядок как в селекте). */
+export function prefetchGameweekNeighborBets(
+	calendarNodes: Calendar[],
+	currentNodeId: string,
+	prefetch: (nodeId: string) => void
+): void {
+	const index = calendarNodes.findIndex((n) => n.id === currentNodeId);
+	if (index < 0) {
+		return;
+	}
+	const prev = calendarNodes[index - 1];
+	const next = calendarNodes[index + 1];
+	if (prev) {
+		prefetch(prev.id);
+	}
+	if (next) {
+		prefetch(next.id);
+	}
 }
