@@ -4,6 +4,7 @@ import { useState } from 'react';
 import CustomButton from '../../../components/custom/btn/CustomButton';
 import AddTeamToLeague from './AddTeamToLeague';
 import CreateNewTeam from './CreateNewTeam';
+import EditTeamPanel from './EditTeamPanel';
 
 export default function TeamsManagement(): JSX.Element {
 	const [showAddTeamToLeague, setShowAddTeamToLeague] = useState(false);
@@ -26,7 +27,7 @@ export default function TeamsManagement(): JSX.Element {
 	};
 
 	return (
-		<Box sx={{ margin: '0 auto', textAlign: 'center', width: '20rem', mt: 1.5 }}>
+		<Box sx={{ margin: '0 auto', textAlign: 'center', width: 'min(24rem, 100%)', mt: 1.5, px: 1 }}>
 			<Box sx={{ borderBottom: 2, pb: 2 }}>
 				<Box sx={{ fontSize: 22, fontWeight: 600, mb: 1.5 }}>{t('teamManagement')}</Box>
 				<CustomButton
@@ -54,6 +55,8 @@ export default function TeamsManagement(): JSX.Element {
 					</Box>
 				)}
 			</Box>
+
+			<EditTeamPanel />
 		</Box>
 	);
 }

@@ -1,4 +1,5 @@
 import GameScore from '../../bets/types/GameScore';
+import { TeamDisplayNames } from '../../admin/teams/types/Team';
 
 export type ExternalMatchdaySyncStatus = 'POLLING' | 'COMPLETED';
 
@@ -22,6 +23,13 @@ export interface ExternalMatch {
 	utcDate?: string;
 	homeTeamName: string;
 	awayTeamName: string;
+	/** Внутренний title (PascalCase), если команда найдена в БД. */
+	homeTeamTitle?: string | null;
+	awayTeamTitle?: string | null;
+	homeTeamLogoKey?: string | null;
+	awayTeamLogoKey?: string | null;
+	homeTeamDisplayNames?: TeamDisplayNames | null;
+	awayTeamDisplayNames?: TeamDisplayNames | null;
 	gameScore?: GameScore | null;
 }
 

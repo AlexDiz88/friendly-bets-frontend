@@ -21,7 +21,6 @@ const UserAvatar = ({
 				variant="circular"
 				alt="user_avatar"
 				src={avatarBase64Converter(player?.avatar)}
-				// src={`${AWS_BUCKET_URL}/avatars/${player?.id || ''}`} // aws S3 variant
 			/>
 			{player?.username}
 		</Box>

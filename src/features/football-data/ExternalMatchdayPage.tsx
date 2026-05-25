@@ -10,6 +10,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	showErrorSnackbar,
@@ -19,14 +20,14 @@ import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import MatchdayNavigator from '../../components/matchday/MatchdayNavigator';
 import { getExternalMatchScoreView } from './externalMatchScoreView';
-import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
+import { matchSideToDisplayTeam } from './externalMatchDisplay';
+import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import { selectUser } from '../auth/selectors';
 import GameScore from '../bets/types/GameScore';
-import { teamNameMap } from './gameResults/teamMap';
 import {
 	buildMatchdaySlotsForLeague,
 	FOOTBALL_DATA_COMPETITIONS,
@@ -52,11 +53,6 @@ import {
 	ExternalMatchdayPage as MatchdayPageData,
 } from './types/ExternalMatch';
 
-function toDisplayTeam(name: string): Team {
-	const title = teamNameMap[name] ?? name;
-	return { id: `ext-${title}`, title };
-}
-
 const MATCH_ROW_AVATAR = 26;
 
 function CompactMatchRow({
@@ -68,6 +64,8 @@ function CompactMatchRow({
 	awayTeam: Team;
 	scoreView: string;
 }): JSX.Element {
+	const { t, i18n } = useTranslation();
+
 	return (
 		<Box
 			sx={{
@@ -99,11 +97,11 @@ function CompactMatchRow({
 						whiteSpace: 'nowrap',
 					}}
 				>
-					{t(`teams:${homeTeam.title}`)}
+					{resolveTeamDisplayName(homeTeam, t, i18n.language)}
 				</Typography>
 				<Avatar
 					variant="square"
-					src={pathToLogoImage(homeTeam.title)}
+					src={resolveTeamLogoUrl(homeTeam)}
 					alt=""
 					sx={{ width: MATCH_ROW_AVATAR, height: MATCH_ROW_AVATAR, flexShrink: 0 }}
 				/>
@@ -135,7 +133,7 @@ function CompactMatchRow({
 			>
 				<Avatar
 					variant="square"
-					src={pathToLogoImage(awayTeam.title)}
+					src={resolveTeamLogoUrl(awayTeam)}
 					alt=""
 					sx={{ width: MATCH_ROW_AVATAR, height: MATCH_ROW_AVATAR, flexShrink: 0 }}
 				/>
@@ -151,7 +149,7 @@ function CompactMatchRow({
 						whiteSpace: 'nowrap',
 					}}
 				>
-					{t(`teams:${awayTeam.title}`)}
+					{resolveTeamDisplayName(awayTeam, t, i18n.language)}
 				</Typography>
 			</Box>
 		</Box>
@@ -581,8 +579,8 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					}}
 				>
 					{sortedMatches.map((match: ExternalMatch, index: number) => {
-						const homeTeam = toDisplayTeam(match.homeTeamName);
-						const awayTeam = toDisplayTeam(match.awayTeamName);
+						const homeTeam = matchSideToDisplayTeam(match, 'home');
+						const awayTeam = matchSideToDisplayTeam(match, 'away');
 						const gameScore: GameScore | null = match.gameScore ?? null;
 						const scoreView = getExternalMatchScoreView(gameScore, match.status);
 						const matchDate = match.utcDate

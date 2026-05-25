@@ -1,7 +1,7 @@
 import { Avatar, Box } from '@mui/material';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import Team from '../../../features/admin/teams/types/Team';
-import { pathToLogoImage } from '../../utils/imgBase64Converter';
+import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../utils/teamDisplay';
 
 const TeamAvatar = ({
 	team,
@@ -12,15 +12,17 @@ const TeamAvatar = ({
 	height?: number;
 	sx?: {};
 }): JSX.Element => {
+	const { t, i18n } = useTranslation();
+
 	return (
 		<Box sx={{ display: 'flex', alignItems: 'center', ...sx }}>
 			<Avatar
 				sx={{ mr: 0.3, height, width: height }}
 				variant="square"
 				alt="team_logo"
-				src={pathToLogoImage(team?.title)}
+				src={resolveTeamLogoUrl(team)}
 			/>
-			{t(`teams:${team?.title || ''}`)}
+			{resolveTeamDisplayName(team, t, i18n.language)}
 		</Box>
 	);
 };
