@@ -19,6 +19,30 @@ export async function getAllSeasonCalendarNodes(
 	return result.json();
 }
 
+export interface GameweeksOverviewResponse {
+	calendarNodes: Calendar[];
+	bets: BetsPage | null;
+}
+
+export async function getGameweeksOverview(
+	seasonId: string,
+	calendarNodeId?: string
+): Promise<GameweeksOverviewResponse> {
+	const params = calendarNodeId ? `?calendarNodeId=${encodeURIComponent(calendarNodeId)}` : '';
+	let url = `${
+		import.meta.env.VITE_PRODUCT_SERVER || ''
+	}/api/calendars/seasons/${seasonId}/gameweeks-overview${params}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/calendars/seasons/${seasonId}/gameweeks-overview${params}`;
+	}
+	const result = await apiFetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 export async function getSeasonCalendarHasBetsNodes(
 	seasonId: string
 ): Promise<{ calendarNodes: Calendar[] }> {
