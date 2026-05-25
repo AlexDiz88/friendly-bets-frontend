@@ -1,0 +1,116 @@
+import CheckIcon from '@mui/icons-material/Check';
+import { Box, IconButton, Tooltip, Typography } from '@mui/material';
+import { t } from 'i18next';
+import { useEffect, useMemo, useState } from 'react';
+import { useAppDispatch } from '../../../app/hooks';
+import LeagueAvatar from '../../../components/custom/avatar/LeagueAvatar';
+import MatchdayGridSelect from '../../../components/matchday/MatchdayGridSelect';
+import {
+	expandedSlotsToMatchdaySlots,
+	matchDayStringToSlotValue,
+	slotValueToMatchDayString,
+} from '../../../components/matchday/slotMappers';
+import {
+	showErrorSnackbar,
+	showSuccessSnackbar,
+} from '../../../components/custom/snackbar/snackbarSlice';
+import League from './types/League';
+import { setLeagueCurrentMatchday } from './api';
+
+export default function LeagueCurrentMatchdayAssignInline({
+	league,
+	onSaved,
+}: {
+	league: League;
+	onSaved: () => void;
+}): JSX.Element {
+	const dispatch = useAppDispatch();
+	const slots = useMemo(
+		() => (league.matchdaySlots?.length ? expandedSlotsToMatchdaySlots(league.matchdaySlots) : []),
+		[league.matchdaySlots]
+	);
+	const [slotValue, setSlotValue] = useState(() =>
+		matchDayStringToSlotValue(league.currentMatchDay, slots)
+	);
+	const [saving, setSaving] = useState(false);
+
+	useEffect(() => {
+		setSlotValue(matchDayStringToSlotValue(league.currentMatchDay, slots));
+	}, [league.id, league.currentMatchDay, slots]);
+
+	const handleSave = async (): Promise<void> => {
+		if (saving || slots.length === 0) {
+			return;
+		}
+		setSaving(true);
+		try {
+			await setLeagueCurrentMatchday(league.id, slotValueToMatchDayString(slotValue, slots));
+			dispatch(showSuccessSnackbar({ message: t('leagueCurrentMatchdaySaved') }));
+			onSaved();
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : t('leagueCurrentMatchdayError'),
+				})
+			);
+		} finally {
+			setSaving(false);
+		}
+	};
+
+	if (slots.length === 0) {
+		return <></>;
+	}
+
+	return (
+		<Box
+			sx={{
+				border: 1,
+				borderColor: 'divider',
+				borderRadius: 1,
+				p: 0.75,
+				bgcolor: 'background.paper',
+				textAlign: 'left',
+				width: '100%',
+				minWidth: 0,
+				overflow: 'hidden',
+				boxSizing: 'border-box',
+			}}
+		>
+			<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+				<LeagueAvatar leagueCode={league.leagueCode} height={24} />
+				<Typography variant="body2" fontWeight={600} sx={{ flex: 1, minWidth: 0 }}>
+					{league.name}
+				</Typography>
+			</Box>
+			<Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>
+				{t('leagueCurrentMatchday')}
+			</Typography>
+			<Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', minWidth: 0 }}>
+				<MatchdayGridSelect
+					value={slotValue}
+					matchdayCount={slots.length}
+					slots={slots}
+					onChange={setSlotValue}
+					disabled={saving}
+					aria-label={t('leagueCurrentMatchday')}
+				/>
+				<Tooltip title={t('btnText.save')} arrow>
+					<Box component="span" sx={{ flexShrink: 0, display: 'inline-flex' }}>
+						<IconButton
+							color="success"
+							size="small"
+							disabled={saving}
+							onClick={() => {
+								void handleSave();
+							}}
+							aria-label={t('btnText.save')}
+						>
+							<CheckIcon fontSize="small" />
+						</IconButton>
+					</Box>
+				</Tooltip>
+			</Box>
+		</Box>
+	);
+}

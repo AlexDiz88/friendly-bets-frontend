@@ -1,4 +1,3 @@
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {
 	Box,
 	List,
@@ -21,8 +20,9 @@ import {
 import { getTournamentFormats } from '../tournament-formats/api';
 import TournamentFormat from '../tournament-formats/types/TournamentFormat';
 import League from '../leagues/types/League';
-import { addLeagueToSeason, getSeasons } from '../seasons/seasonsSlice';
+import { addLeagueToSeason, getActiveSeason, getSeasons } from '../seasons/seasonsSlice';
 import { selectLeagueCodes } from '../seasons/selectors';
+import LeagueCurrentMatchdayAssignInline from './LeagueCurrentMatchdayAssignInline';
 import LeagueFormatAssignInline from './LeagueFormatAssignInline';
 
 export default function AddLeagueInSeason({
@@ -48,6 +48,7 @@ export default function AddLeagueInSeason({
 
 	const refreshSeasons = useCallback(() => {
 		dispatch(getSeasons());
+		dispatch(getActiveSeason());
 	}, [dispatch]);
 
 	const handleAddLeagueClick = useCallback(async () => {
@@ -99,10 +100,11 @@ export default function AddLeagueInSeason({
 								overflow: 'hidden',
 							}}
 						>
-							{l.tournamentFormatId ? (
+							{l.tournamentFormatId && l.matchdaySlots && l.matchdaySlots.length > 0 ? (
+								<LeagueCurrentMatchdayAssignInline league={l} onSaved={refreshSeasons} />
+							) : l.tournamentFormatId ? (
 								<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
 									<LeagueAvatar leagueCode={l.leagueCode} height={28} fullName />
-									<CheckCircleIcon color="success" fontSize="small" sx={{ ml: 'auto' }} />
 								</Box>
 							) : (
 								<LeagueFormatAssignInline
