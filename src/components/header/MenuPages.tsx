@@ -15,8 +15,30 @@ import { selectUser } from '../../features/auth/selectors';
 import { changeLanguageAsync, saveUserLanguageAsync } from '../../features/languages/languageSlice';
 import Language from '../../features/languages/types/Language';
 import CustomMenuPageText from '../custom/CustomMenuPageText';
+import {
+	headerLangMenuDesktopSx,
+	headerLangMenuMobileSx,
+	headerNavDesktopSx,
+	headerNavMobileSx,
+} from './headerLayout';
 
-export default function MenuPages(): JSX.Element {
+export interface HeaderMenuState {
+	t: (key: string) => string;
+	pages: string[];
+	languages: Language[];
+	currentLang: Language | undefined;
+	anchorElNav: HTMLElement | null;
+	anchorElLang: HTMLElement | null;
+	handleNavigate: (page: string) => void;
+	handleOpenNavMenu: (event: React.MouseEvent<HTMLElement>) => void;
+	handleCloseNavMenu: () => void;
+	handleOpenLangMenu: (event: React.MouseEvent<HTMLElement>) => void;
+	handleCloseLangMenu: () => void;
+	handleLanguageSelect: (lang: Language) => void;
+	scrollToTop: () => void;
+}
+
+export function useHeaderMenu(): HeaderMenuState {
 	const user = useAppSelector(selectUser);
 	const { t, i18n } = useTranslation();
 	useAppSelector((state) => state.language);
@@ -108,97 +130,161 @@ export default function MenuPages(): JSX.Element {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
+	return {
+		t,
+		pages,
+		languages,
+		currentLang,
+		anchorElNav,
+		anchorElLang,
+		handleNavigate,
+		handleOpenNavMenu,
+		handleCloseNavMenu,
+		handleOpenLangMenu,
+		handleCloseLangMenu,
+		handleLanguageSelect,
+		scrollToTop,
+	};
+}
+
+function LanguagePickerMenu({
+	menu,
+	sx,
+}: {
+	menu: HeaderMenuState;
+	sx?: object;
+}): JSX.Element {
+	return (
+		<Menu
+			id="language-menu"
+			anchorEl={menu.anchorElLang}
+			anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+			transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+			open={Boolean(menu.anchorElLang)}
+			onClose={menu.handleCloseLangMenu}
+			sx={sx}
+		>
+			{menu.languages.map((lang) => (
+				<MenuItem key={lang.code} onClick={() => menu.handleLanguageSelect(lang)}>
+					<Box sx={{ display: 'flex', alignItems: 'center' }}>
+						<Avatar
+							sx={{ mr: 0.5, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
+							alt="language_flag"
+							src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${lang.img}`}
+						/>
+						{lang.name}
+					</Box>
+				</MenuItem>
+			))}
+		</Menu>
+	);
+}
+
+/** Гамбургер — левая колонка (xs–sm). */
+export function HeaderNavLeft({ menu }: { menu: HeaderMenuState }): JSX.Element {
+	return (
+		<Box sx={{ ...headerNavMobileSx, alignItems: 'center', minWidth: 40 }}>
+			<IconButton
+				size="large"
+				aria-label="main navigation"
+				aria-controls="menu-app-bar"
+				aria-haspopup="true"
+				onClick={menu.handleOpenNavMenu}
+				color="inherit"
+			>
+				<MenuIcon />
+			</IconButton>
+			<Menu
+				id="menu-app-bar"
+				anchorEl={menu.anchorElNav}
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+				keepMounted
+				transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+				open={Boolean(menu.anchorElNav)}
+				onClose={menu.handleCloseNavMenu}
+			>
+				{menu.pages.map((page) => (
+					<MenuItem
+						key={page}
+						sx={
+							page === menu.t('language')
+								? {
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'space-between',
+								  }
+								: undefined
+						}
+						onClick={
+							page === menu.t('language')
+								? menu.handleOpenLangMenu
+								: () => {
+										menu.handleCloseNavMenu();
+										menu.handleNavigate(page);
+								  }
+						}
+					>
+						{page === menu.t('language') ? (
+							<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+								<Avatar
+									sx={{ mr: -0.5, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
+									alt="language_flag"
+									src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${
+										menu.currentLang?.img ?? 'default.png'
+									}`}
+								/>
+								<Typography sx={{ fontWeight: 600 }}>{page}</Typography>
+							</Box>
+						) : (
+							<Typography sx={{ fontWeight: 600 }}>{page}</Typography>
+						)}
+						{page === menu.t('language') && <KeyboardArrowRight />}
+					</MenuItem>
+				))}
+			</Menu>
+			<LanguagePickerMenu menu={menu} sx={headerLangMenuMobileSx} />
+		</Box>
+	);
+}
+
+/** Ссылки — центральная колонка, по центру окна на любой ширине. */
+export function HeaderNavCenter({ menu }: { menu: HeaderMenuState }): JSX.Element {
 	return (
 		<>
-			{/* Мобильная версия меню */}
-			<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-				<IconButton
-					size="large"
-					aria-label="account of current user"
-					aria-controls="menu-app-bar"
-					aria-haspopup="true"
-					onClick={handleOpenNavMenu}
-					color="inherit"
-				>
-					<MenuIcon />
-				</IconButton>
-				<Menu
-					id="menu-app-bar"
-					anchorEl={anchorElNav}
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'right',
-					}}
-					keepMounted
-					transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-					open={Boolean(anchorElNav)}
-					onClose={handleCloseNavMenu}
-					sx={{
-						display: { xs: 'block', md: 'none', lg: 'none' },
-					}}
-				>
-					{pages.map((page) => (
-						<MenuItem
-							key={page}
-							sx={
-								page === t('language')
-									? {
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'space-between',
-									  }
-									: undefined
-							}
-							onClick={
-								page === t('language')
-									? handleOpenLangMenu
-									: () => {
-											handleCloseNavMenu();
-											handleNavigate(page);
-									  }
-							}
-						>
-							{page === t('language') ? (
-								<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-									<Avatar
-										sx={{ mr: -0.5, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
-										alt="language_flag"
-										src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${
-											currentLang?.img ?? 'default.png'
-										}`}
-									/>
-									<Typography sx={{ fontWeight: 600 }}>{page}</Typography>
-								</Box>
-							) : (
-								<Typography sx={{ fontWeight: 600 }}>{page}</Typography>
-							)}
-							{page === t('language') && <KeyboardArrowRight />}
-						</MenuItem>
-					))}
-				</Menu>
-			</Box>
-
-			{/* Десктопная версия меню */}
-			<Box sx={{ display: 'flex', alignItems: 'center' }}>
-				<CustomMenuPageText onClick={scrollToTop} href="#" title={t('table')} />
-				<CustomMenuPageText onClick={scrollToTop} href="#/bets/opened" title={t('bets')} />
-				<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-					{pages.map((page) =>
-						page === t('language') ? (
+			<Box
+				sx={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					flexWrap: 'wrap',
+					rowGap: 0,
+					maxWidth: '100%',
+					px: { xs: 0.5, sm: 1 },
+				}}
+			>
+				<CustomMenuPageText onClick={menu.scrollToTop} href="#" title={menu.t('table')} />
+				<CustomMenuPageText
+					onClick={menu.scrollToTop}
+					href="#/bets/opened"
+					title={menu.t('bets')}
+				/>
+				<Box sx={headerNavDesktopSx}>
+					{menu.pages.map((page) =>
+						page === menu.t('language') ? (
 							<Box
 								key={page}
-								sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', ml: 2 }}
+								sx={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }}
 								onClick={(event) => {
-									handleOpenLangMenu(event);
-									scrollToTop();
-									handleCloseNavMenu();
+									menu.handleOpenLangMenu(event);
+									menu.scrollToTop();
+									menu.handleCloseNavMenu();
 								}}
 							>
 								<Avatar
-									sx={{ mr: -1, width: 26, height: 18, border: 0.5, borderRadius: 0 }}
+									sx={{ ml: 1, mr: -0.5, width: 26, height: 18, border: 0.5, borderRadius: 0 }}
 									alt="language_flag"
 									src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${
-										currentLang?.img ?? 'default.png'
+										menu.currentLang?.img ?? 'default.png'
 									}`}
 								/>
 								<CustomMenuPageText title={page} />
@@ -207,9 +293,9 @@ export default function MenuPages(): JSX.Element {
 							<CustomMenuPageText
 								key={page}
 								onClickCapture={() => {
-									handleNavigate(page);
-									scrollToTop();
-									handleCloseNavMenu();
+									menu.handleNavigate(page);
+									menu.scrollToTop();
+									menu.handleCloseNavMenu();
 								}}
 								title={page}
 							/>
@@ -217,28 +303,18 @@ export default function MenuPages(): JSX.Element {
 					)}
 				</Box>
 			</Box>
+			<LanguagePickerMenu menu={menu} sx={headerLangMenuDesktopSx} />
+		</>
+	);
+}
 
-			<Menu
-				id="language-menu"
-				anchorEl={anchorElLang}
-				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-				transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-				open={Boolean(anchorElLang)}
-				onClose={handleCloseLangMenu}
-			>
-				{languages.map((lang) => (
-					<MenuItem key={lang.code} onClick={() => handleLanguageSelect(lang)}>
-						<Box sx={{ mb: 0.8, ml: 0, display: 'flex', alignItems: 'center' }}>
-							<Avatar
-								sx={{ mr: 0.5, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
-								alt="language_flag"
-								src={`${import.meta.env.PUBLIC_URL || ''}/upload/locales/${lang.img}`}
-							/>
-							{lang.name}
-						</Box>
-					</MenuItem>
-				))}
-			</Menu>
+/** @deprecated */
+export default function MenuPages(): JSX.Element {
+	const menu = useHeaderMenu();
+	return (
+		<>
+			<HeaderNavLeft menu={menu} />
+			<HeaderNavCenter menu={menu} />
 		</>
 	);
 }

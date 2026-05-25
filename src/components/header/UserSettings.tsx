@@ -75,8 +75,7 @@ export default function UserSettings(): JSX.Element {
 			sx={{
 				display: 'flex',
 				justifyContent: 'flex-end',
-				flexGrow: 1,
-				pl: { xs: 0, md: 3 },
+				alignItems: 'center',
 			}}
 		>
 			<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
