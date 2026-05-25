@@ -56,6 +56,8 @@ export default function LeagueFormatAssignInline({
 		}
 	};
 
+	const selectedFormatName = formats.find((f) => f.id === formatId)?.name;
+
 	return (
 		<Box
 			sx={{
@@ -65,6 +67,10 @@ export default function LeagueFormatAssignInline({
 				p: 0.75,
 				bgcolor: 'action.hover',
 				textAlign: 'left',
+				width: '100%',
+				minWidth: 0,
+				overflow: 'hidden',
+				boxSizing: 'border-box',
 			}}
 		>
 			<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: seasonTitle ? 0.25 : 0.5 }}>
@@ -81,7 +87,7 @@ export default function LeagueFormatAssignInline({
 					{t('season')}: {seasonTitle}
 				</Typography>
 			)}
-			<Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+			<Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', minWidth: 0 }}>
 				<Select
 					fullWidth
 					size="small"
@@ -89,6 +95,32 @@ export default function LeagueFormatAssignInline({
 					value={formatId}
 					onChange={handleFormatChange}
 					disabled={saving}
+					renderValue={() =>
+						formatId ? (
+							<Box
+								component="span"
+								sx={{
+									display: 'block',
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
+									whiteSpace: 'nowrap',
+								}}
+							>
+								{selectedFormatName}
+							</Box>
+						) : (
+							t('chooseTournamentFormat')
+						)
+					}
+					sx={{
+						flex: 1,
+						minWidth: 0,
+						'& .MuiSelect-select': {
+							overflow: 'hidden',
+							textOverflow: 'ellipsis',
+							whiteSpace: 'nowrap',
+						},
+					}}
 				>
 					<MenuItem value="" disabled>
 						{t('chooseTournamentFormat')}
@@ -100,7 +132,7 @@ export default function LeagueFormatAssignInline({
 					))}
 				</Select>
 				<Tooltip title={t('btnText.save')} arrow>
-					<span>
+					<Box component="span" sx={{ flexShrink: 0, display: 'inline-flex' }}>
 						<IconButton
 							color="success"
 							size="small"
@@ -112,7 +144,7 @@ export default function LeagueFormatAssignInline({
 						>
 							<CheckIcon fontSize="small" />
 						</IconButton>
-					</span>
+					</Box>
 				</Tooltip>
 			</Box>
 		</Box>

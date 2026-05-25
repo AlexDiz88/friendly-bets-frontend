@@ -1,209 +1,64 @@
-import { AddCircle, RemoveCircle } from '@mui/icons-material';
-import {
-	Box,
-	IconButton,
-	MenuItem,
-	Select,
-	SelectChangeEvent,
-	Switch,
-	TextField,
-	Typography,
-} from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useState } from 'react';
-import { MATCHDAY_TITLE_FINAL } from '../../constants';
+import { useEffect, useMemo } from 'react';
+import MatchdaySlotSelect from '../../components/selectors/MatchdaySlotSelect';
+import {
+	formatMatchdaySlotLabel,
+	resolveDefaultMatchDay,
+} from '../../components/utils/matchdaySlots';
+import type { ExpandedMatchdaySlot } from '../admin/tournament-formats/types/TournamentFormat';
 
-const getIsPlayoff = (title: string): boolean => {
-	return title === MATCHDAY_TITLE_FINAL || title.startsWith('1/');
+type MatchDayFormProps = {
+	matchDay: string;
+	matchdaySlots?: ExpandedMatchdaySlot[];
+	onMatchDay: (matchDay: string) => void;
 };
 
-const getMatchday = (title: string): string => {
-	const index = title.indexOf('[');
-	return index !== -1 ? title.substring(0, index).trim() : title;
-};
-
-const getPlayoffLeg = (title: string): string => {
-	const index = title.indexOf('[');
-	return index !== -1 ? title[index + 1] : '';
-};
-
+/**
+ * Tour selection for bets: uses TournamentFormat slots when available, otherwise legacy numeric input.
+ */
 export default function MatchDayForm({
 	matchDay,
+	matchdaySlots,
 	onMatchDay,
-}: {
-	matchDay: string;
-	onMatchDay: (matchDay: string) => void;
-}): JSX.Element {
-	const [updatedIsPlayoff, setUpdatedIsPlayoff] = useState<boolean>(getIsPlayoff(matchDay));
-	const [updatedMatchDay, setUpdatedMatchDay] = useState<string>(getMatchday(matchDay));
-	const [updatedPlayoffLeg, setUpdatedPlayoffLeg] = useState<string>(getPlayoffLeg(matchDay));
-
-	const playoffMatchDayList: string[] = ['1/16', '1/8', '1/4', '1/2', MATCHDAY_TITLE_FINAL];
-	const playoffLegsList: string[] = ['', '1', '2', '3', '4'];
-
-	const championsLeaguePlayoffMappings: Record<string, string> = {
-		'9': '1/16',
-		'10': '1/16',
-		'11': '1/8',
-		'12': '1/8',
-		'13': '1/4',
-		'14': '1/4',
-		'15': '1/2',
-		'16': '1/2',
-		'17': MATCHDAY_TITLE_FINAL,
-	};
-
-	const championsLeaguePlayoffLegMappings: Record<string, string> = {
-		'9': '1',
-		'10': '2',
-		'11': '1',
-		'12': '2',
-		'13': '1',
-		'14': '2',
-		'15': '1',
-		'16': '2',
-		'17': '',
-	};
+}: MatchDayFormProps): JSX.Element {
+	const hasFormatSlots = (matchdaySlots?.length ?? 0) > 0;
+	const slots = useMemo(() => matchdaySlots ?? [], [matchdaySlots]);
 
 	useEffect(() => {
-		let res = updatedMatchDay;
-		if (updatedIsPlayoff && updatedPlayoffLeg !== '') {
-			res = updatedMatchDay + ' [' + updatedPlayoffLeg + ']';
+		if (!hasFormatSlots) {
+			return;
 		}
-		onMatchDay(res);
-	}, [updatedIsPlayoff, updatedMatchDay, updatedPlayoffLeg]);
-
-	const handleIncrement = (): void => {
-		setUpdatedMatchDay((prevValue) => {
-			const newValue = playoffMatchDayList.includes(updatedMatchDay)
-				? '1'
-				: (Number(prevValue) + 1).toString();
-			return newValue;
-		});
-	};
-
-	const handleDecrement = (): void => {
-		setUpdatedMatchDay((prevValue) => {
-			const newValue =
-				Number(prevValue) - 1 < 1 || playoffMatchDayList.includes(updatedMatchDay)
-					? '1'
-					: (Number(prevValue) - 1).toString();
-			return newValue;
-		});
-	};
-
-	const handleMatchDayChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-		setUpdatedMatchDay(e.target.value);
-	};
-
-	const handleMatchDaySelect = (e: SelectChangeEvent): void => {
-		if (e.target.value === MATCHDAY_TITLE_FINAL) {
-			setUpdatedPlayoffLeg('');
+		const resolved = resolveDefaultMatchDay(matchDay, slots);
+		if (resolved !== matchDay) {
+			onMatchDay(resolved);
 		}
-		setUpdatedMatchDay(e.target.value);
-	};
+	}, [hasFormatSlots, matchDay, slots, onMatchDay]);
 
-	const handlePlayoffLegSelect = (e: SelectChangeEvent): void => {
-		setUpdatedPlayoffLeg(e.target.value);
-	};
-
-	const handleIsPlayoffBet = (event: React.ChangeEvent<HTMLInputElement>): void => {
-		const flag = event.target.checked;
-		setUpdatedIsPlayoff(flag);
-
-		const matchDayTransform = flag
-			? championsLeaguePlayoffMappings[updatedMatchDay] || '1/16'
-			: getIsPlayoff(matchDay)
-			? '1'
-			: matchDay;
-
-		const playoffLegValue = flag
-			? championsLeaguePlayoffLegMappings[updatedMatchDay] || ''
-			: getPlayoffLeg(matchDay);
-
-		setUpdatedMatchDay(matchDayTransform);
-		setUpdatedPlayoffLeg(playoffLegValue);
-	};
+	if (hasFormatSlots) {
+		return (
+			<Box>
+				<Typography sx={{ mx: 1, fontWeight: 600 }}>{t('matchday')}</Typography>
+				<Box sx={{ mt: 1 }}>
+					<MatchdaySlotSelect value={matchDay} slots={slots} onChange={onMatchDay} />
+				</Box>
+			</Box>
+		);
+	}
 
 	return (
 		<Box>
-			<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-				<Typography sx={{ mx: 1, fontWeight: '600' }}>{t('matchday')}</Typography>
-				<Typography sx={{ textAlign: 'left', mx: 0, mt: 0.8, fontWeight: '600' }}>
-					Play-off?
-					<Switch
-						checked={updatedIsPlayoff}
-						onChange={handleIsPlayoffBet}
-						inputProps={{ 'aria-label': 'controlled' }}
-					/>
-				</Typography>
+			<Typography sx={{ mx: 1, fontWeight: 600 }}>{t('matchday')}</Typography>
+			<Box component="form" autoComplete="off" sx={{ minWidth: '5rem', pt: 0, mt: 1 }}>
+				<TextField
+					size="small"
+					value={matchDay}
+					onChange={(e) => onMatchDay(e.target.value)}
+					inputProps={{ min: 1, 'aria-label': t('matchday') }}
+				/>
 			</Box>
-			{!updatedIsPlayoff ? (
-				<Box
-					component="form"
-					autoComplete="off"
-					display="flex"
-					alignItems="center"
-					sx={{ minWidth: '5rem', pt: 0 }}
-				>
-					<IconButton onClick={handleDecrement}>
-						<RemoveCircle color="info" sx={{ fontSize: '2.5rem' }} />
-					</IconButton>
-					<TextField
-						size="small"
-						type="number"
-						value={updatedMatchDay}
-						onChange={handleMatchDayChange}
-						inputProps={{
-							min: 0,
-							max: 50,
-						}}
-					/>
-					<IconButton onClick={handleIncrement}>
-						<AddCircle color="info" sx={{ fontSize: '2.5rem' }} />
-					</IconButton>
-				</Box>
-			) : (
-				<Box>
-					<Select
-						autoWidth
-						size="small"
-						sx={{ minWidth: '11rem', mt: 1.5, mb: 0.6 }}
-						labelId="playoff-matchday-label"
-						id="playoff-matchday-select"
-						value={updatedMatchDay}
-						onChange={handleMatchDaySelect}
-					>
-						{playoffMatchDayList.map((value) => (
-							<MenuItem key={value} sx={{ ml: -0.5, minWidth: '6rem' }} value={value}>
-								<Box style={{ display: 'flex', alignItems: 'center' }}>
-									<Typography sx={{ mx: 1, fontSize: '1rem' }}>
-										{t(`playoffStage.${value}`)}
-									</Typography>
-								</Box>
-							</MenuItem>
-						))}
-					</Select>
-					<Select
-						disabled={updatedMatchDay === MATCHDAY_TITLE_FINAL ? true : false}
-						autoWidth
-						size="small"
-						sx={{ minWidth: '4rem', mt: 1.5, mb: 0.6 }}
-						labelId="playoff-leg-label"
-						id="playoff-leg-select"
-						value={updatedPlayoffLeg}
-						onChange={handlePlayoffLegSelect}
-					>
-						{playoffLegsList.map((value) => (
-							<MenuItem key={value} sx={{ ml: -0.5, minWidth: '6rem' }} value={value}>
-								<Box style={{ display: 'flex', alignItems: 'center' }}>
-									<Typography sx={{ mx: 1, fontSize: '1rem' }}>{value}</Typography>
-								</Box>
-							</MenuItem>
-						))}
-					</Select>
-				</Box>
-			)}
 		</Box>
 	);
 }
+
+export { formatMatchdaySlotLabel };

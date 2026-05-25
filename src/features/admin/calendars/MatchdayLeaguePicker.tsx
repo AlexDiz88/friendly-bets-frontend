@@ -11,6 +11,7 @@ import { MATCHDAY_TITLE_FINAL } from '../../../constants';
 import {
 	suggestedBetSizeForCalendarMatchday,
 } from '../../bets/betSizeDefaults';
+import { resolveDefaultMatchDay } from '../../../components/utils/matchdaySlots';
 import MatchDayForm from '../../bets/MatchDayForm';
 import League from '../leagues/types/League';
 import LeagueMatchdayNode from './types/LeagueMatchdayNode';
@@ -100,7 +101,7 @@ const MatchdayLeaguePicker = ({
 		setShowLeagues(false);
 		setShowMatchDayForm(true);
 		setShowAddLeagueError(false);
-		setMatchDay(league.currentMatchDay);
+		setMatchDay(resolveDefaultMatchDay(league.currentMatchDay, league.matchdaySlots));
 		resetBetLimitForm();
 	};
 
@@ -166,7 +167,11 @@ const MatchdayLeaguePicker = ({
 
 			{showMatchDayForm && (
 				<>
-					<MatchDayForm matchDay={matchDay} onMatchDay={handleMatchDay} />
+					<MatchDayForm
+						matchDay={matchDay}
+						matchdaySlots={selectedLeague?.matchdaySlots}
+						onMatchDay={handleMatchDay}
+					/>
 					<Box
 						sx={{
 							display: 'flex',

@@ -46,7 +46,7 @@ import {
 } from '../admin/calendars/calendarsSlice';
 import { selectAllCalendarNodes } from '../admin/calendars/selectors';
 import Calendar from '../admin/calendars/types/Calendar';
-import { selectActiveSeasonId } from '../admin/seasons/selectors';
+import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
 import BetInputOdds from './BetInputOdds';
@@ -73,6 +73,7 @@ export default function BetEditForm({
 }): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
+	const activeSeason = useAppSelector(selectActiveSeason);
 	const calendarNodes = useAppSelector(selectAllCalendarNodes);
 	const [calendar, setCalendar] = useState<Calendar | undefined>();
 	const [updatedUser, setUpdatedUser] = useState<SimpleUser>(bet.player);
@@ -246,7 +247,13 @@ export default function BetEditForm({
 				</Typography>
 			</Box>
 			<BetInputPlayer defaultValue={bet.player} onUserSelect={handleUserSelection} />
-			<MatchDayForm matchDay={bet.matchDay} onMatchDay={handleMatchDaySelection} />
+			<MatchDayForm
+				matchDay={updatedMatchDay ?? bet.matchDay}
+				matchdaySlots={
+					activeSeason?.leagues?.find((l) => l.id === bet.leagueId)?.matchdaySlots
+				}
+				onMatchDay={handleMatchDaySelection}
+			/>
 			{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}
 			<BetInputTeams
 				defaultHomeTeamName={bet.homeTeam?.title}

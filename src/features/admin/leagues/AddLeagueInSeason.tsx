@@ -95,6 +95,8 @@ export default function AddLeagueInSeason({
 								alignItems: 'stretch',
 								px: 0.5,
 								py: 0.75,
+								minWidth: 0,
+								overflow: 'hidden',
 							}}
 						>
 							{l.tournamentFormatId ? (

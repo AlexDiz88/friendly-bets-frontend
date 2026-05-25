@@ -39,6 +39,7 @@ import BetInputTeams from './BetInputTeams';
 import BetInputTitle from './BetInputTitle';
 import BetSummaryInfo from './BetSummaryInfo';
 import MatchDayForm from './MatchDayForm';
+import { resolveDefaultMatchDay } from '../../components/utils/matchdaySlots';
 import { addEmptyBet, addOpenedBet } from './betsSlice';
 import BetTitle from './types/BetTitle';
 
@@ -180,7 +181,7 @@ export default function BetInputContainer(): JSX.Element {
 	const handleLeagueSelection = (league: League): void => {
 		setSelectedLeague(league);
 		setSelectedLeagueId(league.id);
-		setMatchDay(league.currentMatchDay || '1');
+		setMatchDay(resolveDefaultMatchDay(league.currentMatchDay, league.matchdaySlots));
 		setSelectedHomeTeam(undefined);
 		setSelectedAwayTeam(undefined);
 		setSelectedBetTitle(undefined);
@@ -334,7 +335,8 @@ export default function BetInputContainer(): JSX.Element {
 						<>
 							<MatchDayForm
 								key={selectedLeague.id}
-								matchDay={selectedLeague ? selectedLeague.currentMatchDay : '1'}
+								matchDay={matchDay}
+								matchdaySlots={selectedLeague?.matchdaySlots}
 								onMatchDay={handleMatchDay}
 							/>
 							{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}

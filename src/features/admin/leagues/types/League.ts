@@ -1,3 +1,4 @@
+import type { ExpandedMatchdaySlot } from '../../tournament-formats/types/TournamentFormat';
 import Team from '../../teams/types/Team';
 
 export default interface League {
@@ -6,6 +7,7 @@ export default interface League {
 	name: string;
 	currentMatchDay: string;
 	tournamentFormatId?: string;
+	matchdaySlots?: ExpandedMatchdaySlot[];
 	teams: Team[];
 }
 
