@@ -106,6 +106,12 @@ export const addTeamToLeagueInSeason = createAsyncThunk(
 		api.addTeamToLeagueInSeason(seasonId, leagueId, teamId)
 );
 
+export const removeTeamFromLeagueInSeason = createAsyncThunk(
+	'seasons/removeTeamFromLeagueInSeason',
+	async ({ seasonId, leagueId, teamId }: { seasonId: string; leagueId: string; teamId: string }) =>
+		api.removeTeamFromLeagueInSeason(seasonId, leagueId, teamId)
+);
+
 const seasonsSlice = createSlice({
 	name: 'seasons',
 	initialState,

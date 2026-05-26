@@ -1,11 +1,14 @@
+import CloseIcon from '@mui/icons-material/Close';
 import {
 	Avatar,
 	Box,
+	IconButton,
 	List,
 	ListItem,
 	MenuItem,
 	Select,
 	SelectChangeEvent,
+	Tooltip,
 	Typography,
 } from '@mui/material';
 import { t } from 'i18next';
@@ -13,15 +16,17 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
+import CustomCalendarDialog from '../../../components/custom/dialog/CustomCalendarDialog';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
 import { pathToLogoImage } from '../../../components/utils/imgBase64Converter';
-import { addTeamToLeagueInSeason, getSeasons } from '../seasons/seasonsSlice';
+import { addTeamToLeagueInSeason, getSeasons, removeTeamFromLeagueInSeason } from '../seasons/seasonsSlice';
 import { selectSeasons } from '../seasons/selectors';
 import Season from '../seasons/types/Season';
 import { selectLeagueTeams, selectTeams } from './selectors';
+import Team from './types/Team';
 import { getAllTeams, getLeagueTeams } from './teamsSlice';
 
 export default function AddTeamToLeague({
@@ -40,6 +45,7 @@ export default function AddTeamToLeague({
 	const [seasonId, setSeasonId] = useState<string>('');
 	const [leagueId, setLeagueId] = useState<string>('');
 	const [teamId, setTeamId] = useState<string>('');
+	const [teamToRemove, setTeamToRemove] = useState<Team | null>(null);
 
 	const handleAddTeamClick = useCallback(async () => {
 		const dispatchResult = await dispatch(
@@ -88,6 +94,31 @@ export default function AddTeamToLeague({
 	const handleCancelClick = (): void => {
 		closeAddTeamToLeague(false);
 	};
+
+	const handleConfirmRemoveTeam = useCallback(async () => {
+		if (!teamToRemove || !seasonId || !leagueId) {
+			return;
+		}
+		const dispatchResult = await dispatch(
+			removeTeamFromLeagueInSeason({
+				seasonId,
+				leagueId,
+				teamId: teamToRemove.id,
+			})
+		);
+		setTeamToRemove(null);
+		if (removeTeamFromLeagueInSeason.fulfilled.match(dispatchResult)) {
+			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyRemovedFromLeague') }));
+			if (selectedTeam === teamToRemove.title) {
+				setSelectedTeam('');
+				setTeamId('');
+			}
+			dispatch(getLeagueTeams({ leagueId }));
+		}
+		if (removeTeamFromLeagueInSeason.rejected.match(dispatchResult)) {
+			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
+		}
+	}, [dispatch, leagueId, seasonId, selectedTeam, teamToRemove]);
 
 	useEffect(() => {
 		dispatch(getSeasons());
@@ -157,13 +188,36 @@ export default function AddTeamToLeague({
 										: 0
 								)
 								.map((team) => (
-									<ListItem sx={{ py: 0 }} key={team.id}>
-										<Avatar
-											sx={{ mr: 1, width: 25, height: 25 }}
-											alt="team_logo"
-											src={pathToLogoImage(team.title)}
-										/>
-										<Typography sx={{ fontSize: '0.9rem' }}>{t(`teams:${team.title}`)}</Typography>
+									<ListItem
+										sx={{
+											py: 0,
+											pr: 0,
+											display: 'flex',
+											justifyContent: 'space-between',
+											alignItems: 'center',
+										}}
+										key={team.id}
+									>
+										<Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+											<Avatar
+												sx={{ mr: 1, width: 25, height: 25 }}
+												alt="team_logo"
+												src={pathToLogoImage(team.title)}
+											/>
+											<Typography sx={{ fontSize: '0.9rem' }}>
+												{t(`teams:${team.title}`)}
+											</Typography>
+										</Box>
+										<Tooltip title={t('btnText.delete')} arrow>
+											<IconButton
+												size="small"
+												aria-label={t('btnText.delete')}
+												onClick={() => setTeamToRemove(team)}
+												sx={{ color: 'error.main', flexShrink: 0 }}
+											>
+												<CloseIcon fontSize="small" />
+											</IconButton>
+										</Tooltip>
 									</ListItem>
 								))
 						) : (
@@ -203,6 +257,43 @@ export default function AddTeamToLeague({
 					</Box>
 				</>
 			)}
+			<CustomCalendarDialog
+				open={teamToRemove != null}
+				onClose={() => setTeamToRemove(null)}
+				onSave={() => {
+					void handleConfirmRemoveTeam();
+				}}
+				title={t('removeTeamFromLeagueTitle')}
+				summaryComponent={
+					teamToRemove ? (
+						<Box
+							sx={{
+								display: 'flex',
+								flexWrap: 'wrap',
+								alignItems: 'center',
+								gap: 0.5,
+								lineHeight: 1.45,
+							}}
+						>
+							<Typography component="span" sx={{ fontSize: '1rem' }}>
+								{t('removeTeamFromLeagueConfirmBefore')}
+							</Typography>
+							<Avatar
+								sx={{ width: 24, height: 24 }}
+								alt="team_logo"
+								src={pathToLogoImage(teamToRemove.title)}
+							/>
+							<Typography component="span" sx={{ fontSize: '1rem', fontWeight: 600 }}>
+								{t(`teams:${teamToRemove.title}`)}
+							</Typography>
+							<Typography component="span" sx={{ fontSize: '1rem' }}>
+								{t('removeTeamFromLeagueConfirmAfter')}
+							</Typography>
+						</Box>
+					) : undefined
+				}
+				buttonAcceptText={t('btnText.delete')}
+			/>
 		</Box>
 	);
 }
