@@ -14,6 +14,7 @@ import Profile from './components/profile/Profile';
 import SeasonRegister from './components/profile/SeasonRegister';
 import AdminCabinet from './features/admin/AdminCabinet';
 import MatchdayCalendar from './features/admin/calendars/MatchdayCalendar';
+import ExternalSyncIssuesPage from './features/admin/external-sync-issues/ExternalSyncIssuesPage';
 import { getActiveSeason, getActiveSeasonId } from './features/admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from './features/admin/seasons/selectors';
 import Login from './features/auth/Login';
@@ -73,6 +74,7 @@ function App(): JSX.Element {
 
 				<Route element={<PrivateRoute roles={['ADMIN']} />}>
 					<Route path="/admin/cabinet" element={<AdminCabinet />} />
+					<Route path="/admin/external-sync-issues" element={<ExternalSyncIssuesPage />} />
 				</Route>
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>

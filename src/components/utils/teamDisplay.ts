@@ -40,3 +40,48 @@ export function resolveTeamDisplayName(
 	}
 	return key;
 }
+
+/** Russian label for sorting admin team lists (displayNames.ru, then i18n, then title). */
+export function resolveTeamRussianSortName(
+	team: Pick<Team, 'title' | 'displayNames'> | undefined,
+	t: TFunction
+): string {
+	if (!team) {
+		return '';
+	}
+	const ru = team.displayNames?.ru?.trim();
+	if (ru) {
+		return ru;
+	}
+	return resolveTeamDisplayName(team, t, 'ru') || team.title;
+}
+
+/** Match team by title, display names (ru/en/de), and localized labels. */
+export function teamMatchesSearchQuery(
+	team: Pick<Team, 'title' | 'displayNames'> | undefined,
+	query: string,
+	t: TFunction
+): boolean {
+	if (!team) {
+		return false;
+	}
+	const q = query.trim().toLowerCase();
+	if (!q) {
+		return true;
+	}
+	const parts = new Set<string>();
+	const add = (value: string | undefined): void => {
+		const s = value?.trim();
+		if (s) {
+			parts.add(s.toLowerCase());
+		}
+	};
+	add(team.title);
+	add(team.displayNames?.ru);
+	add(team.displayNames?.en);
+	add(team.displayNames?.de);
+	add(resolveTeamDisplayName(team, t, 'ru'));
+	add(resolveTeamDisplayName(team, t, 'en'));
+	add(resolveTeamDisplayName(team, t, 'de'));
+	return [...parts].some((part) => part.includes(q));
+}

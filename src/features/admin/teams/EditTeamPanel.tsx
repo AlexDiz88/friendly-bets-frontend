@@ -2,19 +2,27 @@ import {
 	Autocomplete,
 	Box,
 	CircularProgress,
+	FilterOptionsState,
 	TextField,
 	Typography,
 } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import TeamAvatar from '../../../components/custom/avatar/TeamAvatar';
+import {
+	resolveTeamDisplayName,
+	resolveTeamRussianSortName,
+	teamMatchesSearchQuery,
+} from '../../../components/utils/teamDisplay';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
 import TeamFormFields from './TeamFormFields';
+import TeamFormStatusIcon from './TeamFormStatusIcon';
 import { selectTeams } from './selectors';
 import {
 	emptyTeamFormValues,
@@ -26,11 +34,13 @@ import { getAllTeams, updateTeam } from './teamsSlice';
 
 export default function EditTeamPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
+	const { i18n } = useTranslation();
 	const teams = useAppSelector(selectTeams);
 	const [loading, setLoading] = useState(false);
 	const [selected, setSelected] = useState<Team | null>(null);
 	const [values, setValues] = useState(emptyTeamFormValues);
 	const [saving, setSaving] = useState(false);
+	const [unmappedHintsRefreshKey, setUnmappedHintsRefreshKey] = useState(0);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -48,8 +58,17 @@ export default function EditTeamPanel(): JSX.Element {
 	}, [dispatch]);
 
 	const sortedTeams = useMemo(
-		() => [...teams].sort((a, b) => a.title.localeCompare(b.title)),
+		() =>
+			[...teams].sort((a, b) =>
+				resolveTeamRussianSortName(a, t).localeCompare(resolveTeamRussianSortName(b, t), 'ru')
+			),
 		[teams]
+	);
+
+	const filterTeamOptions = useCallback(
+		(options: Team[], state: FilterOptionsState<Team>) =>
+			options.filter((team) => teamMatchesSearchQuery(team, state.inputValue, t)),
+		[]
 	);
 
 	useEffect(() => {
@@ -78,7 +97,10 @@ export default function EditTeamPanel(): JSX.Element {
 		setSaving(false);
 		if (updateTeam.fulfilled.match(result)) {
 			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyUpdated') }));
-			setSelected(result.payload);
+			const updated = result.payload;
+			setSelected(updated);
+			setValues(teamToFormValues(updated));
+			setUnmappedHintsRefreshKey((k) => k + 1);
 		}
 		if (updateTeam.rejected.match(result)) {
 			dispatch(showErrorSnackbar({ message: result.error.message }));
@@ -98,7 +120,8 @@ export default function EditTeamPanel(): JSX.Element {
 					options={sortedTeams}
 					value={selected}
 					onChange={(_e, team) => setSelected(team)}
-					getOptionLabel={(team) => team.title}
+					getOptionLabel={(team) => resolveTeamDisplayName(team, t, i18n.language)}
+					filterOptions={filterTeamOptions}
 					isOptionEqualToValue={(a, b) => a.id === b.id}
 					renderOption={(props, team) => (
 						<li {...props} key={team.id}>
@@ -119,10 +142,16 @@ export default function EditTeamPanel(): JSX.Element {
 
 			{selected ? (
 				<Box>
-					<Box sx={{ mb: 1 }}>
+					<Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
 						<TeamAvatar team={selected} height={28} />
+						<TeamFormStatusIcon values={values} />
 					</Box>
-					<TeamFormFields values={values} onChange={handleChange} titleReadOnly />
+					<TeamFormFields
+						values={values}
+						onChange={handleChange}
+						titleReadOnly
+						unmappedHintsRefreshKey={unmappedHintsRefreshKey}
+					/>
 					<Box sx={{ textAlign: 'center', mt: 1 }}>
 						<CustomSuccessButton
 							onClick={handleSave}

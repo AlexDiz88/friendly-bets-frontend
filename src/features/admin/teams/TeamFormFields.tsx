@@ -1,18 +1,23 @@
 import { Box, FormControl, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
-import { TeamFormValues } from './teamFormUtils';
+import UnmappedTeamNameHints from './UnmappedTeamNameHints';
+import { hasFootballDataApiMapping, TeamFormValues } from './teamFormUtils';
 
 type TeamFormFieldsProps = {
 	values: TeamFormValues;
 	onChange: (patch: Partial<TeamFormValues>) => void;
 	titleReadOnly?: boolean;
+	unmappedHintsRefreshKey?: number;
 };
 
 export default function TeamFormFields({
 	values,
 	onChange,
 	titleReadOnly = false,
+	unmappedHintsRefreshKey = 0,
 }: TeamFormFieldsProps): JSX.Element {
+	const showUnmappedHints = !hasFootballDataApiMapping(values);
+
 	return (
 		<FormControl fullWidth>
 			<Box sx={{ my: 1 }}>
@@ -75,6 +80,20 @@ export default function TeamFormFields({
 			<Typography sx={{ mt: 1.5, mb: 0.5, fontWeight: 600, textAlign: 'left' }}>
 				{t('teamApiDataSection')}
 			</Typography>
+			{showUnmappedHints ? (
+				<UnmappedTeamNameHints
+					refreshKey={unmappedHintsRefreshKey}
+					onApply={(externalName, externalId) => {
+						const patch: Partial<TeamFormValues> = {
+							footballDataExternalName: externalName,
+						};
+						if (externalId != null) {
+							patch.footballDataTeamId = String(externalId);
+						}
+						onChange(patch);
+					}}
+				/>
+			) : null}
 			<Box sx={{ my: 1 }}>
 				<TextField
 					fullWidth
