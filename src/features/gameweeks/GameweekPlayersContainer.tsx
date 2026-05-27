@@ -1,7 +1,12 @@
 import { Avatar, Box, Grid } from '@mui/material';
 import { useState } from 'react';
 import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
-import { BET_STATUS_EMPTY, BET_STATUS_OPENED, COMPLETED_BET_STATUSES } from '../../constants';
+import {
+	BET_STATUS_DELETED,
+	BET_STATUS_EMPTY,
+	BET_STATUS_OPENED,
+	COMPLETED_BET_STATUSES,
+} from '../../constants';
 import Season from '../admin/seasons/types/Season';
 import CompleteBetCard from '../bets/CompleteBetCard';
 import EmptyBetCard from '../bets/EmptyBetCard';
@@ -23,15 +28,20 @@ const GameweekPlayersContainer = ({
 }): JSX.Element => {
 	const [expandedBetId, setExpandedBetId] = useState<string | null>(null);
 
+	const visibleBets = bets.filter(
+		(bet) => bet.betStatus !== BET_STATUS_DELETED && bet.player?.id != null
+	);
+
 	const betsByPlayers: { [key: string]: Bet[] } = {};
 
 	activeSeason.players.forEach((player) => {
 		betsByPlayers[player.id] = [];
 	});
 
-	bets.forEach((bet) => {
-		if (betsByPlayers[bet.player.id]) {
-			betsByPlayers[bet.player.id].push(bet);
+	visibleBets.forEach((bet) => {
+		const playerId = bet.player?.id;
+		if (playerId && betsByPlayers[playerId]) {
+			betsByPlayers[playerId].push(bet);
 		}
 	});
 
@@ -150,7 +160,7 @@ const GameweekPlayersContainer = ({
 					zIndex={10}
 					onClick={handleCloseExpandedCard}
 				>
-					{bets.map((bet) =>
+					{visibleBets.map((bet) =>
 						bet.id === expandedBetId ? (
 							<Box
 								key={bet.id}

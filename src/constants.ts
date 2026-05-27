@@ -13,6 +13,7 @@ export const BET_STATUS_EMPTY = 'EMPTY';
 export const BET_STATUS_WON = 'WON';
 export const BET_STATUS_RETURNED = 'RETURNED';
 export const BET_STATUS_LOST = 'LOST';
+export const BET_STATUS_DELETED = 'DELETED';
 
 export const COMPLETED_BET_STATUSES = [BET_STATUS_WON, BET_STATUS_RETURNED, BET_STATUS_LOST];
 export type BetStatus = typeof BET_STATUS_WON | typeof BET_STATUS_RETURNED | typeof BET_STATUS_LOST;
