@@ -122,8 +122,7 @@ const authSlice = createSlice({
 				state.authChecked = true;
 			})
 
-			.addCase(register.fulfilled, (state, action) => {
-				state.user = action.payload;
+			.addCase(register.fulfilled, (state) => {
 				state.registerFormError = undefined;
 			})
 			.addCase(register.rejected, (state, action) => {

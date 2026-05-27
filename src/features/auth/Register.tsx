@@ -16,7 +16,7 @@ import { t } from 'i18next';
 import { forwardRef, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { login, register } from './authSlice';
+import { register } from './authSlice';
 import { selectRegisterFormError } from './selectors';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
@@ -62,9 +62,8 @@ function Register(): JSX.Element {
 
 			if (register.fulfilled.match(dispatchResult)) {
 				setOpenSuccessSnackbar(true);
-				await dispatch(login({ email, password }));
 				setTimeout(() => {
-					navigate('/my/profile');
+					navigate('/auth/login');
 				}, snackbarDuration);
 			}
 			if (register.rejected.match(dispatchResult)) {
@@ -214,7 +213,7 @@ function Register(): JSX.Element {
 						onClose={handleSnackbarClose}
 					>
 						<Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '15rem' }}>
-							{t('signUpSuccess')}
+							{t('signUpCheckEmail')}
 						</Alert>
 					</Snackbar>
 					<Snackbar

@@ -16,7 +16,7 @@ const ProfileEmail = ({ email }: { email: string | undefined }): JSX.Element => 
 	const handleSaveEmail = useCallback(async () => {
 		const dispatchResult = await dispatch(editEmail({ newEmail }));
 		if (editEmail.fulfilled.match(dispatchResult)) {
-			dispatch(showSuccessSnackbar({ message: t('emailWasSuccessfullyUpdated') }));
+			dispatch(showSuccessSnackbar({ message: t('emailChangeVerificationSent') }));
 			setShowEmailInput(false);
 		}
 		if (editEmail.rejected.match(dispatchResult)) {

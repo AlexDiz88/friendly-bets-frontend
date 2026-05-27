@@ -7,6 +7,7 @@ import ProfileAvatar from './ProfileAvatar';
 import ProfileEmail from './ProfileEmail';
 import ProfileLanguage from './ProfileLanguage';
 import ProfilePassword from './ProfilePassword';
+import ProfileEmailVerification from './ProfileEmailVerification';
 import ProfileUsername from './ProfileUsername';
 
 export default function Profile(): JSX.Element {
@@ -27,6 +28,7 @@ export default function Profile(): JSX.Element {
 			}}
 		>
 			<Typography sx={{ borderBottom: 2, pb: 1, mx: 2, px: 7 }}>{t('personalAccount')}</Typography>
+			<ProfileEmailVerification email={user?.email} emailIsConfirmed={user?.emailIsConfirmed} />
 			<ProfileAvatar avatar={user?.avatar} />
 			<ProfileEmail email={user?.email} />
 			<ProfilePassword />

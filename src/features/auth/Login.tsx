@@ -176,6 +176,9 @@ function Login(): JSX.Element {
 							</Typography>
 						</Button>
 					</Box>
+					<Box sx={{ fontSize: 14, textAlign: 'center', mt: 1 }}>
+						<Link href="#/auth/forgot-password">{t('forgotPassword')}</Link>
+					</Box>
 
 					<Snackbar
 						anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
@@ -203,7 +206,9 @@ function Login(): JSX.Element {
 					>
 						<Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '15rem' }}>
 							{t('loginError')}
-							{errorLoginForm && <Box>{errorLoginForm}</Box>}
+							{errorLoginForm && (
+								<Box>{t(`error.${errorLoginForm}`, { defaultValue: errorLoginForm })}</Box>
+							)}
 						</Alert>
 					</Snackbar>
 				</FormControl>

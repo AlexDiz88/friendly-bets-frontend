@@ -17,9 +17,12 @@ import MatchdayCalendar from './features/admin/calendars/MatchdayCalendar';
 import ExternalSyncIssuesPage from './features/admin/external-sync-issues/ExternalSyncIssuesPage';
 import { getActiveSeason, getActiveSeasonId } from './features/admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from './features/admin/seasons/selectors';
+import ForgotPassword from './features/auth/ForgotPassword';
 import Login from './features/auth/Login';
 import PrivateRoute from './features/auth/PrivateRoute';
 import Register from './features/auth/Register';
+import ResetPassword from './features/auth/ResetPassword';
+import VerifyEmail from './features/auth/VerifyEmail';
 import { getProfile } from './features/auth/authSlice';
 import { selectUser } from './features/auth/selectors';
 import BetEditList from './features/bets/BetEditList';
@@ -71,6 +74,9 @@ function App(): JSX.Element {
 				<Route path="/" element={<Homepage />} />
 				<Route path="/auth/login" element={<Login />} />
 				<Route path="/auth/register" element={<Register />} />
+				<Route path="/auth/verify-email" element={<VerifyEmail />} />
+				<Route path="/auth/forgot-password" element={<ForgotPassword />} />
+				<Route path="/auth/reset-password" element={<ResetPassword />} />
 
 				<Route element={<PrivateRoute roles={['ADMIN']} />}>
 					<Route path="/admin/cabinet" element={<AdminCabinet />} />
