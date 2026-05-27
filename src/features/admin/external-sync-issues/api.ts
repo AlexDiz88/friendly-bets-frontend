@@ -2,6 +2,12 @@ import { apiFetch } from '../../../shared/apiClient';
 import { ExternalSyncIssue } from './types/ExternalSyncIssue';
 import { UnmappedExternalTeamName } from './types/UnmappedExternalTeamName';
 
+export const EXTERNAL_SYNC_ISSUES_CHANGED_EVENT = 'friendlybets:external-sync-issues-changed';
+
+export function notifyExternalSyncIssuesChanged(): void {
+	window.dispatchEvent(new Event(EXTERNAL_SYNC_ISSUES_CHANGED_EVENT));
+}
+
 function apiUrl(path: string): string {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		return path;
@@ -11,6 +17,15 @@ function apiUrl(path: string): string {
 
 export async function getUnmappedExternalTeamNames(): Promise<UnmappedExternalTeamName[]> {
 	const result = await apiFetch(apiUrl('/api/admin/external-sync-issues/unmapped-team-names'));
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function getExternalSyncIssuesStatus(): Promise<{ hasIssues: boolean }> {
+	const result = await apiFetch(apiUrl('/api/admin/external-sync-issues/status'));
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);

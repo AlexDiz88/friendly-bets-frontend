@@ -3,7 +3,6 @@ import { t } from 'i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { store } from '../../app/store';
 import CustomErrorMessage from '../../components/custom/CustomErrorMessage';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
@@ -12,6 +11,7 @@ import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import {
 	fetchGameweekBets,
 	fetchGameweeksOverview,
+	invalidateGameweeksBetsCache,
 } from '../admin/calendars/calendarsSlice';
 import {
 	selectBetsByCalendarNodeId,
@@ -54,9 +54,7 @@ const Gameweek = (): JSX.Element => {
 
 	const loadBetsForNode = useCallback(
 		(nodeId: string): void => {
-			if (!store.getState().calendars.betsByCalendarNodeId[nodeId]) {
-				void dispatch(fetchGameweekBets(nodeId));
-			}
+			void dispatch(fetchGameweekBets(nodeId));
 		},
 		[dispatch]
 	);
@@ -94,6 +92,7 @@ const Gameweek = (): JSX.Element => {
 		const loadOverview = async (): Promise<void> => {
 			setOverviewLoading(true);
 			setOverviewError(false);
+			dispatch(invalidateGameweeksBetsCache());
 
 			try {
 				const result = await dispatch(fetchGameweeksOverview({ seasonId }));
@@ -119,9 +118,7 @@ const Gameweek = (): JSX.Element => {
 
 				if (defaultNode) {
 					setSelectedCalendarNode(defaultNode);
-					if (!store.getState().calendars.betsByCalendarNodeId[defaultNode.id]) {
-						void dispatch(fetchGameweekBets(defaultNode.id));
-					}
+					void dispatch(fetchGameweekBets(defaultNode.id));
 				} else {
 					setSelectedCalendarNode(undefined);
 				}
@@ -171,9 +168,7 @@ const Gameweek = (): JSX.Element => {
 
 		const timeoutId = window.setTimeout(() => {
 			prefetchGameweekNeighborBets(calendarNodes, selectedNodeId, (neighborId) => {
-				if (!store.getState().calendars.betsByCalendarNodeId[neighborId]) {
-					void dispatch(fetchGameweekBets(neighborId));
-				}
+				void dispatch(fetchGameweekBets(neighborId));
 			});
 		}, GAMEWEEK_NEIGHBOR_PREFETCH_DELAY_MS);
 

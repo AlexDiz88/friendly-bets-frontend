@@ -109,7 +109,8 @@
 		"refresh": "Aktualisieren",
 		"clear": "Leeren"
 	},
-	"externalSyncIssuesTitle": "Externe Sync-Probleme",
+	"externalSyncIssuesTitle": "Fehlerprotokoll",
+	"externalSyncIssuesHasIssues": "Der Log enthält Einträge",
 	"externalSyncIssuesEmpty": "Keine Probleme gefunden.",
 	"externalSyncIssuesLoadError": "Fehler beim Laden des Logs",
 	"externalSyncIssuesCleared": "Log geleert",

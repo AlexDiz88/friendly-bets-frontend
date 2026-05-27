@@ -73,6 +73,9 @@ const calendarsSlice = createSlice({
 		invalidateGameweeksOverview: (state) => {
 			state.gameweeksOverviewLoadedAt = undefined;
 		},
+		invalidateGameweeksBetsCache: (state) => {
+			state.betsByCalendarNodeId = {};
+		},
 	},
 	extraReducers: (builder) => {
 		builder
@@ -152,6 +155,7 @@ const calendarsSlice = createSlice({
 	},
 });
 
-export const { resetError, invalidateGameweeksOverview } = calendarsSlice.actions;
+export const { resetError, invalidateGameweeksOverview, invalidateGameweeksBetsCache } =
+	calendarsSlice.actions;
 
 export default calendarsSlice.reducer;

@@ -109,7 +109,8 @@
 		"refresh": "Refresh",
 		"clear": "Clear"
 	},
-	"externalSyncIssuesTitle": "External sync issues",
+	"externalSyncIssuesTitle": "Error log",
+	"externalSyncIssuesHasIssues": "The log has entries",
 	"externalSyncIssuesEmpty": "No issues.",
 	"externalSyncIssuesLoadError": "Failed to load issues log",
 	"externalSyncIssuesCleared": "Issues log cleared",

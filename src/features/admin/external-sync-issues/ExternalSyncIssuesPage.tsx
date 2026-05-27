@@ -14,7 +14,7 @@ import { useAppDispatch } from '../../../app/hooks';
 import CustomButton from '../../../components/custom/btn/CustomButton';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
 import { ADMIN_PANEL_SX } from '../adminPanelStyles';
-import { clearExternalSyncIssues, getExternalSyncIssues } from './api';
+import { clearExternalSyncIssues, getExternalSyncIssues, notifyExternalSyncIssuesChanged } from './api';
 import { ExternalSyncIssue } from './types/ExternalSyncIssue';
 
 export default function ExternalSyncIssuesPage(): JSX.Element {
@@ -27,6 +27,7 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 		try {
 			const data = await getExternalSyncIssues();
 			setIssues(data);
+			notifyExternalSyncIssuesChanged();
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
@@ -46,6 +47,7 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 		try {
 			await clearExternalSyncIssues();
 			setIssues([]);
+			notifyExternalSyncIssuesChanged();
 			dispatch(showSuccessSnackbar({ message: t('externalSyncIssuesCleared') }));
 		} catch (error) {
 			dispatch(

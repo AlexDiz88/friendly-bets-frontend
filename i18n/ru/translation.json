@@ -109,7 +109,8 @@
 		"refresh": "Обновить",
 		"clear": "Очистить"
 	},
-	"externalSyncIssuesTitle": "Лог внешней синхронизации",
+	"externalSyncIssuesTitle": "Лог ошибок",
+	"externalSyncIssuesHasIssues": "В логе есть записи",
 	"externalSyncIssuesEmpty": "Проблем не найдено.",
 	"externalSyncIssuesLoadError": "Не удалось загрузить лог",
 	"externalSyncIssuesCleared": "Лог очищен",

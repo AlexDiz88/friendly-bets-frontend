@@ -80,7 +80,10 @@ function App(): JSX.Element {
 
 				<Route element={<PrivateRoute roles={['ADMIN']} />}>
 					<Route path="/admin/cabinet" element={<AdminCabinet />} />
-					<Route path="/admin/external-sync-issues" element={<ExternalSyncIssuesPage />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/external-sync-issues" element={<ExternalSyncIssuesPage />} />
 				</Route>
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
