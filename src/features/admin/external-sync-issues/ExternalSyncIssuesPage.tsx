@@ -98,7 +98,7 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 								secondary={
 									<>
 										<div>
-											{`${i.competitionCode ?? ''} ${i.season ?? ''} MD ${i.matchday ?? ''} #${i.externalMatchId ?? ''}`.trim()}
+											{`${i.leagueCode ?? ''} ${i.season ?? ''} MD ${i.matchday ?? ''} #${i.externalMatchId ?? ''}`.trim()}
 										</div>
 										<div>{`${i.homeTeamName ?? ''} vs ${i.awayTeamName ?? ''}`.trim()}</div>
 										{i.message ? <div>{i.message}</div> : null}

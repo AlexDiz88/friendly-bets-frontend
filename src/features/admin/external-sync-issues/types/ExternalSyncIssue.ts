@@ -3,7 +3,7 @@ export type ExternalSyncIssue = {
 	createdAt?: string;
 	provider?: string;
 	issueType?: string;
-	competitionCode?: string;
+	leagueCode?: string;
 	season?: string;
 	matchday?: number;
 	externalMatchId?: number;

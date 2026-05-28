@@ -4,7 +4,7 @@ import { TeamDisplayNames } from '../../admin/teams/types/Team';
 export type ExternalMatchdaySyncStatus = 'POLLING' | 'COMPLETED';
 
 export interface ExternalMatchdaySync {
-	competitionCode: string;
+	leagueCode: string;
 	matchday: number;
 	season: string;
 	syncStatus: ExternalMatchdaySyncStatus;
@@ -15,14 +15,17 @@ export interface ExternalMatchdaySync {
 }
 
 export interface ExternalMatch {
+	id?: string;
 	externalMatchId: number;
-	competitionCode: string;
+	leagueCode: string;
 	matchday: number;
 	season: string;
 	status: string;
 	utcDate?: string;
 	homeTeamName: string;
 	awayTeamName: string;
+	homeTeamId?: string;
+	awayTeamId?: string;
 	/** Внутренний title (PascalCase), если команда найдена в БД. */
 	homeTeamTitle?: string | null;
 	awayTeamTitle?: string | null;
@@ -31,6 +34,10 @@ export interface ExternalMatch {
 	homeTeamDisplayNames?: TeamDisplayNames | null;
 	awayTeamDisplayNames?: TeamDisplayNames | null;
 	gameScore?: GameScore | null;
+	finalized?: boolean;
+	finalizedAt?: string;
+	finalizedSource?: string;
+	adminCorrected?: boolean;
 }
 
 export interface ExternalMatchdayPage {

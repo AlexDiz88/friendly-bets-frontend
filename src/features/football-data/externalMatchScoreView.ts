@@ -6,12 +6,13 @@ const SCORE_UNAVAILABLE = '—';
 
 const LIVE_STATUSES = new Set(['IN_PLAY', 'PAUSED', 'EXTRA_TIME', 'PENALTY_SHOOTOUT']);
 
-/** Счёт для football-data.org: без live на бесплатном тарифе — прочерк вместо «Не указан!». */
+/** Счёт для football-data.org: live без финализации — прочерк. */
 export function getExternalMatchScoreView(
 	gameScore: GameScore | null | undefined,
-	matchStatus: string
+	matchStatus: string,
+	finalized = false
 ): string {
-	if (LIVE_STATUSES.has(normalizeMatchStatus(matchStatus))) {
+	if (LIVE_STATUSES.has(normalizeMatchStatus(matchStatus)) && !finalized) {
 		return SCORE_UNAVAILABLE;
 	}
 

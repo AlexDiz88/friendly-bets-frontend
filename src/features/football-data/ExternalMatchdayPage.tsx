@@ -1,11 +1,14 @@
+import EditIcon from '@mui/icons-material/Edit';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
 	Avatar,
 	Box,
 	Chip,
 	CircularProgress,
+	FormControlLabel,
 	IconButton,
 	SelectChangeEvent,
+	Switch,
 	Tooltip,
 	Typography,
 } from '@mui/material';
@@ -20,6 +23,12 @@ import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import MatchdayNavigator from '../../components/matchday/MatchdayNavigator';
 import { getExternalMatchScoreView } from './externalMatchScoreView';
+import GameResultScoreEditDialog from './GameResultScoreEditDialog';
+import {
+	adminCorrectGameResultScore,
+	gameScoreToAdminBody,
+	settleMatchdayAndRecalculateStats,
+} from './gameResultsAdminApi';
 import { matchSideToDisplayTeam } from './externalMatchDisplay';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -169,6 +178,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const user = useAppSelector(selectUser);
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const canSync = user?.role === 'ADMIN' || user?.role === 'MODERATOR';
+	const isAdmin = user?.role === 'ADMIN';
 
 	useFetchActiveSeason(activeSeason?.id);
 
@@ -230,8 +240,21 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [loading, setLoading] = useState(false);
 	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(false);
 	const [syncing, setSyncing] = useState(false);
+	const [editMatch, setEditMatch] = useState<ExternalMatch | null>(null);
+	const [adminOptionsEnabled, setAdminOptionsEnabled] = useState(false);
+
+	const showAdminTools = isAdmin && adminOptionsEnabled;
 
 	const matchesLoading = competitionInfoLoading || loading;
+
+	const reloadMatchday = useCallback(async (): Promise<void> => {
+		const page = await getMatchdayFromCache(
+			competitionCode,
+			effectiveMatchday,
+			externalSeason
+		);
+		setData(page);
+	}, [competitionCode, effectiveMatchday, externalSeason]);
 
 	useEffect(() => {
 		if (!activeSeason) {
@@ -379,6 +402,28 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		}
 	};
 
+	const handleAdminScoreSave = async (score: GameScore): Promise<void> => {
+		if (!editMatch?.id || !activeSeason?.id || !effectiveLeagueCode) {
+			return;
+		}
+		await adminCorrectGameResultScore(editMatch.id, gameScoreToAdminBody(score));
+		const result = await settleMatchdayAndRecalculateStats({
+			seasonId: activeSeason.id,
+			leagueCode: effectiveLeagueCode,
+			matchday: effectiveMatchday,
+			externalSeason,
+		});
+		await reloadMatchday();
+		dispatch(
+			showSuccessSnackbar({
+				message: t('gameResultScoreCorrected', {
+					matches: result.matchesSubmitted,
+					bets: result.betsProcessed,
+				}),
+			})
+		);
+	};
+
 	const sortedMatches = useMemo(() => {
 		if (!data?.matches) return [];
 		return [...data.matches].sort((a, b) => {
@@ -408,7 +453,8 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				maxWidth: 430,
 				mx: 'auto',
 				px: 0.5,
-				mt: { xs: -1.5, md: 0 },
+				mt: { xs: -1.5, sm: 5, md: 5 },
+				pt: { md: 1 },
 				pb: 1,
 			}}
 		>
@@ -556,7 +602,35 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						</Typography>
 					</Box>
 				)}
+				{isAdmin ? (
+					<Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%', px: 0.5 }}>
+						<FormControlLabel
+							sx={{
+								mx: 0,
+								mr: 0,
+								'& .MuiFormControlLabel-label': { fontSize: '0.8rem' },
+							}}
+							control={
+								<Switch
+									size="small"
+									checked={adminOptionsEnabled}
+									onChange={(e) => setAdminOptionsEnabled(e.target.checked)}
+									inputProps={{ 'aria-label': t('gameResultAdminOptions') }}
+								/>
+							}
+							label={t('gameResultAdminOptions')}
+							labelPlacement="start"
+						/>
+					</Box>
+				) : null}
 			</Box>
+
+			<GameResultScoreEditDialog
+				open={editMatch !== null}
+				match={editMatch}
+				onClose={() => setEditMatch(null)}
+				onSave={handleAdminScoreSave}
+			/>
 
 			{matchesLoading && (
 				<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
@@ -582,7 +656,17 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						const homeTeam = matchSideToDisplayTeam(match, 'home');
 						const awayTeam = matchSideToDisplayTeam(match, 'away');
 						const gameScore: GameScore | null = match.gameScore ?? null;
-						const scoreView = getExternalMatchScoreView(gameScore, match.status);
+						const scoreView = getExternalMatchScoreView(
+							gameScore,
+							match.status,
+							Boolean(match.finalized)
+						);
+						const statusLabel = match.finalized
+							? t('gameResultFinalized')
+							: translateMatchStatus(match.status, t);
+						const statusColor = match.finalized
+							? 'success'
+							: getMatchStatusChipColor(match.status);
 						const matchDate = match.utcDate
 							? new Date(match.utcDate).toLocaleString(undefined, {
 									day: '2-digit',
@@ -618,16 +702,32 @@ export default function ExternalMatchdayPage(): JSX.Element {
 									>
 										{matchDate}
 									</Typography>
-									<Chip
-										size="small"
-										label={translateMatchStatus(match.status, t)}
-										color={getMatchStatusChipColor(match.status)}
-										sx={{
-											height: 18,
-											fontSize: '0.58rem',
-											'& .MuiChip-label': { px: 0.5, py: 0 },
-										}}
-									/>
+									<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
+										<Chip
+											size="small"
+											label={statusLabel}
+											color={statusColor}
+											sx={{
+												height: 18,
+												fontSize: '0.58rem',
+												'& .MuiChip-label': { px: 0.5, py: 0 },
+											}}
+										/>
+										{showAdminTools && match.id ? (
+											<Tooltip title={t('gameResultEditScore')}>
+												<span>
+													<IconButton
+														size="small"
+														onClick={() => setEditMatch(match)}
+														sx={{ p: 0.25 }}
+														aria-label={t('gameResultEditScore')}
+													>
+														<EditIcon sx={{ fontSize: 16 }} />
+													</IconButton>
+												</span>
+											</Tooltip>
+										) : null}
+									</Box>
 								</Box>
 								<CompactMatchRow
 									homeTeam={homeTeam}

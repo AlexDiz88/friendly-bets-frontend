@@ -2,10 +2,17 @@ import { apiFetch } from '../../../shared/apiClient';
 import { ExternalSyncIssue } from './types/ExternalSyncIssue';
 import { UnmappedExternalTeamName } from './types/UnmappedExternalTeamName';
 
-export const EXTERNAL_SYNC_ISSUES_CHANGED_EVENT = 'friendlybets:external-sync-issues-changed';
+export const API_SYNC_ISSUES_CHANGED_EVENT = 'friendlybets:api-sync-issues-changed';
+
+/** @deprecated use API_SYNC_ISSUES_CHANGED_EVENT */
+export const EXTERNAL_SYNC_ISSUES_CHANGED_EVENT = API_SYNC_ISSUES_CHANGED_EVENT;
+
+export function notifyApiSyncIssuesChanged(): void {
+	window.dispatchEvent(new Event(API_SYNC_ISSUES_CHANGED_EVENT));
+}
 
 export function notifyExternalSyncIssuesChanged(): void {
-	window.dispatchEvent(new Event(EXTERNAL_SYNC_ISSUES_CHANGED_EVENT));
+	notifyApiSyncIssuesChanged();
 }
 
 function apiUrl(path: string): string {
@@ -16,7 +23,7 @@ function apiUrl(path: string): string {
 }
 
 export async function getUnmappedExternalTeamNames(): Promise<UnmappedExternalTeamName[]> {
-	const result = await apiFetch(apiUrl('/api/admin/external-sync-issues/unmapped-team-names'));
+	const result = await apiFetch(apiUrl('/api/admin/api-sync-issues/unmapped-team-names'));
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -25,7 +32,7 @@ export async function getUnmappedExternalTeamNames(): Promise<UnmappedExternalTe
 }
 
 export async function getExternalSyncIssuesStatus(): Promise<{ hasIssues: boolean }> {
-	const result = await apiFetch(apiUrl('/api/admin/external-sync-issues/status'));
+	const result = await apiFetch(apiUrl('/api/admin/api-sync-issues/status'));
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -34,7 +41,7 @@ export async function getExternalSyncIssuesStatus(): Promise<{ hasIssues: boolea
 }
 
 export async function getExternalSyncIssues(): Promise<ExternalSyncIssue[]> {
-	const result = await apiFetch(apiUrl('/api/admin/external-sync-issues'));
+	const result = await apiFetch(apiUrl('/api/admin/api-sync-issues'));
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -43,7 +50,7 @@ export async function getExternalSyncIssues(): Promise<ExternalSyncIssue[]> {
 }
 
 export async function clearExternalSyncIssues(): Promise<void> {
-	const result = await apiFetch(apiUrl('/api/admin/external-sync-issues'), { method: 'DELETE' });
+	const result = await apiFetch(apiUrl('/api/admin/api-sync-issues'), { method: 'DELETE' });
 	if (result.status >= 400) {
 		const body = await result.json().catch(() => ({ message: '' }));
 		const { message } = body as { message?: string };
