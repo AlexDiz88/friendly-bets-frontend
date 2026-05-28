@@ -523,7 +523,25 @@
 		"failedToGetCanvasContext": "Не удалось получить контекст изображения",
 		"fileNotChosen": "Файл не выбран",
 		"failedToConvertHeicImage": "Не удалось конвертировать изображение HEIC",
-		"languageNotSupported": "Язык не поддерживается"
+		"languageNotSupported": "Язык не поддерживается",
+		"oddsApiKeyNotConfigured": "API-ключ odds-api.io не настроен",
+		"oddsApiRequestFailed": "Ошибка запроса к odds-api.io",
+		"oddsApiRateLimitExceeded": "Превышен лимит запросов odds-api.io",
+		"oddsApiSyncCompleted": "Синхронизация кэфов завершена",
+		"leagueSlugRequired": "Укажите slug лиги odds-api",
+		"oddsApiBookmakersNotConfigured": "Не настроены букмекеры odds-api"
+	},
+
+	"oddsDemo": {
+		"menuLink": "Кэфы (демо)",
+		"title": "Демо: кэфы odds-api.io",
+		"hint": "Данные не привязаны к матчам сайта. Угловые, фолы и четвертные линии (2.25, 1.75…) отфильтрованы. Кэфы Bet365 и 1xbet в одной таблице.",
+		"leagueSlug": "Slug лиги",
+		"load": "Загрузить из БД",
+		"refresh": "Обновить из API",
+		"empty": "Нет данных. Админ: «Обновить из API».",
+		"lines": "линий",
+		"selection": "Исход"
 	},
 
 	"matchdayCalendar": "Календарь туров",

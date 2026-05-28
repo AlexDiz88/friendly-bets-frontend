@@ -523,7 +523,25 @@
 		"failedToGetCanvasContext": "Fehler beim Abrufen des Canvas-Kontexts",
 		"fileNotChosen": "Datei nicht ausgewählt",
 		"failedToConvertHeicImage": "Fehler beim Konvertieren des HEIC-Bildes",
-		"languageNotSupported": "Sprache wird nicht unterstützt"
+		"languageNotSupported": "Sprache wird nicht unterstützt",
+		"oddsApiKeyNotConfigured": "odds-api.io API-Schlüssel ist nicht konfiguriert",
+		"oddsApiRequestFailed": "odds-api.io-Anfrage fehlgeschlagen",
+		"oddsApiRateLimitExceeded": "odds-api.io-Ratenlimit überschritten",
+		"oddsApiSyncCompleted": "Quoten-Synchronisierung abgeschlossen",
+		"leagueSlugRequired": "odds-api Liga-Slug erforderlich",
+		"oddsApiBookmakersNotConfigured": "odds-api-Buchmacher nicht konfiguriert"
+	},
+
+	"oddsDemo": {
+		"menuLink": "Quoten (Demo)",
+		"title": "Demo: odds-api.io",
+		"hint": "Nicht mit Seiten-Matches verknüpft. Ecken, Fouls und Viertellinien (2.25, 1.75…) gefiltert. Bet365 und 1xbet in einer Tabelle.",
+		"leagueSlug": "Liga-Slug",
+		"load": "Aus DB laden",
+		"refresh": "Von API aktualisieren",
+		"empty": "Keine Daten. Admin: «Von API aktualisieren».",
+		"lines": "Linien",
+		"selection": "Auswahl"
 	},
 
 	"matchdayCalendar": "Spielplan",

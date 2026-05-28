@@ -33,6 +33,7 @@ export default function UserSettings(): JSX.Element {
 		t('editBet'),
 		t('myProfile'),
 		t('adminPanel'),
+		t('oddsDemo.menuLink'),
 		t('externalSyncIssuesTitle'),
 		t('logout'),
 	];
@@ -125,6 +126,8 @@ export default function UserSettings(): JSX.Element {
 			navigate('/bet-input');
 		} else if (setting === t('adminPanel')) {
 			navigate('/admin/cabinet');
+		} else if (setting === t('oddsDemo.menuLink')) {
+			navigate('/odds-demo');
 		} else if (setting === t('externalSyncIssuesTitle')) {
 			navigate('/external-sync-issues');
 		} else if (setting === t('seasonRegister')) {

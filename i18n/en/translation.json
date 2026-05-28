@@ -523,7 +523,25 @@
 		"failedToGetCanvasContext": "Failed to get canvas context",
 		"fileNotChosen": "File not chosen",
 		"failedToConvertHeicImage": "Failed to convert HEIC image",
-		"languageNotSupported": "Language is not supported"
+		"languageNotSupported": "Language is not supported",
+		"oddsApiKeyNotConfigured": "odds-api.io API key is not configured",
+		"oddsApiRequestFailed": "odds-api.io request failed",
+		"oddsApiRateLimitExceeded": "odds-api.io rate limit exceeded",
+		"oddsApiSyncCompleted": "Odds sync completed",
+		"leagueSlugRequired": "odds-api league slug is required",
+		"oddsApiBookmakersNotConfigured": "odds-api bookmakers are not configured"
+	},
+
+	"oddsDemo": {
+		"menuLink": "Odds (demo)",
+		"title": "Demo: odds-api.io",
+		"hint": "Not linked to site matches. Corners, fouls and quarter lines (2.25, 1.75…) are filtered. Bet365 and 1xbet odds in one table.",
+		"leagueSlug": "League slug",
+		"load": "Load from DB",
+		"refresh": "Refresh from API",
+		"empty": "No data. Admin: use «Refresh from API».",
+		"lines": "lines",
+		"selection": "Selection"
 	},
 
 	"matchdayCalendar": "Matchday schedule",
