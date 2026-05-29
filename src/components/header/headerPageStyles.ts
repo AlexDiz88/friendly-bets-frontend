@@ -50,18 +50,40 @@ export const headerNavLinkSx: SxProps<Theme> = (theme) => {
 	};
 };
 
-/** Выделенный пункт event-навигации (напр. ЧМ-2026) */
-export const headerNavLinkEventSx: SxProps<Theme> = (theme) => {
-	const p = theme.palette.mode === 'dark' ? headerPalette.dark : headerPalette.light;
+/** Свечение активного пункта — одинаково на всех breakpoints (фон хедера всегда тёмный). */
+const headerNavLinkActiveGlow = '0 0 12px rgba(96, 165, 250, 0.55), 0 0 20px rgba(96, 165, 250, 0.35)';
+
+/** Активный пункт навигации (текущая страница) */
+export const headerNavLinkActiveSx: SxProps<Theme> = () => {
+	const p = headerPalette.dark;
 	return {
 		position: 'relative',
 		zIndex: 1,
 		textTransform: 'none',
 		fontWeight: 800,
 		color: p.eventLink,
-		textShadow: theme.palette.mode === 'dark' ? '0 0 12px rgba(96, 165, 250, 0.35)' : 'none',
+		textShadow: headerNavLinkActiveGlow,
 		'&:hover': {
 			color: p.eventLinkHover,
+			textShadow: headerNavLinkActiveGlow,
+		},
+	};
+};
+
+/** Активный пункт в MUI Menu (гамбургер) — цвет и свечение на корне, чтобы не терялись у Typography */
+export const headerNavMenuItemActiveSx: SxProps<Theme> = () => {
+	const p = headerPalette.dark;
+	return {
+		color: p.eventLink,
+		textShadow: headerNavLinkActiveGlow,
+		'&:hover': {
+			color: p.eventLinkHover,
+			textShadow: headerNavLinkActiveGlow,
+		},
+		'& .MuiTypography-root': {
+			fontWeight: 800,
+			color: 'inherit',
+			textShadow: headerNavLinkActiveGlow,
 		},
 	};
 };

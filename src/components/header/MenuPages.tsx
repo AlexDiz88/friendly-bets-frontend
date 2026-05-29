@@ -9,13 +9,17 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectUser } from '../../features/auth/selectors';
 import { changeLanguageAsync, saveUserLanguageAsync } from '../../features/languages/languageSlice';
 import Language from '../../features/languages/types/Language';
 import CustomMenuPageText from '../custom/CustomMenuPageText';
-import { headerIconButtonSx, headerNavLinkEventSx } from './headerPageStyles';
+import {
+	headerIconButtonSx,
+	headerNavLinkActiveSx,
+	headerNavMenuItemActiveSx,
+} from './headerPageStyles';
 import {
 	headerLangMenuDesktopSx,
 	headerLangMenuMobileSx,
@@ -37,6 +41,36 @@ export interface HeaderMenuState {
 	handleCloseLangMenu: () => void;
 	handleLanguageSelect: (lang: Language) => void;
 	scrollToTop: () => void;
+	isNavPageActive: (page: string) => boolean;
+}
+
+export function isHeaderNavPageActive(
+	page: string,
+	pathname: string,
+	t: (key: string) => string,
+): boolean {
+	if (page === t('table')) {
+		return pathname === '/' || pathname === '';
+	}
+	if (page === t('bets')) {
+		return pathname === '/bets' || pathname.startsWith('/bets/');
+	}
+	const pathByPage: Record<string, string> = {
+		[t('wc26.menu')]: '/world-cup-2026',
+		[t('news')]: '/news',
+		[t('byGameweeks')]: '/gameweeks',
+		[t('byBetTitles')]: '/stats/bet-titles',
+		[t('externalMatchResults')]: '/football-data/matchday',
+		[t('byLeagues')]: '/stats/leagues',
+		[t('byTeams')]: '/stats/teams',
+		[t('archive')]: '/archive',
+		[t('rules')]: '/rules',
+	};
+	const base = pathByPage[page];
+	if (!base) {
+		return false;
+	}
+	return pathname === base || pathname.startsWith(`${base}/`);
 }
 
 export function useHeaderMenu(): HeaderMenuState {
@@ -44,6 +78,7 @@ export function useHeaderMenu(): HeaderMenuState {
 	const { t, i18n } = useTranslation();
 	useAppSelector((state) => state.language);
 	const navigate = useNavigate();
+	const { pathname } = useLocation();
 	const dispatch = useAppDispatch();
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const [anchorElLang, setAnchorElLang] = useState<null | HTMLElement>(null);
@@ -135,6 +170,9 @@ export function useHeaderMenu(): HeaderMenuState {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
+	const isNavPageActive = (page: string): boolean =>
+		isHeaderNavPageActive(page, pathname, t);
+
 	return {
 		t,
 		pages,
@@ -149,6 +187,7 @@ export function useHeaderMenu(): HeaderMenuState {
 		handleCloseLangMenu,
 		handleLanguageSelect,
 		scrollToTop,
+		isNavPageActive,
 	};
 }
 
@@ -211,15 +250,16 @@ export function HeaderNavLeft({ menu }: { menu: HeaderMenuState }): JSX.Element 
 				{menu.pages.map((page) => (
 					<MenuItem
 						key={page}
-						sx={
+						sx={[
 							page === menu.t('language')
 								? {
 										display: 'flex',
 										alignItems: 'center',
 										justifyContent: 'space-between',
 								  }
-								: undefined
-						}
+								: undefined,
+							menu.isNavPageActive(page) && headerNavMenuItemActiveSx,
+						]}
 						onClick={
 							page === menu.t('language')
 								? menu.handleOpenLangMenu
@@ -241,7 +281,9 @@ export function HeaderNavLeft({ menu }: { menu: HeaderMenuState }): JSX.Element 
 								<Typography sx={{ fontWeight: 600 }}>{page}</Typography>
 							</Box>
 						) : (
-							<Typography sx={{ fontWeight: 600 }}>{page}</Typography>
+							<Typography sx={{ fontWeight: menu.isNavPageActive(page) ? 800 : 600 }}>
+								{page}
+							</Typography>
 						)}
 						{page === menu.t('language') && <KeyboardArrowRight />}
 					</MenuItem>
@@ -267,11 +309,19 @@ export function HeaderNavCenter({ menu }: { menu: HeaderMenuState }): JSX.Elemen
 					px: { xs: 0.5, sm: 1 },
 				}}
 			>
-				<CustomMenuPageText onClick={menu.scrollToTop} href="#" title={menu.t('table')} />
+				<CustomMenuPageText
+					onClick={menu.scrollToTop}
+					href="#"
+					title={menu.t('table')}
+					active={menu.isNavPageActive(menu.t('table'))}
+					sx={menu.isNavPageActive(menu.t('table')) ? headerNavLinkActiveSx : undefined}
+				/>
 				<CustomMenuPageText
 					onClick={menu.scrollToTop}
 					href="#/bets/opened"
 					title={menu.t('bets')}
+					active={menu.isNavPageActive(menu.t('bets'))}
+					sx={menu.isNavPageActive(menu.t('bets')) ? headerNavLinkActiveSx : undefined}
 				/>
 				<Box sx={headerNavDesktopSx}>
 					{menu.pages.map((page) =>
@@ -303,7 +353,8 @@ export function HeaderNavCenter({ menu }: { menu: HeaderMenuState }): JSX.Elemen
 									menu.handleCloseNavMenu();
 								}}
 								title={page}
-								sx={page === menu.t('wc26.menu') ? headerNavLinkEventSx : undefined}
+								active={menu.isNavPageActive(page)}
+								sx={menu.isNavPageActive(page) ? headerNavLinkActiveSx : undefined}
 							/>
 						)
 					)}

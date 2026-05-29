@@ -7,12 +7,14 @@ const CustomMenuPageText = ({
 	href,
 	onClick,
 	onClickCapture,
+	active,
 	sx,
 }: {
 	title: string;
 	href?: string;
 	onClick?(event: React.MouseEvent<HTMLAnchorElement>): void;
 	onClickCapture?(event: React.MouseEvent<HTMLAnchorElement>): void;
+	active?: boolean;
 	sx?: SxProps<Theme>;
 }): JSX.Element => {
 	return (
@@ -34,7 +36,7 @@ const CustomMenuPageText = ({
 					textDecoration: 'none',
 					cursor: 'pointer',
 				},
-				headerNavLinkSx,
+				active ? undefined : headerNavLinkSx,
 				...(Array.isArray(sx) ? sx : sx ? [sx] : []),
 			]}
 		>
