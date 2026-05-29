@@ -16,11 +16,14 @@ import {
 import { t } from 'i18next';
 import { useState } from 'react';
 import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
-import StatsTableIdentityCell from './StatsTableIdentityCell';
+import StatsTableIdentityCell, { STATS_COLLAPSE_MS } from './StatsTableIdentityCell';
 import {
 	statsBalanceNegativeSx,
 	statsBalancePositiveSx,
+	statsBalanceCellSx,
+	statsBetsCellSx,
 	statsBodyDataCellSx,
+	statsPercentCellSx,
 	statsCollapseRowCellSx,
 	statsDetailValueSx,
 	statsExpandIconSx,
@@ -69,15 +72,20 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 					label={pStats.username}
 					labelSx={statsPlayerNameSx}
 				/>
-				<TableCell align="center" sx={[statsBodyDataCellSx, { px: 0.25 }] as SxProps<Theme>}>
+				<TableCell align="center" sx={statsBetsCellSx}>
 					{pStats.betCount} ({pStats.totalBets})
 				</TableCell>
-				<TableCell align="center" sx={[statsBodyDataCellSx, { px: 0.25 }] as SxProps<Theme>}>
+				<TableCell align="center" sx={statsPercentCellSx}>
 					{pStats.winRate.toFixed(0)}
 				</TableCell>
 				<TableCell
 					align="center"
-					sx={pStats.actualBalance >= 0 ? statsBalancePositiveSx : statsBalanceNegativeSx}
+					sx={
+						[
+							statsBalanceCellSx,
+							pStats.actualBalance >= 0 ? statsBalancePositiveSx : statsBalanceNegativeSx,
+						] as SxProps<Theme>
+					}
 				>
 					{pStats.actualBalance.toFixed(2)}€
 				</TableCell>
@@ -88,7 +96,7 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 					sx={statsCollapseRowCellSx}
 					style={{ paddingBottom: 0, paddingTop: 0 }}
 				>
-					<Collapse in={open} timeout={400} unmountOnExit>
+					<Collapse in={open} timeout={STATS_COLLAPSE_MS} unmountOnExit>
 						<Box sx={{ margin: 0, textAlign: 'center' }}>
 							<Typography component="div" sx={statsExpandedTitleSx}>
 								{t('additionalStats')} ({pStats.username})
@@ -175,14 +183,16 @@ export default function PlayersStats({
 						</TableCell>
 						<TableCell
 							align="center"
-							sx={[statsTableHeadCellSx, { fontSize: '0.75rem', px: 0 }] as SxProps<Theme>}
+							sx={
+								[statsTableHeadCellSx, { fontSize: '0.75rem', px: 0.2 }] as SxProps<Theme>
+							}
 						>
 							{t('totalBets')}
 						</TableCell>
-						<TableCell align="center" sx={[statsTableHeadCellSx, { px: 0.5 }] as SxProps<Theme>}>
+						<TableCell align="center" sx={[statsTableHeadCellSx, { px: 0.2 }] as SxProps<Theme>}>
 							%
 						</TableCell>
-						<TableCell align="center" sx={statsTableHeadCellSx}>
+						<TableCell align="center" sx={[statsTableHeadCellSx, { px: 0.2 }] as SxProps<Theme>}>
 							{t('balance')}
 						</TableCell>
 					</TableRow>

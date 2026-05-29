@@ -129,7 +129,23 @@ export const statsTableBodySx: SxProps<Theme> = (theme) => {
 export const statsBodyDataCellSx: SxProps<Theme> = (theme) => ({
 	color: palette(theme).bodyText,
 	fontVariantNumeric: 'tabular-nums',
+	verticalAlign: 'middle',
+	whiteSpace: 'nowrap',
 });
+
+/** Numeric columns — minimal horizontal padding only */
+export const statsNumericCellSx: SxProps<Theme> = (theme) => ({
+	color: palette(theme).bodyText,
+	fontVariantNumeric: 'tabular-nums',
+	verticalAlign: 'middle',
+	whiteSpace: 'nowrap',
+	px: 0.5,
+	py: 0.5,
+});
+
+export const statsBetsCellSx = statsNumericCellSx;
+export const statsPercentCellSx = statsNumericCellSx;
+export const statsBalanceCellSx = statsNumericCellSx;
 
 export const statsCollapseRowCellSx: SxProps<Theme> = (theme) => {
 	const p = palette(theme);
@@ -150,9 +166,9 @@ export function statsExpandableRowSx(open: boolean): SxProps<Theme> {
 			userSelect: 'none',
 			WebkitTapHighlightColor: 'transparent',
 			transition: 'background-color 0.25s ease',
-			bgcolor: open ? p.rowOpen : 'transparent',
+			bgcolor: 'transparent',
 			'&:hover': {
-				bgcolor: open ? p.rowOpen : p.rowHover,
+				bgcolor: open ? 'transparent' : p.rowHover,
 			},
 		};
 	};
@@ -169,7 +185,6 @@ export function statsExpandIconSx(open: boolean): SxProps<Theme> {
 
 export const statsPlayerNameSx: SxProps<Theme> = (theme) => ({
 	fontSize: '0.9rem',
-	maxWidth: '4.8rem',
 	fontWeight: 600,
 	color: palette(theme).name,
 });
@@ -228,10 +243,10 @@ export function statsLeadingSx(expanded: boolean): SxProps<Theme> {
 	});
 }
 
-export function statsIdentityCellSx(expanded: boolean): SxProps<Theme> {
-	return (theme) => ({
-		bgcolor: expanded ? palette(theme).rowOpen : 'transparent',
-	});
+export function statsIdentityCellSx(_expanded: boolean): SxProps<Theme> {
+	return {
+		bgcolor: 'transparent',
+	};
 }
 
 export const statsExpandedRingSx: SxProps<Theme> = (theme) => ({
