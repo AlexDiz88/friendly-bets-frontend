@@ -22,6 +22,8 @@ export const gameweekCompactCardBaseSx: SxProps<Theme> = (theme) => {
 		alignItems: 'center',
 		justifyContent: 'center',
 		flexDirection: 'column',
+		width: '100%',
+		boxSizing: 'border-box',
 		minWidth: GAMEWEEK_CARD_MIN_WIDTH,
 		maxWidth: GAMEWEEK_CARD_MAX_WIDTH,
 		height: GAMEWEEK_CARD_HEIGHT,
@@ -64,6 +66,35 @@ export const gameweekCompactOpenedCardSx: SxProps<Theme> = [
 	gameweekOpenedCardBgSx,
 ] as SxProps<Theme>;
 
+/** «Думает над ставкой» — те же слои, что OPENED; массив без вложения (иначе теряются фон и границы). */
+export const gameweekNoCardSx: SxProps<Theme> = [
+	gameweekCompactCardBaseSx,
+	gameweekOpenedCardBgSx,
+	{ cursor: 'default' },
+] as SxProps<Theme>;
+
+export const gameweekNoCardContentSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+	justifyContent: 'center',
+	width: '100%',
+	height: '100%',
+	textAlign: 'center',
+	gap: 0.3,
+	px: 0.1,
+	boxSizing: 'border-box',
+};
+
+export const gameweekNoCardTitleSx: SxProps<Theme> = (theme) => ({
+	textAlign: 'center',
+	fontWeight: 600,
+	color: statsThemePalette(theme).name,
+	fontSize: '0.85rem',
+	lineHeight: 1.15,
+	maxWidth: '100%',
+});
+
 export const gameweekCardScoreSx: SxProps<Theme> = (theme) => ({
 	px: 0.5,
 	pb: 0.3,
@@ -83,7 +114,7 @@ export const gameweekOddsBadgeSx: SxProps<Theme> = (theme) => {
 		fontSize: '1rem',
 		fontWeight: 600,
 		lineHeight: 0.8,
-		fontVariantNumeric: 'tabular-nums',
+		// fontVariantNumeric: 'tabular-nums',
 		bgcolor: isDark ? 'rgba(250, 204, 21, 0.22)' : '#EAF5CD',
 		border: '1px solid',
 		borderColor: isDark ? 'rgba(250, 204, 21, 0.35)' : 'rgba(0, 0, 0, 0.2)',
@@ -215,12 +246,5 @@ export const gameweekCalendarMenuPaperSx: SxProps<Theme> = (theme) => {
 
 export const gameweekThinkingIconSx: SxProps<Theme> = (theme) => ({
 	color: theme.palette.mode === 'dark' ? '#fb923c' : '#E76B0C',
-	transform: 'scale(1.7)',
-});
-
-export const gameweekThinkingLabelSx: SxProps<Theme> = (theme) => ({
-	textAlign: 'center',
-	fontSize: '0.85rem',
-	fontWeight: 600,
-	color: statsThemePalette(theme).bodyText,
+	fontSize: '2rem',
 });

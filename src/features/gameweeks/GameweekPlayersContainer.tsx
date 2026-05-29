@@ -19,6 +19,7 @@ import {
 	gameweekPlayerHeaderSx,
 	gameweekPlayerRowSx,
 } from './gameweekPageStyles';
+import { sortGameweekBetsByLeagueCode } from './gameweekCalendarUtils';
 import GameweekCompletedCard from './GameweekCompletedCard';
 import GameweekEmptyCard from './GameweekEmptyCard';
 import GameweekNoCard from './GameweekNoCard';
@@ -52,6 +53,10 @@ const GameweekPlayersContainer = ({
 		}
 	});
 
+	Object.keys(betsByPlayers).forEach((playerId) => {
+		betsByPlayers[playerId] = sortGameweekBetsByLeagueCode(betsByPlayers[playerId]);
+	});
+
 	const calculateTotalBalanceChange = (playerId: string): number => {
 		const playerBets = betsByPlayers[playerId] || [];
 		return playerBets.reduce((total, bet) => total + (bet.balanceChange || 0), 0);
@@ -63,7 +68,8 @@ const GameweekPlayersContainer = ({
 	};
 
 	const sortedPlayers = [...activeSeason.players].sort((a, b) => {
-		const balanceDifference = calculateTotalBalanceChange(b.id) - calculateTotalBalanceChange(b.id);
+		const balanceDifference =
+			calculateTotalBalanceChange(b.id) - calculateTotalBalanceChange(a.id);
 		if (balanceDifference !== 0) {
 			return balanceDifference;
 		}

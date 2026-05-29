@@ -1,5 +1,22 @@
 import dayjs, { Dayjs } from 'dayjs';
 import Calendar from '../admin/calendars/types/Calendar';
+import Bet from '../bets/types/Bet';
+
+/** Порядок лиг в сетке ставок участника на странице «По турам». */
+export const GAMEWEEK_LEAGUE_SORT_ORDER = ['EPL', 'BL', 'CL', 'LE'] as const;
+
+function gameweekLeagueSortIndex(leagueCode: string | undefined): number {
+	const idx = GAMEWEEK_LEAGUE_SORT_ORDER.indexOf(
+		leagueCode as (typeof GAMEWEEK_LEAGUE_SORT_ORDER)[number]
+	);
+	return idx === -1 ? GAMEWEEK_LEAGUE_SORT_ORDER.length : idx;
+}
+
+export function sortGameweekBetsByLeagueCode(bets: Bet[]): Bet[] {
+	return [...bets].sort(
+		(a, b) => gameweekLeagueSortIndex(a.leagueCode) - gameweekLeagueSortIndex(b.leagueCode)
+	);
+}
 
 /**
  * Тур по умолчанию при открытии «По турам»:
