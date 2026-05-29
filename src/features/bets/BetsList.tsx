@@ -6,6 +6,13 @@ import { useAppSelector } from '../../app/hooks';
 import CustomSwitchButton from '../../components/custom/btn/CustomSwitchButton';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import { selectActiveSeason } from '../admin/seasons/selectors';
+import {
+	betsPageRootSx,
+	betsStickyTabsSx,
+	betsSwitchButtonSx,
+	betsSwitchLabelSx,
+	betsTabBarSx,
+} from './betsPageStyles';
 
 export default function BetsList(): JSX.Element {
 	const navigate = useNavigate();
@@ -26,19 +33,28 @@ export default function BetsList(): JSX.Element {
 		navigate('/bets/opened');
 	}, []);
 
+	const openedActive = isActive('/bets/opened');
+	const completedActive = isActive('/bets/completed');
+
 	return (
-		<Box>
-			<Box sx={{ display: 'flex', justifyContent: 'center', mt: -0.5 }}>
-				<CustomSwitchButton
-					onClick={() => handleNavigate(t('openedBets'))}
-					buttonText={t('openedBets')}
-					isActive={isActive('/bets/opened')}
-				/>
-				<CustomSwitchButton
-					onClick={() => handleNavigate(t('completedBets'))}
-					buttonText={t('completedBets')}
-					isActive={isActive('/bets/completed')}
-				/>
+		<Box sx={betsPageRootSx}>
+			<Box sx={betsStickyTabsSx}>
+				<Box sx={betsTabBarSx}>
+					<CustomSwitchButton
+						onClick={() => handleNavigate(t('openedBets'))}
+						buttonText={t('openedBets')}
+						isActive={openedActive}
+						sx={betsSwitchButtonSx(openedActive)}
+						labelSx={betsSwitchLabelSx(openedActive)}
+					/>
+					<CustomSwitchButton
+						onClick={() => handleNavigate(t('completedBets'))}
+						buttonText={t('completedBets')}
+						isActive={completedActive}
+						sx={betsSwitchButtonSx(completedActive)}
+						labelSx={betsSwitchLabelSx(completedActive)}
+					/>
+				</Box>
 			</Box>
 			<Outlet />
 		</Box>

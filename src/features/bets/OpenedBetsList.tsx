@@ -8,6 +8,7 @@ import useFilterLanguageChange from '../../components/hooks/useFilterLanguageCha
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import PlayerSelect from '../../components/selectors/PlayerSelect';
 import { selectActiveSeason } from '../admin/seasons/selectors';
+import { betsFilterBarSx, betsListSx } from './betsPageStyles';
 import OpenedBetCard from './OpenedBetCard';
 import { getOpenedBets } from './betsSlice';
 import { selectOpenedBets } from './selectors';
@@ -78,7 +79,7 @@ const OpenedBetsList = (): JSX.Element => {
 						<CustomLoadingError />
 					) : (
 						<>
-							<Box sx={{ display: 'flex', justifyContent: 'center', my: 1 }}>
+							<Box sx={betsFilterBarSx}>
 								<LeagueSelect
 									value={selectedLeagueCode}
 									onChange={handleLeagueChange}
@@ -92,7 +93,7 @@ const OpenedBetsList = (): JSX.Element => {
 								/>
 							</Box>
 
-							<Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+							<Box sx={betsListSx}>
 								{filteredBets &&
 									filteredBets.map((bet) => (
 										<Box key={bet.id}>

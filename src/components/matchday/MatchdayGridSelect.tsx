@@ -1,5 +1,9 @@
-import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { MenuItem, Select, SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
 import { compactMatchdaySelectSx } from '../selectors/compactSelectSx';
+import {
+	filterSelectMenuItemSx,
+	filterSelectMenuProps,
+} from '../selectors/filterSelectStyles';
 import { formatSlotLabel } from './formatSlotLabel';
 import { getGridColumnsForMatchdayCount, MatchdaySlot } from './types';
 
@@ -49,17 +53,13 @@ export default function MatchdayGridSelect({
 			renderValue={() =>
 				selectedSlot ? formatSlotLabel(selectedSlot) : String(safeValue)
 			}
-			sx={{
-				...compactMatchdaySelectSx,
-				minWidth: '5.5rem',
-			}}
+			sx={compactMatchdaySelectSx}
 			MenuProps={{
-				PaperProps: {
-					sx: {
-						maxHeight: 420,
-						width: 'min(100vw - 1.5rem, 22rem)',
-					},
-				},
+				...filterSelectMenuProps(
+					resolvedSlots.length,
+					{ width: 'min(100vw - 1.5rem, 22rem)' },
+					{ gridColumns: columns }
+				),
 				MenuListProps: {
 					sx: {
 						display: 'grid',
@@ -67,6 +67,8 @@ export default function MatchdayGridSelect({
 						gap: 0.5,
 						p: 1,
 						justifyContent: 'center',
+						maxHeight: 'none',
+						overflowY: 'auto',
 					},
 				},
 			}}
@@ -75,17 +77,22 @@ export default function MatchdayGridSelect({
 				<MenuItem
 					key={slot.value}
 					value={slot.value}
-					sx={{
-						minWidth: 0,
-						width: '100%',
-						minHeight: '2.75rem',
-						justifyContent: 'center',
-						px: 0.25,
-						py: 0.5,
-						fontSize: '0.85rem',
-						fontWeight: safeValue === slot.value ? 700 : 600,
-						whiteSpace: 'nowrap',
-					}}
+					sx={
+						[
+							filterSelectMenuItemSx,
+							{
+								minWidth: 0,
+								width: '100%',
+								minHeight: '2.75rem',
+								justifyContent: 'center',
+								px: 0.25,
+								py: 0.5,
+								fontSize: '0.85rem',
+								fontWeight: safeValue === slot.value ? 700 : 600,
+								whiteSpace: 'nowrap',
+							},
+						] as SxProps<Theme>
+					}
 				>
 					{formatSlotLabel(slot)}
 				</MenuItem>

@@ -2,13 +2,14 @@ import { Box, SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import CustomButtonGroupPagination from '../../components/custom/btn/CustomButtonGroupPagination';
+import BetsPagination from './BetsPagination';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import PlayerSelect from '../../components/selectors/PlayerSelect';
 import { selectActiveSeason } from '../admin/seasons/selectors';
+import { betsFilterBarSx, betsListSx } from './betsPageStyles';
 import { getCompletedBets } from './betsSlice';
 import CompleteBetCard from './CompleteBetCard';
 import EmptyBetCard from './EmptyBetCard';
@@ -81,7 +82,7 @@ const CompletedBetsList = (): JSX.Element => {
 				<CustomLoading />
 			) : (
 				<>
-					<Box sx={{ display: 'flex', justifyContent: 'center', my: 1 }}>
+					<Box sx={betsFilterBarSx}>
 						<LeagueSelect
 							value={selectedLeagueCode}
 							onChange={handleLeagueChange}
@@ -100,7 +101,7 @@ const CompletedBetsList = (): JSX.Element => {
 					) : (
 						<Box>
 							<Box>
-								<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+								<Box sx={betsListSx}>
 									{completedBets &&
 										Array.isArray(completedBets) &&
 										completedBets.length > 0 &&
@@ -114,10 +115,10 @@ const CompletedBetsList = (): JSX.Element => {
 											</Box>
 										))}
 								</Box>
-								<CustomButtonGroupPagination
+								<BetsPagination
 									page={page}
 									totalPages={totalPages}
-									handlePageChange={handlePageChange}
+									onPageChange={handlePageChange}
 								/>
 							</Box>
 						</Box>

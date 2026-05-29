@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,17 @@ import TeamsAvatars from '../../components/custom/avatar/TeamsAvatars';
 import UserAvatar from '../../components/custom/avatar/UserAvatar';
 import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
+import {
+	BETS_CARD_LOGO_SIZE,
+	BETS_CARD_USER_AVATAR_SIZE,
+	betsCardAvatarSx,
+	betsCardBodySx,
+	betsCardHeaderRowSx,
+	betsCardLabelSx,
+	betsCardSx,
+	betsCardTeamsRowSx,
+	betsCardTeamsSx,
+} from './betsPageStyles';
 import Bet from './types/Bet';
 
 export default function OpenedBetCard({ bet }: { bet: Bet }): JSX.Element {
@@ -23,39 +34,44 @@ export default function OpenedBetCard({ bet }: { bet: Bet }): JSX.Element {
 	return (
 		<>
 			{bet && (
-				<Box
-					sx={{
-						maxWidth: '25rem',
-						minWidth: '19rem',
-						border: 2,
-						mx: 0.5,
-						my: 0.5,
-						p: 0.5,
-						borderRadius: 2,
-						bgcolor: 'white',
-						boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.7)',
-					}}
-				>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							flexWrap: 'wrap',
-							justifyContent: 'space-between',
-						}}
-					>
-						<UserAvatar player={player} />
-						<LeagueAvatar leagueCode={leagueCode} matchDay={matchDayTitle} />
+				<Box sx={betsCardSx}>
+					<Box sx={betsCardHeaderRowSx}>
+						<UserAvatar
+							player={player}
+							height={BETS_CARD_USER_AVATAR_SIZE}
+							sx={betsCardAvatarSx}
+						/>
+						<LeagueAvatar
+							leagueCode={leagueCode}
+							matchDay={matchDayTitle}
+							height={BETS_CARD_LOGO_SIZE}
+							sx={betsCardAvatarSx}
+						/>
 					</Box>
-					<Box sx={{ display: 'flex', justifyContent: 'start' }}>
-						<TeamsAvatars homeTeam={homeTeam} awayTeam={awayTeam} />
+					<Box sx={betsCardTeamsRowSx}>
+						<TeamsAvatars
+							homeTeam={homeTeam}
+							awayTeam={awayTeam}
+							height={BETS_CARD_LOGO_SIZE}
+							sx={betsCardTeamsSx}
+						/>
 					</Box>
-					<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-						<b>{t('bet')}:</b> {getFullBetTitle(betTitle)}
-					</Box>
-					<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-						<b>{t('coef')}:</b> {betOdds?.toFixed(2)}, <b>{t('amount')}:</b> {betSize}
-					</Box>
+					<Typography component="div" sx={betsCardBodySx}>
+						<Box component="span" sx={betsCardLabelSx}>
+							{t('bet')}:
+						</Box>{' '}
+						{getFullBetTitle(betTitle)}
+					</Typography>
+					<Typography component="div" sx={betsCardBodySx}>
+						<Box component="span" sx={betsCardLabelSx}>
+							{t('coef')}:
+						</Box>{' '}
+						{betOdds?.toFixed(2)},{' '}
+						<Box component="span" sx={betsCardLabelSx}>
+							{t('amount')}:
+						</Box>{' '}
+						{betSize}
+					</Typography>
 				</Box>
 			)}
 		</>

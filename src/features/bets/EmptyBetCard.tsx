@@ -1,11 +1,25 @@
 import { GppMaybe } from '@mui/icons-material';
-import { Box } from '@mui/material';
+import { Box, Typography, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
 import UserAvatar from '../../components/custom/avatar/UserAvatar';
 import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
+import {
+	BETS_CARD_LOGO_SIZE,
+	BETS_CARD_USER_AVATAR_SIZE,
+	betsBalanceChangeSx,
+	betsCardAvatarSx,
+	betsCardBodySx,
+	betsCardHeaderRowSx,
+	betsCardLabelSx,
+	betsCardStatusLabelSx,
+	betsCardStatusRowSx,
+	betsCardSx,
+	betsCompletedCardBgSx,
+	betsStatusIconSx,
+} from './betsPageStyles';
 import Bet from './types/Bet';
 
 export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
@@ -21,53 +35,34 @@ export default function EmptyBetCard({ bet }: { bet: Bet }): JSX.Element {
 	return (
 		<>
 			{bet && (
-				<Box
-					sx={{
-						maxWidth: '25rem',
-						minWidth: '19rem',
-						border: 2,
-						mx: 0.5,
-						my: 0.5,
-						p: 0.5,
-						borderRadius: 2,
-						bgcolor: '#e0dfe4',
-						boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.7)',
-					}}
-				>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							flexWrap: 'wrap',
-							justifyContent: 'space-between',
-						}}
-					>
-						<UserAvatar player={player} />
-						<LeagueAvatar leagueCode={leagueCode} matchDay={matchDayTitle} />
+				<Box sx={[betsCardSx, betsCompletedCardBgSx('empty')] as SxProps<Theme>}>
+					<Box sx={betsCardHeaderRowSx}>
+						<UserAvatar
+							player={player}
+							height={BETS_CARD_USER_AVATAR_SIZE}
+							sx={betsCardAvatarSx}
+						/>
+						<LeagueAvatar
+							leagueCode={leagueCode}
+							matchDay={matchDayTitle}
+							height={BETS_CARD_LOGO_SIZE}
+							sx={betsCardAvatarSx}
+						/>
 					</Box>
-					<Box sx={{ textAlign: 'left', ml: 0.5 }}>
-						<b>{t('amount')}:</b> {betSize}
-					</Box>
+					<Typography component="div" sx={betsCardBodySx}>
+						<Box component="span" sx={betsCardLabelSx}>
+							{t('amount')}:
+						</Box>{' '}
+						{betSize}
+					</Typography>
 
-					<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-						<Box>
-							<Box
-								sx={{
-									fontSize: '0.85rem',
-									fontWeight: 600,
-									pl: 0.5,
-									display: 'flex',
-									alignItems: 'center',
-								}}
-							>
-								<GppMaybe sx={{ color: '#8f2323' }} />
-								{t('betNotPlaced')}
-							</Box>
+					<Box sx={betsCardStatusRowSx}>
+						<Box sx={betsCardStatusLabelSx}>
+							<GppMaybe sx={betsStatusIconSx('empty')} />
+							{t('betNotPlaced')}
 						</Box>
 						{balanceChange !== undefined && (
-							<Box sx={{ pr: 1, fontWeight: 600, fontSize: '1.4rem', color: 'brown' }}>
-								{balanceChange}€
-							</Box>
+							<Box sx={betsBalanceChangeSx(balanceChange)}>{balanceChange}€</Box>
 						)}
 					</Box>
 				</Box>

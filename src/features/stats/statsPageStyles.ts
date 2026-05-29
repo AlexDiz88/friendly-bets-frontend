@@ -71,6 +71,11 @@ function palette(theme: Theme) {
 	return theme.palette.mode === 'dark' ? statsPalette.dark : statsPalette.light;
 }
 
+/** Палитра главной (таблица статистики) — для страницы ставок и др. */
+export function statsThemePalette(theme: Theme) {
+	return palette(theme);
+}
+
 export const statsTableContainerSx: SxProps<Theme> = (theme) => {
 	const p = palette(theme);
 	return {
