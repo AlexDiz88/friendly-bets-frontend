@@ -48,6 +48,7 @@ export function useHeaderMenu(): HeaderMenuState {
 	const [anchorElLang, setAnchorElLang] = useState<null | HTMLElement>(null);
 
 	const pages = [
+		t('wc26.menu'),
 		t('news'),
 		t('byGameweeks'),
 		t('byBetTitles'),
@@ -68,6 +69,9 @@ export function useHeaderMenu(): HeaderMenuState {
 
 	const handleNavigate = (page: string): void => {
 		switch (page) {
+			case t('wc26.menu'):
+				navigate('/world-cup-2026');
+				break;
 			case t('news'):
 				navigate('/news');
 				break;

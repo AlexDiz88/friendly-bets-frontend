@@ -6,6 +6,7 @@ import { selectCompletedBets } from '../features/bets/selectors';
 import PlayersStats from '../features/stats/PlayersStats';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
+import Wc26QuickLink from '../features/world-cup-2026/Wc26QuickLink';
 import CustomLoading from './custom/loading/CustomLoading';
 import CustomLoadingError from './custom/loading/CustomLoadingError';
 import useFetchActiveSeason from './hooks/useFetchActiveSeason';
@@ -88,6 +89,7 @@ export default function Homepage(): JSX.Element {
 								boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
 							}}
 						>
+							<Wc26QuickLink />
 							<PlayersStats playersStats={sortedPlayersStats} />
 							{/* <Box sx={{ py: 3, px: 1 }}>
 								Fetch Results:

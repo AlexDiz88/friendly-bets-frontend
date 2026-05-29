@@ -34,6 +34,7 @@ import CompletedBetsList from './features/bets/CompletedBetsList';
 import OpenedBetsList from './features/bets/OpenedBetsList';
 import ExternalMatchdayPage from './features/football-data/ExternalMatchdayPage';
 import OddsDemoPage from './features/odds-demo/OddsDemoPage';
+import WorldCup26Page from './features/world-cup-2026/WorldCup26Page';
 import GameList from './features/football-data/gameResults/GameList';
 import Gameweek from './features/gameweeks/Gameweek';
 import BetTitlesStatsPage from './features/stats/BetTitlesStatsPage';
@@ -128,6 +129,7 @@ function App(): JSX.Element {
 				<Route path="/odds-demo" element={<OddsDemoPage />} />
 				<Route path="/gameweeks" element={<Gameweek />} />
 				<Route path="/news" element={<News />} />
+				<Route path="/world-cup-2026" element={<WorldCup26Page />} />
 				<Route path="/rules" element={<RulesPage />} />
 				<Route path="/archive" element={<Archive />} />
 				<Route path="/my/stats" element={<MyStats />} />
