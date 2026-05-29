@@ -541,7 +541,19 @@
 		"refresh": "Обновить из API",
 		"empty": "Нет данных. Админ: «Обновить из API».",
 		"lines": "линий",
-		"selection": "Исход"
+		"line": "Линия",
+		"selection": "Исход",
+		"groups": {
+			"matchResult": "Исход матча",
+			"doubleChance": "Двойной шанс",
+			"handicap": "Форы",
+			"totals": "Тоталы",
+			"btts": "Обе забьют",
+			"teamTotalHome": "Инд. тотал хозяев",
+			"teamTotalAway": "Инд. тотал гостей",
+			"correctScore": "Точный счёт",
+			"other": "Прочее"
+		}
 	},
 
 	"matchdayCalendar": "Календарь туров",

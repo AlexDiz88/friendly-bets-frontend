@@ -1,17 +1,4 @@
-import {
-	Alert,
-	Box,
-	CircularProgress,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	TextField,
-	Typography,
-} from '@mui/material';
+import { Alert, Box, CircularProgress, Paper, TextField, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -23,6 +10,7 @@ import {
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import { getOddsDemoEvent, listOddsDemoEvents, refreshOddsDemoLeague } from './oddsDemoApi';
+import OddsMarketGroupAccordion from './OddsMarketGroupAccordion';
 import { OddsDemoEventDetail, OddsDemoEventSummary } from './types';
 
 const DEFAULT_LEAGUE = 'international-world-cup';
@@ -182,42 +170,12 @@ export default function OddsDemoPage(): JSX.Element {
 							<Typography variant="h6" sx={{ mb: 1 }}>
 								{detail.home} — {detail.away}
 							</Typography>
-							{detail.mergedLines.map((line) => (
-								<TableContainer
-									key={`${line.marketName}-${line.line ?? 'main'}`}
-									component={Paper}
-									variant="outlined"
-									sx={{ mb: 2 }}
-								>
-									<Typography sx={{ px: 1.5, pt: 1, fontWeight: 600 }}>
-										{line.marketName}
-										{line.line ? ` (${line.line})` : ''}
-									</Typography>
-									<Table size="small">
-										<TableHead>
-											<TableRow>
-												<TableCell>{t('oddsDemo.selection', 'Исход')}</TableCell>
-												{bookmakers.map((bk) => (
-													<TableCell key={bk} align="right">
-														{bk}
-													</TableCell>
-												))}
-											</TableRow>
-										</TableHead>
-										<TableBody>
-											{line.selections.map((sel) => (
-												<TableRow key={sel.selectionKey}>
-													<TableCell>{sel.displayLabel}</TableCell>
-													{bookmakers.map((bk) => (
-														<TableCell key={bk} align="right">
-															{sel.bookmakerOdds[bk] ?? '—'}
-														</TableCell>
-													))}
-												</TableRow>
-											))}
-										</TableBody>
-									</Table>
-								</TableContainer>
+							{(detail.marketGroups ?? []).map((group) => (
+								<OddsMarketGroupAccordion
+									key={group.category}
+									group={group}
+									bookmakers={bookmakers}
+								/>
 							))}
 						</Box>
 					)}

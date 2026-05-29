@@ -541,7 +541,19 @@
 		"refresh": "Von API aktualisieren",
 		"empty": "Keine Daten. Admin: «Von API aktualisieren».",
 		"lines": "Linien",
-		"selection": "Auswahl"
+		"line": "Linie",
+		"selection": "Auswahl",
+		"groups": {
+			"matchResult": "Spielausgang",
+			"doubleChance": "Doppelte Chance",
+			"handicap": "Handicap",
+			"totals": "Über/Unter",
+			"btts": "Beide treffen",
+			"teamTotalHome": "Heim-Teamtotal",
+			"teamTotalAway": "Auswärts-Teamtotal",
+			"correctScore": "Genaues Ergebnis",
+			"other": "Sonstige"
+		}
 	},
 
 	"matchdayCalendar": "Spielplan",

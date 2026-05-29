@@ -541,7 +541,19 @@
 		"refresh": "Refresh from API",
 		"empty": "No data. Admin: use «Refresh from API».",
 		"lines": "lines",
-		"selection": "Selection"
+		"line": "Line",
+		"selection": "Selection",
+		"groups": {
+			"matchResult": "Match result",
+			"doubleChance": "Double chance",
+			"handicap": "Handicap",
+			"totals": "Totals",
+			"btts": "Both teams to score",
+			"teamTotalHome": "Home team total",
+			"teamTotalAway": "Away team total",
+			"correctScore": "Correct score",
+			"other": "Other"
+		}
 	},
 
 	"matchdayCalendar": "Matchday schedule",

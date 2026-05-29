@@ -1,13 +1,16 @@
-export type MergedOddsSelection = {
-	selectionKey: string;
+export type OddsLineRow = {
+	line?: string | null;
+	selectionCode: string;
 	displayLabel: string;
 	bookmakerOdds: Record<string, string>;
 };
 
-export type MergedOddsLine = {
-	marketName: string;
-	line?: string | null;
-	selections: MergedOddsSelection[];
+export type OddsMarketGroup = {
+	category: string;
+	groupKey: string;
+	sortOrder: number;
+	collapsedByDefault: boolean;
+	rows: OddsLineRow[];
 };
 
 export type OddsDemoEventSummary = {
@@ -22,6 +25,6 @@ export type OddsDemoEventSummary = {
 
 export type OddsDemoEventDetail = OddsDemoEventSummary & {
 	bookmakers: string[];
-	mergedLines: MergedOddsLine[];
+	marketGroups: OddsMarketGroup[];
 	fetchedAt: string;
 };
