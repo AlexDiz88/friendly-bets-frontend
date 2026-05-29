@@ -6,8 +6,8 @@ import UserAvatar from '../custom/avatar/UserAvatar';
 import {
 	filterSelectAllAvatarSx,
 	filterSelectAllLabelSx,
-	filterSelectMenuItemSx,
-	filterSelectMenuProps,
+	filterSelectPlayerMenuItemSx,
+	filterSelectPlayerMenuProps,
 	filterSelectPlayerLayoutSx,
 	filterSelectRootSx,
 } from './filterSelectStyles';
@@ -28,22 +28,21 @@ const PlayerSelect = ({ value, onChange, players }: PlayerSelectProps): JSX.Elem
 
 	return (
 		<Select
-			autoWidth
 			size="small"
 			sx={
 				[
 					filterSelectRootSx('standard'),
 					filterSelectPlayerLayoutSx,
-					{ minWidth: { xs: 0, sm: '11.5rem' } },
+					{ minWidth: { xs: 0, sm: '10rem' } },
 				] as SxProps<Theme>
 			}
 			labelId="player-title-label"
 			id="player-title-select"
 			value={value}
 			onChange={onChange}
-			MenuProps={filterSelectMenuProps(menuItemCount)}
+			MenuProps={filterSelectPlayerMenuProps(menuItemCount)}
 		>
-			<MenuItem sx={filterSelectMenuItemSx} value={t('all')}>
+			<MenuItem sx={filterSelectPlayerMenuItemSx} value={t('all')}>
 				<Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
 					<Avatar
 						variant="circular"
@@ -51,7 +50,7 @@ const PlayerSelect = ({ value, onChange, players }: PlayerSelectProps): JSX.Elem
 						alt="all_players_logo"
 						src={`${import.meta.env.PUBLIC_URL || ''}/upload/avatars/cool_man.jpg`}
 					/>
-					<Box component="span" sx={filterSelectAllLabelSx}>
+					<Box component="span" sx={[filterSelectAllLabelSx, { ml: 0.5, mr: 0 }] as SxProps<Theme>}>
 						{t('all')}
 					</Box>
 				</Box>
@@ -59,13 +58,13 @@ const PlayerSelect = ({ value, onChange, players }: PlayerSelectProps): JSX.Elem
 			{sortedPlayers.map((p) => (
 						<MenuItem
 							key={p.id}
-							sx={[filterSelectMenuItemSx, { minWidth: '11rem' }] as SxProps<Theme>}
+							sx={filterSelectPlayerMenuItemSx}
 							value={p.username}
 						>
 							<UserAvatar
 								player={p}
 								height={28}
-								sx={{ my: 0, mb: 0, fontWeight: 500, fontSize: '0.875rem' }}
+								sx={{ my: 0, mb: 0, ml: 0, fontWeight: 500, fontSize: '0.875rem' }}
 								avasx={{ border: 0, mr: 0.75, height: 28, width: 28 }}
 							/>
 						</MenuItem>

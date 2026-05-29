@@ -166,7 +166,8 @@ export const filterSelectLeagueLayoutSx: SxProps<Theme> = {
 export const filterSelectPlayerLayoutSx: SxProps<Theme> = {
 	flex: '1 1 52%',
 	minWidth: 0,
-	maxWidth: { xs: '52%', sm: '13.5rem' },
+	width: '100%',
+	maxWidth: { xs: '52%', sm: '12rem' },
 };
 
 export const filterSelectMenuPaperSx: SxProps<Theme> = (theme) => {
@@ -210,6 +211,18 @@ export const filterSelectMenuItemSx: SxProps<Theme> = (theme) => {
 	};
 };
 
+/** Пункты списка игроков: без бокового mx, padding как у .MuiSelect-select (0.75). */
+export const filterSelectPlayerMenuItemSx: SxProps<Theme> = [
+	filterSelectMenuItemSx,
+	{
+		mx: 0,
+		px: 0.75,
+		borderRadius: 0,
+		width: '100%',
+		boxSizing: 'border-box',
+	},
+];
+
 export const filterSelectAllLabelSx: SxProps<Theme> = (theme) => ({
 	mx: 0.75,
 	fontSize: '0.875rem',
@@ -228,6 +241,24 @@ export type FilterSelectMenuOptions = {
 	/** Сетка (туры): число колонок для расчёта высоты. */
 	gridColumns?: number;
 };
+
+export function filterSelectPlayerMenuProps(itemCount: number): SelectProps['MenuProps'] {
+	return {
+		...filterSelectMenuProps(itemCount),
+		// Иначе Popover сдвигает меню от якоря (особенно у края viewport).
+		marginThreshold: 0,
+		MenuListProps: {
+			sx: {
+				py: 0.5,
+				px: 0,
+				maxHeight: 'none',
+				overflowY: 'auto',
+				width: '100%',
+				boxSizing: 'border-box',
+			},
+		},
+	};
+}
 
 export function filterSelectMenuProps(
 	itemCount: number,
@@ -248,6 +279,7 @@ export function filterSelectMenuProps(
 	return {
 		anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
 		transformOrigin: { vertical: 'top', horizontal: 'left' },
+		marginThreshold: 0,
 		PaperProps: {
 			sx: paperSx,
 		},
