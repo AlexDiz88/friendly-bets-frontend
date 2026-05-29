@@ -1,7 +1,7 @@
 import { Avatar, Box, MenuItem, Select, SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
 import League from '../../features/admin/leagues/types/League';
-import LeagueAvatar from '../custom/avatar/LeagueAvatar';
+import LeagueAvatar, { leagueLogoAvatarSx } from '../custom/avatar/LeagueAvatar';
 import { compactLeagueSelectSx } from './compactSelectSx';
 import {
 	filterSelectAllAvatarSx,
@@ -71,7 +71,7 @@ const LeagueSelect = ({
 					<Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
 						<Avatar
 							variant="square"
-							sx={filterSelectAllAvatarSx}
+							sx={[filterSelectAllAvatarSx, leagueLogoAvatarSx] as SxProps<Theme>}
 							alt="league_logo"
 							src={`${import.meta.env.PUBLIC_URL || ''}/upload/logo/total.png`}
 						/>
