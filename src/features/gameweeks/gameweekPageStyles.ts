@@ -31,8 +31,8 @@ export const gameweekCompactCardBaseSx: SxProps<Theme> = (theme) => {
 		borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.12)',
 		borderTopColor: convex.borderTopColor,
 		borderBottomColor: convex.borderBottomColor,
-		mx: 0.5,
-		mb: 0.5,
+		mx: 0,
+		mb: 0,
 		p: 0.3,
 		borderRadius: 2,
 		color: p.bodyText,
@@ -153,7 +153,6 @@ export const gameweekPlayerRowSx: SxProps<Theme> = (theme) => {
 
 export const gameweekPlayerHeaderSx: SxProps<Theme> = {
 	mb: 0.8,
-	ml: 0.5,
 	display: 'flex',
 	alignItems: 'center',
 	fontWeight: 600,
