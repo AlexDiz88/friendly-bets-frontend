@@ -1,35 +1,18 @@
-import { Avatar, Box } from '@mui/material';
+import { Avatar, Box, type SxProps, type Theme } from '@mui/material';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
-import {
-	GAMEWEEK_CARD_HEIGHT,
-	GAMEWEEK_CARD_MAX_WIDTH,
-	GAMEWEEK_CARD_MIN_WIDTH,
-} from '../../constants';
 import Bet from '../bets/types/Bet';
+import {
+	gameweekCardBetTitleSx,
+	gameweekCompactOpenedCardSx,
+	gameweekOddsBadgeSx,
+} from './gameweekPageStyles';
 
 const GameweekOpenedCard = ({ bet, onClick }: { bet: Bet; onClick: () => void }): JSX.Element => {
+	const titleLen = bet.betTitle?.label.length || 0;
+
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				flexDirection: 'column',
-				minWidth: GAMEWEEK_CARD_MIN_WIDTH,
-				maxWidth: GAMEWEEK_CARD_MAX_WIDTH,
-				height: GAMEWEEK_CARD_HEIGHT,
-				border: 2,
-				mx: 0.5,
-				mb: 0.5,
-				p: 0.3,
-				borderRadius: 2,
-				bgcolor: 'whitesmoke',
-				boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.7)',
-				cursor: 'pointer',
-			}}
-			onClick={onClick}
-		>
+		<Box sx={gameweekCompactOpenedCardSx} onClick={onClick}>
 			<Box>
 				<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 					<Avatar
@@ -38,21 +21,7 @@ const GameweekOpenedCard = ({ bet, onClick }: { bet: Bet; onClick: () => void })
 						alt="team_logo"
 						src={pathToLogoImage(bet.homeTeam?.title)}
 					/>
-					<Box
-						sx={{
-							px: 0.3,
-							py: 0.2,
-							mx: 0.3,
-							textAlign: 'center',
-							fontSize: '1rem',
-							fontWeight: 600,
-							lineHeight: 0.8,
-							bgcolor: '#EAF5CD',
-							border: '1px solid',
-						}}
-					>
-						{bet.betOdds?.toFixed(2)}
-					</Box>
+					<Box sx={gameweekOddsBadgeSx}>{bet.betOdds?.toFixed(2)}</Box>
 					<Avatar
 						sx={{ width: 30, height: 30 }}
 						variant="square"
@@ -65,14 +34,17 @@ const GameweekOpenedCard = ({ bet, onClick }: { bet: Bet; onClick: () => void })
 			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 				{bet.balanceChange !== undefined && (
 					<Box
-						sx={{
-							textAlign: 'center',
-							fontWeight: 600,
-							fontSize: (bet.betTitle?.label.length || 0) > 16 ? '0.8rem' : '1.1rem',
-							lineHeight: (bet.betTitle?.label.length || 0) > 16 ? 0.8 : 1,
-							pb: 0.5,
-							pt: 0.1,
-						}}
+						sx={
+							[
+								gameweekCardBetTitleSx,
+								{
+									fontSize: titleLen > 16 ? '0.8rem' : '1.1rem',
+									lineHeight: titleLen > 16 ? 0.8 : 1,
+									pb: 0.5,
+									pt: 0.1,
+								},
+							] as SxProps<Theme>
+						}
 					>
 						{getFullBetTitle(bet.betTitle)}
 					</Box>

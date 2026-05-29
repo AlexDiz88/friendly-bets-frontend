@@ -157,6 +157,30 @@ export function betsSwitchLabelSx(active: boolean): SxProps<Theme> {
 	};
 }
 
+/** Фильтр лиг на «Подведение итогов матчей» — не хардкодить black/brown. */
+export function betsLeagueFilterTabSx(selected: boolean): SxProps<Theme> {
+	return (theme) => {
+		const isDark = theme.palette.mode === 'dark';
+		const activeColor = isDark ? '#e8b080' : '#8b4513';
+		const inactiveColor = isDark ? 'rgba(255, 255, 255, 0.72)' : '#171717';
+		return {
+			borderRadius: 0,
+			borderBottom: '2px solid',
+			borderBottomColor: selected ? activeColor : 'transparent',
+			color: selected ? activeColor : inactiveColor,
+			fontFamily: "'Exo 2'",
+			px: 0.5,
+			mr: 1,
+			fontWeight: selected ? 700 : 500,
+			textTransform: 'none',
+			minWidth: 0,
+			'&:hover': {
+				bgcolor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
+			},
+		};
+	};
+}
+
 /** Непрозрачная подложка под sticky-вкладки — контент не просвечивает при скролле. */
 export const betsStickyTabsSx: SxProps<Theme> = (theme) => {
 	const isDark = theme.palette.mode === 'dark';
@@ -165,7 +189,8 @@ export const betsStickyTabsSx: SxProps<Theme> = (theme) => {
 		position: 'sticky',
 		top: APP_STICKY_BELOW_HEADER_TOP,
 		zIndex: 20,
-		py: 0.5,
+		pt: 0,
+		pb: 0.5,
 		mb: 0.5,
 		mx: `calc(-1 * ${BETS_PAGE_INSET_PX})`,
 		px: BETS_PAGE_INSET_PX,

@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid } from '@mui/material';
+import { Avatar, Box, Grid, type SxProps, type Theme } from '@mui/material';
 import { useState } from 'react';
 import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
 import {
@@ -12,6 +12,13 @@ import CompleteBetCard from '../bets/CompleteBetCard';
 import EmptyBetCard from '../bets/EmptyBetCard';
 import OpenedBetCard from '../bets/OpenedBetCard';
 import Bet from '../bets/types/Bet';
+import {
+	gameweekBalanceChangeSx,
+	gameweekExpandedCardWrapSx,
+	gameweekExpandedOverlaySx,
+	gameweekPlayerHeaderSx,
+	gameweekPlayerRowSx,
+} from './gameweekPageStyles';
 import GameweekCompletedCard from './GameweekCompletedCard';
 import GameweekEmptyCard from './GameweekEmptyCard';
 import GameweekNoCard from './GameweekNoCard';
@@ -56,7 +63,7 @@ const GameweekPlayersContainer = ({
 	};
 
 	const sortedPlayers = [...activeSeason.players].sort((a, b) => {
-		const balanceDifference = calculateTotalBalanceChange(b.id) - calculateTotalBalanceChange(a.id);
+		const balanceDifference = calculateTotalBalanceChange(b.id) - calculateTotalBalanceChange(b.id);
 		if (balanceDifference !== 0) {
 			return balanceDifference;
 		}
@@ -84,96 +91,67 @@ const GameweekPlayersContainer = ({
 
 	return (
 		<Box sx={{ m: '0 auto', my: 2, maxWidth: '25rem' }}>
-			{sortedPlayers.map((player) => (
-				<Box
-					key={player.id}
-					sx={{
-						mb: 2,
-						p: 0.5,
-						border: '2px solid',
-						borderRadius: 2,
-						bgcolor: '#FFF4E8CE',
-						boxShadow: '1px 4px 7px rgba(0, 0, 60, 0.4), 0px 4px 8px rgba(0, 0, 0, 0.7)',
-						filter: expandedBetId ? 'blur(0.75px)' : 'none',
-					}}
-				>
-					<Box sx={{ mb: 0.8, ml: 0.5, display: 'flex', alignItems: 'center', fontWeight: 600 }}>
-						<Box
-							sx={{
-								mr: 1,
-								fontSize: '1.25rem',
-								color:
-									calculateTotalBalanceChange(player.id) > 0
-										? 'green'
-										: calculateTotalBalanceChange(player.id) < 0
-										? 'brown'
-										: 'black',
-							}}
-						>
-							{calculateTotalBalanceChange(player.id).toFixed(2)}€
+			{sortedPlayers.map((player) => {
+				const totalBalance = calculateTotalBalanceChange(player.id);
+				return (
+					<Box
+						key={player.id}
+						sx={
+							[gameweekPlayerRowSx, { filter: expandedBetId ? 'blur(0.75px)' : 'none' }] as SxProps<Theme>
+						}
+					>
+						<Box sx={gameweekPlayerHeaderSx}>
+							<Box
+								sx={
+									[gameweekBalanceChangeSx(totalBalance), { mr: 1, fontSize: '1.25rem' }] as SxProps<Theme>
+								}
+							>
+								{totalBalance.toFixed(2)}€
+							</Box>
+							<Avatar
+								sx={{ mr: 0.5, width: 30, height: 30, border: 1, borderColor: 'gray' }}
+								alt="user_avatar"
+								src={avatarBase64Converter(player.avatar)}
+							/>
+							{player.username}
 						</Box>
-						<Avatar
-							sx={{ mr: 0.5, width: 30, height: 30, border: 1, borderColor: 'gray' }}
-							alt="user_avatar"
-							src={avatarBase64Converter(player.avatar)}
-						/>
-						{player.username}
+						<Grid container spacing={1}>
+							{Array.from({ length: gameweekCardsCount }).map((_, index) => {
+								const bet = betsByPlayers[player.id][index];
+								return (
+									<Grid item xs={6} sm={6} key={bet ? bet.id : `empty-${player.id}-${index}`}>
+										{bet && bet.betStatus ? (
+											<>
+												{COMPLETED_BET_STATUSES.includes(bet.betStatus) && (
+													<GameweekCompletedCard bet={bet} onClick={() => handleCardClick(bet.id)} />
+												)}
+												{BET_STATUS_OPENED === bet.betStatus && (
+													<GameweekOpenedCard bet={bet} onClick={() => handleCardClick(bet.id)} />
+												)}
+												{BET_STATUS_EMPTY === bet.betStatus && (
+													<GameweekEmptyCard bet={bet} onClick={() => handleCardClick(bet.id)} />
+												)}
+											</>
+										) : (
+											<GameweekNoCard />
+										)}
+									</Grid>
+								);
+							})}
+						</Grid>
 					</Box>
-					<Grid container spacing={1}>
-						{Array.from({ length: gameweekCardsCount }).map((_, index) => {
-							const bet = betsByPlayers[player.id][index];
-							return (
-								<Grid item xs={6} sm={6} key={bet ? bet.id : `empty-${player.id}-${index}`}>
-									{bet && bet.betStatus ? (
-										<>
-											{COMPLETED_BET_STATUSES.includes(bet.betStatus) && (
-												<GameweekCompletedCard bet={bet} onClick={() => handleCardClick(bet.id)} />
-											)}
-											{BET_STATUS_OPENED === bet.betStatus && (
-												<GameweekOpenedCard bet={bet} onClick={() => handleCardClick(bet.id)} />
-											)}
-											{BET_STATUS_EMPTY === bet.betStatus && (
-												<GameweekEmptyCard bet={bet} onClick={() => handleCardClick(bet.id)} />
-											)}
-										</>
-									) : (
-										<GameweekNoCard />
-									)}
-								</Grid>
-							);
-						})}
-					</Grid>
-				</Box>
-			))}
-			{/* Слой развернутой карточки */}
+				);
+			})}
 			{expandedBetId && (
-				<Box
-					position="fixed"
-					top={0}
-					left={0}
-					width="100%"
-					height="100%"
-					display="flex"
-					alignItems="center"
-					justifyContent="center"
-					bgcolor="rgba(0, 0, 0, 0.5)"
-					zIndex={10}
-					onClick={handleCloseExpandedCard}
-				>
+				<Box sx={gameweekExpandedOverlaySx} onClick={handleCloseExpandedCard}>
 					{visibleBets.map((bet) =>
 						bet.id === expandedBetId ? (
 							<Box
 								key={bet.id}
+								sx={gameweekExpandedCardWrapSx}
 								onClick={(e) => {
 									e.stopPropagation();
 									handleCloseExpandedCard();
-								}}
-								style={{
-									background: 'white',
-									borderRadius: '8px',
-									padding: '16px',
-									maxWidth: '400px',
-									boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
 								}}
 							>
 								{COMPLETED_BET_STATUSES.includes(bet.betStatus) && <CompleteBetCard bet={bet} />}

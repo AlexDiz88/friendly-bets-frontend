@@ -11,7 +11,7 @@ export default function Wc26PageHero(): JSX.Element {
 			sx={(theme) => ({
 				...wc26TitleShineKeyframes,
 				px: 2,
-				pt: 1,
+				pt: 0,
 				pb: 1.5,
 				textAlign: 'center',
 				position: 'relative',

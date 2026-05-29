@@ -198,20 +198,20 @@ export default function StatsTableIdentityCell({
 	const slotExpanded = playerFxEnabled ? slotLarge : expanded;
 	const slotWidth = slotExpanded ? expandedSize : avatarSize;
 	const slotHeight = slotExpanded ? expandedSize : avatarSize;
-	/** Вертикальный зазор между логотипами команд в свёрнутой строке */
-	const squareLogoRowGap = 0.2;
+	/** Вертикальный зазор между аватарами/логотипами в свёрнутой строке */
+	const collapsedIdentityGap = isSquare ? 0.2 : 0.4;
 
 	const flipAnimation =
 		fxPhase === 'enter' ? `${flipEnter} ${FLIP_ENTER_MS}ms ${AVATAR_EASE} both` : 'none';
 
 	/** Large avatar: center in cell */
 	const layoutExpanded = slotExpanded && showIdentity;
-	const squareLogoSpaced = isSquare && !layoutExpanded && !isCollapsing;
+	const identitySpaced = !layoutExpanded && !isCollapsing;
 	/** Stable row height & column width while collapse FX runs */
 	const rowMinHeight =
 		slotExpanded || isCollapsing
 			? expandedSize + 8
-			: avatarSize + (squareLogoSpaced ? squareLogoRowGap * 16 : 0);
+			: avatarSize + (identitySpaced ? collapsedIdentityGap * 16 : 0);
 	const showLeading = !expanded && !isCollapsing;
 	const identityMinWidth = Math.max(expandedSize + 8, 22 + 1 + avatarSize);
 
@@ -279,7 +279,7 @@ export default function StatsTableIdentityCell({
 							flexShrink: 0,
 							width: slotWidth,
 							height: slotHeight,
-							...(squareLogoSpaced ? { my: squareLogoRowGap } : {}),
+							...(identitySpaced ? { my: collapsedIdentityGap } : {}),
 							transition: theme.transitions.create(['width', 'height'], {
 								duration: playerFxEnabled && isCollapsing ? COLLAPSE_MS : theme.transitions.duration.standard,
 								easing: isCollapsing ? COLLAPSE_EASE : AVATAR_EASE,

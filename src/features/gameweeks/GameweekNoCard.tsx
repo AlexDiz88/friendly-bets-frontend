@@ -1,37 +1,17 @@
 import PsychologyIcon from '@mui/icons-material/Psychology';
-import { Box } from '@mui/material';
+import { Box, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
 import {
-	GAMEWEEK_CARD_HEIGHT,
-	GAMEWEEK_CARD_MAX_WIDTH,
-	GAMEWEEK_CARD_MIN_WIDTH,
-} from '../../constants';
+	gameweekCompactOpenedCardSx,
+	gameweekThinkingIconSx,
+	gameweekThinkingLabelSx,
+} from './gameweekPageStyles';
 
 const GameweekNoCard = (): JSX.Element => {
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				flexDirection: 'column',
-				minWidth: GAMEWEEK_CARD_MIN_WIDTH,
-				maxWidth: GAMEWEEK_CARD_MAX_WIDTH,
-				height: GAMEWEEK_CARD_HEIGHT,
-				border: 2,
-				mx: 0.5,
-				mb: 0.5,
-				p: 0.3,
-				borderRadius: 2,
-				bgcolor: '#E5E5E5',
-				boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.7)',
-			}}
-		>
+		<Box sx={[gameweekCompactOpenedCardSx, { cursor: 'default' }] as SxProps<Theme>}>
 			<Box
 				sx={{
-					textAlign: 'center',
-					fontSize: '0.85rem',
-					fontWeight: 600,
 					pl: 0.5,
 					display: 'flex',
 					alignItems: 'center',
@@ -39,8 +19,10 @@ const GameweekNoCard = (): JSX.Element => {
 					flexDirection: 'column',
 				}}
 			>
-				<PsychologyIcon sx={{ color: '#E76B0C', scale: '170%' }} />
-				{t('thinkingAboutBet')}
+				<PsychologyIcon sx={gameweekThinkingIconSx} />
+				<Box component="span" sx={gameweekThinkingLabelSx}>
+					{t('thinkingAboutBet')}
+				</Box>
 			</Box>
 		</Box>
 	);
