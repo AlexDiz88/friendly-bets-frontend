@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { keyframes } from '@mui/system';
 import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
+import { leagueLogoAvatarSx } from '../../components/custom/avatar/LeagueAvatar';
 
 const AVATAR_EASE = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
 const LAYOUT_EASE = 'cubic-bezier(0.4, 0, 0.2, 1)';
@@ -197,14 +198,20 @@ export default function StatsTableIdentityCell({
 	const slotExpanded = playerFxEnabled ? slotLarge : expanded;
 	const slotWidth = slotExpanded ? expandedSize : avatarSize;
 	const slotHeight = slotExpanded ? expandedSize : avatarSize;
+	/** Вертикальный зазор между логотипами команд в свёрнутой строке */
+	const squareLogoRowGap = 0.2;
 
 	const flipAnimation =
 		fxPhase === 'enter' ? `${flipEnter} ${FLIP_ENTER_MS}ms ${AVATAR_EASE} both` : 'none';
 
 	/** Large avatar: center in cell */
 	const layoutExpanded = slotExpanded && showIdentity;
+	const squareLogoSpaced = isSquare && !layoutExpanded && !isCollapsing;
 	/** Stable row height & column width while collapse FX runs */
-	const rowMinHeight = slotExpanded || isCollapsing ? expandedSize + 8 : avatarSize;
+	const rowMinHeight =
+		slotExpanded || isCollapsing
+			? expandedSize + 8
+			: avatarSize + (squareLogoSpaced ? squareLogoRowGap * 16 : 0);
 	const showLeading = !expanded && !isCollapsing;
 	const identityMinWidth = Math.max(expandedSize + 8, 22 + 1 + avatarSize);
 
@@ -272,6 +279,7 @@ export default function StatsTableIdentityCell({
 							flexShrink: 0,
 							width: slotWidth,
 							height: slotHeight,
+							...(squareLogoSpaced ? { my: squareLogoRowGap } : {}),
 							transition: theme.transitions.create(['width', 'height'], {
 								duration: playerFxEnabled && isCollapsing ? COLLAPSE_MS : theme.transitions.duration.standard,
 								easing: isCollapsing ? COLLAPSE_EASE : AVATAR_EASE,
@@ -386,18 +394,25 @@ export default function StatsTableIdentityCell({
 									alt={avatarAlt}
 									src={avatarSrc}
 									imgProps={{ style: { objectFit: 'contain' } }}
-									sx={(theme) => ({
-										width: '100%',
-										height: '100%',
-										border: 0,
-										bgcolor: isSquare
-											? 'background.paper'
-											: theme.palette.mode === 'dark'
-												? '#141414'
-												: '#fff',
-										backfaceVisibility: 'hidden',
-										filter: slotExpanded ? 'saturate(1.1) contrast(1.04)' : 'none',
-									})}
+									sx={
+										[
+											(theme) => ({
+												width: '100%',
+												height: '100%',
+												border: 0,
+												bgcolor: isSquare
+													? theme.palette.mode === 'light'
+														? theme.palette.background.paper
+														: undefined
+													: theme.palette.mode === 'dark'
+														? '#141414'
+														: '#fff',
+												backfaceVisibility: 'hidden',
+												filter: slotExpanded ? 'saturate(1.1) contrast(1.04)' : 'none',
+											}),
+											...(isSquare ? [leagueLogoAvatarSx] : []),
+										] as SxProps<Theme>
+									}
 								/>
 
 								{isEnter ? (
