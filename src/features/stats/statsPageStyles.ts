@@ -136,11 +136,11 @@ export const statsBodyDataCellSx: SxProps<Theme> = (theme) => ({
 /** Numeric columns — minimal horizontal padding only */
 export const statsNumericCellSx: SxProps<Theme> = (theme) => ({
 	color: palette(theme).bodyText,
-	fontVariantNumeric: 'tabular-nums',
 	verticalAlign: 'middle',
 	whiteSpace: 'nowrap',
-	px: 0.5,
-	py: 0.5,
+	px: 0.25,
+	py: 0.25,
+	fontSize: '0.8rem',
 });
 
 export const statsBetsCellSx = statsNumericCellSx;

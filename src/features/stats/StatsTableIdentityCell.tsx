@@ -206,14 +206,14 @@ export default function StatsTableIdentityCell({
 	/** Stable row height & column width while collapse FX runs */
 	const rowMinHeight = slotExpanded || isCollapsing ? expandedSize + 8 : avatarSize;
 	const showLeading = !expanded && !isCollapsing;
-	const identityMinWidth = Math.max(expandedSize + 8, 22 + 4 + avatarSize);
+	const identityMinWidth = Math.max(expandedSize + 8, 22 + 1 + avatarSize);
 
 	return (
 		<TableCell
 			component="th"
 			scope="row"
 			sx={{
-				p: 0.5,
+				p: '0.5px',
 				fontWeight: 600,
 				verticalAlign: 'middle',
 				minWidth: identityMinWidth,
@@ -234,7 +234,7 @@ export default function StatsTableIdentityCell({
 					alignItems: 'center',
 					justifyContent: layoutExpanded || isCollapsing ? 'center' : 'flex-start',
 					width: '100%',
-					gap: layoutExpanded || isCollapsing ? 0 : 0.25,
+					gap: layoutExpanded || isCollapsing ? 0 : '0.5px',
 					minHeight: rowMinHeight,
 					transition: (theme) =>
 						theme.transitions.create('min-height', {
@@ -436,6 +436,7 @@ export default function StatsTableIdentityCell({
 							whiteSpace: 'nowrap',
 							flex: '1 1 auto',
 							minWidth: 0,
+							ml: 0.5,
 							maxWidth: showIdentity ? 'none' : 0,
 							opacity: showIdentity ? 1 : 0,
 							visibility: showIdentity ? 'visible' : 'hidden',

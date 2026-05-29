@@ -15,6 +15,7 @@ import { t } from 'i18next';
 import { useState } from 'react';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import StatsTableIdentityCell from './StatsTableIdentityCell';
+import { statsPlayerNameSx } from './statsPageStyles';
 import PlayerStatsByTeams from './types/PlayerStatsByTeams';
 import TeamStats from './types/TeamStats';
 
@@ -68,7 +69,7 @@ function Row({ tStats }: RowProps): JSX.Element {
 					avatarAlt="team_logo"
 					avatarSize={27}
 					label={t(`teams:${tStats.team.title}`)}
-					labelSx={{ fontSize: '0.9rem', maxWidth: '6.5rem' }}
+					labelSx={statsPlayerNameSx}
 				/>
 				<TableCell align="center" sx={{ px: 0, mx: 0 }}>
 					[{tStats.wonBetCount}-{tStats.returnedBetCount}-{tStats.lostBetCount}]

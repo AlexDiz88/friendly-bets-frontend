@@ -177,7 +177,7 @@ export default function PlayersStats({
 					<TableRow>
 						<TableCell
 							align="left"
-							sx={[statsTableHeadCellSx, { pl: { xs: 1.5, sm: 3.5 } }] as SxProps<Theme>}
+							sx={[statsTableHeadCellSx, { pl: 3 }] as SxProps<Theme>}
 						>
 							{t('playerName')}
 						</TableCell>
