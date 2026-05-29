@@ -1,4 +1,5 @@
 import type { SxProps, Theme } from '@mui/material';
+import { APP_STICKY_BELOW_HEADER_TOP } from '../../components/header/headerLayout';
 
 export const wc26TitleShineKeyframes = {
 	'@keyframes wc26TitleShine': {
@@ -9,7 +10,7 @@ export const wc26TitleShineKeyframes = {
 
 export const wc26StickyFilterBarSx: SxProps<Theme> = (theme) => ({
 	position: 'sticky',
-	top: { xs: 56, sm: 64 },
+	top: APP_STICKY_BELOW_HEADER_TOP,
 	zIndex: 10,
 	py: 1,
 	mb: 1,
@@ -158,4 +159,145 @@ export const wc26DividerSx: SxProps<Theme> = (theme) => ({
 	borderColor:
 		theme.palette.mode === 'dark' ? 'rgba(0, 200, 120, 0.14)' : 'rgba(4, 90, 55, 0.1)',
 	mx: 0.5,
+});
+
+/** Баннер-ссылка на ЧМ26 (главная и др.) */
+export const wc26QuickLinkCardSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		display: 'flex',
+		alignItems: 'center',
+		gap: 1.25,
+		mx: 'auto',
+		mb: 2,
+		maxWidth: '25rem',
+		px: 1.5,
+		py: 1.25,
+		borderRadius: 2.5,
+		textDecoration: 'none',
+		color: 'inherit',
+		position: 'relative',
+		overflow: 'hidden',
+		border: '1px solid',
+		borderColor: isDark ? 'rgba(255, 214, 0, 0.35)' : 'rgba(184, 134, 11, 0.45)',
+		background: isDark
+			? 'linear-gradient(135deg, rgba(0,90,55,0.55) 0%, rgba(100,75,0,0.28) 55%, rgba(0,90,55,0.45) 100%)'
+			: 'linear-gradient(135deg, #dceee4 0%, #f0e8c8 48%, #dceee4 100%)',
+		boxShadow: isDark
+			? '0 4px 16px rgba(0, 200, 120, 0.18), inset 0 1px 0 rgba(255,255,255,0.06)'
+			: '0 4px 14px rgba(4, 90, 55, 0.14), inset 0 1px 0 rgba(255,255,255,0.85)',
+		transition: 'transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease',
+		'&::before': {
+			content: '""',
+			position: 'absolute',
+			inset: 0,
+			opacity: 0.1,
+			background:
+				'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,215,0,0.07) 10px, rgba(255,215,0,0.07) 20px)',
+			pointerEvents: 'none',
+		},
+		'&:hover': {
+			transform: 'translateY(-1px)',
+			borderColor: isDark ? 'rgba(255, 214, 0, 0.55)' : 'rgba(184, 134, 11, 0.65)',
+			boxShadow: isDark
+				? '0 6px 22px rgba(0, 200, 120, 0.28)'
+				: '0 6px 20px rgba(4, 90, 55, 0.2)',
+		},
+		'&:active': {
+			transform: 'translateY(0)',
+		},
+	};
+};
+
+export const wc26QuickLinkIconSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		position: 'relative',
+		zIndex: 1,
+		width: 40,
+		height: 40,
+		borderRadius: '50%',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		flexShrink: 0,
+		border: '1px solid',
+		borderColor: isDark ? 'rgba(255, 214, 0, 0.4)' : 'rgba(184, 134, 11, 0.5)',
+		background: isDark
+			? 'linear-gradient(135deg, #007a4d 0%, #6b5200 100%)'
+			: 'linear-gradient(135deg, #046a3d 0%, #8b6914 100%)',
+		color: '#fff8e7',
+		boxShadow: isDark ? '0 0 12px rgba(0, 200, 120, 0.25)' : '0 2px 8px rgba(4, 90, 55, 0.2)',
+	};
+};
+
+export const wc26QuickLinkTitleSx: SxProps<Theme> = (theme) => ({
+	position: 'relative',
+	zIndex: 1,
+	fontWeight: 800,
+	lineHeight: 1.2,
+	fontSize: '0.875rem',
+	textTransform: 'none',
+	background:
+		theme.palette.mode === 'dark'
+			? 'linear-gradient(90deg, #9de8c4, #ffd700)'
+			: 'linear-gradient(90deg, #034d2e, #8b6914)',
+	backgroundClip: 'text',
+	WebkitBackgroundClip: 'text',
+	color: 'transparent',
+});
+
+export const wc26QuickLinkHintSx: SxProps<Theme> = (theme) => ({
+	position: 'relative',
+	zIndex: 1,
+	lineHeight: 1.25,
+	fontSize: '0.7rem',
+	color: theme.palette.mode === 'dark' ? 'rgba(157, 232, 196, 0.8)' : '#3d6b52',
+});
+
+export const wc26QuickLinkChevronSx: SxProps<Theme> = (theme) => ({
+	position: 'relative',
+	zIndex: 1,
+	flexShrink: 0,
+	color: theme.palette.mode === 'dark' ? '#ffd966' : '#8b6914',
+});
+
+/** Глобальный AppBar: глубокий тёмно-синий (#1e3471 = primary.dark), акценты wc26 в ссылках */
+export const wc26AppBarSx: SxProps<Theme> = (theme) => ({
+	bgcolor: theme.palette.primary.dark,
+	color: '#fff',
+	backgroundImage: 'none',
+	boxShadow: theme.shadows[4],
+});
+
+export const wc26HeaderNavLinkSx: SxProps<Theme> = () => ({
+	position: 'relative',
+	zIndex: 1,
+	textTransform: 'none',
+	color: 'inherit',
+	'&:hover': {
+		color: '#ff9800',
+	},
+});
+
+/** Пункт «ЧМ-2026» в навигации */
+export const wc26HeaderNavLinkEventSx: SxProps<Theme> = (theme) => ({
+	position: 'relative',
+	zIndex: 1,
+	textTransform: 'none',
+	fontWeight: 800,
+	color: theme.palette.mode === 'dark' ? '#ffd966' : '#ffe566',
+	'&:hover': {
+		color: '#fff8e7',
+	},
+});
+
+export const wc26HeaderIconButtonSx: SxProps<Theme> = () => ({
+	position: 'relative',
+	zIndex: 1,
+	color: 'inherit',
+	'&:hover': {
+		color: '#ff9800',
+		backgroundColor: 'rgba(255, 255, 255, 0.08)',
+	},
 });

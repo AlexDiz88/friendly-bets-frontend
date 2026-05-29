@@ -83,11 +83,14 @@ export default function Homepage(): JSX.Element {
 						<CustomLoadingError />
 					) : (
 						<Box
-							sx={{
+							sx={(theme) => ({
 								maxWidth: '25rem',
 								margin: '0 auto',
-								boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
-							}}
+								boxShadow:
+									theme.palette.mode === 'dark'
+										? '0 2px 8px rgba(0, 0, 0, 0.35)'
+										: '0 2px 10px rgba(4, 90, 55, 0.08)',
+							})}
 						>
 							<Wc26QuickLink />
 							<PlayersStats playersStats={sortedPlayersStats} />

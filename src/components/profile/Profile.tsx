@@ -19,11 +19,9 @@ export default function Profile(): JSX.Element {
 			sx={{
 				display: 'flex',
 				flexDirection: 'column',
-				justifyContent: 'center',
 				alignItems: 'center',
 				textAlign: 'center',
 				mx: 2,
-				mt: 2,
 				mb: 4,
 			}}
 		>

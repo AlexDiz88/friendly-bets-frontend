@@ -16,6 +16,10 @@ import { changeLanguageAsync, saveUserLanguageAsync } from '../../features/langu
 import Language from '../../features/languages/types/Language';
 import CustomMenuPageText from '../custom/CustomMenuPageText';
 import {
+	wc26HeaderIconButtonSx,
+	wc26HeaderNavLinkEventSx,
+} from '../../features/world-cup-2026/wc26PageStyles';
+import {
 	headerLangMenuDesktopSx,
 	headerLangMenuMobileSx,
 	headerNavDesktopSx,
@@ -194,7 +198,7 @@ export function HeaderNavLeft({ menu }: { menu: HeaderMenuState }): JSX.Element 
 				aria-controls="menu-app-bar"
 				aria-haspopup="true"
 				onClick={menu.handleOpenNavMenu}
-				color="inherit"
+				sx={wc26HeaderIconButtonSx}
 			>
 				<MenuIcon />
 			</IconButton>
@@ -302,6 +306,7 @@ export function HeaderNavCenter({ menu }: { menu: HeaderMenuState }): JSX.Elemen
 									menu.handleCloseNavMenu();
 								}}
 								title={page}
+								sx={page === menu.t('wc26.menu') ? wc26HeaderNavLinkEventSx : undefined}
 							/>
 						)
 					)}

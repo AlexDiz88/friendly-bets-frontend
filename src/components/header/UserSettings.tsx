@@ -1,5 +1,5 @@
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Avatar, Box, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { Avatar, Box, IconButton, Menu, MenuItem, Typography, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ import {
 	EXTERNAL_SYNC_ISSUES_CHANGED_EVENT,
 	getExternalSyncIssuesStatus,
 } from '../../features/admin/external-sync-issues/api';
+import { wc26HeaderIconButtonSx } from '../../features/world-cup-2026/wc26PageStyles';
 import { avatarBase64Converter } from '../utils/imgBase64Converter';
 
 function isStaffRole(role: string | undefined): boolean {
@@ -152,7 +153,10 @@ export default function UserSettings(): JSX.Element {
 				alignItems: 'center',
 			}}
 		>
-			<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+			<IconButton
+				onClick={handleOpenUserMenu}
+				sx={[wc26HeaderIconButtonSx, { p: 0 }] as SxProps<Theme>}
+			>
 				<Avatar alt="avatar" src={avatarBase64Converter(user?.avatar)} />
 			</IconButton>
 			<Menu

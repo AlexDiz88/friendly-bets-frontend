@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, type SxProps, type Theme } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Wc26MatchCard from './Wc26MatchCard';
@@ -33,7 +33,10 @@ export default function Wc26BetSlotsView(): JSX.Element {
 		<Stack spacing={2}>
 			{ROUNDS.map((round) => (
 				<Box key={round}>
-					<Typography variant="subtitle2" sx={[wc26SectionHeaderSx, { mb: 1 }]}>
+					<Typography
+						variant="subtitle2"
+						sx={[wc26SectionHeaderSx, { mb: 1 }] as SxProps<Theme>}
+					>
 						{t('wc26.betSlots.round', { round })}
 					</Typography>
 
