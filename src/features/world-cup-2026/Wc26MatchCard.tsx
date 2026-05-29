@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Wc26TeamFlag from './Wc26TeamFlag';
 import { kickoffToGerman } from './wc26Time';
 import type { Wc26Match } from './wc26Schedule';
+import { wc26KickoffTimeSx, wc26MatchMetaSx } from './wc26PageStyles';
 
 interface Wc26MatchCardProps {
 	match: Wc26Match;
@@ -20,11 +21,7 @@ export default function Wc26MatchCard({ match }: Wc26MatchCardProps): JSX.Elemen
 	return (
 		<Box sx={{ py: 0.75, px: 0.5 }}>
 			{(match.group || match.id) && (
-				<Typography
-					variant="caption"
-					color="text.secondary"
-					sx={{ display: 'block', mb: 0.25, pl: 0.25, fontSize: '0.65rem' }}
-				>
+				<Typography variant="caption" sx={wc26MatchMetaSx}>
 					#{match.id}
 					{match.group ? ` · ${t('wc26.group', { letter: match.group })}` : ''}
 				</Typography>
@@ -50,17 +47,7 @@ export default function Wc26MatchCard({ match }: Wc26MatchCardProps): JSX.Elemen
 						<Wc26TeamFlag teamId={match.home!} side="home" />
 					</Box>
 
-					<Typography
-						component="span"
-						sx={{
-							flexShrink: 0,
-							fontWeight: 500,
-							fontSize: { xs: '1.05rem', sm: '1.15rem' },
-							fontVariantNumeric: 'tabular-nums',
-							lineHeight: 1,
-							px: 0.25,
-						}}
-					>
+					<Typography component="span" sx={wc26KickoffTimeSx}>
 						{german.time}
 					</Typography>
 
@@ -77,15 +64,7 @@ export default function Wc26MatchCard({ match }: Wc26MatchCardProps): JSX.Elemen
 				</Box>
 			) : (
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-					<Typography
-						component="span"
-						sx={{
-							flexShrink: 0,
-							fontWeight: 500,
-							fontSize: { xs: '1.05rem', sm: '1.15rem' },
-							fontVariantNumeric: 'tabular-nums',
-						}}
-					>
+					<Typography component="span" sx={wc26KickoffTimeSx}>
 						{german.time}
 					</Typography>
 					<Typography variant="body2" sx={{ fontSize: '0.8rem', lineHeight: 1.3 }}>

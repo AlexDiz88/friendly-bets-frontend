@@ -4,6 +4,13 @@ import { useTranslation } from 'react-i18next';
 import Wc26MatchCard from './Wc26MatchCard';
 import { WC26_BET_SLOTS, formatSlotBerlinRange, getMatchesForSlot, type Wc26GroupRound } from './wc26BetSlots';
 import { wc26DateLocale } from './wc26Time';
+import {
+	wc26DividerSx,
+	wc26SectionHeaderSx,
+	wc26SlotRangeSx,
+	wc26SlotRuleSx,
+	wc26SlotTitleSx,
+} from './wc26PageStyles';
 
 const ROUNDS: Wc26GroupRound[] = [1, 2, 3];
 
@@ -26,18 +33,7 @@ export default function Wc26BetSlotsView(): JSX.Element {
 		<Stack spacing={2}>
 			{ROUNDS.map((round) => (
 				<Box key={round}>
-					<Typography
-						variant="subtitle2"
-						fontWeight={800}
-						sx={{
-							mb: 1,
-							px: 1,
-							py: 0.5,
-							borderRadius: 1,
-							bgcolor: 'secondary.main',
-							color: 'secondary.contrastText',
-						}}
-					>
+					<Typography variant="subtitle2" sx={[wc26SectionHeaderSx, { mb: 1 }]}>
 						{t('wc26.betSlots.round', { round })}
 					</Typography>
 
@@ -49,21 +45,16 @@ export default function Wc26BetSlotsView(): JSX.Element {
 							return (
 								<Box key={slot.id}>
 									<Box sx={{ px: 0.5, mb: 0.5 }}>
-										<Typography variant="caption" fontWeight={800}>
+										<Typography variant="caption" sx={wc26SlotTitleSx}>
 											{t('wc26.betSlots.slotTitle', {
 												round: slot.round,
 												index: slot.slotIndex,
 											})}
 										</Typography>
-										<Typography variant="caption" color="text.secondary" display="block">
+										<Typography variant="caption" sx={wc26SlotRangeSx}>
 											{t('wc26.betSlots.range', { from: range.from, to: range.to })}
 										</Typography>
-										<Typography
-											variant="caption"
-											color="primary.main"
-											fontWeight={600}
-											display="block"
-										>
+										<Typography variant="caption" sx={wc26SlotRuleSx}>
 											{t('wc26.betSlots.betsRule', {
 												bets: slot.betsRequired,
 												matches: slot.matchesPerSlot,
@@ -72,11 +63,7 @@ export default function Wc26BetSlotsView(): JSX.Element {
 									</Box>
 									<Stack
 										spacing={0}
-										divider={
-											<Box
-												sx={{ borderBottom: '1px solid', borderColor: 'divider', mx: 0.5 }}
-											/>
-										}
+										divider={<Box sx={wc26DividerSx} />}
 									>
 										{matches.map((match) => (
 											<Wc26MatchCard key={match.id} match={match} />

@@ -18,6 +18,13 @@ import {
 	type Wc26ViewFilter,
 } from './wc26ViewFilters';
 import { kickoffToGerman, wc26DateLocale } from './wc26Time';
+import {
+	wc26DividerSx,
+	wc26MatchCountSx,
+	wc26SectionHeaderSx,
+	wc26StageChipSx,
+	wc26StickyFilterBarSx,
+} from './wc26PageStyles';
 
 function groupMatchesByGermanDate(matches: Wc26Match[]): Map<string, Wc26Match[]> {
 	const map = new Map<string, Wc26Match[]>();
@@ -69,22 +76,7 @@ export default function WorldCup26Page(): JSX.Element {
 				}}
 			>
 			<Container maxWidth="sm" disableGutters sx={{ px: { xs: 1.5, sm: 2 } }}>
-				<Box
-					sx={{
-						position: 'sticky',
-						top: { xs: 56, sm: 64 },
-						zIndex: 10,
-						py: 1,
-						mb: 1,
-						mx: -0.5,
-						px: 0.5,
-						backdropFilter: 'blur(12px)',
-						bgcolor: (theme) =>
-							theme.palette.mode === 'dark'
-								? 'rgba(13, 17, 23, 0.85)'
-								: 'rgba(245, 247, 250, 0.9)',
-					}}
-				>
+				<Box sx={wc26StickyFilterBarSx}>
 					<Stack
 						direction="row"
 						spacing={0.75}
@@ -100,22 +92,14 @@ export default function WorldCup26Page(): JSX.Element {
 								key={value}
 								label={label}
 								onClick={() => setViewFilter(value)}
-								color={viewFilter === value ? 'primary' : 'default'}
-								variant={viewFilter === value ? 'filled' : 'outlined'}
-								sx={{
-									flexShrink: 0,
-									fontWeight: 600,
-									fontSize: '0.75rem',
-									height: 36,
-									borderRadius: 2,
-								}}
+								sx={wc26StageChipSx(viewFilter === value)}
 							/>
 						))}
 					</Stack>
 				</Box>
 
 				{!isBetSlotsView(viewFilter) && (
-					<Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1, px: 0.5 }}>
+					<Typography variant="caption" sx={wc26MatchCountSx}>
 						{t('wc26.matchCount', { count: filtered.length })}
 					</Typography>
 				)}
@@ -135,29 +119,12 @@ export default function WorldCup26Page(): JSX.Element {
 
 							return (
 								<Box key={date}>
-									<Typography
-										variant="caption"
-										fontWeight={800}
-										sx={{
-											mb: 0.5,
-											px: 1,
-											py: 0.5,
-											borderRadius: 1,
-											bgcolor: 'primary.main',
-											color: 'primary.contrastText',
-											textTransform: 'capitalize',
-											display: 'block',
-										}}
-									>
+									<Typography variant="caption" sx={wc26SectionHeaderSx}>
 										{headerDate}
 									</Typography>
 									<Stack
 										spacing={0}
-										divider={
-											<Box
-												sx={{ borderBottom: '1px solid', borderColor: 'divider', mx: 0.5 }}
-											/>
-										}
+										divider={<Box sx={wc26DividerSx} />}
 									>
 										{dayMatches.map((match) => (
 											<Wc26MatchCard key={match.id} match={match} />

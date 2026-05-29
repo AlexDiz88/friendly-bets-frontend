@@ -593,7 +593,7 @@
 		"menu": "WC 2026",
 		"title": "FIFA World Cup 2026",
 		"infoAria": "Betting rules and schedule info",
-		"infoTooltip": "Canada · Mexico · USA — 104 matches. Times are Berlin (UTC+2). Official schedule: fifa.com.\n\nGroup stage betting rules:\n• Each round is split into slots in chronological Berlin time order.\n• Rounds 1–2: 6 slots of 4 matches — 2 bets per slot (pick 2 of 4).\n• Round 3: 4 slots of 6 matches — 3 bets per slot (pick 3 of 6).\n\nThere is a break between slots to submit your bets.",
+		"infoTooltip": "Canada · Mexico · USA — 104 matches in total. Kick-off times are shown in Berlin (UTC+2). The match schedule is taken from the official FIFA website: fifa.com.\n\nGroup stage betting rules:\n• Each round is split into slots in chronological order by time.\n• Rounds 1 and 2: 6 slots of 4 matches — 2 bets for each slot.\n• Round 3: 4 slots of 6 matches — 3 bets per slot.\n\nThere is a break between slots so you have time to submit your bets.",
 		"officialSchedule": "Official schedule on FIFA.com",
 		"quickLinkTitle": "World Cup 2026 schedule",
 		"quickLinkHint": "All matches · date & time · FIFA flags",

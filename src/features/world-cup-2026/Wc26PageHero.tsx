@@ -1,13 +1,7 @@
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-
-const titleShineKeyframes = {
-	'@keyframes wc26TitleShine': {
-		'0%, 100%': { backgroundPosition: '0% 50%' },
-		'50%': { backgroundPosition: '100% 50%' },
-	},
-};
+import { wc26TitleShineKeyframes } from './wc26PageStyles';
 
 export default function Wc26PageHero(): JSX.Element {
 	const { t } = useTranslation();
@@ -15,7 +9,7 @@ export default function Wc26PageHero(): JSX.Element {
 	return (
 		<Box
 			sx={(theme) => ({
-				...titleShineKeyframes,
+				...wc26TitleShineKeyframes,
 				px: 2,
 				pt: 1,
 				pb: 1.5,

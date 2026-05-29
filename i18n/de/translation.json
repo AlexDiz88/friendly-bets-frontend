@@ -593,7 +593,7 @@
 		"menu": "WM 2026",
 		"title": "FIFA-Weltmeisterschaft 2026",
 		"infoAria": "Wettregeln und Spielplan",
-		"infoTooltip": "Kanada · Mexiko · USA — 104 Spiele. Uhrzeit Berlin (UTC+2). Offizieller Spielplan: fifa.com.\n\nWettregeln Gruppenphase:\n• Jeder Spieltag ist in Slots nach Berliner Uhrzeit chronologisch unterteilt.\n• Runden 1–2: 6 Slots mit je 4 Spielen — 2 Wetten pro Slot (2 von 4 wählen).\n• Runde 3: 4 Slots mit je 6 Spielen — 3 Wetten pro Slot (3 von 6 wählen).\n\nZwischen den Slots gibt es eine Pause zum Abgeben der Wetten.",
+		"infoTooltip": "Kanada · Mexiko · USA — insgesamt 104 Spiele. Anpfiffzeiten nach Berlin (UTC+2). Der Spielplan stammt von der offiziellen FIFA-Website: fifa.com.\n\nWettregeln Gruppenphase:\n• Jeder Spieltag ist in Slots in chronologischer Reihenfolge nach Uhrzeit unterteilt.\n• Spieltage 1 und 2: 6 Slots mit je 4 Spielen — 2 Wetten je Slot.\n• Spieltag 3: 4 Slots mit je 6 Spielen — 3 Wetten je Slot.\n\nZwischen den Slots gibt es eine Pause, um rechtzeitig Wetten abgeben zu können.",
 		"officialSchedule": "Offizieller Spielplan auf FIFA.com",
 		"quickLinkTitle": "WM 2026: Spielplan",
 		"quickLinkHint": "Alle Spiele · Datum & Uhrzeit · FIFA-Flaggen",
