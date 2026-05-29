@@ -1,4 +1,4 @@
-import { Avatar, Box, TableCell, TableCellProps } from '@mui/material';
+import { Avatar, Box, TableCell, TableCellProps, type SxProps, type Theme } from '@mui/material';
 import { keyframes } from '@mui/system';
 import { ReactNode, useEffect, useState } from 'react';
 
@@ -29,8 +29,10 @@ type StatsTableIdentityCellProps = {
 	avatarVariant?: 'circular' | 'square';
 	/** Expand/collapse indicator — rendered flush left before the avatar */
 	leading?: ReactNode;
-	labelSx?: object;
+	leadingSx?: SxProps<Theme>;
+	labelSx?: SxProps<Theme>;
 	cellSx?: TableCellProps['sx'];
+	expandedRingSx?: SxProps<Theme>;
 };
 
 /**
@@ -45,8 +47,10 @@ export default function StatsTableIdentityCell({
 	expanded = false,
 	avatarVariant = 'circular',
 	leading,
+	leadingSx,
 	labelSx,
 	cellSx,
+	expandedRingSx,
 }: StatsTableIdentityCellProps): JSX.Element {
 	const expandedSize = avatarSize * 2.2;
 	const isSquare = avatarVariant === 'square';
@@ -98,46 +102,58 @@ export default function StatsTableIdentityCell({
 			>
 				{leading != null ? (
 					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							flexShrink: 0,
-							width: 22,
-							color: expanded ? 'primary.main' : 'text.secondary',
-							transition: (theme) =>
-								theme.transitions.create('color', {
-									duration: theme.transitions.duration.short,
-								}),
-						}}
+						sx={[
+							{
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								flexShrink: 0,
+								width: 22,
+								color: expanded ? 'primary.main' : 'text.secondary',
+								transition: (theme) =>
+									theme.transitions.create('color', {
+										duration: theme.transitions.duration.short,
+									}),
+							},
+							...(leadingSx ? (Array.isArray(leadingSx) ? leadingSx : [leadingSx]) : []),
+						]}
 					>
 						{leading}
 					</Box>
 				) : null}
 				<Box
-					sx={{
-						position: 'relative',
-						flexShrink: 0,
-						width: expanded ? expandedSize : avatarSize,
-						height: expanded ? expandedSize : avatarSize,
-						transition: (theme) =>
-							theme.transitions.create(['width', 'height'], {
-								duration: theme.transitions.duration.standard,
-								easing: AVATAR_EASE,
-							}),
-						'&::after': expanded
+					sx={[
+						{
+							position: 'relative',
+							flexShrink: 0,
+							width: expanded ? expandedSize : avatarSize,
+							height: expanded ? expandedSize : avatarSize,
+							transition: (theme) =>
+								theme.transitions.create(['width', 'height'], {
+									duration: theme.transitions.duration.standard,
+									easing: AVATAR_EASE,
+								}),
+						},
+						expanded
 							? {
-									content: '""',
-									position: 'absolute',
-									inset: -3,
-									borderRadius: ringRadius,
-									border: '2px solid',
-									borderColor: 'primary.main',
-									pointerEvents: 'none',
-									animation: `${avatarRingPulse} 2s ease-in-out infinite`,
+									'&::after': {
+										content: '""',
+										position: 'absolute',
+										inset: -3,
+										borderRadius: ringRadius,
+										border: '2px solid',
+										borderColor: 'primary.main',
+										pointerEvents: 'none',
+										animation: `${avatarRingPulse} 2s ease-in-out infinite`,
+									},
 								}
-							: undefined,
-					}}
+							: {},
+						...(expanded && expandedRingSx
+							? Array.isArray(expandedRingSx)
+								? expandedRingSx
+								: [expandedRingSx]
+							: []),
+					]}
 				>
 					<Avatar
 						variant={avatarVariant}

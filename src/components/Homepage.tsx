@@ -10,6 +10,7 @@ import Wc26QuickLink from '../features/world-cup-2026/Wc26QuickLink';
 import CustomLoading from './custom/loading/CustomLoading';
 import CustomLoadingError from './custom/loading/CustomLoadingError';
 import useFetchActiveSeason from './hooks/useFetchActiveSeason';
+import { homepageContentLayoutSx } from './layoutMainStyles';
 
 export default function Homepage(): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
@@ -82,16 +83,7 @@ export default function Homepage(): JSX.Element {
 					{loadingError ? (
 						<CustomLoadingError />
 					) : (
-						<Box
-							sx={(theme) => ({
-								maxWidth: '25rem',
-								margin: '0 auto',
-								boxShadow:
-									theme.palette.mode === 'dark'
-										? '0 2px 8px rgba(0, 0, 0, 0.35)'
-										: '0 2px 10px rgba(4, 90, 55, 0.08)',
-							})}
-						>
+						<Box sx={homepageContentLayoutSx}>
 							<Wc26QuickLink />
 							<PlayersStats playersStats={sortedPlayersStats} />
 							{/* <Box sx={{ py: 3, px: 1 }}>
