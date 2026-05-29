@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
-import { wc26HeaderNavLinkSx } from '../../features/world-cup-2026/wc26PageStyles';
+import { headerNavLinkSx } from '../header/headerPageStyles';
 
 const CustomMenuPageText = ({
 	title,
@@ -34,7 +34,7 @@ const CustomMenuPageText = ({
 					textDecoration: 'none',
 					cursor: 'pointer',
 				},
-				wc26HeaderNavLinkSx,
+				headerNavLinkSx,
 				...(Array.isArray(sx) ? sx : sx ? [sx] : []),
 			]}
 		>

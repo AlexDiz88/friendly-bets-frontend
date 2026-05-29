@@ -11,7 +11,7 @@ import {
 	EXTERNAL_SYNC_ISSUES_CHANGED_EVENT,
 	getExternalSyncIssuesStatus,
 } from '../../features/admin/external-sync-issues/api';
-import { wc26HeaderIconButtonSx } from '../../features/world-cup-2026/wc26PageStyles';
+import { headerIconButtonSx } from './headerPageStyles';
 import { avatarBase64Converter } from '../utils/imgBase64Converter';
 
 function isStaffRole(role: string | undefined): boolean {
@@ -155,7 +155,7 @@ export default function UserSettings(): JSX.Element {
 		>
 			<IconButton
 				onClick={handleOpenUserMenu}
-				sx={[wc26HeaderIconButtonSx, { p: 0 }] as SxProps<Theme>}
+				sx={[headerIconButtonSx, { p: 0 }] as SxProps<Theme>}
 			>
 				<Avatar alt="avatar" src={avatarBase64Converter(user?.avatar)} />
 			</IconButton>

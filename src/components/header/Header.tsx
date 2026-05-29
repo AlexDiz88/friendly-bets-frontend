@@ -2,7 +2,7 @@ import { Box, type SxProps, type Theme } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
-import { wc26AppBarSx } from '../../features/world-cup-2026/wc26PageStyles';
+import { headerAppBarSx } from './headerPageStyles';
 import ThemeModeToggle from '../../theme/ThemeModeToggle';
 import { APP_HEADER_HEIGHT_PX } from './headerLayout';
 import { HeaderNavCenter, HeaderNavLeft, useHeaderMenu } from './MenuPages';
@@ -17,7 +17,7 @@ export default function Header(): JSX.Element {
 			elevation={4}
 			sx={
 				[
-					wc26AppBarSx,
+					headerAppBarSx,
 					{ height: APP_HEADER_HEIGHT_PX, justifyContent: 'center' },
 				] as SxProps<Theme>
 			}
