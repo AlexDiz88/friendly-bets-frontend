@@ -91,7 +91,7 @@ export default function EditTeamPanel(): JSX.Element {
 		const result = await dispatch(
 			updateTeam({
 				teamId: selected.id,
-				payload: formValuesToUpdatePayload(values),
+				payload: formValuesToUpdatePayload(values, selected.externalAliases),
 			})
 		);
 		setSaving(false);

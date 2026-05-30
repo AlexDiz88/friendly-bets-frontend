@@ -1,6 +1,7 @@
 import i18n from '../../../i18n';
 import NewTeam from './types/NewTeam';
 import Team, { TeamDisplayNames, TeamExternalAlias } from './types/Team';
+import { FOOTBALL_DATA_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
 
 export type TeamFormValues = {
 	title: string;
@@ -10,9 +11,9 @@ export type TeamFormValues = {
 	nameDe: string;
 	footballDataTeamId: string;
 	footballDataExternalName: string;
+	oddsApiTeamId: string;
+	oddsApiExternalName: string;
 };
-
-const FOOTBALL_DATA_PROVIDER = 'football-data';
 
 export function emptyTeamFormValues(): TeamFormValues {
 	return {
@@ -23,11 +24,17 @@ export function emptyTeamFormValues(): TeamFormValues {
 		nameDe: '',
 		footballDataTeamId: '',
 		footballDataExternalName: '',
+		oddsApiTeamId: '',
+		oddsApiExternalName: '',
 	};
 }
 
 export function hasFootballDataApiMapping(values: TeamFormValues): boolean {
 	return values.footballDataTeamId.trim() !== '' && values.footballDataExternalName.trim() !== '';
+}
+
+export function hasOddsApiMapping(values: TeamFormValues): boolean {
+	return values.oddsApiExternalName.trim() !== '';
 }
 
 function formFieldFilled(value: string): boolean {
@@ -108,6 +115,7 @@ export function isTeamFormComplete(values: TeamFormValues): boolean {
 
 export function teamToFormValues(team: Team): TeamFormValues {
 	const fdAlias = team.externalAliases?.find((a) => a.provider === FOOTBALL_DATA_PROVIDER);
+	const oddsAlias = team.externalAliases?.find((a) => a.provider === ODDS_API_PROVIDER);
 	return applyI18nDisplayNamesToFormValues(
 		{
 			title: team.title ?? '',
@@ -122,6 +130,8 @@ export function teamToFormValues(team: Team): TeamFormValues {
 						? String(fdAlias.externalId)
 						: '',
 			footballDataExternalName: fdAlias?.externalName ?? '',
+			oddsApiTeamId: oddsAlias?.externalId != null ? String(oddsAlias.externalId) : '',
+			oddsApiExternalName: oddsAlias?.externalName ?? '',
 		},
 		true
 	);
@@ -142,37 +152,75 @@ function buildDisplayNames(
 	};
 }
 
-function buildFootballDataAliases(
-	footballDataTeamId: string,
-	footballDataExternalName: string
-): TeamExternalAlias[] | undefined {
-	const name = footballDataExternalName.trim();
-	const idRaw = footballDataTeamId.trim();
+function parseOptionalExternalId(raw: string): number | undefined {
+	const idRaw = raw.trim();
+	if (!idRaw) {
+		return undefined;
+	}
+	const externalId = Number(idRaw);
+	return Number.isFinite(externalId) ? externalId : undefined;
+}
+
+function buildFootballDataAlias(values: TeamFormValues): TeamExternalAlias | undefined {
+	const name = values.footballDataExternalName.trim();
+	const idRaw = values.footballDataTeamId.trim();
 	if (!name && !idRaw) {
 		return undefined;
 	}
-	const externalId = idRaw ? Number(idRaw) : undefined;
-	return [
-		{
-			provider: FOOTBALL_DATA_PROVIDER,
-			externalId: Number.isFinite(externalId) ? externalId : undefined,
-			externalName: name || undefined,
-		},
-	];
+	return {
+		provider: FOOTBALL_DATA_PROVIDER,
+		externalId: parseOptionalExternalId(values.footballDataTeamId),
+		externalName: name || undefined,
+	};
+}
+
+function buildOddsApiAlias(values: TeamFormValues): TeamExternalAlias | undefined {
+	const name = values.oddsApiExternalName.trim();
+	const idRaw = values.oddsApiTeamId.trim();
+	if (!name && !idRaw) {
+		return undefined;
+	}
+	return {
+		provider: ODDS_API_PROVIDER,
+		externalId: parseOptionalExternalId(values.oddsApiTeamId),
+		externalName: name || undefined,
+	};
+}
+
+/** Merge form aliases; legacy wc26 provider entries are dropped on save. */
+export function buildExternalAliases(
+	values: TeamFormValues,
+	existing?: TeamExternalAlias[]
+): TeamExternalAlias[] {
+	const byProvider = new Map<string, TeamExternalAlias>();
+	for (const alias of existing ?? []) {
+		if (alias.provider && alias.provider !== 'wc26') {
+			byProvider.set(alias.provider, alias);
+		}
+	}
+	const fd = buildFootballDataAlias(values);
+	if (fd) {
+		byProvider.set(FOOTBALL_DATA_PROVIDER, fd);
+	} else {
+		byProvider.delete(FOOTBALL_DATA_PROVIDER);
+	}
+	const odds = buildOddsApiAlias(values);
+	if (odds) {
+		byProvider.set(ODDS_API_PROVIDER, odds);
+	} else {
+		byProvider.delete(ODDS_API_PROVIDER);
+	}
+	return [...byProvider.values()];
 }
 
 export function formValuesToCreatePayload(values: TeamFormValues): NewTeam {
-	const fdIdRaw = values.footballDataTeamId.trim();
-	const fdId = fdIdRaw ? Number(fdIdRaw) : undefined;
+	const fdId = parseOptionalExternalId(values.footballDataTeamId);
 	return {
 		title: values.title.trim(),
 		country: values.country.trim(),
 		displayNames: buildDisplayNames(values.nameEn, values.nameRu, values.nameDe),
-		externalAliases: buildFootballDataAliases(
-			values.footballDataTeamId,
-			values.footballDataExternalName
-		),
-		footballDataTeamId: Number.isFinite(fdId) ? fdId : undefined,
+		externalAliases: buildExternalAliases(values),
+		footballDataTeamId: fdId,
 	};
 }
 
@@ -183,17 +231,15 @@ export interface UpdateTeamPayload {
 	footballDataTeamId?: number;
 }
 
-export function formValuesToUpdatePayload(values: TeamFormValues): UpdateTeamPayload {
-	const fdIdRaw = values.footballDataTeamId.trim();
-	const fdId = fdIdRaw ? Number(fdIdRaw) : undefined;
-	const aliases = buildFootballDataAliases(
-		values.footballDataTeamId,
-		values.footballDataExternalName
-	);
+export function formValuesToUpdatePayload(
+	values: TeamFormValues,
+	existingExternalAliases?: TeamExternalAlias[]
+): UpdateTeamPayload {
+	const fdId = parseOptionalExternalId(values.footballDataTeamId);
 	return {
 		country: values.country.trim() || undefined,
 		displayNames: buildDisplayNames(values.nameEn, values.nameRu, values.nameDe),
-		externalAliases: aliases ?? [],
-		footballDataTeamId: Number.isFinite(fdId) ? fdId : undefined,
+		externalAliases: buildExternalAliases(values, existingExternalAliases),
+		footballDataTeamId: fdId,
 	};
 }

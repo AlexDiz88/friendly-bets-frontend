@@ -1,7 +1,12 @@
 import { Box, FormControl, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import UnmappedTeamNameHints from './UnmappedTeamNameHints';
-import { hasFootballDataApiMapping, TeamFormValues } from './teamFormUtils';
+import { FOOTBALL_DATA_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
+import {
+	hasFootballDataApiMapping,
+	hasOddsApiMapping,
+	TeamFormValues,
+} from './teamFormUtils';
 
 type TeamFormFieldsProps = {
 	values: TeamFormValues;
@@ -16,8 +21,6 @@ export default function TeamFormFields({
 	titleReadOnly = false,
 	unmappedHintsRefreshKey = 0,
 }: TeamFormFieldsProps): JSX.Element {
-	const showUnmappedHints = !hasFootballDataApiMapping(values);
-
 	return (
 		<FormControl fullWidth>
 			<Box sx={{ my: 1 }}>
@@ -78,10 +81,11 @@ export default function TeamFormFields({
 			</Box>
 
 			<Typography sx={{ mt: 1.5, mb: 0.5, fontWeight: 600, textAlign: 'left' }}>
-				{t('teamApiDataSection')}
+				{t('teamFootballDataSection')}
 			</Typography>
-			{showUnmappedHints ? (
+			{!hasFootballDataApiMapping(values) ? (
 				<UnmappedTeamNameHints
+					provider={FOOTBALL_DATA_PROVIDER}
 					refreshKey={unmappedHintsRefreshKey}
 					onApply={(externalName, externalId) => {
 						const patch: Partial<TeamFormValues> = {
@@ -114,6 +118,47 @@ export default function TeamFormFields({
 					value={values.footballDataExternalName}
 					onChange={(e) => onChange({ footballDataExternalName: e.target.value })}
 					helperText={t('teamFootballDataExternalNameHint')}
+				/>
+			</Box>
+
+			<Typography sx={{ mt: 1.5, mb: 0.5, fontWeight: 600, textAlign: 'left' }}>
+				{t('teamOddsApiSection')}
+			</Typography>
+			{!hasOddsApiMapping(values) ? (
+				<UnmappedTeamNameHints
+					provider={ODDS_API_PROVIDER}
+					refreshKey={unmappedHintsRefreshKey}
+					onApply={(externalName, externalId) => {
+						const patch: Partial<TeamFormValues> = {
+							oddsApiExternalName: externalName,
+						};
+						if (externalId != null) {
+							patch.oddsApiTeamId = String(externalId);
+						}
+						onChange(patch);
+					}}
+				/>
+			) : null}
+			<Box sx={{ my: 1 }}>
+				<TextField
+					fullWidth
+					id="odds-api-team-id"
+					label={t('teamOddsApiId')}
+					variant="outlined"
+					value={values.oddsApiTeamId}
+					onChange={(e) => onChange({ oddsApiTeamId: e.target.value })}
+					helperText={t('teamOddsApiIdHint')}
+				/>
+			</Box>
+			<Box sx={{ my: 1 }}>
+				<TextField
+					fullWidth
+					id="odds-api-external-name"
+					label={t('teamOddsApiExternalName')}
+					variant="outlined"
+					value={values.oddsApiExternalName}
+					onChange={(e) => onChange({ oddsApiExternalName: e.target.value })}
+					helperText={t('teamOddsApiExternalNameHint')}
 				/>
 			</Box>
 		</FormControl>

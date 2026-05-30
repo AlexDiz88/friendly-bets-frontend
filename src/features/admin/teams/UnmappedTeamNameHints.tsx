@@ -1,15 +1,20 @@
 import { Box, Chip, Typography } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getUnmappedExternalTeamNames } from '../external-sync-issues/api';
 import { UnmappedExternalTeamName } from '../external-sync-issues/types/UnmappedExternalTeamName';
+import { FOOTBALL_DATA_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
+
+export type UnmappedHintsProvider = typeof FOOTBALL_DATA_PROVIDER | typeof ODDS_API_PROVIDER;
 
 type UnmappedTeamNameHintsProps = {
+	provider: UnmappedHintsProvider;
 	onApply: (externalName: string, externalId?: number) => void;
 	refreshKey?: number;
 };
 
 export default function UnmappedTeamNameHints({
+	provider,
 	onApply,
 	refreshKey = 0,
 }: UnmappedTeamNameHintsProps): JSX.Element | null {
@@ -21,10 +26,7 @@ export default function UnmappedTeamNameHints({
 			try {
 				const data = await getUnmappedExternalTeamNames();
 				if (!cancelled) {
-					const sorted = [...data].sort((a, b) =>
-						a.externalName.localeCompare(b.externalName, 'en', { sensitivity: 'base' })
-					);
-					setHints(sorted);
+					setHints(data);
 				}
 			} catch {
 				if (!cancelled) {
@@ -38,24 +40,39 @@ export default function UnmappedTeamNameHints({
 		};
 	}, [refreshKey]);
 
-	if (hints.length === 0) {
+	const filtered = useMemo(
+		() =>
+			[...hints]
+				.filter((hint) => (hint.provider ?? FOOTBALL_DATA_PROVIDER) === provider)
+				.sort((a, b) =>
+					a.externalName.localeCompare(b.externalName, 'en', { sensitivity: 'base' })
+				),
+		[hints, provider]
+	);
+
+	if (filtered.length === 0) {
 		return null;
 	}
+
+	const hintLabelKey =
+		provider === ODDS_API_PROVIDER
+			? 'teamUnmappedOddsApiNamesHint'
+			: 'teamUnmappedFootballDataNamesHint';
 
 	return (
 		<Box sx={{ mb: 1 }}>
 			<Typography variant="body2" sx={{ opacity: 0.85, mb: 0.75, textAlign: 'left' }}>
-				{t('teamUnmappedApiNamesHint')}
+				{t(hintLabelKey)}
 			</Typography>
 			<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
-				{hints.map((hint) => {
+				{filtered.map((hint) => {
 					const label =
 						hint.externalId != null
 							? `${hint.externalName} (${hint.externalId})`
 							: hint.externalName;
 					return (
 						<Chip
-							key={hint.externalName}
+							key={`${provider}:${hint.externalName}:${hint.externalId ?? ''}`}
 							label={label}
 							size="small"
 							clickable
