@@ -1,17 +1,12 @@
-export type OddsLineRow = {
-	line?: string | null;
-	selectionCode: string;
-	displayLabel: string;
-	bookmakerOdds: Record<string, string>;
-};
-
-export type OddsMarketGroup = {
-	category: string;
-	groupKey: string;
-	sortOrder: number;
-	collapsedByDefault: boolean;
-	rows: OddsLineRow[];
-};
+export type {
+	OddsLineRow,
+	OddsMarketGroup,
+	OddsEventMarkets,
+	Wc26BettingContext,
+	Wc26GameResultLookup,
+	PlaceBetFromOddsRequest,
+	OddsSelection,
+} from '../../components/odds/oddsTypes';
 
 export type OddsDemoEventSummary = {
 	oddsApiEventId: number;
@@ -25,6 +20,6 @@ export type OddsDemoEventSummary = {
 
 export type OddsDemoEventDetail = OddsDemoEventSummary & {
 	bookmakers: string[];
-	marketGroups: OddsMarketGroup[];
+	marketGroups: import('../../components/odds/oddsTypes').OddsMarketGroup[];
 	fetchedAt: string;
 };

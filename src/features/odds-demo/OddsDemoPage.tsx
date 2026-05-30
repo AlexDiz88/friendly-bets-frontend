@@ -10,7 +10,7 @@ import {
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import { getOddsDemoEvent, listOddsDemoEvents, refreshOddsDemoLeague } from './oddsDemoApi';
-import OddsMarketGroupAccordion from './OddsMarketGroupAccordion';
+import OddsMarketGroupAccordion from '../../components/odds/OddsMarketGroupAccordion';
 import { OddsDemoEventDetail, OddsDemoEventSummary } from './types';
 
 const DEFAULT_LEAGUE = 'international-world-cup';

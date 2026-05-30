@@ -261,3 +261,8 @@ export const wc26QuickLinkChevronSx: SxProps<Theme> = (theme) => ({
 	flexShrink: 0,
 	color: theme.palette.mode === 'dark' ? '#ffd966' : '#8b6914',
 });
+
+export const wc26DialogPaperSx: SxProps<Theme> = (theme) => ({
+	borderRadius: 2,
+	bgcolor: theme.palette.mode === 'dark' ? '#0d1117' : '#f8faf9',
+});

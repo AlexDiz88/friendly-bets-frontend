@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { flagImageUrl, fifaTeamPageUrl } from './fifaAssets';
+import { flagImageUrl } from './fifaAssets';
 import { WC26_TEAMS, type Wc26TeamId } from './wc26Teams';
 
 export type Wc26TeamSide = 'home' | 'away';
@@ -63,17 +63,10 @@ export default function Wc26TeamFlag({ teamId, side }: Wc26TeamFlagProps): JSX.E
 
 	return (
 		<Box
-			component="a"
-			href={fifaTeamPageUrl(team.fifaSlug)}
-			target="_blank"
-			rel="noopener noreferrer"
-			aria-label={t(team.nameKey)}
 			sx={{
 				display: 'flex',
 				alignItems: 'center',
 				gap: 0.75,
-				textDecoration: 'none',
-				color: 'inherit',
 				minWidth: 0,
 			}}
 		>

@@ -55,7 +55,7 @@ import {
 	isMatchdayNotStarted,
 	translateMatchStatus,
 } from './matchStatusI18n';
-import { resolveDefaultExternalSeason } from './seasonExternalYear';
+import { resolveExternalSeasonForLeague } from './seasonExternalYear';
 import {
 	ExternalCompetitionInfo,
 	ExternalMatch,
@@ -198,11 +198,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [matchday, setMatchday] = useState(1);
 	const [matchdayTouched, setMatchdayTouched] = useState(false);
 
-	const externalSeason = useMemo(
-		() => resolveDefaultExternalSeason(activeSeason),
-		[activeSeason]
-	);
-
 	const competitionCode = useMemo(
 		() => leagueCodeToCompetition(selectedLeagueCode),
 		[selectedLeagueCode]
@@ -224,6 +219,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		}
 		return footballDataLeagues[0].leagueCode;
 	}, [footballDataLeagues, selectedLeagueCode]);
+
+	const externalSeason = useMemo(
+		() => resolveExternalSeasonForLeague(activeSeason, effectiveLeagueCode),
+		[activeSeason, effectiveLeagueCode]
+	);
 
 	const effectiveMatchday = useMemo(() => {
 		if (matchdaySlots.length === 0) {

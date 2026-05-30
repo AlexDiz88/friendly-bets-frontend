@@ -22,6 +22,7 @@ export default interface Bet {
 	balanceChange?: number;
 	updatedAt?: Date;
 	calendarNodeId?: string;
+	wc26ScheduleId?: number;
 }
 
 export type BetId = Bet['id'];

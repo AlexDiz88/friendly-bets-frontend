@@ -5,8 +5,10 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Wc26BettingContext } from '../../components/odds/oddsTypes';
+import { getWc26BettingContext } from './wc26OddsApi';
 import Wc26BetSlotsView from './Wc26BetSlotsView';
 import Wc26PageHero from './Wc26PageHero';
 import Wc26MatchCard from './Wc26MatchCard';
@@ -48,6 +50,18 @@ export default function WorldCup26Page(): JSX.Element {
 	const { t, i18n } = useTranslation();
 	const dateLocale = wc26DateLocale(i18n.language);
 	const [viewFilter, setViewFilter] = useState<Wc26ViewFilter>('bet_slots');
+	const [bettingContext, setBettingContext] = useState<Wc26BettingContext>({
+		bettingEnabled: false,
+		seasonParticipant: false,
+	});
+
+	useEffect(() => {
+		void getWc26BettingContext()
+			.then(setBettingContext)
+			.catch(() =>
+				setBettingContext({ bettingEnabled: false, seasonParticipant: false })
+			);
+	}, []);
 
 	const filtered = useMemo(() => filterWc26Matches(viewFilter), [viewFilter]);
 	const byDate = useMemo(() => groupMatchesByGermanDate(filtered), [filtered]);
@@ -105,7 +119,7 @@ export default function WorldCup26Page(): JSX.Element {
 				)}
 
 				{isBetSlotsView(viewFilter) ? (
-					<Wc26BetSlotsView />
+					<Wc26BetSlotsView context={bettingContext} />
 				) : (
 					<Stack spacing={1.5}>
 						{sortedDates.map((date) => {
