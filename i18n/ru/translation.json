@@ -15,6 +15,9 @@
 	"previousMatchday": "Предыдущий тур",
 	"nextMatchday": "Следующий тур",
 	"externalMatchSyncFromApi": "Загрузить с football-data.org",
+	"externalMatchOddsSyncFromApi": "Загрузить кэфы с odds-api.io",
+	"externalMatchOddsSyncSuccess": "Кэфы обновлены: {{saved}} записей, {{failures}} без сопоставления",
+	"externalMatchOddsSyncError": "Не удалось загрузить кэфы",
 	"externalMatchSyncSuccess": "Результаты тура обновлены",
 	"externalMatchSyncError": "Не удалось загрузить данные",
 	"externalMatchLoadError": "Не удалось прочитать кэш",
@@ -126,6 +129,10 @@
 	"externalSyncIssuesLoadError": "Не удалось загрузить лог",
 	"externalSyncIssuesCleared": "Лог очищен",
 	"externalSyncIssuesClearError": "Не удалось очистить лог",
+	"externalSyncIssuesHomeAlert": "football-data изменил счёт уже сохранённого матча. Проверьте лог и при необходимости исправьте результат вручную:",
+	"externalSyncIssuesIssueTypeApiScoreChanged": "изменение счёта API",
+	"externalSyncIssuesIssueTypeTeamMappingMissing": "нет маппинга команды",
+	"externalSyncIssuesIssueTypeEventMappingMissing": "нет маппинга события",
 	"actualSeason": "Текущий сезон",
 	"contentInProgress": "Контент в разработке",
 	"signUpPage": "Регистрация",
@@ -558,7 +565,8 @@
 		"oddsApiRateLimitExceeded": "Превышен лимит запросов odds-api.io",
 		"oddsApiSyncCompleted": "Синхронизация кэфов завершена",
 		"leagueSlugRequired": "Укажите slug лиги odds-api",
-		"oddsApiBookmakersNotConfigured": "Не настроены букмекеры odds-api"
+		"oddsApiBookmakersNotConfigured": "Не настроены букмекеры odds-api",
+		"oddsSyncNoMatchdayMatches": "Нет не начавшихся матчей в выбранном туре. Сначала загрузите результаты с football-data.org"
 	},
 
 	"oddsDemo": {

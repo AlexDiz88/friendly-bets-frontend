@@ -1,7 +1,7 @@
 import { Box, Chip, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
-import { getUnmappedExternalTeamNames } from '../external-sync-issues/api';
+import { getUnmappedExternalTeamNames, API_SYNC_ISSUES_CHANGED_EVENT } from '../external-sync-issues/api';
 import { UnmappedExternalTeamName } from '../external-sync-issues/types/UnmappedExternalTeamName';
 import { FOOTBALL_DATA_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
 
@@ -35,8 +35,13 @@ export default function UnmappedTeamNameHints({
 			}
 		};
 		load();
+		const onChanged = (): void => {
+			void load();
+		};
+		window.addEventListener(API_SYNC_ISSUES_CHANGED_EVENT, onChanged);
 		return () => {
 			cancelled = true;
+			window.removeEventListener(API_SYNC_ISSUES_CHANGED_EVENT, onChanged);
 		};
 	}, [refreshKey]);
 

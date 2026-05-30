@@ -2,8 +2,6 @@ export type {
 	OddsLineRow,
 	OddsMarketGroup,
 	OddsEventMarkets,
-	Wc26BettingContext,
-	PlaceBetFromOddsRequest,
 	OddsSelection,
 } from '../../components/odds/oddsTypes';
 

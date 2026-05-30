@@ -5,18 +5,14 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Wc26BettingContext } from '../../components/odds/oddsTypes';
-import { getWc26BettingContext } from './wc26OddsApi';
-import Wc26BetSlotsView from './Wc26BetSlotsView';
 import Wc26PageHero from './Wc26PageHero';
 import Wc26MatchCard from './Wc26MatchCard';
 import type { Wc26Match } from './wc26Schedule';
 import {
 	WC26_VIEW_FILTER_ORDER,
 	filterWc26Matches,
-	isBetSlotsView,
 	type Wc26ViewFilter,
 } from './wc26ViewFilters';
 import { kickoffToGerman, wc26DateLocale } from './wc26Time';
@@ -49,19 +45,7 @@ function groupMatchesByGermanDate(matches: Wc26Match[]): Map<string, Wc26Match[]
 export default function WorldCup26Page(): JSX.Element {
 	const { t, i18n } = useTranslation();
 	const dateLocale = wc26DateLocale(i18n.language);
-	const [viewFilter, setViewFilter] = useState<Wc26ViewFilter>('bet_slots');
-	const [bettingContext, setBettingContext] = useState<Wc26BettingContext>({
-		bettingEnabled: false,
-		seasonParticipant: false,
-	});
-
-	useEffect(() => {
-		void getWc26BettingContext()
-			.then(setBettingContext)
-			.catch(() =>
-				setBettingContext({ bettingEnabled: false, seasonParticipant: false })
-			);
-	}, []);
+	const [viewFilter, setViewFilter] = useState<Wc26ViewFilter>('all');
 
 	const filtered = useMemo(() => filterWc26Matches(viewFilter), [viewFilter]);
 	const byDate = useMemo(() => groupMatchesByGermanDate(filtered), [filtered]);
@@ -112,43 +96,37 @@ export default function WorldCup26Page(): JSX.Element {
 					</Stack>
 				</Box>
 
-				{!isBetSlotsView(viewFilter) && (
-					<Typography variant="caption" sx={wc26MatchCountSx}>
-						{t('wc26.matchCount', { count: filtered.length })}
-					</Typography>
-				)}
+				<Typography variant="caption" sx={wc26MatchCountSx}>
+					{t('wc26.matchCount', { count: filtered.length })}
+				</Typography>
 
-				{isBetSlotsView(viewFilter) ? (
-					<Wc26BetSlotsView context={bettingContext} />
-				) : (
-					<Stack spacing={1.5}>
-						{sortedDates.map((date) => {
-							const dayMatches = byDate.get(date) ?? [];
-							const headerDate = new Date(`${date}T12:00:00`).toLocaleDateString(dateLocale, {
-								weekday: 'long',
-								day: 'numeric',
-								month: 'long',
-								year: 'numeric',
-							});
+				<Stack spacing={1.5}>
+					{sortedDates.map((date) => {
+						const dayMatches = byDate.get(date) ?? [];
+						const headerDate = new Date(`${date}T12:00:00`).toLocaleDateString(dateLocale, {
+							weekday: 'long',
+							day: 'numeric',
+							month: 'long',
+							year: 'numeric',
+						});
 
-							return (
-								<Box key={date}>
-									<Typography variant="caption" sx={wc26SectionHeaderSx}>
-										{headerDate}
-									</Typography>
-									<Stack
-										spacing={0}
-										divider={<Box sx={wc26DividerSx} />}
-									>
-										{dayMatches.map((match) => (
-											<Wc26MatchCard key={match.id} match={match} />
-										))}
-									</Stack>
-								</Box>
-							);
-						})}
-					</Stack>
-				)}
+						return (
+							<Box key={date}>
+								<Typography variant="caption" sx={wc26SectionHeaderSx}>
+									{headerDate}
+								</Typography>
+								<Stack
+									spacing={0}
+									divider={<Box sx={wc26DividerSx} />}
+								>
+									{dayMatches.map((match) => (
+										<Wc26MatchCard key={match.id} match={match} />
+									))}
+								</Stack>
+							</Box>
+						);
+					})}
+				</Stack>
 			</Container>
 			</Box>
 		</>

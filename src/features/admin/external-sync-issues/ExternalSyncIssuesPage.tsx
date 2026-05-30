@@ -17,6 +17,19 @@ import { ADMIN_PANEL_SX } from '../adminPanelStyles';
 import { clearExternalSyncIssues, getExternalSyncIssues, notifyExternalSyncIssuesChanged } from './api';
 import { ExternalSyncIssue } from './types/ExternalSyncIssue';
 
+function issueTypeLabel(issueType: string | undefined): string {
+	if (issueType === 'API_SCORE_CHANGED') {
+		return t('externalSyncIssuesIssueTypeApiScoreChanged');
+	}
+	if (issueType === 'TEAM_MAPPING_MISSING') {
+		return t('externalSyncIssuesIssueTypeTeamMappingMissing');
+	}
+	if (issueType === 'EVENT_MAPPING_MISSING') {
+		return t('externalSyncIssuesIssueTypeEventMappingMissing');
+	}
+	return issueType ?? '';
+}
+
 export default function ExternalSyncIssuesPage(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const [issues, setIssues] = useState<ExternalSyncIssue[]>([]);
@@ -94,7 +107,7 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 							}}
 						>
 							<ListItemText
-								primary={`${i.provider ?? ''} ${i.issueType ?? ''}`.trim()}
+								primary={`${i.provider ?? ''} · ${issueTypeLabel(i.issueType)}`.trim()}
 								secondary={
 									<>
 										<div>

@@ -15,6 +15,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTranslation } from 'react-i18next';
 import { OddsMarketGroup } from './oddsTypes';
+import BetTitle from '../../features/bets/types/BetTitle';
 
 const LINE_COLUMN_CATEGORIES = new Set([
 	'HANDICAP',
@@ -30,6 +31,7 @@ export type OddsRowSelection = {
 	displayLabel: string;
 	line?: string | null;
 	groupKey: string;
+	betTitle: BetTitle;
 };
 
 type Props = {
@@ -59,7 +61,7 @@ export default function OddsMarketGroupAccordion({
 	const useBest = displayMode === 'best';
 
 	const handleRowClick = (row: OddsMarketGroup['rows'][number]) => {
-		if (!selectable || disabled || !onSelect || !row.selectionKey) {
+		if (!selectable || disabled || !onSelect || !row.selectionKey || !row.betTitle) {
 			return;
 		}
 		const bookmaker = row.bestBookmaker;
@@ -78,6 +80,7 @@ export default function OddsMarketGroupAccordion({
 			displayLabel: row.displayLabel,
 			line: row.line,
 			groupKey: group.groupKey,
+			betTitle: row.betTitle,
 		});
 	};
 

@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import type { SxProps, Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -250,16 +251,20 @@ export function HeaderNavLeft({ menu }: { menu: HeaderMenuState }): JSX.Element 
 				{menu.pages.map((page) => (
 					<MenuItem
 						key={page}
-						sx={[
-							page === menu.t('language')
-								? {
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'space-between',
-								  }
-								: undefined,
-							menu.isNavPageActive(page) && headerNavMenuItemActiveSx,
-						]}
+						sx={
+							[
+								...(page === menu.t('language')
+									? [
+											{
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'space-between',
+											},
+									  ]
+									: []),
+								...(menu.isNavPageActive(page) ? [headerNavMenuItemActiveSx] : []),
+							] as SxProps<Theme>
+						}
 						onClick={
 							page === menu.t('language')
 								? menu.handleOpenLangMenu

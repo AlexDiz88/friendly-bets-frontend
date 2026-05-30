@@ -1,6 +1,13 @@
-import { Box } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Alert, Box } from '@mui/material';
+import { t } from 'i18next';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { selectUser } from '../features/auth/selectors';
+import {
+	API_SYNC_ISSUES_CHANGED_EVENT,
+	getExternalSyncIssuesStatus,
+} from '../features/admin/external-sync-issues/api';
 import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
 import { selectCompletedBets } from '../features/bets/selectors';
 import PlayersStats from '../features/stats/PlayersStats';
@@ -12,13 +19,47 @@ import CustomLoadingError from './custom/loading/CustomLoadingError';
 import useFetchActiveSeason from './hooks/useFetchActiveSeason';
 import { homepageContentLayoutSx } from './layoutMainStyles';
 
+function isStaffRole(role: string | undefined): boolean {
+	return role === 'ADMIN' || role === 'MODERATOR';
+}
+
 export default function Homepage(): JSX.Element {
+	const user = useAppSelector(selectUser);
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const playersStats = useAppSelector(selectPlayersStats);
 	const completedBets = useAppSelector(selectCompletedBets);
 	const dispatch = useAppDispatch();
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
+	const [scoreChangeIssues, setScoreChangeIssues] = useState(false);
+
+	const loadSyncIssuesStatus = useCallback(async (): Promise<void> => {
+		try {
+			const status = await getExternalSyncIssuesStatus();
+			setScoreChangeIssues(Boolean(status.hasScoreChangeIssues));
+		} catch {
+			setScoreChangeIssues(false);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!isStaffRole(user?.role)) {
+			setScoreChangeIssues(false);
+			return;
+		}
+		void loadSyncIssuesStatus();
+	}, [user?.role, loadSyncIssuesStatus]);
+
+	useEffect(() => {
+		if (!isStaffRole(user?.role)) {
+			return;
+		}
+		const onChanged = (): void => {
+			void loadSyncIssuesStatus();
+		};
+		window.addEventListener(API_SYNC_ISSUES_CHANGED_EVENT, onChanged);
+		return () => window.removeEventListener(API_SYNC_ISSUES_CHANGED_EVENT, onChanged);
+	}, [user?.role, loadSyncIssuesStatus]);
 
 	const [externalData, setExternalData] = useState<any>(null);
 	const [externalDataError, setExternalDataError] = useState(false);
@@ -84,6 +125,12 @@ export default function Homepage(): JSX.Element {
 						<CustomLoadingError />
 					) : (
 						<Box sx={homepageContentLayoutSx}>
+							{isStaffRole(user?.role) && scoreChangeIssues ? (
+								<Alert severity="warning" sx={{ mb: 2, textAlign: 'left' }}>
+									{t('externalSyncIssuesHomeAlert')}{' '}
+									<Link to="/external-sync-issues">{t('externalSyncIssuesTitle')}</Link>
+								</Alert>
+							) : null}
 							<Wc26QuickLink />
 							<PlayersStats playersStats={sortedPlayersStats} />
 							{/* <Box sx={{ py: 3, px: 1 }}>

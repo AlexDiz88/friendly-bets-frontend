@@ -15,6 +15,9 @@
 	"previousMatchday": "Vorheriger Spieltag",
 	"nextMatchday": "Nächster Spieltag",
 	"externalMatchSyncFromApi": "Von football-data.org laden",
+	"externalMatchOddsSyncFromApi": "Quoten von odds-api.io laden",
+	"externalMatchOddsSyncSuccess": "Quoten aktualisiert: {{saved}} gespeichert, {{failures}} ohne Zuordnung",
+	"externalMatchOddsSyncError": "Quoten konnten nicht geladen werden",
 	"externalMatchSyncSuccess": "Spieltag aktualisiert",
 	"externalMatchSyncError": "Daten konnten nicht geladen werden",
 	"externalMatchLoadError": "Cache konnte nicht gelesen werden",
@@ -126,6 +129,10 @@
 	"externalSyncIssuesLoadError": "Fehler beim Laden des Logs",
 	"externalSyncIssuesCleared": "Log geleert",
 	"externalSyncIssuesClearError": "Fehler beim Leeren des Logs",
+	"externalSyncIssuesHomeAlert": "football-data hat den Spielstand eines bereits gespeicherten Spiels geändert. Prüfen Sie das Log und korrigieren Sie das Ergebnis bei Bedarf manuell:",
+	"externalSyncIssuesIssueTypeApiScoreChanged": "API-Spielstand geändert",
+	"externalSyncIssuesIssueTypeTeamMappingMissing": "Team-Mapping fehlt",
+	"externalSyncIssuesIssueTypeEventMappingMissing": "Event-Mapping fehlt",
 	"actualSeason": "Aktuelle Saison",
 	"contentInProgress": "Inhalt in Entwicklung",
 	"signUpPage": "Anmeldungsseite",
@@ -558,7 +565,8 @@
 		"oddsApiRateLimitExceeded": "odds-api.io-Ratenlimit überschritten",
 		"oddsApiSyncCompleted": "Quoten-Synchronisierung abgeschlossen",
 		"leagueSlugRequired": "odds-api Liga-Slug erforderlich",
-		"oddsApiBookmakersNotConfigured": "odds-api-Buchmacher nicht konfiguriert"
+		"oddsApiBookmakersNotConfigured": "odds-api-Buchmacher nicht konfiguriert",
+		"oddsSyncNoMatchdayMatches": "Keine nicht gestarteten Spiele im gewählten Spieltag. Zuerst Ergebnisse von football-data.org laden"
 	},
 
 	"oddsDemo": {

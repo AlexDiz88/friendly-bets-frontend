@@ -31,7 +31,10 @@ export async function getUnmappedExternalTeamNames(): Promise<UnmappedExternalTe
 	return result.json();
 }
 
-export async function getExternalSyncIssuesStatus(): Promise<{ hasIssues: boolean }> {
+export async function getExternalSyncIssuesStatus(): Promise<{
+	hasIssues: boolean;
+	hasScoreChangeIssues: boolean;
+}> {
 	const result = await apiFetch(apiUrl('/api/admin/api-sync-issues/status'));
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();

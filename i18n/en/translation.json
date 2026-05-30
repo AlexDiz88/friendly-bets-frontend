@@ -15,6 +15,9 @@
 	"previousMatchday": "Previous matchday",
 	"nextMatchday": "Next matchday",
 	"externalMatchSyncFromApi": "Fetch from football-data.org",
+	"externalMatchOddsSyncFromApi": "Fetch odds from odds-api.io",
+	"externalMatchOddsSyncSuccess": "Odds updated: {{saved}} saved, {{failures}} mapping failures",
+	"externalMatchOddsSyncError": "Failed to fetch odds",
 	"externalMatchSyncSuccess": "Matchday results updated",
 	"externalMatchSyncError": "Failed to fetch data",
 	"externalMatchLoadError": "Failed to read cache",
@@ -126,6 +129,10 @@
 	"externalSyncIssuesLoadError": "Failed to load issues log",
 	"externalSyncIssuesCleared": "Issues log cleared",
 	"externalSyncIssuesClearError": "Failed to clear issues log",
+	"externalSyncIssuesHomeAlert": "football-data changed the score of an already saved match. Check the log and correct the result manually if needed:",
+	"externalSyncIssuesIssueTypeApiScoreChanged": "API score changed",
+	"externalSyncIssuesIssueTypeTeamMappingMissing": "team mapping missing",
+	"externalSyncIssuesIssueTypeEventMappingMissing": "event mapping missing",
 	"actualSeason": "Actual Season",
 	"contentInProgress": "Content in progress",
 	"signUpPage": "SignUp Page",
@@ -558,7 +565,8 @@
 		"oddsApiRateLimitExceeded": "odds-api.io rate limit exceeded",
 		"oddsApiSyncCompleted": "Odds sync completed",
 		"leagueSlugRequired": "odds-api league slug is required",
-		"oddsApiBookmakersNotConfigured": "odds-api bookmakers are not configured"
+		"oddsApiBookmakersNotConfigured": "odds-api bookmakers are not configured",
+		"oddsSyncNoMatchdayMatches": "No not-started matches in the selected matchday. Fetch results from football-data.org first"
 	},
 
 	"oddsDemo": {

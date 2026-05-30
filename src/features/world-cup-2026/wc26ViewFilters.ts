@@ -1,7 +1,6 @@
 import { WC26_SCHEDULE, type Wc26Match, type Wc26Stage } from './wc26Schedule';
 
 export type Wc26ViewFilter =
-	| 'bet_slots'
 	| 'all'
 	| 'group'
 	| 'group_r1'
@@ -12,7 +11,6 @@ export type Wc26ViewFilter =
 
 /** Порядок вкладок в UI. */
 export const WC26_VIEW_FILTER_ORDER: Wc26ViewFilter[] = [
-	'bet_slots',
 	'all',
 	'group',
 	'group_r1',
@@ -46,8 +44,6 @@ export function filterWc26Matches(filter: Wc26ViewFilter): Wc26Match[] {
 	switch (filter) {
 		case 'all':
 			return WC26_SCHEDULE;
-		case 'bet_slots':
-			return [];
 		case 'group':
 			return WC26_SCHEDULE.filter((m) => m.stage === 'group');
 		case 'group_r1':
@@ -61,8 +57,4 @@ export function filterWc26Matches(filter: Wc26ViewFilter): Wc26Match[] {
 		default:
 			return WC26_SCHEDULE.filter((m) => m.stage === filter);
 	}
-}
-
-export function isBetSlotsView(filter: Wc26ViewFilter): boolean {
-	return filter === 'bet_slots';
 }

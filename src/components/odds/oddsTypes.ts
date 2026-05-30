@@ -1,3 +1,5 @@
+import BetTitle from '../../features/bets/types/BetTitle';
+
 export type OddsLineRow = {
 	line?: string | null;
 	selectionCode: string;
@@ -6,6 +8,7 @@ export type OddsLineRow = {
 	selectionKey?: string;
 	bestOdds?: string;
 	bestBookmaker?: string;
+	betTitle?: BetTitle;
 };
 
 export type OddsMarketGroup = {
@@ -25,23 +28,6 @@ export type OddsEventMarkets = {
 	bookmakers: string[];
 	marketGroups: OddsMarketGroup[];
 	fetchedAt?: string;
-};
-
-export type Wc26BettingContext = {
-	bettingEnabled: boolean;
-	seasonId?: string;
-	leagueId?: string;
-	leagueCode?: string;
-	tournamentFormatId?: string;
-	seasonParticipant: boolean;
-};
-
-export type PlaceBetFromOddsRequest = {
-	gameResultId: string;
-	matchDay: string;
-	selectionKey: string;
-	bookmaker: string;
-	clientOdds: number;
 };
 
 export type OddsSelection = {

@@ -1,4 +1,5 @@
 import EditIcon from '@mui/icons-material/Edit';
+import PaidIcon from '@mui/icons-material/Paid';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
 	Avatar,
@@ -22,6 +23,14 @@ import {
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import MatchdayNavigator from '../../components/matchday/MatchdayNavigator';
+import OddsPickDialog from '../../components/odds/OddsPickDialog';
+import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
+import { selectAllCalendarNodes } from '../admin/calendars/selectors';
+import {
+	findLeagueMatchdayInCalendars,
+	resolveBetSizeForBetInput,
+	resolveSeasonDefaultBetSize,
+} from '../bets/betSizeDefaults';
 import { getExternalMatchScoreView } from './externalMatchScoreView';
 import GameResultScoreEditDialog from './GameResultScoreEditDialog';
 import {
@@ -50,8 +59,11 @@ import {
 	getMatchdayFromCache,
 	syncMatchdayFromApi,
 } from './footballDataApi';
+import { syncOddsMatchdayFromApi } from './matchOddsApi';
+import { notifyExternalSyncIssuesChanged } from '../admin/external-sync-issues/api';
 import {
 	getMatchStatusChipColor,
+	isMatchNotStarted,
 	isMatchdayNotStarted,
 	translateMatchStatus,
 } from './matchStatusI18n';
@@ -177,6 +189,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const user = useAppSelector(selectUser);
 	const activeSeason = useAppSelector(selectActiveSeason);
+	const calendarNodes = useAppSelector(selectAllCalendarNodes);
 	const canSync = user?.role === 'ADMIN' || user?.role === 'MODERATOR';
 	const isAdmin = user?.role === 'ADMIN';
 
@@ -240,10 +253,54 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [loading, setLoading] = useState(false);
 	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(false);
 	const [syncing, setSyncing] = useState(false);
+	const [oddsSyncing, setOddsSyncing] = useState(false);
 	const [editMatch, setEditMatch] = useState<ExternalMatch | null>(null);
+	const [pickMatch, setPickMatch] = useState<ExternalMatch | null>(null);
 	const [adminOptionsEnabled, setAdminOptionsEnabled] = useState(false);
 
 	const showAdminTools = isAdmin && adminOptionsEnabled;
+
+	const isSeasonParticipant = useMemo(() => {
+		if (!user?.id || !activeSeason?.players) {
+			return false;
+		}
+		return activeSeason.players.some((p) => p.id === user.id);
+	}, [user?.id, activeSeason?.players]);
+
+	const betMatchDay = useMemo(() => {
+		const slot = matchdaySlots.find((s) => s.value === effectiveMatchday);
+		return slot?.slotId ?? String(effectiveMatchday);
+	}, [matchdaySlots, effectiveMatchday]);
+
+	const calendarMatch = useMemo(
+		() =>
+			selectedLeague
+				? findLeagueMatchdayInCalendars(calendarNodes, selectedLeague.leagueCode, betMatchDay)
+				: null,
+		[calendarNodes, selectedLeague, betMatchDay]
+	);
+
+	const canUserBetOnMatch = useCallback(
+		(match: ExternalMatch): boolean => {
+			if (!user || !isSeasonParticipant || !selectedLeague?.id || !activeSeason?.id) {
+				return false;
+			}
+			if (!calendarMatch) {
+				return false;
+			}
+			if (!match.id || !match.homeTeamId || !match.awayTeamId) {
+				return false;
+			}
+			if (!isMatchNotStarted(match.status)) {
+				return false;
+			}
+			if (match.utcDate && new Date(match.utcDate).getTime() <= Date.now()) {
+				return false;
+			}
+			return true;
+		},
+		[user, isSeasonParticipant, selectedLeague?.id, activeSeason?.id, calendarMatch]
+	);
 
 	const matchesLoading = competitionInfoLoading || loading;
 
@@ -261,6 +318,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			dispatch(getActiveSeason());
 		}
 	}, [activeSeason, dispatch]);
+
+	useEffect(() => {
+		if (activeSeason?.id) {
+			void dispatch(getAllSeasonCalendarNodes(activeSeason.id));
+		}
+	}, [activeSeason?.id, dispatch]);
 
 	useEffect(() => {
 		if (footballDataLeagues.length > 0) {
@@ -402,6 +465,37 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		}
 	};
 
+	const handleOddsSyncFromApi = async (): Promise<void> => {
+		if (!selectedLeague?.id) {
+			return;
+		}
+		setOddsSyncing(true);
+		try {
+			const result = await syncOddsMatchdayFromApi(
+				selectedLeague.id,
+				effectiveMatchday,
+				externalSeason
+			);
+			notifyExternalSyncIssuesChanged();
+			dispatch(
+				showSuccessSnackbar({
+					message: t('externalMatchOddsSyncSuccess', {
+						saved: result.oddsDocumentsSaved,
+						failures: result.mappingFailures,
+					}),
+				})
+			);
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : t('externalMatchOddsSyncError'),
+				})
+			);
+		} finally {
+			setOddsSyncing(false);
+		}
+	};
+
 	const handleAdminScoreSave = async (score: GameScore): Promise<void> => {
 		if (!editMatch?.id || !activeSeason?.id || !effectiveLeagueCode) {
 			return;
@@ -489,49 +583,85 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							textAlign: 'center',
 							fontSize: '1rem',
 							lineHeight: 1.2,
-							px: canSync ? 4 : 0,
+							px: canSync ? 6.5 : 0,
 						}}
 					>
 						{t('externalMatchResults')}
 					</Typography>
 					{canSync ? (
-						<Tooltip title={t('externalMatchSyncFromApi')}>
-							<Box
-								component="span"
-								sx={{
-									position: 'absolute',
-									right: 0,
-									top: '50%',
-									transform: 'translateY(-50%)',
-									display: 'flex',
-								}}
-							>
-								<IconButton
-									size="small"
-									disabled={syncing || loading}
-									onClick={handleSyncFromApi}
-									aria-label={t('externalMatchSyncFromApi')}
-									sx={{
-										width: 26,
-										height: 26,
-										p: 0,
-										bgcolor: 'secondary.main',
-										color: 'common.white',
-										'&:hover': { bgcolor: 'secondary.dark' },
-										'&.Mui-disabled': {
-											bgcolor: 'action.disabledBackground',
-											color: 'action.disabled',
-										},
-									}}
-								>
-									{syncing ? (
-										<CircularProgress size={18} sx={{ color: 'common.white' }} />
-									) : (
-										<RefreshIcon sx={{ fontSize: 20, color: 'common.white' }} />
-									)}
-								</IconButton>
-							</Box>
-						</Tooltip>
+						<Box
+							sx={{
+								position: 'absolute',
+								right: 0,
+								top: '50%',
+								transform: 'translateY(-50%)',
+								display: 'flex',
+								alignItems: 'center',
+								gap: 0.25,
+							}}
+						>
+							<Tooltip title={t('externalMatchOddsSyncFromApi')}>
+								<span>
+									<IconButton
+										size="small"
+										disabled={
+											oddsSyncing ||
+											syncing ||
+											loading ||
+											!selectedLeague?.id
+										}
+										onClick={() => void handleOddsSyncFromApi()}
+										aria-label={t('externalMatchOddsSyncFromApi')}
+										sx={{
+											width: 26,
+											height: 26,
+											p: 0,
+											bgcolor: 'primary.main',
+											color: 'common.white',
+											'&:hover': { bgcolor: 'primary.dark' },
+											'&.Mui-disabled': {
+												bgcolor: 'action.disabledBackground',
+												color: 'action.disabled',
+											},
+										}}
+									>
+										{oddsSyncing ? (
+											<CircularProgress size={18} sx={{ color: 'common.white' }} />
+										) : (
+											<PaidIcon sx={{ fontSize: 18, color: 'common.white' }} />
+										)}
+									</IconButton>
+								</span>
+							</Tooltip>
+							<Tooltip title={t('externalMatchSyncFromApi')}>
+								<span>
+									<IconButton
+										size="small"
+										disabled={syncing || oddsSyncing || loading}
+										onClick={() => void handleSyncFromApi()}
+										aria-label={t('externalMatchSyncFromApi')}
+										sx={{
+											width: 26,
+											height: 26,
+											p: 0,
+											bgcolor: 'secondary.main',
+											color: 'common.white',
+											'&:hover': { bgcolor: 'secondary.dark' },
+											'&.Mui-disabled': {
+												bgcolor: 'action.disabledBackground',
+												color: 'action.disabled',
+											},
+										}}
+									>
+										{syncing ? (
+											<CircularProgress size={18} sx={{ color: 'common.white' }} />
+										) : (
+											<RefreshIcon sx={{ fontSize: 20, color: 'common.white' }} />
+										)}
+									</IconButton>
+								</span>
+							</Tooltip>
+						</Box>
 					) : null}
 				</Box>
 
@@ -632,6 +762,26 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				onSave={handleAdminScoreSave}
 			/>
 
+			{pickMatch && user && activeSeason && selectedLeague && calendarMatch && pickMatch.id ? (
+				<OddsPickDialog
+					open
+					onClose={() => setPickMatch(null)}
+					gameResultId={pickMatch.id}
+					match={pickMatch}
+					seasonId={activeSeason.id}
+					leagueId={selectedLeague.id}
+					matchDay={betMatchDay}
+					calendarNodeId={calendarMatch.calendar.id}
+					betSize={resolveBetSizeForBetInput(
+						resolveSeasonDefaultBetSize(activeSeason),
+						betMatchDay,
+						calendarMatch.node
+					)}
+					userId={user.id}
+					onBetPlaced={() => void reloadMatchday()}
+				/>
+			) : null}
+
 			{matchesLoading && (
 				<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
 					<CircularProgress />
@@ -675,15 +825,19 @@ export default function ExternalMatchdayPage(): JSX.Element {
 									minute: '2-digit',
 								})
 							: '';
+						const betEnabled = canUserBetOnMatch(match);
 
 						return (
 							<Box
 								key={match.externalMatchId}
+								onClick={betEnabled ? () => setPickMatch(match) : undefined}
 								sx={{
 									px: 1,
 									py: 0.45,
 									borderBottom: index < sortedMatches.length - 1 ? 1 : 0,
 									borderColor: 'divider',
+									cursor: betEnabled ? 'pointer' : 'default',
+									'&:hover': betEnabled ? { bgcolor: 'action.hover' } : undefined,
 								}}
 							>
 								<Box
@@ -718,7 +872,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 												<span>
 													<IconButton
 														size="small"
-														onClick={() => setEditMatch(match)}
+														onClick={(e) => {
+															e.stopPropagation();
+															setEditMatch(match);
+														}}
 														sx={{ p: 0.25 }}
 														aria-label={t('gameResultEditScore')}
 													>

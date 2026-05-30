@@ -1,4 +1,5 @@
 import {
+	Avatar,
 	Box,
 	CircularProgress,
 	Dialog,
@@ -13,39 +14,47 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '../../app/hooks';
 import OddsMarketGroupAccordion, {
 	type OddsRowSelection,
-} from '../../components/odds/OddsMarketGroupAccordion';
-import { OddsEventMarkets } from '../../components/odds/oddsTypes';
-import CustomCalendarDialog from '../../components/custom/dialog/CustomCalendarDialog';
+} from './OddsMarketGroupAccordion';
+import { OddsEventMarkets } from './oddsTypes';
+import CustomCalendarDialog from '../custom/dialog/CustomCalendarDialog';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
-} from '../../components/custom/snackbar/snackbarSlice';
-import { ExternalMatch } from '../football-data/types/ExternalMatch';
-import type { Wc26BettingContext } from '../../components/odds/oddsTypes';
-import { getOddsEventMarkets, placeBetFromOdds } from './wc26OddsApi';
-import Wc26BetMatchCard from './Wc26BetMatchCard';
-import { wc26DialogPaperSx } from './wc26PageStyles';
+} from '../custom/snackbar/snackbarSlice';
+import { getOddsEventMarkets } from '../../features/football-data/matchOddsApi';
+import { addOpenedBet } from '../../features/bets/betsSlice';
+import { ExternalMatch } from '../../features/football-data/types/ExternalMatch';
+import { matchSideToDisplayTeam } from '../../features/football-data/externalMatchDisplay';
+import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../utils/teamDisplay';
 
 type Props = {
 	open: boolean;
 	onClose: () => void;
 	gameResultId: string;
 	match: ExternalMatch;
-	slotId: string;
-	context: Wc26BettingContext;
+	seasonId: string;
+	leagueId: string;
+	matchDay: string;
+	calendarNodeId: string;
+	betSize: number;
+	userId: string;
 	onBetPlaced: () => void;
 };
 
-export default function Wc26OddsPickDialog({
+export default function OddsPickDialog({
 	open,
 	onClose,
 	gameResultId,
 	match,
-	slotId,
-	context,
+	seasonId,
+	leagueId,
+	matchDay,
+	calendarNodeId,
+	betSize,
+	userId,
 	onBetPlaced,
 }: Props): JSX.Element {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -56,12 +65,11 @@ export default function Wc26OddsPickDialog({
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
 
-	const canBet = Boolean(
-		context.bettingEnabled && context.seasonParticipant && context.seasonId && context.leagueId
-	);
+	const homeTeam = matchSideToDisplayTeam(match, 'home');
+	const awayTeam = matchSideToDisplayTeam(match, 'away');
 
 	const loadMarkets = useCallback(async () => {
-		if (!open || !canBet || !gameResultId) {
+		if (!open || !gameResultId) {
 			return;
 		}
 		setLoading(true);
@@ -79,7 +87,7 @@ export default function Wc26OddsPickDialog({
 		} finally {
 			setLoading(false);
 		}
-	}, [open, canBet, gameResultId, dispatch]);
+	}, [open, gameResultId, dispatch]);
 
 	useEffect(() => {
 		void loadMarkets();
@@ -91,21 +99,30 @@ export default function Wc26OddsPickDialog({
 	};
 
 	const handleConfirm = async () => {
-		if (!selection || !context.seasonId) {
+		if (!selection?.betTitle) {
 			return;
 		}
 		setSubmitting(true);
 		try {
-			await placeBetFromOdds(
-				{
-					gameResultId,
-					matchDay: slotId,
-					selectionKey: selection.selectionKey,
-					bookmaker: selection.bookmaker,
-					clientOdds: selection.clientOdds,
-				},
-				`${gameResultId}-${slotId}-${selection.selectionKey}-${selection.bookmaker}`
+			const result = await dispatch(
+				addOpenedBet({
+					newOpenedBet: {
+						seasonId,
+						leagueId,
+						userId,
+						matchDay,
+						homeTeamId: markets?.homeTeamId ?? match.homeTeamId ?? '',
+						awayTeamId: markets?.awayTeamId ?? match.awayTeamId ?? '',
+						betTitle: selection.betTitle,
+						betOdds: selection.clientOdds,
+						betSize,
+						calendarNodeId,
+					},
+				})
 			);
+			if (addOpenedBet.rejected.match(result)) {
+				throw new Error(result.error.message ?? 'unknownError');
+			}
 			dispatch(showSuccessSnackbar({ message: 'wc26.oddsPick.success' }));
 			setConfirmOpen(false);
 			onBetPlaced();
@@ -113,6 +130,9 @@ export default function Wc26OddsPickDialog({
 		} catch (e) {
 			const message = e instanceof Error ? e.message : 'unknownError';
 			dispatch(showErrorSnackbar({ message }));
+			if (message === 'betAlreadyAdded') {
+				onBetPlaced();
+			}
 		} finally {
 			setSubmitting(false);
 		}
@@ -131,24 +151,39 @@ export default function Wc26OddsPickDialog({
 
 	return (
 		<>
-			<Dialog
-				open={open}
-				onClose={onClose}
-				fullScreen={fullScreen}
-				maxWidth="sm"
-				fullWidth
-				PaperProps={{ sx: wc26DialogPaperSx }}
-			>
+			<Dialog open={open} onClose={onClose} fullScreen={fullScreen} maxWidth="sm" fullWidth>
 				<DialogTitle sx={{ pb: 0.5 }}>{t('wc26.oddsPick.title')}</DialogTitle>
 				<DialogContent>
-					<Box sx={{ mb: 1.5 }}>
-						<Wc26BetMatchCard match={match} />
-					</Box>
-					{!canBet ? (
-						<Typography variant="body2" color="text.secondary">
-							{t('wc26.betSlots.loginRequired')}
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: 1,
+							mb: 1.5,
+							py: 0.5,
+						}}
+					>
+						<Typography variant="body2" sx={{ flex: 1, textAlign: 'right', fontWeight: 600 }}>
+							{resolveTeamDisplayName(homeTeam, t, i18n.language)}
 						</Typography>
-					) : loading ? (
+						<Avatar
+							variant="square"
+							src={resolveTeamLogoUrl(homeTeam)}
+							sx={{ width: 28, height: 28 }}
+						/>
+						<Typography variant="body2" sx={{ px: 0.5, fontWeight: 700 }}>
+							—
+						</Typography>
+						<Avatar
+							variant="square"
+							src={resolveTeamLogoUrl(awayTeam)}
+							sx={{ width: 28, height: 28 }}
+						/>
+						<Typography variant="body2" sx={{ flex: 1, fontWeight: 600 }}>
+							{resolveTeamDisplayName(awayTeam, t, i18n.language)}
+						</Typography>
+					</Box>
+					{loading ? (
 						<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
 							<CircularProgress size={28} />
 						</Box>
@@ -158,6 +193,7 @@ export default function Wc26OddsPickDialog({
 								key={group.groupKey}
 								group={group}
 								bookmakers={markets.bookmakers}
+								displayMode="best"
 								selectable
 								onSelect={handleSelect}
 							/>
@@ -172,7 +208,7 @@ export default function Wc26OddsPickDialog({
 
 			<CustomCalendarDialog
 				open={confirmOpen}
-				onClose={() => setConfirmOpen(false)}
+				onClose={() => !submitting && setConfirmOpen(false)}
 				onSave={() => void handleConfirm()}
 				title={t('wc26.oddsPick.confirmTitle')}
 				helperText={t('wc26.oddsPick.confirmHelper')}
