@@ -502,6 +502,8 @@
 		"noActiveSeason": "No active season",
 		"wcLeagueNotInSeason": "WC league is not in the season",
 		"wc26GameResultNotMapped": "Match is not linked to game results yet",
+		"gameResultNotFound": "Match not found in game results",
+		"gameResultNotInSlot": "Match does not belong to the selected slot",
 		"betSlotLimitReached": "Bet limit for this slot is reached",
 		"betSlotClosed": "This betting slot is closed",
 		"calendarNodeNotFound": "Slot not found in season calendar",
@@ -649,7 +651,8 @@
 			"range": "{{from}} — {{to}}",
 			"betsRule": "{{bets}} bets from {{matches}} matches",
 			"loginRequired": "Bets are available only to participants registered for the tournament.",
-			"bettingUnavailable": "Odds betting is unavailable: the active season has no WC league."
+			"bettingUnavailable": "Odds betting is unavailable: the active season has no WC league.",
+			"noMatchesInSlot": "No matches synced for this slot yet (Match results → select this slot and refresh)."
 		},
 		"oddsPick": {
 			"title": "Pick a bet",
@@ -658,7 +661,8 @@
 			"confirmHelper": "After confirmation, odds and selection are locked.",
 			"oddsLine": "{{odds}} · {{bookmaker}}",
 			"betChip": "{{title}} @ {{odds}}",
-			"success": "Bet accepted"
+			"success": "Bet accepted",
+			"noMarkets": "Odds for this match are not available yet"
 		},
 		"teams": {
 			"MEX": "Mexico",

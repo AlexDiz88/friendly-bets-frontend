@@ -4,7 +4,6 @@ import {
 	OddsEventMarkets,
 	PlaceBetFromOddsRequest,
 	Wc26BettingContext,
-	Wc26GameResultLookup,
 } from '../../components/odds/oddsTypes';
 
 function apiUrl(path: string): string {
@@ -23,15 +22,9 @@ export async function getWc26BettingContext(): Promise<Wc26BettingContext> {
 	return result.json();
 }
 
-export async function lookupWc26GameResult(
-	seasonId: string,
-	wc26ScheduleId: number,
-	slotId: string
-): Promise<Wc26GameResultLookup> {
-	const params = new URLSearchParams({ seasonId, slotId });
-	const result = await apiFetch(
-		apiUrl(`/api/wc26/matches/${wc26ScheduleId}/game-result?${params}`)
-	);
+export async function getWc26GroupStageBoard(seasonId: string): Promise<import('./wc26BetBoard').Wc26GroupStageBoard> {
+	const params = new URLSearchParams({ seasonId });
+	const result = await apiFetch(apiUrl(`/api/wc26/group-stage/board?${params}`));
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);

@@ -16,6 +16,7 @@ import {
 	resolveTeamRussianSortName,
 	teamMatchesSearchQuery,
 } from '../../../components/utils/teamDisplay';
+import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import {
 	showErrorSnackbar,
@@ -83,6 +84,11 @@ export default function EditTeamPanel(): JSX.Element {
 		setValues((prev) => ({ ...prev, ...patch }));
 	};
 
+	const handleCancel = useCallback((): void => {
+		setSelected(null);
+		setValues(emptyTeamFormValues());
+	}, []);
+
 	const handleSave = useCallback(async () => {
 		if (!selected || saving) {
 			return;
@@ -97,9 +103,8 @@ export default function EditTeamPanel(): JSX.Element {
 		setSaving(false);
 		if (updateTeam.fulfilled.match(result)) {
 			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyUpdated') }));
-			const updated = result.payload;
-			setSelected(updated);
-			setValues(teamToFormValues(updated));
+			setSelected(null);
+			setValues(emptyTeamFormValues());
 			setUnmappedHintsRefreshKey((k) => k + 1);
 		}
 		if (updateTeam.rejected.match(result)) {
@@ -153,6 +158,7 @@ export default function EditTeamPanel(): JSX.Element {
 						unmappedHintsRefreshKey={unmappedHintsRefreshKey}
 					/>
 					<Box sx={{ textAlign: 'center', mt: 1 }}>
+						<CustomCancelButton onClick={handleCancel} />
 						<CustomSuccessButton
 							onClick={handleSave}
 							buttonText={t('btnText.save')}

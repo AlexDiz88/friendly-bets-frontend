@@ -22,7 +22,7 @@ export default interface Bet {
 	balanceChange?: number;
 	updatedAt?: Date;
 	calendarNodeId?: string;
-	wc26ScheduleId?: number;
+	gameResultId?: string;
 }
 
 export type BetId = Bet['id'];

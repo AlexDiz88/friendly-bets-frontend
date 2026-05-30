@@ -36,17 +36,8 @@ export type Wc26BettingContext = {
 	seasonParticipant: boolean;
 };
 
-export type Wc26GameResultLookup = {
-	gameResultId: string;
-	wc26ScheduleId: number;
-	homeTeamId: string;
-	awayTeamId: string;
-	kickoffUtc?: string;
-	slotId?: string;
-};
-
 export type PlaceBetFromOddsRequest = {
-	wc26ScheduleId: number;
+	gameResultId: string;
 	matchDay: string;
 	selectionKey: string;
 	bookmaker: string;

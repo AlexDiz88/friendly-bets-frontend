@@ -1,6 +1,5 @@
 import {
 	Box,
-	Chip,
 	CircularProgress,
 	Dialog,
 	DialogContent,
@@ -21,20 +20,17 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
-import type { Wc26Match } from './wc26Schedule';
+import { ExternalMatch } from '../football-data/types/ExternalMatch';
 import type { Wc26BettingContext } from '../../components/odds/oddsTypes';
-import {
-	getOddsEventMarkets,
-	lookupWc26GameResult,
-	placeBetFromOdds,
-} from './wc26OddsApi';
-import Wc26MatchCard from './Wc26MatchCard';
+import { getOddsEventMarkets, placeBetFromOdds } from './wc26OddsApi';
+import Wc26BetMatchCard from './Wc26BetMatchCard';
 import { wc26DialogPaperSx } from './wc26PageStyles';
 
 type Props = {
 	open: boolean;
 	onClose: () => void;
-	match: Wc26Match;
+	gameResultId: string;
+	match: ExternalMatch;
 	slotId: string;
 	context: Wc26BettingContext;
 	onBetPlaced: () => void;
@@ -43,6 +39,7 @@ type Props = {
 export default function Wc26OddsPickDialog({
 	open,
 	onClose,
+	gameResultId,
 	match,
 	slotId,
 	context,
@@ -58,23 +55,20 @@ export default function Wc26OddsPickDialog({
 	const [selection, setSelection] = useState<OddsRowSelection | null>(null);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
-	const [gameResultId, setGameResultId] = useState<string | null>(null);
 
 	const canBet = Boolean(
 		context.bettingEnabled && context.seasonParticipant && context.seasonId && context.leagueId
 	);
 
 	const loadMarkets = useCallback(async () => {
-		if (!open || !canBet || !context.seasonId || !match.id) {
+		if (!open || !canBet || !gameResultId) {
 			return;
 		}
 		setLoading(true);
 		setMarkets(null);
 		setSelection(null);
 		try {
-			const lookup = await lookupWc26GameResult(context.seasonId, match.id, slotId);
-			setGameResultId(lookup.gameResultId);
-			const data = await getOddsEventMarkets(lookup.gameResultId);
+			const data = await getOddsEventMarkets(gameResultId);
 			setMarkets(data);
 		} catch (e) {
 			dispatch(
@@ -85,7 +79,7 @@ export default function Wc26OddsPickDialog({
 		} finally {
 			setLoading(false);
 		}
-	}, [open, canBet, context.seasonId, match.id, slotId, dispatch]);
+	}, [open, canBet, gameResultId, dispatch]);
 
 	useEffect(() => {
 		void loadMarkets();
@@ -97,20 +91,20 @@ export default function Wc26OddsPickDialog({
 	};
 
 	const handleConfirm = async () => {
-		if (!selection || !context.seasonId || !gameResultId) {
+		if (!selection || !context.seasonId) {
 			return;
 		}
 		setSubmitting(true);
 		try {
 			await placeBetFromOdds(
 				{
-					wc26ScheduleId: match.id,
+					gameResultId,
 					matchDay: slotId,
 					selectionKey: selection.selectionKey,
 					bookmaker: selection.bookmaker,
 					clientOdds: selection.clientOdds,
 				},
-				`${match.id}-${slotId}-${selection.selectionKey}-${selection.bookmaker}`
+				`${gameResultId}-${slotId}-${selection.selectionKey}-${selection.bookmaker}`
 			);
 			dispatch(showSuccessSnackbar({ message: 'wc26.oddsPick.success' }));
 			setConfirmOpen(false);
@@ -118,37 +112,21 @@ export default function Wc26OddsPickDialog({
 			onClose();
 		} catch (e) {
 			const message = e instanceof Error ? e.message : 'unknownError';
-			if (message === 'oddsChangedRetry') {
-				void loadMarkets();
-			}
 			dispatch(showErrorSnackbar({ message }));
-			setConfirmOpen(false);
 		} finally {
 			setSubmitting(false);
 		}
 	};
 
-	const summary = useMemo(() => {
+	const confirmHelper = useMemo(() => {
 		if (!selection) {
-			return null;
+			return '';
 		}
-		return (
-			<Box sx={{ fontSize: '0.9rem' }}>
-				<Typography variant="body2" sx={{ mb: 0.5 }}>
-					{t(`oddsDemo.groups.${selection.groupKey}`, selection.groupKey)}
-				</Typography>
-				<Typography variant="body2">
-					{selection.displayLabel}
-					{selection.line ? ` (${selection.line})` : ''}
-				</Typography>
-				<Typography variant="body2" sx={{ mt: 0.5 }}>
-					{t('wc26.oddsPick.oddsLine', {
-						odds: selection.clientOdds,
-						bookmaker: selection.bookmaker,
-					})}
-				</Typography>
-			</Box>
-		);
+		return t('wc26.oddsPick.oddsLine', {
+			label: selection.displayLabel,
+			odds: selection.clientOdds,
+			bookmaker: selection.bookmaker,
+		});
 	}, [selection, t]);
 
 	return (
@@ -164,34 +142,30 @@ export default function Wc26OddsPickDialog({
 				<DialogTitle sx={{ pb: 0.5 }}>{t('wc26.oddsPick.title')}</DialogTitle>
 				<DialogContent>
 					<Box sx={{ mb: 1.5 }}>
-						<Wc26MatchCard match={match} />
+						<Wc26BetMatchCard match={match} />
 					</Box>
-					{!canBet && (
-						<Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+					{!canBet ? (
+						<Typography variant="body2" color="text.secondary">
 							{t('wc26.betSlots.loginRequired')}
 						</Typography>
-					)}
-					{loading && (
+					) : loading ? (
 						<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
 							<CircularProgress size={28} />
 						</Box>
-					)}
-					{!loading && markets && (
-						<Box>
-							{markets.marketGroups.map((group) => (
-								<OddsMarketGroupAccordion
-									key={group.groupKey + group.category}
-									group={group}
-									bookmakers={markets.bookmakers}
-									displayMode="best"
-									selectable={canBet}
-									selectedKey={selection?.selectionKey}
-									selectedBookmaker={selection?.bookmaker}
-									onSelect={handleSelect}
-									disabled={submitting}
-								/>
-							))}
-						</Box>
+					) : markets && markets.marketGroups.length > 0 ? (
+						markets.marketGroups.map((group) => (
+							<OddsMarketGroupAccordion
+								key={group.groupKey}
+								group={group}
+								bookmakers={markets.bookmakers}
+								selectable
+								onSelect={handleSelect}
+							/>
+						))
+					) : (
+						<Typography variant="body2" color="text.secondary">
+							{t('wc26.oddsPick.noMarkets')}
+						</Typography>
 					)}
 				</DialogContent>
 			</Dialog>
@@ -202,8 +176,13 @@ export default function Wc26OddsPickDialog({
 				onSave={() => void handleConfirm()}
 				title={t('wc26.oddsPick.confirmTitle')}
 				helperText={t('wc26.oddsPick.confirmHelper')}
-				summaryComponent={summary ?? undefined}
-				buttonAcceptText={t('btnText.accept')}
+				summaryComponent={
+					confirmHelper ? (
+						<Typography variant="body2" sx={{ mt: 1 }}>
+							{confirmHelper}
+						</Typography>
+					) : undefined
+				}
 			/>
 		</>
 	);

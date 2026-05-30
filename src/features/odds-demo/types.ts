@@ -3,7 +3,6 @@ export type {
 	OddsMarketGroup,
 	OddsEventMarkets,
 	Wc26BettingContext,
-	Wc26GameResultLookup,
 	PlaceBetFromOddsRequest,
 	OddsSelection,
 } from '../../components/odds/oddsTypes';

@@ -502,6 +502,8 @@
 		"noActiveSeason": "Keine aktive Saison",
 		"wcLeagueNotInSeason": "WM-Liga fehlt in der Saison",
 		"wc26GameResultNotMapped": "Spiel noch nicht mit Ergebnissen verknüpft",
+		"gameResultNotFound": "Spiel in den Ergebnissen nicht gefunden",
+		"gameResultNotInSlot": "Spiel gehört nicht zum gewählten Slot",
 		"betSlotLimitReached": "Wettlimit für diesen Slot erreicht",
 		"betSlotClosed": "Wettannahme für diesen Slot geschlossen",
 		"calendarNodeNotFound": "Slot im Saisonkalender nicht gefunden",
@@ -649,7 +651,8 @@
 			"range": "{{from}} — {{to}}",
 			"betsRule": "{{bets}} Wetten aus {{matches}} Spielen",
 			"loginRequired": "Wetten sind nur für am Turnier registrierte Teilnehmer verfügbar.",
-			"bettingUnavailable": "Quotenwetten nicht verfügbar: in der aktiven Saison gibt es keine WM-Liga."
+			"bettingUnavailable": "Quotenwetten nicht verfügbar: in der aktiven Saison gibt es keine WM-Liga.",
+			"noMatchesInSlot": "Spiele für diesen Slot noch nicht synchronisiert (Spielergebnisse → Slot wählen und aktualisieren)."
 		},
 		"oddsPick": {
 			"title": "Wette wählen",
@@ -658,7 +661,8 @@
 			"confirmHelper": "Nach Bestätigung sind Quote und Auswahl fixiert.",
 			"oddsLine": "{{odds}} · {{bookmaker}}",
 			"betChip": "{{title}} @ {{odds}}",
-			"success": "Wette angenommen"
+			"success": "Wette angenommen",
+			"noMarkets": "Quoten für dieses Spiel sind noch nicht verfügbar"
 		},
 		"teams": {
 			"MEX": "Mexiko",

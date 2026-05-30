@@ -34,7 +34,7 @@ export function hasFootballDataApiMapping(values: TeamFormValues): boolean {
 }
 
 export function hasOddsApiMapping(values: TeamFormValues): boolean {
-	return values.oddsApiExternalName.trim() !== '';
+	return values.oddsApiTeamId.trim() !== '' && values.oddsApiExternalName.trim() !== '';
 }
 
 function formFieldFilled(value: string): boolean {
@@ -109,7 +109,8 @@ export function isTeamFormComplete(values: TeamFormValues): boolean {
 		formFieldFilled(values.nameEn) &&
 		formFieldFilled(values.nameRu) &&
 		formFieldFilled(values.nameDe) &&
-		hasFootballDataApiMapping(values)
+		hasFootballDataApiMapping(values) &&
+		hasOddsApiMapping(values)
 	);
 }
 

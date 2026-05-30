@@ -1,14 +1,16 @@
-import { Alert, Box, Stack, Typography, type SxProps, type Theme } from '@mui/material';
+import { Alert, Box, CircularProgress, Stack, Typography, type SxProps, type Theme } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Bet from '../bets/types/Bet';
+import { ExternalMatch } from '../football-data/types/ExternalMatch';
 import { Wc26BettingContext } from '../../components/odds/oddsTypes';
-import Wc26MatchCard from './Wc26MatchCard';
+import { showErrorSnackbar } from '../../components/custom/snackbar/snackbarSlice';
+import { useAppDispatch } from '../../app/hooks';
+import Wc26BetMatchCard from './Wc26BetMatchCard';
 import Wc26OddsPickDialog from './Wc26OddsPickDialog';
-import { WC26_BET_SLOTS, formatSlotBerlinRange, getMatchesForSlot, type Wc26GroupRound } from './wc26BetSlots';
-import type { Wc26Match } from './wc26Schedule';
+import { formatSlotUtcRange, Wc26BettingSlot } from './wc26BetBoard';
 import { wc26DateLocale } from './wc26Time';
-import { getSelfOpenedBets } from './wc26OddsApi';
+import { getSelfOpenedBets, getWc26GroupStageBoard } from './wc26OddsApi';
 import {
 	wc26DividerSx,
 	wc26SectionHeaderSx,
@@ -17,17 +19,32 @@ import {
 	wc26SlotTitleSx,
 } from './wc26PageStyles';
 
-const ROUNDS: Wc26GroupRound[] = [1, 2, 3];
+const ROUNDS = [1, 2, 3] as const;
 
 type Props = {
 	context: Wc26BettingContext;
 };
 
+function betMatchesGame(bet: Bet, match: ExternalMatch): boolean {
+	if (bet.gameResultId && match.id) {
+		return bet.gameResultId === match.id;
+	}
+	return (
+		bet.homeTeam?.id != null &&
+		bet.awayTeam?.id != null &&
+		bet.homeTeam.id === match.homeTeamId &&
+		bet.awayTeam.id === match.awayTeamId
+	);
+}
+
 export default function Wc26BetSlotsView({ context }: Props): JSX.Element {
 	const { t, i18n } = useTranslation();
+	const dispatch = useAppDispatch();
 	const dateLocale = wc26DateLocale(i18n.language);
 	const [userBets, setUserBets] = useState<Bet[]>([]);
-	const [pickMatch, setPickMatch] = useState<{ match: Wc26Match; slotId: string } | null>(null);
+	const [slots, setSlots] = useState<Wc26BettingSlot[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [pick, setPick] = useState<{ match: ExternalMatch; slotId: string } | null>(null);
 
 	const canInteract = context.bettingEnabled && context.seasonParticipant;
 
@@ -44,30 +61,59 @@ export default function Wc26BetSlotsView({ context }: Props): JSX.Element {
 		}
 	}, [context.seasonId, context.leagueId, context.seasonParticipant]);
 
+	const loadBoard = useCallback(async () => {
+		if (!context.seasonId) {
+			setSlots([]);
+			return;
+		}
+		setLoading(true);
+		try {
+			const board = await getWc26GroupStageBoard(context.seasonId);
+			setSlots(board.slots);
+		} catch (e) {
+			setSlots([]);
+			dispatch(
+				showErrorSnackbar({
+					message: e instanceof Error ? e.message : 'unknownError',
+				})
+			);
+		} finally {
+			setLoading(false);
+		}
+	}, [context.seasonId, dispatch]);
+
+	useEffect(() => {
+		void loadBoard();
+	}, [loadBoard]);
+
 	useEffect(() => {
 		void loadBets();
 	}, [loadBets]);
 
-	const betsByScheduleId = useMemo(() => {
-		const map = new Map<number, Bet>();
-		for (const bet of userBets) {
-			if (bet.wc26ScheduleId != null) {
-				map.set(bet.wc26ScheduleId, bet);
-			}
-		}
-		return map;
-	}, [userBets]);
-
 	const slotsByRound = useMemo(() => {
-		const map = new Map<Wc26GroupRound, typeof WC26_BET_SLOTS>();
+		const map = new Map<number, Wc26BettingSlot[]>();
 		for (const round of ROUNDS) {
 			map.set(
 				round,
-				WC26_BET_SLOTS.filter((s) => s.round === round)
+				slots.filter((s) => s.round === round)
 			);
 		}
 		return map;
-	}, []);
+	}, [slots]);
+
+	const findBetForMatch = useCallback(
+		(match: ExternalMatch, slotId: string): Bet | undefined =>
+			userBets.find((b) => b.matchDay === slotId && betMatchesGame(b, match)),
+		[userBets]
+	);
+
+	if (loading && slots.length === 0) {
+		return (
+			<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+				<CircularProgress size={32} />
+			</Box>
+		);
+	}
 
 	return (
 		<Stack spacing={2}>
@@ -93,8 +139,7 @@ export default function Wc26BetSlotsView({ context }: Props): JSX.Element {
 
 					<Stack spacing={1.5}>
 						{slotsByRound.get(round)?.map((slot) => {
-							const range = formatSlotBerlinRange(slot, dateLocale);
-							const matches = getMatchesForSlot(slot);
+							const range = formatSlotUtcRange(slot, dateLocale);
 
 							return (
 								<Box key={slot.id}>
@@ -115,29 +160,34 @@ export default function Wc26BetSlotsView({ context }: Props): JSX.Element {
 											})}
 										</Typography>
 									</Box>
-									<Stack
-										spacing={0}
-										divider={<Box sx={wc26DividerSx} />}
-									>
-										{matches.map((match) => {
-											const hasBet = Boolean(betsByScheduleId.get(match.id));
-											const clickable = canInteract && !hasBet;
+									{slot.matches.length === 0 ? (
+										<Typography variant="caption" color="text.secondary" sx={{ px: 0.5, pb: 1 }}>
+											{t('wc26.betSlots.noMatchesInSlot')}
+										</Typography>
+									) : (
+										<Stack spacing={0} divider={<Box sx={wc26DividerSx} />}>
+											{slot.matches.map((match) => {
+												const userBet = findBetForMatch(match, slot.id);
+												const hasBet = Boolean(userBet);
+												const clickable =
+													canInteract && !hasBet && Boolean(match.id);
 
-											return (
-												<Wc26MatchCard
-													key={match.id}
-													match={match}
-													userBet={betsByScheduleId.get(match.id)}
-													clickable={clickable}
-													onClick={
-														clickable
-															? () => setPickMatch({ match, slotId: slot.id })
-															: undefined
-													}
-												/>
-											);
-										})}
-									</Stack>
+												return (
+													<Wc26BetMatchCard
+														key={match.id ?? `${match.homeTeamId}-${match.awayTeamId}`}
+														match={match}
+														userBet={userBet}
+														clickable={clickable}
+														onClick={
+															clickable
+																? () => setPick({ match, slotId: slot.id })
+																: undefined
+														}
+													/>
+												);
+											})}
+										</Stack>
+									)}
 								</Box>
 							);
 						})}
@@ -145,14 +195,18 @@ export default function Wc26BetSlotsView({ context }: Props): JSX.Element {
 				</Box>
 			))}
 
-			{pickMatch && (
+			{pick && pick.match.id && (
 				<Wc26OddsPickDialog
 					open
-					onClose={() => setPickMatch(null)}
-					match={pickMatch.match}
-					slotId={pickMatch.slotId}
+					onClose={() => setPick(null)}
+					gameResultId={pick.match.id}
+					match={pick.match}
+					slotId={pick.slotId}
 					context={context}
-					onBetPlaced={() => void loadBets()}
+					onBetPlaced={() => {
+						void loadBets();
+						void loadBoard();
+					}}
 				/>
 			)}
 		</Stack>
