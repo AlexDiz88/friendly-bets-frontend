@@ -29,9 +29,13 @@ export async function getCompetitionInfo(
 export async function getMatchdayFromCache(
 	competitionCode: string,
 	matchday: number,
-	season: string
+	season: string,
+	leagueId?: string
 ): Promise<ExternalMatchdayPage> {
 	const params = new URLSearchParams({ season });
+	if (leagueId) {
+		params.set('leagueId', leagueId);
+	}
 	const result = await apiFetch(
 		apiUrl(`/api/football-data/competitions/${competitionCode}/matchdays/${matchday}?${params}`)
 	);
@@ -76,5 +80,5 @@ export async function syncMatchdayFromApi(
 		const { message }: { message: string } = await syncResult.json();
 		throw new Error(message);
 	}
-	return getMatchdayFromCache(competitionCode, matchday, season);
+	return getMatchdayFromCache(competitionCode, matchday, season, leagueId);
 }

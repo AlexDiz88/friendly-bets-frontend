@@ -9,6 +9,7 @@ import {
 	FormControlLabel,
 	IconButton,
 	SelectChangeEvent,
+	Stack,
 	Switch,
 	Tooltip,
 	Typography,
@@ -73,6 +74,14 @@ import {
 	ExternalMatch,
 	ExternalMatchdayPage as MatchdayPageData,
 } from './types/ExternalMatch';
+import WcBerlinSlotHeader from './WcBerlinSlotHeader';
+import ExternalMatchWc26Card from './ExternalMatchWc26Card';
+import {
+	expectedBerlinMatchCount,
+	filterExternalMatchesForBerlinSlot,
+	isBerlinGroupSlot,
+} from '../world-cup-2026/wc26BetSlots';
+import { wc26DividerSx } from '../world-cup-2026/wc26PageStyles';
 
 const MATCH_ROW_AVATAR = 26;
 
@@ -272,6 +281,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return slot?.slotId ?? String(effectiveMatchday);
 	}, [matchdaySlots, effectiveMatchday]);
 
+	const isBerlinGroupSlotActive = useMemo(
+		() => isBerlinGroupSlot(betMatchDay),
+		[betMatchDay]
+	);
+
 	const calendarMatch = useMemo(
 		() =>
 			selectedLeague
@@ -308,10 +322,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		const page = await getMatchdayFromCache(
 			competitionCode,
 			effectiveMatchday,
-			externalSeason
+			externalSeason,
+			selectedLeague?.id
 		);
 		setData(page);
-	}, [competitionCode, effectiveMatchday, externalSeason]);
+	}, [competitionCode, effectiveMatchday, externalSeason, selectedLeague?.id]);
 
 	useEffect(() => {
 		if (!activeSeason) {
@@ -385,7 +400,8 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				const page = await getMatchdayFromCache(
 					competitionCode,
 					targetMatchday,
-					externalSeason
+					externalSeason,
+					selectedLeague?.id
 				);
 				if (!cancelled) setData(page);
 			} catch (error) {
@@ -414,6 +430,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		matchday,
 		competitionCode,
 		externalSeason,
+		selectedLeague?.id,
 		dispatch,
 	]);
 
@@ -520,12 +537,23 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const sortedMatches = useMemo(() => {
 		if (!data?.matches) return [];
-		return [...data.matches].sort((a, b) => {
+		const sorted = [...data.matches].sort((a, b) => {
 			const da = a.utcDate ? new Date(a.utcDate).getTime() : 0;
 			const db = b.utcDate ? new Date(b.utcDate).getTime() : 0;
 			return da - db;
 		});
-	}, [data?.matches]);
+		if (isBerlinGroupSlotActive) {
+			return filterExternalMatchesForBerlinSlot(sorted, betMatchDay);
+		}
+		return sorted;
+	}, [data?.matches, isBerlinGroupSlotActive, betMatchDay]);
+
+	const syncProgressTotal = useMemo(() => {
+		if (isBerlinGroupSlotActive) {
+			return expectedBerlinMatchCount(betMatchDay);
+		}
+		return data?.sync?.expectedMatchCount ?? 0;
+	}, [isBerlinGroupSlotActive, betMatchDay, data?.sync?.expectedMatchCount]);
 
 	const matchdayNotStarted = useMemo(() => isMatchdayNotStarted(sortedMatches), [sortedMatches]);
 
@@ -727,7 +755,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						<Typography variant="caption" color="text.secondary" sx={{ px: 1 }}>
 							{t('externalMatchSyncProgress', {
 								finished: data.sync.finishedMatchCount,
-								total: data.sync.expectedMatchCount,
+								total: syncProgressTotal,
 							})}
 						</Typography>
 					</Box>
@@ -794,7 +822,55 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				</Typography>
 			)}
 
-			{!matchesLoading && sortedMatches.length > 0 && (
+			{!matchesLoading && sortedMatches.length > 0 && isBerlinGroupSlotActive && (
+				<Box
+					sx={{
+						borderRadius: 2,
+						boxShadow: 2,
+						bgcolor: 'background.paper',
+						px: 0.5,
+						py: 0.75,
+					}}
+				>
+					<WcBerlinSlotHeader slotId={betMatchDay} />
+					<Stack spacing={0} divider={<Box sx={wc26DividerSx} />}>
+						{sortedMatches.map((match: ExternalMatch) => {
+							const betEnabled = canUserBetOnMatch(match);
+							return (
+								<ExternalMatchWc26Card
+									key={match.externalMatchId}
+									match={match}
+									slotId={betMatchDay}
+									clickable={betEnabled}
+									onClick={betEnabled ? () => setPickMatch(match) : undefined}
+									showAdminEdit={showAdminTools && Boolean(match.id)}
+									adminEditButton={
+										showAdminTools && match.id ? (
+											<Tooltip title={t('gameResultEditScore')}>
+												<span>
+													<IconButton
+														size="small"
+														onClick={(e) => {
+															e.stopPropagation();
+															setEditMatch(match);
+														}}
+														sx={{ p: 0.25 }}
+														aria-label={t('gameResultEditScore')}
+													>
+														<EditIcon sx={{ fontSize: 16 }} />
+													</IconButton>
+												</span>
+											</Tooltip>
+										) : null
+									}
+								/>
+							);
+						})}
+					</Stack>
+				</Box>
+			)}
+
+			{!matchesLoading && sortedMatches.length > 0 && !isBerlinGroupSlotActive && (
 				<Box
 					sx={{
 						borderRadius: 2,
