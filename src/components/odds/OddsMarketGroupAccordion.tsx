@@ -21,7 +21,6 @@ import {
 	oddsPickAccordionSummarySx,
 	oddsPickAccordionSx,
 	oddsPickRowLabelSx,
-	oddsPickRowLineSx,
 	oddsPickRowOddsSx,
 	oddsPickRowSx,
 } from './oddsPickDialogStyles';
@@ -71,12 +70,34 @@ export default function OddsMarketGroupAccordion({
 	const title = t(`oddsDemo.groups.${group.groupKey}`, group.groupKey);
 	const useBest = displayMode === 'best';
 
+	const resolveBookmaker = (row: OddsMarketGroup['rows'][number]): string | undefined => {
+		if (row.bestBookmaker) {
+			return row.bestBookmaker;
+		}
+		for (const [bk, value] of Object.entries(row.bookmakerOdds ?? {})) {
+			if (value && value !== '—') {
+				return bk;
+			}
+		}
+		return undefined;
+	};
+
+	const resolveOdds = (row: OddsMarketGroup['rows'][number], bookmaker?: string): string | undefined => {
+		if (row.bestOdds && row.bestOdds !== '—') {
+			return row.bestOdds;
+		}
+		if (bookmaker) {
+			return row.bookmakerOdds?.[bookmaker];
+		}
+		return undefined;
+	};
+
 	const handleRowClick = (row: OddsMarketGroup['rows'][number]) => {
 		if (!selectable || disabled || !onSelect || !row.selectionKey || !row.betTitle) {
 			return;
 		}
-		const bookmaker = row.bestBookmaker;
-		const odds = row.bestOdds ?? (bookmaker ? row.bookmakerOdds[bookmaker] : undefined);
+		const bookmaker = resolveBookmaker(row);
+		const odds = resolveOdds(row, bookmaker);
 		if (!bookmaker || !odds || odds === '—') {
 			return;
 		}
@@ -120,9 +141,7 @@ export default function OddsMarketGroupAccordion({
 							selectable &&
 							useBest &&
 							!disabled &&
-							row.selectionKey &&
-							row.bestBookmaker &&
-							displayOdds !== '—';
+							Boolean(row.selectionKey && row.betTitle && displayOdds !== '—');
 
 						return (
 							<Box
@@ -142,11 +161,6 @@ export default function OddsMarketGroupAccordion({
 								}
 								sx={oddsPickRowSx(Boolean(clickable))}
 							>
-								{showLine && row.line && (
-									<Typography component="span" sx={oddsPickRowLineSx}>
-										{row.line}
-									</Typography>
-								)}
 								<Typography component="span" sx={oddsPickRowLabelSx}>
 									{row.displayLabel}
 								</Typography>

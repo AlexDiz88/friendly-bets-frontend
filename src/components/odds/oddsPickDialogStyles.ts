@@ -1,4 +1,5 @@
 import type { SxProps, Theme } from '@mui/material';
+import { CUSTOM_BUTTON_FONT } from '../custom/btn/customButtonStyles';
 
 export const oddsPickDialogPaperSx = (fullScreen: boolean): SxProps<Theme> => (theme) => ({
 	bgcolor: theme.palette.mode === 'dark' ? '#0b1424' : '#eef4f0',
@@ -63,6 +64,7 @@ export const oddsPickDialogCloseBtnSx: SxProps<Theme> = (theme) => ({
 	borderRadius: 2,
 	fontWeight: 700,
 	fontSize: '0.85rem',
+	fontFamily: CUSTOM_BUTTON_FONT,
 	textTransform: 'none',
 	color: theme.palette.mode === 'dark' ? '#ffd966' : '#6b5200',
 	border: '1px solid',

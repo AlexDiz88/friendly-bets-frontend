@@ -33,6 +33,10 @@ export function matchDaysEqual(a: string, b: string): boolean {
 	if (left === right) {
 		return true;
 	}
+	// Под-слоты ставок (1 [1], 1/16 [2], …) — только точное совпадение id, не «тур 1» целиком.
+	if (left.includes('[') || right.includes('[')) {
+		return false;
+	}
 	return normalizeMatchDayKey(a) === normalizeMatchDayKey(b);
 }
 
