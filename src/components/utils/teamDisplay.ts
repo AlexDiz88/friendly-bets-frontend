@@ -20,16 +20,16 @@ export function resolveTeamDisplayName(
 	}
 	const lang = language ?? '';
 	const names = team.displayNames;
-	if (names) {
-		if (lang.startsWith('ru') && names.ru) {
-			return names.ru;
-		}
-		if (lang.startsWith('de') && names.de) {
-			return names.de;
-		}
-		if (names.en) {
-			return names.en;
-		}
+	let localizedName: string | undefined;
+	if (lang.startsWith('ru')) {
+		localizedName = names?.ru?.trim();
+	} else if (lang.startsWith('de')) {
+		localizedName = names?.de?.trim();
+	} else {
+		localizedName = names?.en?.trim();
+	}
+	if (localizedName) {
+		return localizedName;
 	}
 	const key = teamI18nKey(team);
 	if (key) {

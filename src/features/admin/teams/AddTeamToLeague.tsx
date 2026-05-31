@@ -10,9 +10,12 @@ import {
 	SelectChangeEvent,
 	Tooltip,
 	Typography,
+	type SxProps,
+	type Theme,
 } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
@@ -21,6 +24,8 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
+import { leagueLogoAvatarSx } from '../../../components/custom/avatar/LeagueAvatar';
+import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../../components/utils/teamDisplay';
 import { pathToLogoImage } from '../../../components/utils/imgBase64Converter';
 import { addTeamToLeagueInSeason, getSeasons, removeTeamFromLeagueInSeason } from '../seasons/seasonsSlice';
 import { selectSeasons } from '../seasons/selectors';
@@ -35,6 +40,7 @@ export default function AddTeamToLeague({
 	closeAddTeamToLeague: (close: boolean) => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
+	const { i18n } = useTranslation();
 	const seasons = useAppSelector(selectSeasons);
 	const allTeams = useAppSelector(selectTeams);
 	const leagueTeams = useAppSelector(selectLeagueTeams);
@@ -161,7 +167,8 @@ export default function AddTeamToLeague({
 							<MenuItem key={league.id} value={league.name}>
 								<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 									<Avatar
-										sx={{ mr: 1, borderRadius: 0 }}
+										sx={[{ mr: 1 }, leagueLogoAvatarSx] as SxProps<Theme>}
+										variant="square"
 										alt="league_logo"
 										src={pathToLogoImage(league.leagueCode)}
 									/>
@@ -183,9 +190,10 @@ export default function AddTeamToLeague({
 							leagueTeams
 								.slice()
 								.sort((a, b) =>
-									a.title && b.title
-										? t(`teams:${a.title}`).localeCompare(t(`teams:${b.title}`))
-										: 0
+									resolveTeamDisplayName(a, t, i18n.language).localeCompare(
+										resolveTeamDisplayName(b, t, i18n.language),
+										i18n.language.startsWith('ru') ? 'ru' : undefined
+									)
 								)
 								.map((team) => (
 									<ListItem
@@ -200,12 +208,15 @@ export default function AddTeamToLeague({
 									>
 										<Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
 											<Avatar
-												sx={{ mr: 1, width: 25, height: 25 }}
+												sx={
+													[{ mr: 1, width: 25, height: 25 }, leagueLogoAvatarSx] as SxProps<Theme>
+												}
+												variant="square"
 												alt="team_logo"
-												src={pathToLogoImage(team.title)}
+												src={resolveTeamLogoUrl(team)}
 											/>
 											<Typography sx={{ fontSize: '0.9rem' }}>
-												{t(`teams:${team.title}`)}
+												{resolveTeamDisplayName(team, t, i18n.language)}
 											</Typography>
 										</Box>
 										<Tooltip title={t('btnText.delete')} arrow>
@@ -240,13 +251,23 @@ export default function AddTeamToLeague({
 						{allTeams
 							.slice()
 							.sort((a, b) =>
-								a.title && b.title ? t(`teams:${a.title}`).localeCompare(t(`teams:${b.title}`)) : 0
+								resolveTeamDisplayName(a, t, i18n.language).localeCompare(
+									resolveTeamDisplayName(b, t, i18n.language),
+									i18n.language.startsWith('ru') ? 'ru' : undefined
+								)
 							)
 							.map((team) => (
 								<MenuItem dense key={team.id} value={team.title}>
 									<Box sx={{ display: 'flex', alignItems: 'center' }}>
-										<Avatar sx={{ mr: 1 }} alt="team_logo" src={pathToLogoImage(team.title)} />
-										<Typography sx={{ fontSize: '0.9rem' }}>{t(`teams:${team.title}`)}</Typography>
+										<Avatar
+											sx={[{ mr: 1 }, leagueLogoAvatarSx] as SxProps<Theme>}
+											variant="square"
+											alt="team_logo"
+											src={resolveTeamLogoUrl(team)}
+										/>
+										<Typography sx={{ fontSize: '0.9rem' }}>
+											{resolveTeamDisplayName(team, t, i18n.language)}
+										</Typography>
 									</Box>
 								</MenuItem>
 							))}
@@ -279,12 +300,13 @@ export default function AddTeamToLeague({
 								{t('removeTeamFromLeagueConfirmBefore')}
 							</Typography>
 							<Avatar
-								sx={{ width: 24, height: 24 }}
+								sx={[{ width: 24, height: 24 }, leagueLogoAvatarSx] as SxProps<Theme>}
+								variant="square"
 								alt="team_logo"
-								src={pathToLogoImage(teamToRemove.title)}
+								src={resolveTeamLogoUrl(teamToRemove)}
 							/>
 							<Typography component="span" sx={{ fontSize: '1rem', fontWeight: 600 }}>
-								{t(`teams:${teamToRemove.title}`)}
+								{resolveTeamDisplayName(teamToRemove, t, i18n.language)}
 							</Typography>
 							<Typography component="span" sx={{ fontSize: '1rem' }}>
 								{t('removeTeamFromLeagueConfirmAfter')}
