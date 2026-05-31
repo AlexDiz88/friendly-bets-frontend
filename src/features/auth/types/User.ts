@@ -6,4 +6,6 @@ export default interface User {
 	username?: string;
 	avatar?: string;
 	language?: string;
+	themePreference?: string;
+	showThemeToggle?: boolean;
 }

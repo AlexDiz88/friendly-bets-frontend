@@ -5,8 +5,12 @@ import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import { editPassword } from '../../features/auth/authSlice';
 import CustomButton from '../custom/btn/CustomButton';
-import CustomCancelButton from '../custom/btn/CustomCancelButton';
-import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
+import ProfileEditActions from './ProfileEditActions';
+import {
+	profileAccountActionButtonSx,
+	profileEditPanelSx,
+	profileFullWidthFieldSx,
+} from './profilePageStyles';
 import { showErrorSnackbar, showSuccessSnackbar } from '../custom/snackbar/snackbarSlice';
 
 const ProfilePassword = (): JSX.Element => {
@@ -53,96 +57,84 @@ const ProfilePassword = (): JSX.Element => {
 		setShowPasswordInput(false);
 	};
 
-	return (
-		<>
-			{showPasswordInput ? (
-				<Box sx={{ textAlign: 'center', mx: 2, mt: 1, mb: 2 }}>
-					<TextField
-						size="small"
-						fullWidth
-						required
-						id="current-password"
-						label={t('currentPassword')}
-						type={showCurrentPassword ? 'text' : 'password'}
-						value={currentPassword}
-						onChange={(e) => setCurrentPassword(e.target.value)}
-						sx={{ mr: 1, mb: 1.5 }}
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position="end">
-									<IconButton
-										aria-label="toggle password visibility"
-										onClick={handleToggleCurrentPasswordVisibility}
-										edge="end"
-										tabIndex={-1}
-									>
-										{showCurrentPassword ? <VisibilityOff /> : <Visibility />}
-									</IconButton>
-								</InputAdornment>
-							),
-						}}
-					/>
-					<TextField
-						size="small"
-						fullWidth
-						required
-						id="new-password"
-						label={t('newPassword')}
-						type={showNewPassword ? 'text' : 'password'}
-						value={newPassword}
-						onChange={(e) => setNewPassword(e.target.value)}
-						sx={{ mr: 1, mb: 1.5 }}
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position="end">
-									<IconButton
-										aria-label="toggle password visibility"
-										onClick={handleToggleNewPasswordVisibility}
-										edge="end"
-										tabIndex={-1}
-									>
-										{showNewPassword ? <VisibilityOff /> : <Visibility />}
-									</IconButton>
-								</InputAdornment>
-							),
-						}}
-					/>
-					<TextField
-						size="small"
-						fullWidth
-						required
-						id="new-password-repeat"
-						label={t('newPasswordRepeat')}
-						type={showNewPassword ? 'text' : 'password'}
-						value={newPasswordRepeat}
-						onChange={(e) => setNewPasswordRepeat(e.target.value)}
-						sx={{ mr: 1, mb: 1.5 }}
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position="end">
-									<IconButton
-										aria-label="toggle password visibility"
-										onClick={handleToggleNewPasswordVisibility}
-										edge="end"
-										tabIndex={-1}
-									>
-										{showNewPassword ? <VisibilityOff /> : <Visibility />}
-									</IconButton>
-								</InputAdornment>
-							),
-						}}
-					/>
-					<Box>
-						<CustomCancelButton onClick={handleCancelPassword} />
-						<CustomSuccessButton onClick={handleSavePassword} buttonText={t('btnText.change')} />
-					</Box>
-				</Box>
-			) : (
-				<Box sx={{ textAlign: 'center', mx: 2, mt: 1, mb: 2 }}>
-					<CustomButton onClick={handleEditPassword} buttonText={t('changePassword')} />
-				</Box>
-			)}
-		</>
+	const passwordVisibilityAdornment = (visible: boolean, onToggle: () => void) => (
+		<InputAdornment position="end">
+			<IconButton
+				aria-label="toggle password visibility"
+				onClick={onToggle}
+				edge="end"
+				tabIndex={-1}
+			>
+				{visible ? <VisibilityOff /> : <Visibility />}
+			</IconButton>
+		</InputAdornment>
+	);
+
+	return showPasswordInput ? (
+		<Box sx={profileEditPanelSx}>
+			<TextField
+				size="small"
+				fullWidth
+				required
+				id="current-password"
+				label={t('currentPassword')}
+				type={showCurrentPassword ? 'text' : 'password'}
+				value={currentPassword}
+				onChange={(e) => setCurrentPassword(e.target.value)}
+				sx={profileFullWidthFieldSx}
+				InputProps={{
+					endAdornment: passwordVisibilityAdornment(
+						showCurrentPassword,
+						handleToggleCurrentPasswordVisibility
+					),
+				}}
+			/>
+			<TextField
+				size="small"
+				fullWidth
+				required
+				id="new-password"
+				label={t('newPassword')}
+				type={showNewPassword ? 'text' : 'password'}
+				value={newPassword}
+				onChange={(e) => setNewPassword(e.target.value)}
+				sx={profileFullWidthFieldSx}
+				InputProps={{
+					endAdornment: passwordVisibilityAdornment(
+						showNewPassword,
+						handleToggleNewPasswordVisibility
+					),
+				}}
+			/>
+			<TextField
+				size="small"
+				fullWidth
+				required
+				id="new-password-repeat"
+				label={t('newPasswordRepeat')}
+				type={showNewPassword ? 'text' : 'password'}
+				value={newPasswordRepeat}
+				onChange={(e) => setNewPasswordRepeat(e.target.value)}
+				sx={profileFullWidthFieldSx}
+				InputProps={{
+					endAdornment: passwordVisibilityAdornment(
+						showNewPassword,
+						handleToggleNewPasswordVisibility
+					),
+				}}
+			/>
+			<ProfileEditActions
+				onCancel={handleCancelPassword}
+				onSave={() => void handleSavePassword()}
+				saveText={t('btnText.change')}
+			/>
+		</Box>
+	) : (
+		<CustomButton
+			onClick={handleEditPassword}
+			buttonText={t('changePassword')}
+			sx={profileAccountActionButtonSx}
+		/>
 	);
 };
 

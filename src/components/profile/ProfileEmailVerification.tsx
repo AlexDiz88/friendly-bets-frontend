@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import * as api from '../../features/auth/api';
 import CustomButton from '../custom/btn/CustomButton';
+import { profileVerificationBannerSx } from './profilePageStyles';
 import { showErrorSnackbar, showSuccessSnackbar } from '../custom/snackbar/snackbarSlice';
 
 /** Временно: повторная отправка письма до настройки почты на бэкенде. */
@@ -43,16 +44,17 @@ export default function ProfileEmailVerification({
 	}
 
 	return (
-		<Box sx={{ width: '100%', maxWidth: 360, mt: 2, mb: 1 }}>
+		<Box sx={profileVerificationBannerSx}>
 			<Alert severity="warning" sx={{ textAlign: 'left', mb: SHOW_RESEND_VERIFICATION_EMAIL ? 1 : 0 }}>
 				{t('emailNotConfirmedBanner')}
 			</Alert>
 			{SHOW_RESEND_VERIFICATION_EMAIL && (
-				<Box sx={{ textAlign: 'center' }}>
+				<Box sx={{ textAlign: 'left' }}>
 					<CustomButton
 						onClick={() => void handleResend()}
 						buttonText={t('resendVerificationEmail')}
 						disabled={sending || !email}
+						sx={{ width: { xs: '100%', sm: 'auto' } }}
 					/>
 				</Box>
 			)}

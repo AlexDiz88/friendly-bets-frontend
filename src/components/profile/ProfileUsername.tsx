@@ -1,11 +1,15 @@
-import { Box, TextField, Typography } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import { editUsername } from '../../features/auth/authSlice';
 import CustomButton from '../custom/btn/CustomButton';
-import CustomCancelButton from '../custom/btn/CustomCancelButton';
-import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
+import ProfileEditActions from './ProfileEditActions';
+import {
+	profileAccountActionButtonSx,
+	profileEditPanelSx,
+	profileFullWidthFieldSx,
+} from './profilePageStyles';
 import { showErrorSnackbar, showSuccessSnackbar } from '../custom/snackbar/snackbarSlice';
 
 const ProfileUsername = ({ username }: { username: string | undefined }): JSX.Element => {
@@ -22,44 +26,40 @@ const ProfileUsername = ({ username }: { username: string | undefined }): JSX.El
 		if (editUsername.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
-	}, [newName]);
+	}, [dispatch, newName]);
 
 	const handleEditName = (): void => {
+		setNewName(username || '');
 		setShowNameInput(true);
 	};
 
 	const handleCancel = (): void => {
-		if (username) {
-			setNewName(username);
-		}
+		setNewName(username || '');
 		setShowNameInput(false);
 	};
 
-	return (
-		<>
-			<Typography sx={{ textAlign: 'center', pt: 1, mx: 2 }}>
-				<b>{t('username')}:</b> {username}
-			</Typography>
-			{showNameInput ? (
-				<Box sx={{ textAlign: 'center', mx: 2, mt: 1, mb: 2 }}>
-					<TextField
-						size="small"
-						value={newName}
-						onChange={(e) => setNewName(e.target.value)}
-						sx={{ mr: 1, mb: 1.5 }}
-					/>
-
-					<Box>
-						<CustomCancelButton onClick={handleCancel} />
-						<CustomSuccessButton onClick={handleSaveName} buttonText={t('btnText.change')} />
-					</Box>
-				</Box>
-			) : (
-				<Box sx={{ textAlign: 'left', mx: 2, mt: 1, mb: 2 }}>
-					<CustomButton onClick={handleEditName} buttonText={t('changeUsername')} />
-				</Box>
-			)}
-		</>
+	return showNameInput ? (
+		<Box sx={profileEditPanelSx}>
+			<TextField
+				size="small"
+				fullWidth
+				label={t('username')}
+				value={newName}
+				onChange={(e) => setNewName(e.target.value)}
+				sx={profileFullWidthFieldSx}
+			/>
+			<ProfileEditActions
+				onCancel={handleCancel}
+				onSave={() => void handleSaveName()}
+				saveText={t('btnText.change')}
+			/>
+		</Box>
+	) : (
+		<CustomButton
+			onClick={handleEditName}
+			buttonText={t('changeUsername')}
+			sx={profileAccountActionButtonSx}
+		/>
 	);
 };
 

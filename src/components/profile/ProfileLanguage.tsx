@@ -1,4 +1,4 @@
-import { Avatar, Box, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
@@ -6,8 +6,17 @@ import { getProfile } from '../../features/auth/authSlice';
 import { saveUserLanguageAsync } from '../../features/languages/languageSlice';
 import Language from '../../features/languages/types/Language';
 import CustomButton from '../custom/btn/CustomButton';
-import CustomCancelButton from '../custom/btn/CustomCancelButton';
-import CustomSuccessButton from '../custom/btn/CustomSuccessButton';
+import ProfileEditActions from './ProfileEditActions';
+import {
+	profileEditPanelSx,
+	profileFullWidthFieldSx,
+	profileItemActionSx,
+	profileItemCardSx,
+	profileItemLabelSx,
+	profileItemRowSx,
+	profileItemValueRowSx,
+	profileItemValueSx,
+} from './profilePageStyles';
 import { showErrorSnackbar, showSuccessSnackbar } from '../custom/snackbar/snackbarSlice';
 
 const ProfileLanguage = ({ lng }: { lng: string | undefined }): JSX.Element => {
@@ -33,13 +42,14 @@ const ProfileLanguage = ({ lng }: { lng: string | undefined }): JSX.Element => {
 		if (saveUserLanguageAsync.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
-	}, [language]);
+	}, [dispatch, language]);
 
 	const handleLanguageChange = (event: SelectChangeEvent<string>): void => {
 		setLanguage(event.target.value);
 	};
 
 	const handleEditLanguage = (): void => {
+		setLanguage(lng || 'ru');
 		setShowLangChange(true);
 	};
 
@@ -48,28 +58,21 @@ const ProfileLanguage = ({ lng }: { lng: string | undefined }): JSX.Element => {
 	};
 
 	return (
-		<>
-			<Box sx={{ pt: 1, mx: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-				<Box sx={{ mr: 1, textAlign: 'center', fontWeight: 600 }}>{t('currentSiteLanguage')}:</Box>
-				<Avatar
-					sx={{ mr: 0.5, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
-					alt="language_flag"
-					src={`/upload/locales/${currentLng?.img || ''}`}
-				/>
-			</Box>
+		<Box sx={profileItemCardSx}>
 			{showLangChange ? (
-				<>
+				<Box sx={profileEditPanelSx}>
 					<Select
-						sx={{ mt: 1, pt: 0.5, mb: 1.5, minWidth: '13rem' }}
+						fullWidth
 						size="small"
 						value={language}
 						onChange={handleLanguageChange}
+						sx={profileFullWidthFieldSx}
 					>
 						{languages.map((lang) => (
 							<MenuItem key={lang.code} value={lang.code}>
-								<Box sx={{ mb: 0.8, ml: 0, display: 'flex', alignItems: 'center' }}>
+								<Box sx={{ display: 'flex', alignItems: 'center' }}>
 									<Avatar
-										sx={{ mr: 0.5, py: 0, width: 30, height: 20, border: 0.5, borderRadius: 0 }}
+										sx={{ mr: 1, width: 28, height: 18, border: 0.5, borderRadius: 0 }}
 										alt="language_flag"
 										src={`/upload/locales/${lang.img}`}
 									/>
@@ -78,17 +81,33 @@ const ProfileLanguage = ({ lng }: { lng: string | undefined }): JSX.Element => {
 							</MenuItem>
 						))}
 					</Select>
-					<Box>
-						<CustomCancelButton onClick={handleCancel} />
-						<CustomSuccessButton onClick={handleSaveLanguage} buttonText={t('btnText.accept')} />
-					</Box>
-				</>
+					<ProfileEditActions
+						onCancel={handleCancel}
+						onSave={() => void handleSaveLanguage()}
+						saveText={t('btnText.accept')}
+					/>
+				</Box>
 			) : (
-				<Box sx={{ textAlign: 'left', mx: 2, mt: 1, mb: 2 }}>
-					<CustomButton onClick={handleEditLanguage} buttonText={t('changeLanguage')} />
+				<Box sx={profileItemRowSx}>
+					<Box sx={{ flex: 1, minWidth: 0 }}>
+						<Typography sx={profileItemLabelSx}>{t('currentSiteLanguage')}</Typography>
+						<Box sx={profileItemValueRowSx}>
+							<Avatar
+								sx={{ width: 28, height: 18, border: 0.5, borderRadius: 0 }}
+								alt="language_flag"
+								src={`/upload/locales/${currentLng?.img || ''}`}
+							/>
+							<Typography sx={profileItemValueSx}>{currentLng?.name || lng || '—'}</Typography>
+						</Box>
+					</Box>
+					<CustomButton
+						onClick={handleEditLanguage}
+						buttonText={t('changeLanguage')}
+						sx={profileItemActionSx}
+					/>
 				</Box>
 			)}
-		</>
+		</Box>
 	);
 };
 
