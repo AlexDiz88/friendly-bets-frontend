@@ -1,10 +1,9 @@
 import {
 	Avatar,
 	Box,
+	Button,
 	CircularProgress,
 	Dialog,
-	DialogContent,
-	DialogTitle,
 	Typography,
 	useMediaQuery,
 	useTheme,
@@ -26,6 +25,21 @@ import { addOpenedBet } from '../../features/bets/betsSlice';
 import { ExternalMatch } from '../../features/football-data/types/ExternalMatch';
 import { matchSideToDisplayTeam } from '../../features/football-data/externalMatchDisplay';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../utils/teamDisplay';
+import {
+	oddsPickDialogBodySx,
+	oddsPickDialogCloseBtnSx,
+	oddsPickDialogHeaderSx,
+	oddsPickDialogPaperSx,
+	oddsPickDialogRootSx,
+	oddsPickDialogTeamAvatarSx,
+	oddsPickDialogHomeTeamNameSx,
+	oddsPickDialogAwayTeamNameSx,
+	oddsPickDialogTeamsRowSx,
+	oddsPickDialogTitleRowSx,
+	oddsPickDialogTitleSx,
+	oddsPickDialogVsSx,
+	oddsPickEmptySx,
+} from './oddsPickDialogStyles';
 
 type Props = {
 	open: boolean;
@@ -145,65 +159,72 @@ export default function OddsPickDialog({
 		return t('wc26.oddsPick.oddsLine', {
 			label: selection.displayLabel,
 			odds: selection.clientOdds,
-			bookmaker: selection.bookmaker,
 		});
 	}, [selection, t]);
 
 	return (
 		<>
-			<Dialog open={open} onClose={onClose} fullScreen={fullScreen} maxWidth="sm" fullWidth>
-				<DialogTitle sx={{ pb: 0.5 }}>{t('wc26.oddsPick.title')}</DialogTitle>
-				<DialogContent>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							gap: 1,
-							mb: 1.5,
-							py: 0.5,
-						}}
-					>
-						<Typography variant="body2" sx={{ flex: 1, textAlign: 'right', fontWeight: 600 }}>
-							{resolveTeamDisplayName(homeTeam, t, i18n.language)}
-						</Typography>
-						<Avatar
-							variant="square"
-							src={resolveTeamLogoUrl(homeTeam)}
-							sx={{ width: 28, height: 28 }}
-						/>
-						<Typography variant="body2" sx={{ px: 0.5, fontWeight: 700 }}>
-							—
-						</Typography>
-						<Avatar
-							variant="square"
-							src={resolveTeamLogoUrl(awayTeam)}
-							sx={{ width: 28, height: 28 }}
-						/>
-						<Typography variant="body2" sx={{ flex: 1, fontWeight: 600 }}>
-							{resolveTeamDisplayName(awayTeam, t, i18n.language)}
-						</Typography>
-					</Box>
-					{loading ? (
-						<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-							<CircularProgress size={28} />
+			<Dialog
+				open={open}
+				onClose={onClose}
+				fullScreen={fullScreen}
+				maxWidth="sm"
+				fullWidth
+				PaperProps={{ sx: oddsPickDialogPaperSx(fullScreen) }}
+			>
+				<Box sx={oddsPickDialogRootSx}>
+					<Box sx={oddsPickDialogHeaderSx}>
+						<Box sx={oddsPickDialogTitleRowSx}>
+							<Typography component="h2" sx={oddsPickDialogTitleSx}>
+								{t('wc26.oddsPick.title')}
+							</Typography>
+							<Button onClick={onClose} sx={oddsPickDialogCloseBtnSx}>
+								{t('close')}
+							</Button>
 						</Box>
-					) : markets && markets.marketGroups.length > 0 ? (
-						markets.marketGroups.map((group) => (
-							<OddsMarketGroupAccordion
-								key={group.groupKey}
-								group={group}
-								bookmakers={markets.bookmakers}
-								displayMode="best"
-								selectable
-								onSelect={handleSelect}
+						<Box sx={oddsPickDialogTeamsRowSx}>
+							<Typography sx={oddsPickDialogHomeTeamNameSx}>
+								{resolveTeamDisplayName(homeTeam, t, i18n.language)}
+							</Typography>
+							<Avatar
+								variant="square"
+								src={resolveTeamLogoUrl(homeTeam)}
+								sx={oddsPickDialogTeamAvatarSx}
 							/>
-						))
-					) : (
-						<Typography variant="body2" color="text.secondary">
-							{t('wc26.oddsPick.noMarkets')}
-						</Typography>
-					)}
-				</DialogContent>
+							<Typography sx={oddsPickDialogVsSx}>—</Typography>
+							<Avatar
+								variant="square"
+								src={resolveTeamLogoUrl(awayTeam)}
+								sx={oddsPickDialogTeamAvatarSx}
+							/>
+							<Typography sx={oddsPickDialogAwayTeamNameSx}>
+								{resolveTeamDisplayName(awayTeam, t, i18n.language)}
+							</Typography>
+						</Box>
+					</Box>
+
+					<Box sx={oddsPickDialogBodySx}>
+						{loading ? (
+							<Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+								<CircularProgress size={32} sx={{ color: '#9de8c4' }} />
+							</Box>
+						) : markets && markets.marketGroups.length > 0 ? (
+							markets.marketGroups.map((group) => (
+								<OddsMarketGroupAccordion
+									key={group.groupKey}
+									group={group}
+									bookmakers={markets.bookmakers}
+									displayMode="best"
+									pickMode
+									selectable
+									onSelect={handleSelect}
+								/>
+							))
+						) : (
+							<Typography sx={oddsPickEmptySx}>{t('wc26.oddsPick.noMarkets')}</Typography>
+						)}
+					</Box>
+				</Box>
 			</Dialog>
 
 			<CustomCalendarDialog
@@ -214,7 +235,7 @@ export default function OddsPickDialog({
 				helperText={t('wc26.oddsPick.confirmHelper')}
 				summaryComponent={
 					confirmHelper ? (
-						<Typography variant="body2" sx={{ mt: 1 }}>
+						<Typography variant="body2" sx={{ mt: 1, fontWeight: 600 }}>
 							{confirmHelper}
 						</Typography>
 					) : undefined

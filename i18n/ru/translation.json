@@ -749,7 +749,7 @@
 			"bestOdds": "Кэф",
 			"confirmTitle": "Подтвердите ставку",
 			"confirmHelper": "После подтверждения кэф и исход зафиксированы и не изменятся.",
-			"oddsLine": "{{odds}} · {{bookmaker}}",
+			"oddsLine": "{{label}} — {{odds}}",
 			"betChip": "{{title}} @ {{odds}}",
 			"success": "Ставка принята",
 			"noMarkets": "Кэфы для этого матча пока недоступны"

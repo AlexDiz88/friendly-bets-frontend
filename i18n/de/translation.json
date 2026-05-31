@@ -749,7 +749,7 @@
 			"bestOdds": "Quote",
 			"confirmTitle": "Wette bestätigen",
 			"confirmHelper": "Nach Bestätigung sind Quote und Auswahl fixiert.",
-			"oddsLine": "{{odds}} · {{bookmaker}}",
+			"oddsLine": "{{label}} — {{odds}}",
 			"betChip": "{{title}} @ {{odds}}",
 			"success": "Wette angenommen",
 			"noMarkets": "Quoten für dieses Spiel sind noch nicht verfügbar"

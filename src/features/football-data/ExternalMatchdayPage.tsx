@@ -343,8 +343,34 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		);
 	}, [calendarNodes, selectedLeague, betMatchDay]);
 
-	const isBettingCalendarMissing =
-		calendarsReady && Boolean(selectedLeague) && !calendarMatch;
+	const matchesLoading = competitionInfoLoading || loading;
+
+	const isMatchdayAligned = useMemo(() => {
+		if (effectiveMatchday !== matchday) {
+			return false;
+		}
+		if (matchdayTouched) {
+			return true;
+		}
+		if (competitionInfoLoading || !competitionInfo) {
+			return false;
+		}
+		return matchday === competitionInfo.currentMatchday;
+	}, [
+		effectiveMatchday,
+		matchday,
+		matchdayTouched,
+		competitionInfoLoading,
+		competitionInfo,
+	]);
+
+	const isExternalPageReady =
+		calendarsReady &&
+		!matchesLoading &&
+		Boolean(selectedLeague) &&
+		isMatchdayAligned;
+
+	const isBettingCalendarMissing = isExternalPageReady && !calendarMatch;
 
 	const isMatchOpenForBetting = useCallback((match: ExternalMatch): boolean => {
 		if (!match.id || !match.homeTeamId || !match.awayTeamId) {
@@ -408,8 +434,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			dispatch,
 		]
 	);
-
-	const matchesLoading = competitionInfoLoading || loading;
 
 	const reloadMatchday = useCallback(async (): Promise<void> => {
 		const page = await getMatchdayFromCache(
@@ -557,11 +581,16 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		setMatchdayTouched(false);
 		setSelectedLeagueCode(e.target.value);
 		setData(null);
+		setCompetitionInfo(null);
+		setCompetitionInfoLoading(true);
+		setLoading(true);
 	};
 
 	const handleMatchdayChange = (md: number): void => {
 		setMatchdayTouched(true);
 		setMatchday(md);
+		setData(null);
+		setLoading(true);
 	};
 
 	const handleSyncFromApi = async (): Promise<void> => {
@@ -907,12 +936,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							value={effectiveMatchday}
 							slots={matchdaySlots}
 							onChange={(md) => handleMatchdayChange(md)}
-							disabled={competitionInfoLoading}
+							disabled={!isExternalPageReady}
 						/>
 					</Box>
 				</Box>
 
-				{!matchesLoading && data?.sync && syncChip && (
+				{isExternalPageReady && data?.sync && syncChip && (
 					<Box
 						sx={{
 							display: 'flex',
@@ -1013,13 +1042,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				/>
 			) : null}
 
-			{matchesLoading && (
+			{!isExternalPageReady && (
 				<Box sx={isWcLeague ? externalMatchWcLoadingAreaSx : { display: 'flex', justifyContent: 'center', py: 3 }}>
 					<CircularProgress size={isWcLeague ? 28 : 40} />
 				</Box>
 			)}
 
-			{!matchesLoading && sortedMatches.length === 0 && (
+			{isExternalPageReady && sortedMatches.length === 0 && (
 				<Typography
 					textAlign="center"
 					color={isWcLeague ? undefined : 'text.secondary'}
@@ -1033,7 +1062,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				</Typography>
 			)}
 
-			{!matchesLoading && sortedMatches.length > 0 && isWcLeague && (
+			{isExternalPageReady && sortedMatches.length > 0 && isWcLeague && (
 				<Box sx={[externalMatchWcMatchListSx, { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }] as SxProps<Theme>}>
 					<Box sx={externalMatchWcMatchPanelSx}>
 						<WcExternalSlotPanel
@@ -1070,7 +1099,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				</Box>
 			)}
 
-			{!matchesLoading && sortedMatches.length > 0 && !isWcLeague && (
+			{isExternalPageReady && sortedMatches.length > 0 && !isWcLeague && (
 				<Box
 					sx={{
 						borderRadius: 2,

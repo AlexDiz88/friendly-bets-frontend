@@ -756,7 +756,7 @@
 			"bestOdds": "Odds",
 			"confirmTitle": "Confirm your bet",
 			"confirmHelper": "After confirmation, odds and selection are locked.",
-			"oddsLine": "{{odds}} · {{bookmaker}}",
+			"oddsLine": "{{label}} — {{odds}}",
 			"betChip": "{{title}} @ {{odds}}",
 			"success": "Bet accepted",
 			"noMarkets": "Odds for this match are not available yet"

@@ -16,6 +16,15 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTranslation } from 'react-i18next';
 import { OddsMarketGroup } from './oddsTypes';
 import BetTitle from '../../features/bets/types/BetTitle';
+import {
+	oddsPickAccordionDetailsSx,
+	oddsPickAccordionSummarySx,
+	oddsPickAccordionSx,
+	oddsPickRowLabelSx,
+	oddsPickRowLineSx,
+	oddsPickRowOddsSx,
+	oddsPickRowSx,
+} from './oddsPickDialogStyles';
 
 const LINE_COLUMN_CATEGORIES = new Set([
 	'HANDICAP',
@@ -38,6 +47,7 @@ type Props = {
 	group: OddsMarketGroup;
 	bookmakers: string[];
 	displayMode?: 'bookmakers' | 'best';
+	pickMode?: boolean;
 	selectable?: boolean;
 	selectedKey?: string | null;
 	selectedBookmaker?: string | null;
@@ -49,6 +59,7 @@ export default function OddsMarketGroupAccordion({
 	group,
 	bookmakers,
 	displayMode = 'bookmakers',
+	pickMode = false,
 	selectable = false,
 	selectedKey,
 	selectedBookmaker,
@@ -83,6 +94,72 @@ export default function OddsMarketGroupAccordion({
 			betTitle: row.betTitle,
 		});
 	};
+
+	if (pickMode) {
+		return (
+			<Accordion
+				defaultExpanded={!group.collapsedByDefault}
+				disableGutters
+				sx={oddsPickAccordionSx}
+			>
+				<AccordionSummary expandIcon={<ExpandMoreIcon />} sx={oddsPickAccordionSummarySx}>
+					<Typography fontWeight={700} fontSize="0.9rem">
+						{title}
+						<Typography
+							component="span"
+							sx={{ ml: 0.75, fontWeight: 600, opacity: 0.75, fontSize: '0.85rem' }}
+						>
+							({group.rows.length})
+						</Typography>
+					</Typography>
+				</AccordionSummary>
+				<AccordionDetails sx={oddsPickAccordionDetailsSx}>
+					{group.rows.map((row) => {
+						const displayOdds = row.bestOdds ?? '—';
+						const clickable =
+							selectable &&
+							useBest &&
+							!disabled &&
+							row.selectionKey &&
+							row.bestBookmaker &&
+							displayOdds !== '—';
+
+						return (
+							<Box
+								key={`${row.line ?? ''}-${row.selectionCode}-${row.selectionKey ?? ''}`}
+								role={clickable ? 'button' : undefined}
+								tabIndex={clickable ? 0 : undefined}
+								onClick={() => handleRowClick(row)}
+								onKeyDown={
+									clickable
+										? (e) => {
+												if (e.key === 'Enter' || e.key === ' ') {
+													e.preventDefault();
+													handleRowClick(row);
+												}
+											}
+										: undefined
+								}
+								sx={oddsPickRowSx(Boolean(clickable))}
+							>
+								{showLine && row.line && (
+									<Typography component="span" sx={oddsPickRowLineSx}>
+										{row.line}
+									</Typography>
+								)}
+								<Typography component="span" sx={oddsPickRowLabelSx}>
+									{row.displayLabel}
+								</Typography>
+								<Typography component="span" sx={oddsPickRowOddsSx}>
+									{displayOdds}
+								</Typography>
+							</Box>
+						);
+					})}
+				</AccordionDetails>
+			</Accordion>
+		);
+	}
 
 	return (
 		<Accordion
@@ -148,21 +225,9 @@ export default function OddsMarketGroupAccordion({
 										<TableCell>{row.displayLabel}</TableCell>
 										{useBest ? (
 											<TableCell align="right">
-												<Box>
-													<Typography component="span" fontWeight={600}>
-														{displayOdds}
-													</Typography>
-													{row.bestBookmaker && displayOdds !== '—' && (
-														<Typography
-															component="span"
-															variant="caption"
-															color="text.secondary"
-															sx={{ ml: 0.5 }}
-														>
-															{row.bestBookmaker}
-														</Typography>
-													)}
-												</Box>
+												<Typography component="span" fontWeight={600}>
+													{displayOdds}
+												</Typography>
 											</TableCell>
 										) : (
 											bookmakers.map((bk) => (
