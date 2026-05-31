@@ -28,47 +28,75 @@ export function matchLeagueCodes(a: string | undefined, b: string | undefined): 
 }
 
 export function matchDaysEqual(a: string, b: string): boolean {
+	const left = a.trim();
+	const right = b.trim();
+	if (left === right) {
+		return true;
+	}
 	return normalizeMatchDayKey(a) === normalizeMatchDayKey(b);
+}
+
+type CalendarMatchdayMatch = { calendar: Calendar; node: LeagueMatchdayNode };
+
+function pickBestCalendarMatchdayMatch(
+	candidates: (CalendarMatchdayMatch & { exact: boolean })[]
+): CalendarMatchdayMatch | null {
+	if (candidates.length === 0) {
+		return null;
+	}
+
+	const exactMatches = candidates.filter((candidate) => candidate.exact);
+	const pool = exactMatches.length > 0 ? exactMatches : candidates;
+
+	let best = pool[0];
+	for (let index = 1; index < pool.length; index += 1) {
+		const candidate = pool[index];
+		const nodeSize = getNodeDefaultBetSize(candidate.node);
+		const bestSize = getNodeDefaultBetSize(best.node);
+		if (nodeSize != null && bestSize == null) {
+			best = candidate;
+			continue;
+		}
+
+		const nodeStart = candidate.calendar.startDate ?? '';
+		const bestStart = best.calendar.startDate ?? '';
+		if (nodeStart > bestStart) {
+			best = candidate;
+		}
+	}
+
+	return { calendar: best.calendar, node: best.node };
 }
 
 export function findLeagueMatchdayInCalendars(
 	calendarNodes: Calendar[],
 	leagueCode: string | undefined,
-	matchDay: string
-): { calendar: Calendar; node: LeagueMatchdayNode } | null {
+	matchDay: string,
+	leagueId?: string
+): CalendarMatchdayMatch | null {
 	if (!leagueCode || !matchDay) {
 		return null;
 	}
 
-	let best: { calendar: Calendar; node: LeagueMatchdayNode } | null = null;
+	const candidates: (CalendarMatchdayMatch & { exact: boolean })[] = [];
 
 	for (const calendar of calendarNodes) {
 		for (const node of calendar.leagueMatchdayNodes ?? []) {
-			if (!matchLeagueCodes(node.leagueCode, leagueCode) || !matchDaysEqual(node.matchDay, matchDay)) {
+			if (leagueId && node.leagueId !== leagueId) {
 				continue;
 			}
-
-			if (!best) {
-				best = { calendar, node };
+			if (!matchLeagueCodes(node.leagueCode, leagueCode)) {
 				continue;
 			}
-
-			const nodeSize = getNodeDefaultBetSize(node);
-			const bestSize = getNodeDefaultBetSize(best.node);
-			if (nodeSize != null && bestSize == null) {
-				best = { calendar, node };
+			const exact = node.matchDay.trim() === matchDay.trim();
+			if (!exact && !matchDaysEqual(node.matchDay, matchDay)) {
 				continue;
 			}
-
-			const nodeStart = calendar.startDate ?? '';
-			const bestStart = best.calendar.startDate ?? '';
-			if (nodeStart > bestStart) {
-				best = { calendar, node };
-			}
+			candidates.push({ calendar, node, exact });
 		}
 	}
 
-	return best;
+	return pickBestCalendarMatchdayMatch(candidates);
 }
 
 export function isFinalMatchday(matchDay: string): boolean {

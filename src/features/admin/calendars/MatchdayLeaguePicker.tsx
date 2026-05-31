@@ -15,6 +15,7 @@ import {
 import { resolveDefaultMatchDay } from '../../../components/utils/matchdaySlots';
 import MatchDayForm from '../../bets/MatchDayForm';
 import League from '../leagues/types/League';
+import { calendarNodeMatchdayTextSx } from './calendarNodeStyles';
 import LeagueMatchdayNode from './types/LeagueMatchdayNode';
 
 interface MatchdayLeaguePickerProps {
@@ -295,9 +296,7 @@ const MatchdayLeaguePicker = ({
 										alt="league_logo"
 										src={pathToLogoImage(lmn.leagueCode)}
 									/>
-									<Typography
-										sx={{ mx: 0.5, fontWeight: 600, fontFamily: "'Exo 2'", color: '#123456' }}
-									>
+									<Typography sx={[{ mx: 0.5 }, calendarNodeMatchdayTextSx]}>
 										{t(`leagueFullName.${lmn.leagueCode}`)} -{' '}
 										{lmn.matchDay === MATCHDAY_TITLE_FINAL
 											? t(`playoffStage.${lmn.matchDay}`)

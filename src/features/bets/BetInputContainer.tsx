@@ -275,9 +275,10 @@ export default function BetInputContainer(): JSX.Element {
 			findLeagueMatchdayInCalendars(
 				calendarNodes,
 				selectedLeague?.leagueCode,
-				matchDay
+				matchDay,
+				selectedLeague?.id
 			),
-		[calendarNodes, selectedLeague?.leagueCode, matchDay]
+		[calendarNodes, selectedLeague?.leagueCode, selectedLeague?.id, matchDay]
 	);
 
 	useEffect(() => {

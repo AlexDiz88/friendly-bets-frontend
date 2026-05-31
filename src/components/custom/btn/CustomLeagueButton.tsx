@@ -26,7 +26,13 @@ const CustomLeagueButton = ({
 			<Button sx={{ py: 1.5 }} onClick={onClick}>
 				<LeagueAvatar
 					leagueCode={league?.leagueCode}
-					sx={{ mx: 1, fontSize: '1rem', fontWeight: 600, fontFamily: "'Exo 2'", color: '#123456' }}
+					sx={{
+						mx: 1,
+						fontSize: '1rem',
+						fontWeight: 600,
+						fontFamily: "'Exo 2'",
+						color: 'text.primary',
+					}}
 				/>
 			</Button>
 		</Box>

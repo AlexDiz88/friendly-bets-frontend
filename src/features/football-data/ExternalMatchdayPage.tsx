@@ -3,6 +3,7 @@ import PaidIcon from '@mui/icons-material/Paid';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
 	Avatar,
+	Alert,
 	Box,
 	Chip,
 	CircularProgress,
@@ -287,6 +288,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [editMatch, setEditMatch] = useState<ExternalMatch | null>(null);
 	const [pickMatch, setPickMatch] = useState<ExternalMatch | null>(null);
 	const [adminOptionsEnabled, setAdminOptionsEnabled] = useState(false);
+	const [calendarsReady, setCalendarsReady] = useState(false);
 
 	const showAdminTools = isAdmin && adminOptionsEnabled;
 
@@ -328,13 +330,34 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		refreshKey: data,
 	});
 
-	const calendarMatch = useMemo(
-		() =>
-			selectedLeague
-				? findLeagueMatchdayInCalendars(calendarNodes, selectedLeague.leagueCode, betMatchDay)
-				: null,
-		[calendarNodes, selectedLeague, betMatchDay]
-	);
+	const calendarMatch = useMemo(() => {
+		if (!selectedLeague) {
+			return null;
+		}
+
+		return findLeagueMatchdayInCalendars(
+			calendarNodes,
+			selectedLeague.leagueCode,
+			betMatchDay,
+			selectedLeague.id
+		);
+	}, [calendarNodes, selectedLeague, betMatchDay]);
+
+	const isBettingCalendarMissing =
+		calendarsReady && Boolean(selectedLeague) && !calendarMatch;
+
+	const isMatchOpenForBetting = useCallback((match: ExternalMatch): boolean => {
+		if (!match.id || !match.homeTeamId || !match.awayTeamId) {
+			return false;
+		}
+		if (!isMatchNotStarted(match.status)) {
+			return false;
+		}
+		if (match.utcDate && new Date(match.utcDate).getTime() <= Date.now()) {
+			return false;
+		}
+		return true;
+	}, []);
 
 	const canUserBetOnMatch = useCallback(
 		(match: ExternalMatch): boolean => {
@@ -344,18 +367,46 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			if (!calendarMatch) {
 				return false;
 			}
-			if (!match.id || !match.homeTeamId || !match.awayTeamId) {
-				return false;
-			}
-			if (!isMatchNotStarted(match.status)) {
-				return false;
-			}
-			if (match.utcDate && new Date(match.utcDate).getTime() <= Date.now()) {
-				return false;
-			}
-			return true;
+			return isMatchOpenForBetting(match);
 		},
-		[user, isSeasonParticipant, selectedLeague?.id, activeSeason?.id, calendarMatch]
+		[
+			user,
+			isSeasonParticipant,
+			selectedLeague?.id,
+			activeSeason?.id,
+			calendarMatch,
+			isMatchOpenForBetting,
+		]
+	);
+
+	const handleMatchPick = useCallback(
+		(match: ExternalMatch): void => {
+			if (!calendarMatch) {
+				dispatch(showErrorSnackbar({ message: 'matchdayNotInCalendar' }));
+				return;
+			}
+			if (!user || !isSeasonParticipant) {
+				dispatch(showErrorSnackbar({ message: 'notSeasonParticipant' }));
+				return;
+			}
+			if (!selectedLeague?.id || !activeSeason?.id) {
+				return;
+			}
+			if (!isMatchOpenForBetting(match)) {
+				dispatch(showErrorSnackbar({ message: 'matchAlreadyStarted' }));
+				return;
+			}
+			setPickMatch(match);
+		},
+		[
+			calendarMatch,
+			user,
+			isSeasonParticipant,
+			selectedLeague?.id,
+			activeSeason?.id,
+			isMatchOpenForBetting,
+			dispatch,
+		]
 	);
 
 	const matchesLoading = competitionInfoLoading || loading;
@@ -377,9 +428,20 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [activeSeason, dispatch]);
 
 	useEffect(() => {
-		if (activeSeason?.id) {
-			void dispatch(getAllSeasonCalendarNodes(activeSeason.id));
+		if (user?.id) {
+			dispatch(getActiveSeason());
 		}
+	}, [user?.id, dispatch]);
+
+	useEffect(() => {
+		if (!activeSeason?.id) {
+			setCalendarsReady(false);
+			return;
+		}
+		setCalendarsReady(false);
+		void dispatch(getAllSeasonCalendarNodes(activeSeason.id)).finally(() => {
+			setCalendarsReady(true);
+		});
 	}, [activeSeason?.id, dispatch]);
 
 	useEffect(() => {
@@ -915,6 +977,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				) : null}
 			</Box>
 
+			{isBettingCalendarMissing ? (
+				<Alert severity="warning" role="alert" sx={{ mx: 0.5, mb: 1, flexShrink: 0 }}>
+					{t('externalMatchBettingUnavailableNoCalendar')}
+				</Alert>
+			) : null}
+
 			<GameResultScoreEditDialog
 				open={editMatch !== null}
 				match={editMatch}
@@ -991,7 +1059,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										userBet={matchBet}
 										isLast={index === sortedMatches.length - 1}
 										clickable={betEnabled}
-										onClick={betEnabled ? () => setPickMatch(match) : undefined}
+										onClick={betEnabled ? () => handleMatchPick(match) : undefined}
 										showAdminEdit={showAdminTools && Boolean(match.id)}
 										adminEditButton={renderWcAdminEditButton(match)}
 									/>
@@ -1038,7 +1106,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						return (
 							<Box
 								key={match.externalMatchId}
-								onClick={betEnabled ? () => setPickMatch(match) : undefined}
+								onClick={betEnabled ? () => handleMatchPick(match) : undefined}
 								sx={{
 									px: 1,
 									py: 0.45,
