@@ -24,6 +24,7 @@ export type OddsApiSyncResult = {
 	oddsDocumentsSaved: number;
 	matchesSkippedStarted: number;
 	mappingFailures: number;
+	teamMappingFailures: number;
 };
 
 /** Принудительная синхронизация событий и кэфов odds-api.io для тура лиги. */

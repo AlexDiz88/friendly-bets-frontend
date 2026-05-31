@@ -9,8 +9,8 @@ export type ExternalSyncIssue = {
 	externalMatchId?: number;
 	homeTeamName?: string;
 	awayTeamName?: string;
-	homeTeamExternalId?: number;
-	awayTeamExternalId?: number;
+	homeTeamExternalId?: string | number;
+	awayTeamExternalId?: string | number;
 	message?: string;
 };
 

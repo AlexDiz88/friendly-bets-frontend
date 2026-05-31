@@ -541,6 +541,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					message: t('externalMatchOddsSyncSuccess', {
 						saved: result.oddsDocumentsSaved,
 						failures: result.mappingFailures,
+						teamFailures: result.teamMappingFailures,
 					}),
 				})
 			);
@@ -619,7 +620,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return data?.sync?.expectedMatchCount ?? 0;
 	}, [isBerlinGroupSlotActive, betMatchDay, data?.sync?.expectedMatchCount]);
 
-	const matchdayNotStarted = useMemo(() => isMatchdayNotStarted(sortedMatches), [sortedMatches]);
+	const matchdayNotStarted = useMemo(
+		() => isMatchdayNotStarted(sortedMatches, data?.sync?.finishedMatchCount ?? 0),
+		[sortedMatches, data?.sync?.finishedMatchCount]
+	);
 
 	const syncChip = useMemo(() => {
 		if (!data?.sync) return null;
