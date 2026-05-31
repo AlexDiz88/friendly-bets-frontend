@@ -1,5 +1,6 @@
 import { AddCircle, DoDisturbOn, RemoveCircle } from '@mui/icons-material';
-import { Avatar, Box, IconButton, Switch, Typography } from '@mui/material';
+import { Avatar, Box, IconButton, Typography } from '@mui/material';
+import CustomSwitch from '../../../components/custom/controls/CustomSwitch';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
@@ -180,7 +181,7 @@ const MatchdayLeaguePicker = ({
 							flexDirection: 'column',
 						}}
 					>
-						<Switch
+						<CustomSwitch
 							checked={isLimitEnabled}
 							onChange={(e) => {
 								const checked = e.target.checked;
@@ -212,7 +213,7 @@ const MatchdayLeaguePicker = ({
 								</IconButton>
 							)}
 						</Box>
-						<Switch
+						<CustomSwitch
 							checked={isBetSizeLimitEnabled}
 							onChange={(e) => {
 								const checked = e.target.checked;

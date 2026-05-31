@@ -1,6 +1,9 @@
 import { Dangerous } from '@mui/icons-material';
-import { Box, Checkbox, IconButton, Switch, TextField, Typography } from '@mui/material';
+import { Box, IconButton, TextField, Typography } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
+import CustomCheckbox from '../../components/custom/controls/CustomCheckbox';
+import CustomSwitch from '../../components/custom/controls/CustomSwitch';
+import { toggleInlineRowSx } from '../../components/custom/controls/customToggleStyles';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -316,14 +319,14 @@ export default function BetInputContainer(): JSX.Element {
 			<Typography sx={{ textAlign: 'center', borderBottom: 2, pb: 1, mx: 2 }}>
 				{t('addBets')}
 			</Typography>
-			<Typography sx={{ textAlign: 'left', mx: 1, mt: 1, fontWeight: '600' }}>
-				{t('emptyBet')}?
-				<Switch
+			<Box sx={[toggleInlineRowSx, { mx: 1, mt: 1 }] as SxProps<Theme>}>
+				<Typography sx={{ fontWeight: '600' }}>{t('emptyBet')}?</Typography>
+				<CustomSwitch
 					checked={isEmptyBet}
 					onChange={handleEmptyBet}
 					inputProps={{ 'aria-label': 'controlled' }}
 				/>
-			</Typography>
+			</Box>
 			<BetInputPlayer defaultValue={undefined} onUserSelect={handleUserSelection} />
 			{selectedUser && (
 				<Box>
@@ -368,13 +371,14 @@ export default function BetInputContainer(): JSX.Element {
 									/>
 								</IconButton>
 							</Box>
-							<Checkbox
-								sx={{ pt: 0.5 }}
-								checked={selectedBetTitle.isNot}
-								onChange={handleIsNotChange}
-								inputProps={{ 'aria-label': 'controlled' }}
-							/>
-							{t('not')}
+							<Box component="span" sx={toggleInlineRowSx}>
+								<CustomCheckbox
+									checked={selectedBetTitle.isNot}
+									onChange={handleIsNotChange}
+									inputProps={{ 'aria-label': 'controlled' }}
+								/>
+								<Typography component="span">{t('not')}</Typography>
+							</Box>
 						</Box>
 					)}
 					{selectedBetTitle && (

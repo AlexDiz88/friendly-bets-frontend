@@ -1,12 +1,15 @@
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import {
 	Box,
 	FormControlLabel,
 	MenuItem,
 	Select,
 	SelectChangeEvent,
-	Switch,
 	Typography,
 } from '@mui/material';
+import CustomSwitch from '../custom/controls/CustomSwitch';
+import { toggleFormControlLabelSx } from '../custom/controls/customToggleStyles';
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
@@ -41,6 +44,19 @@ function ThemePreferenceLabel({ preference }: { preference: ThemePreference }): 
 		<Box sx={profileItemValueRowSx}>
 			<Icon fontSize="small" color="action" aria-hidden />
 			<Typography sx={profileItemValueSx}>{t(themePreferenceLabelKey(preference))}</Typography>
+		</Box>
+	);
+}
+
+function HeaderToggleVisibleLabel({ visible }: { visible: boolean }): JSX.Element {
+	return (
+		<Box sx={profileItemValueRowSx}>
+			{visible ? (
+				<CheckRoundedIcon fontSize="small" sx={{ color: 'success.main' }} aria-hidden />
+			) : (
+				<CloseRoundedIcon fontSize="small" sx={{ color: 'error.main' }} aria-hidden />
+			)}
+			<Typography sx={profileItemValueSx}>{t(visible ? 'yes' : 'no')}</Typography>
 		</Box>
 	);
 }
@@ -120,15 +136,15 @@ export default function ProfileTheme({
 						})}
 					</Select>
 					<FormControlLabel
-						sx={{ m: 0, alignItems: 'flex-start' }}
+						sx={toggleFormControlLabelSx}
 						control={
-							<Switch
+							<CustomSwitch
 								checked={headerToggleVisible}
 								onChange={(_, checked) => setHeaderToggleVisible(checked)}
 							/>
 						}
 						label={
-							<Typography sx={{ fontSize: '0.875rem', lineHeight: 1.45, pt: 0.75 }}>
+							<Typography sx={{ fontSize: '0.875rem', lineHeight: 1.4 }}>
 								{t('showThemeToggleInHeader')}
 							</Typography>
 						}
@@ -157,9 +173,7 @@ export default function ProfileTheme({
 						>
 							{t('showThemeToggleInHeader')}
 						</Typography>
-						<Typography sx={profileItemValueSx}>
-							{showThemeToggle ?? true ? t('yes') : t('no')}
-						</Typography>
+						<HeaderToggleVisibleLabel visible={showThemeToggle ?? true} />
 					</Box>
 					<CustomButton
 						onClick={handleEditTheme}

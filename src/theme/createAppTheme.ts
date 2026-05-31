@@ -1,4 +1,8 @@
 import { createTheme, type Theme, type ThemeOptions } from '@mui/material/styles';
+import {
+	getMuiCheckboxStyleOverrides,
+	getMuiSwitchStyleOverrides,
+} from '../components/custom/controls/customToggleStyles';
 
 export type AppThemeMode = 'light' | 'dark';
 
@@ -9,9 +13,22 @@ const sharedTypography: ThemeOptions['typography'] = {
 	},
 };
 
+function getToggleOverrides(): Pick<
+	NonNullable<import('@mui/material/styles').ThemeOptions['components']>,
+	'MuiSwitch' | 'MuiCheckbox'
+> {
+	return {
+		MuiSwitch: getMuiSwitchStyleOverrides(),
+		MuiCheckbox: getMuiCheckboxStyleOverrides(),
+	};
+}
+
 function getComponentOverrides(mode: AppThemeMode): ThemeOptions['components'] {
+	const toggleOverrides = getToggleOverrides();
+
 	if (mode === 'light') {
 		return {
+			...toggleOverrides,
 			MuiAccordion: {
 				styleOverrides: {
 					root: {
@@ -88,6 +105,7 @@ function getComponentOverrides(mode: AppThemeMode): ThemeOptions['components'] {
 	}
 
 	return {
+		...toggleOverrides,
 		MuiAccordion: {
 			styleOverrides: {
 				root: {

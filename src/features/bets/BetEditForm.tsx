@@ -1,7 +1,6 @@
 import { Dangerous } from '@mui/icons-material';
 import {
 	Box,
-	Checkbox,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -17,6 +16,8 @@ import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
+import CustomCheckbox from '../../components/custom/controls/CustomCheckbox';
+import { toggleInlineRowSx } from '../../components/custom/controls/customToggleStyles';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 import {
@@ -285,13 +286,14 @@ export default function BetEditForm({
 							<Dangerous color="error" sx={{ mt: -1.75, ml: -1.5, fontSize: '3rem' }} />
 						</IconButton>
 					</Box>
-					<Checkbox
-						sx={{ pt: 0.5 }}
-						checked={updatedBetTitle?.isNot ?? false}
-						onChange={handleIsNotChange}
-						inputProps={{ 'aria-label': 'controlled' }}
-					/>
-					{t('not')}
+					<Box component="span" sx={toggleInlineRowSx}>
+						<CustomCheckbox
+							checked={updatedBetTitle?.isNot ?? false}
+							onChange={handleIsNotChange}
+							inputProps={{ 'aria-label': 'controlled' }}
+						/>
+						<Typography component="span">{t('not')}</Typography>
+					</Box>
 				</Box>
 			)}
 

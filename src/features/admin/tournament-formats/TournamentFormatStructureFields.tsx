@@ -5,10 +5,11 @@ import {
 	IconButton,
 	MenuItem,
 	Select,
-	Switch,
 	TextField,
 	Typography,
 } from '@mui/material';
+import CustomSwitch from '../../../components/custom/controls/CustomSwitch';
+import { toggleFormControlLabelSx } from '../../../components/custom/controls/customToggleStyles';
 import { t } from 'i18next';
 import CustomButton from '../../../components/custom/btn/CustomButton';
 import { PLAYOFF_STAGE_OPTIONS, WC_FORMAT_CODE } from './tournamentFormatStructureUtils';
@@ -78,8 +79,9 @@ export default function TournamentFormatStructureFields({
 			{!isWc && (
 				<>
 					<FormControlLabel
+						sx={toggleFormControlLabelSx}
 						control={
-							<Switch
+							<CustomSwitch
 								checked={useRegular}
 								disabled={disabled}
 								onChange={(e) => {
@@ -109,8 +111,9 @@ export default function TournamentFormatStructureFields({
 			)}
 
 			<FormControlLabel
+				sx={toggleFormControlLabelSx}
 				control={
-					<Switch
+					<CustomSwitch
 						checked={useGroup}
 						disabled={disabled || isWc}
 						onChange={(e) => {
@@ -137,8 +140,9 @@ export default function TournamentFormatStructureFields({
 						sx={{ mb: 0.5 }}
 					/>
 					<FormControlLabel
+						sx={toggleFormControlLabelSx}
 						control={
-							<Switch
+							<CustomSwitch
 								checked={groupSplitSlots}
 								disabled={disabled}
 								onChange={(e) => onGroupSplitSlotsChange(e.target.checked)}
@@ -179,8 +183,9 @@ export default function TournamentFormatStructureFields({
 			)}
 
 			<FormControlLabel
+				sx={toggleFormControlLabelSx}
 				control={
-					<Switch
+					<CustomSwitch
 						checked={usePlayoff}
 						disabled={disabled}
 						onChange={(e) => onUsePlayoffChange(e.target.checked)}

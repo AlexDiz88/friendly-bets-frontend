@@ -7,9 +7,11 @@ import {
 	MenuItem,
 	Select,
 	SelectChangeEvent,
-	Switch,
 	TextField,
 } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
+import CustomSwitch from '../../../components/custom/controls/CustomSwitch';
+import { toggleFormControlLabelSx } from '../../../components/custom/controls/customToggleStyles';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
@@ -159,7 +161,7 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 
 					<FormControlLabel
 						control={
-							<Switch
+							<CustomSwitch
 								checked={draft.dualVerificationEnabled}
 								onChange={(e) =>
 									setDraft({ ...draft, dualVerificationEnabled: e.target.checked })
@@ -167,12 +169,17 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 							/>
 						}
 						label={t('matchResultSyncDualVerification')}
-						sx={{ display: 'flex', justifyContent: 'space-between', ml: 0, mb: 0.5, width: '100%' }}
+						sx={
+							[
+								toggleFormControlLabelSx,
+								{ justifyContent: 'space-between', mb: 0.5, width: '100%' },
+							] as SxProps<Theme>
+						}
 					/>
 
 					<FormControlLabel
 						control={
-							<Switch
+							<CustomSwitch
 								checked={draft.allowFinalizeWithoutSecondary}
 								onChange={(e) =>
 									setDraft({ ...draft, allowFinalizeWithoutSecondary: e.target.checked })
@@ -180,7 +187,12 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 							/>
 						}
 						label={t('matchResultSyncAllowWithoutSecondary')}
-						sx={{ display: 'flex', justifyContent: 'space-between', ml: 0, mb: 1, width: '100%' }}
+						sx={
+							[
+								toggleFormControlLabelSx,
+								{ justifyContent: 'space-between', mb: 1, width: '100%' },
+							] as SxProps<Theme>
+						}
 					/>
 
 					<TextField
@@ -237,7 +249,7 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 
 					<FormControlLabel
 						control={
-							<Switch
+							<CustomSwitch
 								checked={draft.autoSettleOnlyWhenMatchdayCompleted}
 								onChange={(e) =>
 									setDraft({
@@ -248,7 +260,12 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 							/>
 						}
 						label={t('matchResultSyncAutoSettleMatchdayOnly')}
-						sx={{ display: 'flex', justifyContent: 'space-between', ml: 0, mb: 1, width: '100%' }}
+						sx={
+							[
+								toggleFormControlLabelSx,
+								{ justifyContent: 'space-between', mb: 1, width: '100%' },
+							] as SxProps<Theme>
+						}
 					/>
 
 					{draft.envDefaults ? (

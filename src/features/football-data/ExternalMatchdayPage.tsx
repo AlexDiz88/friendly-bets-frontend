@@ -10,10 +10,12 @@ import {
 	IconButton,
 	SelectChangeEvent,
 	Stack,
-	Switch,
 	Tooltip,
 	Typography,
 } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
+import CustomSwitch from '../../components/custom/controls/CustomSwitch';
+import { toggleFormControlLabelSx } from '../../components/custom/controls/customToggleStyles';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -788,13 +790,14 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				{isAdmin ? (
 					<Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%', px: 0.5 }}>
 						<FormControlLabel
-							sx={{
-								mx: 0,
-								mr: 0,
-								'& .MuiFormControlLabel-label': { fontSize: '0.8rem' },
-							}}
+							sx={
+								[
+									toggleFormControlLabelSx,
+									{ '& .MuiFormControlLabel-label': { fontSize: '0.8rem' } },
+								] as SxProps<Theme>
+							}
 							control={
-								<Switch
+								<CustomSwitch
 									size="small"
 									checked={adminOptionsEnabled}
 									onChange={(e) => setAdminOptionsEnabled(e.target.checked)}
