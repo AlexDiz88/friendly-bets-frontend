@@ -27,6 +27,21 @@ function issueTypeLabel(issueType: string | undefined): string {
 	if (issueType === 'EVENT_MAPPING_MISSING') {
 		return t('externalSyncIssuesIssueTypeEventMappingMissing');
 	}
+	if (issueType === 'INVALID_CANONICAL_SCORE') {
+		return t('externalSyncIssuesIssueTypeInvalidScore');
+	}
+	if (issueType === 'SCORE_NOT_STABLE') {
+		return t('externalSyncIssuesIssueTypeScoreNotStable');
+	}
+	if (issueType === 'PROVIDER_SCORE_MISMATCH') {
+		return t('externalSyncIssuesIssueTypeProviderMismatch');
+	}
+	if (issueType === 'PRIMARY_PROVIDER_UNAVAILABLE') {
+		return t('externalSyncIssuesIssueTypePrimaryUnavailable');
+	}
+	if (issueType === 'SECONDARY_PROVIDER_UNAVAILABLE') {
+		return t('externalSyncIssuesIssueTypeSecondaryUnavailable');
+	}
 	return issueType ?? '';
 }
 

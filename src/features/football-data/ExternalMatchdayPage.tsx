@@ -36,6 +36,7 @@ import { getExternalMatchScoreView } from './externalMatchScoreView';
 import GameResultScoreEditDialog from './GameResultScoreEditDialog';
 import {
 	adminCorrectGameResultScore,
+	applyPrimaryApiGameResultScore,
 	gameScoreToAdminBody,
 	settleMatchdayAndRecalculateStats,
 } from './gameResultsAdminApi';
@@ -513,6 +514,28 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		}
 	};
 
+	const handleApplyApiScore = async (): Promise<void> => {
+		if (!editMatch?.id || !activeSeason?.id || !effectiveLeagueCode) {
+			return;
+		}
+		await applyPrimaryApiGameResultScore(editMatch.id);
+		const result = await settleMatchdayAndRecalculateStats({
+			seasonId: activeSeason.id,
+			leagueCode: effectiveLeagueCode,
+			matchday: effectiveMatchday,
+			externalSeason,
+		});
+		await reloadMatchday();
+		dispatch(
+			showSuccessSnackbar({
+				message: t('gameResultApiScoreApplied', {
+					matches: result.matchesSubmitted,
+					bets: result.betsProcessed,
+				}),
+			})
+		);
+	};
+
 	const handleAdminScoreSave = async (score: GameScore): Promise<void> => {
 		if (!editMatch?.id || !activeSeason?.id || !effectiveLeagueCode) {
 			return;
@@ -788,6 +811,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				match={editMatch}
 				onClose={() => setEditMatch(null)}
 				onSave={handleAdminScoreSave}
+				onApplyApiScore={editMatch?.finalized ? handleApplyApiScore : undefined}
 			/>
 
 			{pickMatch && user && activeSeason && selectedLeague && calendarMatch && pickMatch.id ? (

@@ -22,6 +22,17 @@ export interface MatchdaySettleResult {
 	gameweekStatsRecalculated: boolean;
 }
 
+export async function applyPrimaryApiGameResultScore(gameResultId: string): Promise<ExternalMatch> {
+	const result = await apiFetch(apiUrl(`/api/admin/game-results/${gameResultId}/apply-api-score`), {
+		method: 'POST',
+	});
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 export async function adminCorrectGameResultScore(
 	gameResultId: string,
 	body: AdminCorrectGameScoreBody

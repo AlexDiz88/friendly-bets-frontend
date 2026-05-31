@@ -9,6 +9,7 @@ import TeamsManagement from './teams/TeamsManagement';
 import LeagueFormatAssignment from './leagues/LeagueFormatAssignment';
 import SeasonDateAssignment from './seasons/SeasonDateAssignment';
 import TournamentFormatsManagement from './tournament-formats/TournamentFormatsManagement';
+import MatchResultSyncSettingsManagement from './match-result-sync/MatchResultSyncSettingsManagement';
 import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 
 export default function AdminCabinet(): JSX.Element {
@@ -30,6 +31,7 @@ export default function AdminCabinet(): JSX.Element {
 					<SeasonsManagement />
 					<SeasonDateAssignment />
 					<TournamentFormatsManagement />
+					<MatchResultSyncSettingsManagement />
 					<LeagueFormatAssignment />
 					<TeamsManagement />
 					<StatsRecalculating startLoading={handleStartLoading} stopLoading={handleStopLoading} />

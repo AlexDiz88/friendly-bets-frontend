@@ -3,8 +3,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
+import CustomButton from '../../components/custom/btn/CustomButton';
 import ScoreSelector from '../../components/custom/selectors/ScoreSelector';
 import GameScore from '../bets/types/GameScore';
+import { useAppDispatch } from '../../app/hooks';
+import { showErrorSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import { ExternalMatch } from './types/ExternalMatch';
 
 interface GameResultScoreEditDialogProps {
@@ -12,6 +15,7 @@ interface GameResultScoreEditDialogProps {
 	match: ExternalMatch | null;
 	onClose: () => void;
 	onSave: (score: GameScore) => Promise<void>;
+	onApplyApiScore?: () => Promise<void>;
 }
 
 export default function GameResultScoreEditDialog({
@@ -19,11 +23,14 @@ export default function GameResultScoreEditDialog({
 	match,
 	onClose,
 	onSave,
+	onApplyApiScore,
 }: GameResultScoreEditDialogProps): JSX.Element {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 	const [scoreValid, setScoreValid] = useState(false);
 	const [pendingScore, setPendingScore] = useState<GameScore | null>(null);
 	const [saving, setSaving] = useState(false);
+	const [applyingApi, setApplyingApi] = useState(false);
 
 	const handleSave = async (): Promise<void> => {
 		if (!pendingScore?.fullTime || !scoreValid) {
@@ -35,6 +42,25 @@ export default function GameResultScoreEditDialog({
 			onClose();
 		} finally {
 			setSaving(false);
+		}
+	};
+
+	const handleApplyApi = async (): Promise<void> => {
+		if (!onApplyApiScore) {
+			return;
+		}
+		setApplyingApi(true);
+		try {
+			await onApplyApiScore();
+			onClose();
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : t('gameResultApplyApiScoreError'),
+				})
+			);
+		} finally {
+			setApplyingApi(false);
 		}
 	};
 
@@ -55,9 +81,17 @@ export default function GameResultScoreEditDialog({
 				<CustomSuccessButton
 					buttonText={t('btnText.save')}
 					onClick={() => void handleSave()}
-					disabled={!scoreValid || saving}
+					disabled={!scoreValid || saving || applyingApi}
 					sx={{ mt: 1, width: '100%' }}
 				/>
+				{onApplyApiScore ? (
+					<CustomButton
+						buttonText={t('gameResultApplyApiScore')}
+						onClick={() => void handleApplyApi()}
+						disabled={saving || applyingApi}
+						sx={{ mt: 1, width: '100%' }}
+					/>
+				) : null}
 				<CustomCancelButton buttonText={t('btnText.cancel')} onClick={onClose} sx={{ mt: 1, width: '100%' }} />
 			</DialogContent>
 		</Dialog>
