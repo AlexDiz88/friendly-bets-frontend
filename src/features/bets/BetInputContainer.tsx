@@ -1,5 +1,6 @@
 import { Dangerous } from '@mui/icons-material';
 import { Box, Checkbox, IconButton, Switch, TextField, Typography } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -41,6 +42,11 @@ import BetSummaryInfo from './BetSummaryInfo';
 import MatchDayForm from './MatchDayForm';
 import { resolveDefaultMatchDay } from '../../components/utils/matchdaySlots';
 import { addEmptyBet, addOpenedBet } from './betsSlice';
+import {
+	betInputPageRootSx,
+	betInputSelectedBetSx,
+	betInputTextFieldSx,
+} from './betInputPageStyles';
 import BetTitle from './types/BetTitle';
 
 export default function BetInputContainer(): JSX.Element {
@@ -306,16 +312,7 @@ export default function BetInputContainer(): JSX.Element {
 	}, []);
 
 	return (
-		<Box
-			sx={{
-				m: 1,
-				mb: 10,
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-				minWidth: '15rem',
-			}}
-		>
+		<Box sx={betInputPageRootSx}>
 			<Typography sx={{ textAlign: 'center', borderBottom: 2, pb: 1, mx: 2 }}>
 				{t('addBets')}
 			</Typography>
@@ -361,19 +358,7 @@ export default function BetInputContainer(): JSX.Element {
 					{selectedBetTitle && (
 						<Box sx={{ my: 2, width: '18.2rem' }}>
 							<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-								<Typography
-									sx={{
-										ml: 1,
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-										fontSize: '0.85rem',
-										width: '19rem',
-										height: '2.4rem',
-										border: '1px solid rgba(0, 0, 0, 0.23)',
-										borderRadius: '4px',
-									}}
-								>
+								<Typography sx={betInputSelectedBetSx}>
 									{getFullBetTitle(selectedBetTitle)}
 								</Typography>
 								<IconButton sx={{ p: 0 }} onClick={handleBetCancel}>
@@ -425,6 +410,7 @@ export default function BetInputContainer(): JSX.Element {
 						<Box component="form" autoComplete="off" sx={{ width: '3rem', pt: 0 }}>
 							<TextField
 								size="small"
+								sx={betInputTextFieldSx as SxProps<Theme>}
 								value={selectedEmptyBetSize}
 								onChange={handleEmptyBetSize}
 								inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}

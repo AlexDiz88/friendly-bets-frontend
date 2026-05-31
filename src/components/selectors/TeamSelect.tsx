@@ -1,6 +1,12 @@
 import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useMemo, useState } from 'react';
+import {
+	betInputMenuItemSx,
+	betInputSelectMenuProps,
+	betInputSelectSx,
+} from './betInputFieldStyles';
 import Team from '../../features/admin/teams/types/Team';
 import TeamAvatar from '../custom/avatar/TeamAvatar';
 
@@ -44,17 +50,7 @@ const TeamSelect = ({ label, value, onChange, teams }: TeamSelectProps): JSX.Ele
 		requestAnimationFrame(blurActiveElement);
 	};
 
-	const selectSx = {
-		minWidth: '15rem',
-		mb: 1,
-		'& .MuiOutlinedInput-notchedOutline': {
-			borderColor: 'rgba(0, 0, 0, 0.23)',
-		},
-		'&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-			borderWidth: '1px',
-			borderColor: open ? 'primary.main' : 'rgba(0, 0, 0, 0.23)',
-		},
-	};
+	const teamCount = sortedTeams.length;
 
 	return (
 		<Box sx={{ textAlign: 'left' }}>
@@ -65,12 +61,13 @@ const TeamSelect = ({ label, value, onChange, teams }: TeamSelectProps): JSX.Ele
 				open={open}
 				onOpen={() => setOpen(true)}
 				onClose={handleClose}
-				sx={selectSx}
+				sx={betInputSelectSx as SxProps<Theme>}
 				labelId={`${label}-label`}
 				id={`${label}-select`}
 				value={value}
 				onChange={handleChange}
 				MenuProps={{
+					...betInputSelectMenuProps(teamCount),
 					transitionDuration: 0,
 					disableScrollLock: true,
 					disableAutoFocus: true,
@@ -79,8 +76,12 @@ const TeamSelect = ({ label, value, onChange, teams }: TeamSelectProps): JSX.Ele
 				}}
 			>
 				{sortedTeams.map((team) => (
-					<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={team.id} value={team.title}>
-						<TeamAvatar team={team} sx={{ ml: -1 }} />
+					<MenuItem
+						sx={[betInputMenuItemSx, { mx: 0, minWidth: '14.5rem' }] as SxProps<Theme>}
+						key={team.id}
+						value={team.title}
+					>
+						<TeamAvatar team={team} sx={{ ml: '1px' }} />
 					</MenuItem>
 				))}
 			</Select>

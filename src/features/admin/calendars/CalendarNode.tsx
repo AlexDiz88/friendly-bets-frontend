@@ -1,9 +1,16 @@
 import { DoDisturbOn } from '@mui/icons-material';
 import { Avatar, Box, IconButton, Typography } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
+import { leagueLogoAvatarSx } from '../../../components/custom/avatar/LeagueAvatar';
 import { pathToLogoImage } from '../../../components/utils/imgBase64Converter';
 import { MATCHDAY_TITLE_FINAL } from '../../../constants';
+import {
+	calendarNodeMatchdayTextSx,
+	calendarNodeNoCalendarSx,
+	calendarNodeSx,
+} from './calendarNodeStyles';
 import Calendar from './types/Calendar';
 
 const CalendarNode = ({
@@ -18,16 +25,7 @@ const CalendarNode = ({
 	noCalendar?: boolean;
 }): JSX.Element => {
 	return (
-		<Box
-			sx={{
-				border: '1px solid #123456DB',
-				borderRadius: 2,
-				px: 1.5,
-				py: 0.5,
-				boxShadow: '0 4px 8px #12131BB6',
-				bgcolor: '#0008420E',
-			}}
-		>
+		<Box sx={calendarNodeSx}>
 			{calendar && (
 				<>
 					<Box sx={{ fontWeight: 600, mb: 0.5 }}>
@@ -42,18 +40,13 @@ const CalendarNode = ({
 										<Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
 											<Avatar
 												variant="square"
-												sx={{ width: 27, height: 27 }}
+												sx={
+													[{ width: 27, height: 27 }, leagueLogoAvatarSx] as SxProps<Theme>
+												}
 												alt="league_logo"
 												src={pathToLogoImage(node.leagueCode)}
 											/>
-											<Typography
-												sx={{
-													mx: 0.3,
-													fontWeight: 600,
-													fontFamily: "'Exo 2'",
-													color: '#123456',
-												}}
-											>
+											<Typography sx={calendarNodeMatchdayTextSx}>
 												{node.matchDay === MATCHDAY_TITLE_FINAL
 													? t(`playoffStage.${node.matchDay}`)
 													: node.matchDay}
@@ -76,15 +69,7 @@ const CalendarNode = ({
 			)}
 
 			{!calendar && noCalendar && (
-				<Box
-					sx={{
-						color: 'brown',
-						fontWeight: 600,
-						width: '12rem',
-						py: 0.5,
-						textAlign: 'center',
-					}}
-				>
+				<Box sx={calendarNodeNoCalendarSx}>
 					{t('calendarForLeagueMatchdayNotExist')}
 				</Box>
 			)}

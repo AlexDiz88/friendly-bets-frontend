@@ -1,10 +1,12 @@
 import { Box, TextField, Typography } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import {
 	isAllowedDecimalInput,
 	isAllowedIntegerInput,
 } from '../../components/utils/decimalInput';
+import { betInputTextFieldSx } from './betInputPageStyles';
 import { FALLBACK_DEFAULT_BET_SIZE } from './betSizeDefaults';
 
 export default function BetInputOdds({
@@ -51,6 +53,7 @@ export default function BetInputOdds({
 			<Box component="form" autoComplete="off" sx={{ width: '5rem', pt: 0 }}>
 				<TextField
 					size="small"
+					sx={betInputTextFieldSx as SxProps<Theme>}
 					value={betOdds}
 					onChange={handleBetOdds}
 					inputProps={{
@@ -63,6 +66,7 @@ export default function BetInputOdds({
 			<Box component="form" autoComplete="off" sx={{ width: '3rem', pt: 0 }}>
 				<TextField
 					size="small"
+					sx={betInputTextFieldSx as SxProps<Theme>}
 					value={betSize}
 					onChange={handleBetSize}
 					inputProps={{

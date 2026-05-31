@@ -1,28 +1,44 @@
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import type { SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
+import {
+	customButtonLabelSx,
+	customButtonRootSx,
+	type CustomButtonVariant,
+} from './customButtonStyles';
 
 const CustomCancelButton = ({
 	onClick,
 	buttonVariant = 'contained',
 	buttonText = t('btnText.cancel'),
 	sx,
-	textSize = '0.9rem',
+	textSize = '0.875rem',
+	disabled = false,
 }: {
 	onClick(event: React.MouseEvent<HTMLButtonElement>): void;
-	buttonVariant?: 'text' | 'contained' | 'outlined';
+	buttonVariant?: CustomButtonVariant;
 	buttonText?: string;
-	sx?: {};
+	sx?: SxProps<Theme>;
 	textSize?: string;
+	disabled?: boolean;
 }): JSX.Element => {
 	return (
 		<Button
-			sx={{ height: '2rem', px: 1, mr: 1, ...sx }}
+			disableElevation
+			color="inherit"
+			sx={
+				[
+					customButtonRootSx('error', buttonVariant),
+					{ height: '2.25rem', px: 1.75, mr: 1 },
+					sx,
+				] as SxProps<Theme>
+			}
 			variant={buttonVariant}
-			color="error"
 			onClick={onClick}
+			disabled={disabled}
 		>
-			<Typography variant="button" fontWeight="600" fontSize={textSize} fontFamily="Shantell Sans">
+			<Typography component="span" sx={customButtonLabelSx(textSize)}>
 				{buttonText}
 			</Typography>
 		</Button>

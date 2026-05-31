@@ -6,6 +6,9 @@ import * as api from '../../features/auth/api';
 import CustomButton from '../custom/btn/CustomButton';
 import { showErrorSnackbar, showSuccessSnackbar } from '../custom/snackbar/snackbarSlice';
 
+/** Временно: повторная отправка письма до настройки почты на бэкенде. */
+const SHOW_RESEND_VERIFICATION_EMAIL = false;
+
 export default function ProfileEmailVerification({
 	email,
 	emailIsConfirmed,
@@ -41,16 +44,18 @@ export default function ProfileEmailVerification({
 
 	return (
 		<Box sx={{ width: '100%', maxWidth: 360, mt: 2, mb: 1 }}>
-			<Alert severity="warning" sx={{ textAlign: 'left', mb: 1 }}>
+			<Alert severity="warning" sx={{ textAlign: 'left', mb: SHOW_RESEND_VERIFICATION_EMAIL ? 1 : 0 }}>
 				{t('emailNotConfirmedBanner')}
 			</Alert>
-			<Box sx={{ textAlign: 'center' }}>
-				<CustomButton
-					onClick={() => void handleResend()}
-					buttonText={t('resendVerificationEmail')}
-					disabled={sending || !email}
-				/>
-			</Box>
+			{SHOW_RESEND_VERIFICATION_EMAIL && (
+				<Box sx={{ textAlign: 'center' }}>
+					<CustomButton
+						onClick={() => void handleResend()}
+						buttonText={t('resendVerificationEmail')}
+						disabled={sending || !email}
+					/>
+				</Box>
+			)}
 		</Box>
 	);
 }

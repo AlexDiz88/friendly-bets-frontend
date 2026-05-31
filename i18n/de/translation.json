@@ -95,7 +95,7 @@
 	"verifyEmailSuccess": "E-Mail bestätigt. Sie können sich jetzt anmelden.",
 	"verifyEmailError": "Dieser Link ist ungültig oder abgelaufen.",
 	"signUpCheckEmail": "Registrierung abgeschlossen. Bestätigen Sie Ihre E-Mail über den Link in der Nachricht, dann melden Sie sich an.",
-	"emailNotConfirmedBanner": "E-Mail ist nicht bestätigt. Posteingang prüfen oder Nachricht erneut senden.",
+	"emailNotConfirmedBanner": "E-Mail ist nicht bestätigt. Wenden Sie sich an den Administrator der Website.",
 	"resendVerificationEmail": "Bestätigung erneut senden",
 	"verificationEmailSentIfApplicable": "Falls das Konto existiert und die E-Mail nicht bestätigt ist, wurde eine Nachricht gesendet.",
 	"emailChangeVerificationSent": "An die neue Adresse wurde eine Bestätigungsnachricht gesendet.",

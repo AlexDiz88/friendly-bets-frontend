@@ -13,12 +13,16 @@ export default function BetsPagination({
 	page,
 	totalPages,
 	onPageChange,
+	navigationAriaLabel,
 }: {
 	page: number;
 	totalPages: number;
 	onPageChange: (newPage: number) => void;
+	/** i18n-ключ для aria-label навигации; по умолчанию — завершённые ставки */
+	navigationAriaLabel?: string;
 }): JSX.Element | null {
 	const { t } = useTranslation();
+	const navLabel = navigationAriaLabel ? t(navigationAriaLabel) : t('completedBets');
 
 	if (totalPages <= 1) {
 		return null;
@@ -28,7 +32,7 @@ export default function BetsPagination({
 	const isLast = page >= totalPages;
 
 	return (
-		<Box sx={betsPaginationRootSx} role="navigation" aria-label={t('completedBets')}>
+		<Box sx={betsPaginationRootSx} role="navigation" aria-label={navLabel}>
 			<span>
 				<IconButton
 					aria-label={t('betsPaginationPrev')}

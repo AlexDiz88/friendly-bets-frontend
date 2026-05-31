@@ -95,7 +95,7 @@
 	"verifyEmailSuccess": "Email confirmed. You can sign in now.",
 	"verifyEmailError": "This link is invalid or expired.",
 	"signUpCheckEmail": "Registration complete. Confirm your email using the link we sent, then sign in.",
-	"emailNotConfirmedBanner": "Email is not confirmed. Check your inbox or resend the message.",
+	"emailNotConfirmedBanner": "Email is not confirmed. Please contact the site administrator.",
 	"resendVerificationEmail": "Resend verification email",
 	"verificationEmailSentIfApplicable": "If the account exists and email is not confirmed, a message has been sent.",
 	"emailChangeVerificationSent": "A confirmation message was sent to your new address.",

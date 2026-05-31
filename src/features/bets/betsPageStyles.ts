@@ -5,6 +5,12 @@ import { statsThemePalette } from '../stats/statsPageStyles';
 /** Горизонтальный отступ на мобильных. */
 export const BETS_PAGE_INSET_PX = '1px';
 
+/** Горизонтальный отступ на «Редактирование ставок». */
+export const BETS_EDIT_PAGE_INSET_PX = '0.5px';
+
+/** Layout main px — для компенсации на странице редактирования. */
+const APP_MAIN_HORIZONTAL_PX = '3px';
+
 /** Как на главной — узкая колонка на sm+. */
 export const BETS_DESKTOP_MAX_WIDTH = '25rem';
 
@@ -21,6 +27,20 @@ export const betsPageRootSx: SxProps<Theme> = {
 	boxSizing: 'border-box',
 	maxWidth: { xs: '100%', sm: BETS_DESKTOP_MAX_WIDTH },
 	mx: { xs: 0, sm: 'auto' },
+};
+
+export const betEditPageRootSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'stretch',
+	width: { xs: `calc(100% + 2 * (${APP_MAIN_HORIZONTAL_PX} - ${BETS_EDIT_PAGE_INSET_PX}))`, sm: '100%' },
+	px: BETS_EDIT_PAGE_INSET_PX,
+	boxSizing: 'border-box',
+	maxWidth: { xs: '100%', sm: BETS_DESKTOP_MAX_WIDTH },
+	mx: {
+		xs: `calc(-1 * (${APP_MAIN_HORIZONTAL_PX} - ${BETS_EDIT_PAGE_INSET_PX}))`,
+		sm: 'auto',
+	},
 };
 
 type ConvexPlateStyle = {

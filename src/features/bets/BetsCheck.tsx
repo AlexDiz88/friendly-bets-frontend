@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -19,6 +19,7 @@ import { BET_STATUS_LOST, BET_STATUS_RETURNED, BET_STATUS_WON, BetStatus } from 
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
 import OpenedBetCard from './OpenedBetCard';
+import { betsLeagueFilterTabSx } from './betsPageStyles';
 import { getOpenedBets, setBetResult } from './betsSlice';
 import { selectOpenedBets } from './selectors';
 import Bet from './types/Bet';
@@ -131,57 +132,24 @@ export default function BetsCheck(): JSX.Element {
 										{t('betsCheck')}
 									</Box>
 
-									<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-										<Box sx={{ mb: 1 }}>
+									<Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', mb: 2 }}>
+										<Button
+											color="inherit"
+											sx={betsLeagueFilterTabSx(selectedLeague === t('all'))}
+											onClick={() => handleLeagueChange(t('all'))}
+										>
+											{t('all')}
+										</Button>
+										{activeSeason.leagues?.map((l) => (
 											<Button
-												sx={{
-													borderRadius: 0,
-													borderBottom: selectedLeague === t('all') ? 1 : 0,
-													color: selectedLeague === t('all') ? 'brown' : 'black',
-													fontFamily: 'Exo 2',
-													px: 0,
-													mr: 0.5,
-													fontWeight: selectedLeague === t('all') ? 'bold' : 'normal',
-												}}
-												onClick={() => handleLeagueChange(t('all'))}
+												key={l.leagueCode}
+												color="inherit"
+												sx={betsLeagueFilterTabSx(selectedLeague === l.leagueCode)}
+												onClick={() => handleLeagueChange(l.leagueCode)}
 											>
-												<Typography
-													variant="button"
-													fontWeight="inherit"
-													fontSize="0.9rem"
-													fontFamily="Shantell Sans"
-												>
-													{t('all')}
-												</Typography>
+												{t(`leagueShortName.${l.leagueCode}`)}
 											</Button>
-										</Box>
-										{activeSeason.leagues &&
-											activeSeason.leagues.map((l) => (
-												<Box key={l.id} sx={{ mb: 1 }}>
-													<Button
-														key={l.leagueCode}
-														sx={{
-															borderRadius: 0,
-															borderBottom: selectedLeague === l.leagueCode ? 1 : 0,
-															color: selectedLeague === l.leagueCode ? 'brown' : 'black',
-															fontFamily: 'Exo 2',
-															px: 0,
-															mr: 0.5,
-															fontWeight: selectedLeague === l.leagueCode ? 'bold' : 'normal',
-														}}
-														onClick={() => handleLeagueChange(l.leagueCode)}
-													>
-														<Typography
-															variant="button"
-															fontWeight="inherit"
-															fontSize="0.9rem"
-															fontFamily="Shantell Sans"
-														>
-															{t(`leagueShortName.${l.leagueCode}`)}
-														</Typography>
-													</Button>
-												</Box>
-											))}
+										))}
 									</Box>
 
 									{openedBets.map((bet) => {

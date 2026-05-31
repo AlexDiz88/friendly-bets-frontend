@@ -54,6 +54,13 @@ export function isHeaderNavPageActive(
 		return pathname === '/' || pathname === '';
 	}
 	if (page === t('bets')) {
+		if (
+			pathname === '/bets/check' ||
+			pathname.startsWith('/bets/check/') ||
+			pathname === '/bets/edit'
+		) {
+			return false;
+		}
 		return pathname === '/bets' || pathname.startsWith('/bets/');
 	}
 	const pathByPage: Record<string, string> = {

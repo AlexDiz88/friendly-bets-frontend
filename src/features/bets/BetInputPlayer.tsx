@@ -1,9 +1,15 @@
 import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useMemo, useState } from 'react';
 import { useAppSelector } from '../../app/hooks';
 import UserAvatar from '../../components/custom/avatar/UserAvatar';
 import { sortPlayersForSelect } from '../../components/selectors/sortPlayersForSelect';
+import {
+	betInputPlayerMenuItemSx,
+	betInputPlayerSelectMenuProps,
+	betInputSelectSx,
+} from './betInputPageStyles';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import SimpleUser from '../auth/types/SimpleUser';
 
@@ -37,15 +43,21 @@ export default function BetInputPlayer({
 			<Select
 				autoWidth
 				size="small"
-				sx={{ minWidth: '15rem', mb: 1 }}
+				sx={betInputSelectSx as SxProps<Theme>}
 				labelId="player-username-label"
 				id="player-username-select"
 				value={selectedUsername}
 				onChange={handleSeasonChange}
+				MenuProps={betInputPlayerSelectMenuProps(sortedPlayers.length)}
 			>
 				{sortedPlayers.map((p) => (
 							<MenuItem
-								sx={{ pl: 1.5, pb: 0.7, minWidth: '14.5rem' }}
+								sx={
+									[
+										betInputPlayerMenuItemSx,
+										{ pl: 1.5, pb: 0.7, minWidth: '14.5rem' },
+									] as SxProps<Theme>
+								}
 								key={p.id}
 								value={p.username}
 							>

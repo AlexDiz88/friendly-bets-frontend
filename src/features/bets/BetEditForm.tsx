@@ -12,6 +12,7 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -49,6 +50,7 @@ import Calendar from '../admin/calendars/types/Calendar';
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
+import { betInputSelectedBetSx } from './betInputPageStyles';
 import BetInputOdds from './BetInputOdds';
 import BetInputPlayer from './BetInputPlayer';
 import BetInputTeams from './BetInputTeams';
@@ -270,16 +272,12 @@ export default function BetEditForm({
 				<Box sx={{ my: 2, width: '18.2rem' }}>
 					<Box sx={{ display: 'flex' }}>
 						<Typography
-							sx={{
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-								fontSize: '0.85rem',
-								width: '17rem',
-								height: '2.3rem',
-								border: '1px solid rgba(0, 0, 0, 0.23)',
-								borderRadius: '4px',
-							}}
+							sx={
+								[
+									betInputSelectedBetSx,
+									{ width: '17rem', height: '2.3rem', ml: 0 },
+								] as SxProps<Theme>
+							}
 						>
 							{getFullBetTitle(updatedBetTitle)}
 						</Typography>

@@ -4,6 +4,7 @@ import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
+import { destructiveActionHintSx } from '../../components/custom/btn/customButtonStyles';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 import {
@@ -183,28 +184,31 @@ export default function StatsRecalculating({
 			<Box sx={{ fontSize: 22, fontWeight: 600, mb: 1.5 }}>{t('dbManagement')}</Box>
 			<Box>
 				<CustomButton
-					sx={{ mb: 2, backgroundColor: 'brown' }}
+					sx={{ mb: 2 }}
+					buttonColor="error"
 					onClick={handleRecalculatePlayerStatsDialog}
 					buttonText={t('mainStatsRecalculating')}
 				/>
 			</Box>
 			<Box>
 				<CustomButton
-					sx={{ mb: 2, backgroundColor: 'brown' }}
+					sx={{ mb: 2 }}
+					buttonColor="error"
 					onClick={handleRecalculateTeamStatsDialog}
 					buttonText={t('teamStatsRecalculating')}
 				/>
 			</Box>
 			<Box>
 				<CustomButton
-					sx={{ mb: 2, backgroundColor: 'brown' }}
+					sx={{ mb: 2 }}
+					buttonColor="error"
 					onClick={handleRecalculateBetTitlesStatsDialog}
 					buttonText={t('betTitlesStatsRecalculating')}
 				/>
 			</Box>
 			<Box>
 				<CustomButton
-					sx={{ backgroundColor: 'brown' }}
+					buttonColor="error"
 					onClick={handleRecalculateGameweekStatsDialog}
 					buttonText={t('gameweekStatsRecalculating')}
 				/>
@@ -213,7 +217,7 @@ export default function StatsRecalculating({
 				<DialogContent>
 					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 						{t('mainStatsWillBeRecalculated')}
-						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('thisActionCannotBeCanceled')}</Box>
+						<Box sx={destructiveActionHintSx}>{t('thisActionCannotBeCanceled')}</Box>
 					</Box>
 				</DialogContent>
 				<DialogActions>
@@ -226,7 +230,7 @@ export default function StatsRecalculating({
 				<DialogContent>
 					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 						{t('teamStatsWillBeRecalculated')}
-						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('thisActionCannotBeCanceled')}</Box>
+						<Box sx={destructiveActionHintSx}>{t('thisActionCannotBeCanceled')}</Box>
 					</Box>
 				</DialogContent>
 				<DialogActions>
@@ -239,7 +243,7 @@ export default function StatsRecalculating({
 				<DialogContent>
 					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 						{t('gameweekStatsWillBeRecalculated')}
-						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('thisActionCannotBeCanceled')}</Box>
+						<Box sx={destructiveActionHintSx}>{t('thisActionCannotBeCanceled')}</Box>
 					</Box>
 				</DialogContent>
 				<DialogActions>
@@ -252,7 +256,7 @@ export default function StatsRecalculating({
 				<DialogContent>
 					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 						{t('betTitlesStatsWillBeRecalculated')}
-						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('thisActionCannotBeCanceled')}</Box>
+						<Box sx={destructiveActionHintSx}>{t('thisActionCannotBeCanceled')}</Box>
 					</Box>
 				</DialogContent>
 				<DialogActions>

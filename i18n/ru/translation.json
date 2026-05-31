@@ -95,7 +95,7 @@
 	"verifyEmailSuccess": "Email подтверждён. Можно войти в аккаунт.",
 	"verifyEmailError": "Ссылка недействительна или устарела.",
 	"signUpCheckEmail": "Регистрация завершена. Подтвердите email по ссылке из письма, затем войдите.",
-	"emailNotConfirmedBanner": "Email не подтверждён. Проверьте почту или запросите письмо повторно.",
+	"emailNotConfirmedBanner": "Email не подтвержден. Обратитесь к администратору сайта.",
 	"resendVerificationEmail": "Отправить письмо снова",
 	"verificationEmailSentIfApplicable": "Если аккаунт существует и email не подтверждён, письмо отправлено.",
 	"emailChangeVerificationSent": "На новый адрес отправлено письмо для подтверждения.",

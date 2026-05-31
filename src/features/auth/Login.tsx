@@ -1,15 +1,14 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
 	Box,
-	Button,
 	FormControl,
 	IconButton,
 	InputAdornment,
 	Link,
 	Snackbar,
 	TextField,
-	Typography,
 } from '@mui/material';
+import CustomButton from '../../components/custom/btn/CustomButton';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { t } from 'i18next';
 import { forwardRef, useCallback, useState } from 'react';
@@ -157,24 +156,19 @@ function Login(): JSX.Element {
 							}}
 						/>
 					</Box>
-					<Box sx={{ my: 2 }}>
-						<Button
+					<Box sx={{ my: 2, width: '100%' }}>
+						<CustomButton
 							onClick={handleSubmit}
-							fullWidth
-							sx={{ height: '3rem' }}
-							variant="contained"
-							type="submit"
-							size="large"
-						>
-							<Typography
-								variant="button"
-								fontWeight="600"
-								fontSize="1.2rem"
-								fontFamily="Shantell Sans"
-							>
-								{t('login')}
-							</Typography>
-						</Button>
+							buttonText={t('login')}
+							buttonColor="primary"
+							textSize="1.05rem"
+							sx={{
+								width: '100%',
+								minWidth: '100%',
+								height: '3.35rem',
+								px: 2,
+							}}
+						/>
 					</Box>
 					<Box sx={{ fontSize: 14, textAlign: 'center', mt: 1 }}>
 						<Link href="#/auth/forgot-password">{t('forgotPassword')}</Link>
