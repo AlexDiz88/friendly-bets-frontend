@@ -1,14 +1,4 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import {
-	Box,
-	FormControlLabel,
-	IconButton,
-	MenuItem,
-	Select,
-	Switch,
-	TextField,
-	Typography,
-} from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import CustomButton from '../../../components/custom/btn/CustomButton';
@@ -22,11 +12,14 @@ import { useAppDispatch } from '../../../app/hooks';
 import { ADMIN_PANEL_SX } from '../adminPanelStyles';
 import { createTournamentFormat, getTournamentFormats } from './api';
 import TournamentFormatListItem from './TournamentFormatListItem';
-import TournamentFormat, { NewTournamentFormat, PlayoffStage, RoundRobinStage } from './types/TournamentFormat';
-
-const PLAYOFF_STAGE_OPTIONS = ['1/16', '1/8', '1/4', '1/2', 'third_place', 'final'] as const;
-
-const emptyPlayoffStage = (): PlayoffStage => ({ stage: '1/8', matchdayCount: 2 });
+import TournamentFormatStructureFields from './TournamentFormatStructureFields';
+import {
+	buildStructurePayload,
+	emptyStructureDraft,
+	resizeStructureDraftGroupCount,
+	type TournamentFormatStructureDraft,
+} from './tournamentFormatStructureUtils';
+import TournamentFormat, { NewTournamentFormat } from './types/TournamentFormat';
 
 export default function TournamentFormatsManagement(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -37,12 +30,7 @@ export default function TournamentFormatsManagement(): JSX.Element {
 
 	const [formatCode, setFormatCode] = useState('');
 	const [name, setName] = useState('');
-	const [useRegular, setUseRegular] = useState(false);
-	const [regularCount, setRegularCount] = useState('38');
-	const [useGroup, setUseGroup] = useState(false);
-	const [groupCount, setGroupCount] = useState('8');
-	const [usePlayoff, setUsePlayoff] = useState(false);
-	const [rounds, setRounds] = useState<PlayoffStage[]>([emptyPlayoffStage()]);
+	const [structureDraft, setStructureDraft] = useState<TournamentFormatStructureDraft>(emptyStructureDraft);
 
 	const loadFormats = useCallback(async () => {
 		setLoading(true);
@@ -67,30 +55,14 @@ export default function TournamentFormatsManagement(): JSX.Element {
 	const resetForm = (): void => {
 		setFormatCode('');
 		setName('');
-		setUseRegular(false);
-		setRegularCount('38');
-		setUseGroup(false);
-		setGroupCount('8');
-		setUsePlayoff(false);
-		setRounds([emptyPlayoffStage()]);
+		setStructureDraft(emptyStructureDraft());
 	};
 
-	const buildPayload = (): NewTournamentFormat => {
-		const regularStage: RoundRobinStage | null =
-			useRegular && !useGroup ? { matchdayCount: Number(regularCount) } : null;
-		const groupStage: RoundRobinStage | null =
-			useGroup && !useRegular ? { matchdayCount: Number(groupCount) } : null;
-		const playoff: PlayoffStage[] | null = usePlayoff
-			? rounds.filter((r) => r.stage.trim())
-			: null;
-		return {
-			formatCode: formatCode.trim(),
-			name: name.trim(),
-			regularStage,
-			groupStage,
-			playoff,
-		};
-	};
+	const buildPayload = (): NewTournamentFormat => ({
+		formatCode: formatCode.trim(),
+		name: name.trim(),
+		...buildStructurePayload(structureDraft),
+	});
 
 	const handleSubmit = async (): Promise<void> => {
 		try {
@@ -106,10 +78,6 @@ export default function TournamentFormatsManagement(): JSX.Element {
 				})
 			);
 		}
-	};
-
-	const updateStage = (index: number, field: keyof PlayoffStage, value: string | number): void => {
-		setRounds((prev) => prev.map((r, i) => (i === index ? { ...r, [field]: value } : r)));
 	};
 
 	return (
@@ -142,113 +110,38 @@ export default function TournamentFormatsManagement(): JSX.Element {
 						sx={{ mb: 1 }}
 					/>
 
-					<FormControlLabel
-						control={
-							<Switch
-								checked={useRegular}
-								onChange={(e) => {
-									setUseRegular(e.target.checked);
-									if (e.target.checked) setUseGroup(false);
-								}}
-							/>
+					<TournamentFormatStructureFields
+						useRegular={structureDraft.useRegular}
+						onUseRegularChange={(value) =>
+							setStructureDraft((prev) => ({ ...prev, useRegular: value }))
 						}
-						label={t('tournamentFormatRegularStage')}
-					/>
-					{useRegular && (
-						<TextField
-							fullWidth
-							size="small"
-							type="number"
-							label={t('tournamentFormatMatchdayCount')}
-							value={regularCount}
-							onChange={(e) => setRegularCount(e.target.value)}
-							inputProps={{ min: 1 }}
-							sx={{ mb: 1 }}
-						/>
-					)}
-
-					<FormControlLabel
-						control={
-							<Switch
-								checked={useGroup}
-								onChange={(e) => {
-									setUseGroup(e.target.checked);
-									if (e.target.checked) setUseRegular(false);
-								}}
-							/>
+						regularCount={structureDraft.regularCount}
+						onRegularCountChange={(value) =>
+							setStructureDraft((prev) => ({ ...prev, regularCount: value }))
 						}
-						label={t('tournamentFormatGroupStage')}
-					/>
-					{useGroup && (
-						<TextField
-							fullWidth
-							size="small"
-							type="number"
-							label={t('tournamentFormatMatchdayCount')}
-							value={groupCount}
-							onChange={(e) => setGroupCount(e.target.value)}
-							inputProps={{ min: 1 }}
-							sx={{ mb: 1 }}
-						/>
-					)}
-
-					<FormControlLabel
-						control={
-							<Switch checked={usePlayoff} onChange={(e) => setUsePlayoff(e.target.checked)} />
+						useGroup={structureDraft.useGroup}
+						onUseGroupChange={(value) =>
+							setStructureDraft((prev) => ({ ...prev, useGroup: value }))
 						}
-						label={t('tournamentFormatPlayoff')}
+						groupCount={structureDraft.groupCount}
+						onGroupCountChange={(value) =>
+							setStructureDraft((prev) => resizeStructureDraftGroupCount(prev, value))
+						}
+						groupSplitSlots={structureDraft.groupSplitSlots}
+						onGroupSplitSlotsChange={(value) =>
+							setStructureDraft((prev) => ({ ...prev, groupSplitSlots: value }))
+						}
+						groupSlotsPerRound={structureDraft.groupSlotsPerRound}
+						onGroupSlotsPerRoundChange={(groupSlotsPerRound) =>
+							setStructureDraft((prev) => ({ ...prev, groupSlotsPerRound }))
+						}
+						usePlayoff={structureDraft.usePlayoff}
+						onUsePlayoffChange={(value) =>
+							setStructureDraft((prev) => ({ ...prev, usePlayoff: value }))
+						}
+						rounds={structureDraft.rounds}
+						onRoundsChange={(rounds) => setStructureDraft((prev) => ({ ...prev, rounds }))}
 					/>
-
-					{usePlayoff && (
-						<Box sx={{ mb: 1 }}>
-							<Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-								{t('tournamentFormatPlayoffStages')}
-							</Typography>
-							{rounds.map((round, index) => (
-								<Box
-									key={`round-${index}`}
-									sx={{ display: 'flex', gap: 0.5, mb: 0.5, alignItems: 'center' }}
-								>
-									<Select
-										size="small"
-										value={round.stage}
-										onChange={(e) => updateStage(index, 'stage', e.target.value)}
-										sx={{ flex: 1 }}
-									>
-										{PLAYOFF_STAGE_OPTIONS.map((key) => (
-											<MenuItem key={key} value={key}>
-												{t(`playoffStage.${key}`)}
-											</MenuItem>
-										))}
-									</Select>
-									<Select
-										size="small"
-										value={round.matchdayCount}
-										onChange={(e) =>
-											updateStage(index, 'matchdayCount', Number(e.target.value))
-										}
-										sx={{ width: '5rem' }}
-									>
-										<MenuItem value={1}>1</MenuItem>
-										<MenuItem value={2}>2</MenuItem>
-									</Select>
-									<IconButton
-										size="small"
-										onClick={() => setRounds((prev) => prev.filter((_, i) => i !== index))}
-										disabled={rounds.length <= 1}
-									>
-										<DeleteIcon fontSize="small" />
-									</IconButton>
-								</Box>
-							))}
-							<CustomButton
-								buttonSize="small"
-								buttonVariant="outlined"
-								onClick={() => setRounds((prev) => [...prev, emptyPlayoffStage()])}
-								buttonText={t('tournamentFormatAddStage')}
-							/>
-						</Box>
-					)}
 
 					<Box sx={{ textAlign: 'center', mt: 1 }}>
 						<CustomCancelButton

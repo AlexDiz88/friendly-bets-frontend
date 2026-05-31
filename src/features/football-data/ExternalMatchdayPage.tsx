@@ -598,9 +598,9 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				maxWidth: 430,
 				mx: 'auto',
 				px: 0.5,
-				mt: { xs: -1.5, sm: 5, md: 5 },
-				pt: { md: 1 },
+				mt: { xs: -1.5, sm: 0 },
 				pb: 1,
+				overflowX: 'hidden',
 			}}
 		>
 			<Box
@@ -721,8 +721,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
-						gap: 2,
+						gap: { xs: 0.75, sm: 2 },
 						flexWrap: 'nowrap',
+						minWidth: 0,
+						overflow: 'hidden',
 					}}
 				>
 					<Box sx={{ flex: '1 1 auto', display: 'flex', justifyContent: 'flex-end', minWidth: 0 }}>

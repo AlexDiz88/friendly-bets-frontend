@@ -1,5 +1,5 @@
 import { apiFetch } from '../../../shared/apiClient';
-import TournamentFormat, { NewTournamentFormat } from './types/TournamentFormat';
+import TournamentFormat, { NewTournamentFormat, UpdateTournamentFormat } from './types/TournamentFormat';
 
 function apiUrl(path: string): string {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
@@ -30,20 +30,33 @@ export async function createTournamentFormat(body: NewTournamentFormat): Promise
 	return result.json();
 }
 
-export async function updateTournamentFormatName(
+export async function updateTournamentFormat(
 	id: string,
-	name: string
+	body: UpdateTournamentFormat
 ): Promise<TournamentFormat> {
 	const result = await apiFetch(apiUrl(`/api/tournament-formats/${encodeURIComponent(id)}`), {
 		method: 'PATCH',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ name }),
+		body: JSON.stringify(body),
 	});
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
 	}
 	return result.json();
+}
+
+/** @deprecated use updateTournamentFormat */
+export async function updateTournamentFormatName(
+	id: string,
+	name: string
+): Promise<TournamentFormat> {
+	return updateTournamentFormat(id, {
+		name,
+		regularStage: null,
+		groupStage: null,
+		playoff: null,
+	});
 }
 
 export async function deleteTournamentFormat(id: string): Promise<void> {

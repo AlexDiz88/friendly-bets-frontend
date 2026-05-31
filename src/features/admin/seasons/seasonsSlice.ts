@@ -112,6 +112,12 @@ export const removeTeamFromLeagueInSeason = createAsyncThunk(
 		api.removeTeamFromLeagueInSeason(seasonId, leagueId, teamId)
 );
 
+export const removeLeagueFromSeason = createAsyncThunk(
+	'seasons/removeLeagueFromSeason',
+	async ({ seasonId, leagueId }: { seasonId: string; leagueId: string }) =>
+		api.removeLeagueFromSeason(seasonId, leagueId)
+);
+
 const seasonsSlice = createSlice({
 	name: 'seasons',
 	initialState,
@@ -193,6 +199,14 @@ const seasonsSlice = createSlice({
 				);
 			})
 			.addCase(addLeagueToSeason.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
+			.addCase(removeLeagueFromSeason.fulfilled, (state, action) => {
+				state.seasons = state.seasons.map((season) =>
+					season.id === action.payload.id ? action.payload : season
+				);
+			})
+			.addCase(removeLeagueFromSeason.rejected, (state, action) => {
 				state.error = action.error.message;
 			});
 	},

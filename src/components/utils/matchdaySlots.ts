@@ -1,18 +1,19 @@
-import { t } from 'i18next';
 import type { ExpandedMatchdaySlot } from '../../features/admin/tournament-formats/types/TournamentFormat';
+import { formatSlotIdLabel } from '../matchday/formatSlotLabel';
+import type { MatchdaySlot } from '../matchday/types';
+
+function expandedSlotKind(kind: ExpandedMatchdaySlot['kind']): MatchdaySlot['kind'] {
+	if (kind === 'KNOCKOUT') {
+		return 'KNOCKOUT';
+	}
+	if (kind === 'GROUP') {
+		return 'GROUP';
+	}
+	return 'REGULAR';
+}
 
 export function formatMatchdaySlotLabel(slot: ExpandedMatchdaySlot): string {
-	const display = slot.id;
-	if (slot.kind === 'KNOCKOUT' || display.includes('[')) {
-		const bracket = display.indexOf('[');
-		const playoffStage = bracket >= 0 ? display.substring(0, bracket).trim() : display;
-		const leg = bracket >= 0 ? display.substring(bracket) : '';
-		const key = `playoffStage.${playoffStage}`;
-		const translated = t(key);
-		const stageLabel = translated === key ? playoffStage : translated;
-		return leg ? `${stageLabel} ${leg}` : stageLabel;
-	}
-	return display;
+	return formatSlotIdLabel(slot.id, expandedSlotKind(slot.kind));
 }
 
 export function resolveDefaultMatchDay(

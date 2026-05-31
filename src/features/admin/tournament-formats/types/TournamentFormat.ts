@@ -1,5 +1,7 @@
 export interface RoundRobinStage {
 	matchdayCount: number;
+	splitSlotsPerRound?: boolean;
+	slotsPerRound?: number[] | null;
 }
 
 export interface PlayoffStage {
@@ -28,6 +30,13 @@ export default interface TournamentFormat {
 
 export interface NewTournamentFormat {
 	formatCode: string;
+	name: string;
+	regularStage: RoundRobinStage | null;
+	groupStage: RoundRobinStage | null;
+	playoff: PlayoffStage[] | null;
+}
+
+export interface UpdateTournamentFormat {
 	name: string;
 	regularStage: RoundRobinStage | null;
 	groupStage: RoundRobinStage | null;

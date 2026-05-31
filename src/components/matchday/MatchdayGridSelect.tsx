@@ -1,11 +1,21 @@
-import { MenuItem, Select, SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
+import {
+	MenuItem,
+	Select,
+	SelectChangeEvent,
+	useMediaQuery,
+	useTheme,
+	type SxProps,
+	type Theme,
+} from '@mui/material';
 import { compactMatchdaySelectSx } from '../selectors/compactSelectSx';
 import {
-	filterSelectMenuItemSx,
+	filterSelectGridMenuItemSx,
 	filterSelectMenuProps,
 } from '../selectors/filterSelectStyles';
 import { formatSlotLabel } from './formatSlotLabel';
 import { getGridColumnsForMatchdayCount, MatchdaySlot } from './types';
+
+const GRID_MENU_WIDTH = 'min(22rem, calc(100vw - 1.5rem))';
 
 export interface MatchdayGridSelectProps {
 	value: number;
@@ -24,6 +34,9 @@ export default function MatchdayGridSelect({
 	disabled = false,
 	'aria-label': ariaLabel,
 }: MatchdayGridSelectProps): JSX.Element {
+	const theme = useTheme();
+	const isNarrow = useMediaQuery(theme.breakpoints.down('sm'));
+
 	const resolvedSlots: MatchdaySlot[] =
 		slots && slots.length > 0
 			? slots
@@ -33,7 +46,7 @@ export default function MatchdayGridSelect({
 					kind: 'REGULAR' as const,
 				}));
 
-	const columns = getGridColumnsForMatchdayCount(resolvedSlots.length);
+	const columns = getGridColumnsForMatchdayCount(resolvedSlots.length, isNarrow);
 	const slotValues = resolvedSlots.map((s) => s.value);
 	const safeValue = slotValues.includes(value) ? value : (resolvedSlots[0]?.value ?? 1);
 	const selectedSlot = resolvedSlots.find((s) => s.value === safeValue);
@@ -57,17 +70,26 @@ export default function MatchdayGridSelect({
 			MenuProps={{
 				...filterSelectMenuProps(
 					resolvedSlots.length,
-					{ width: 'min(100vw - 1.5rem, 22rem)' },
+					{
+						width: GRID_MENU_WIDTH,
+						maxWidth: GRID_MENU_WIDTH,
+						boxSizing: 'border-box',
+						overflow: 'hidden',
+					},
 					{ gridColumns: columns }
 				),
 				MenuListProps: {
 					sx: {
 						display: 'grid',
-						gridTemplateColumns: `repeat(${columns}, minmax(2.75rem, 1fr))`,
+						gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
 						gap: 0.5,
 						p: 1,
 						justifyContent: 'center',
+						width: '100%',
+						maxWidth: '100%',
+						boxSizing: 'border-box',
 						maxHeight: 'none',
+						overflowX: 'hidden',
 						overflowY: 'auto',
 					},
 				},
@@ -79,17 +101,20 @@ export default function MatchdayGridSelect({
 					value={slot.value}
 					sx={
 						[
-							filterSelectMenuItemSx,
+							filterSelectGridMenuItemSx,
 							{
 								minWidth: 0,
 								width: '100%',
+								maxWidth: '100%',
 								minHeight: '2.75rem',
 								justifyContent: 'center',
 								px: 0.25,
-								py: 0.5,
-								fontSize: '0.85rem',
+								py: 1.5,
+								fontSize: isNarrow ? '0.78rem' : '0.85rem',
 								fontWeight: safeValue === slot.value ? 700 : 600,
-								whiteSpace: 'nowrap',
+								whiteSpace: 'normal',
+								lineHeight: 1.2,
+								textAlign: 'center',
 							},
 						] as SxProps<Theme>
 					}

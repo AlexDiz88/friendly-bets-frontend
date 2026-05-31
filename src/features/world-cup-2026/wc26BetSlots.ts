@@ -3,7 +3,7 @@ import { WC26_SCHEDULE, type Wc26Match } from './wc26Schedule';
 import { kickoffToGerman, wc26DateLocale } from './wc26Time';
 import type { Wc26TeamId } from './wc26Teams';
 
-const BERLIN_GROUP_SLOT = /^r([123])-s(\d+)$/;
+const BERLIN_GROUP_SLOT = /^([123]) \[(\d+)\]$/;
 
 /** odds-api / football-data names per FIFA code — mirrors backend Wc26TeamCatalog. */
 const API_NAMES_BY_FIFA: Record<Wc26TeamId, string[]> = {
@@ -84,10 +84,14 @@ export function scheduleIdsForSlot(slotId: string): number[] {
 }
 
 export function betsRequiredForSlot(slotId: string): number {
-	if (slotId.startsWith('r3-')) {
+	const parsed = parseBerlinSlotId(slotId);
+	if (!parsed) {
+		return 1;
+	}
+	if (parsed.round === 3) {
 		return 3;
 	}
-	if (slotId.startsWith('r1-') || slotId.startsWith('r2-')) {
+	if (parsed.round === 1 || parsed.round === 2) {
 		return 2;
 	}
 	return 1;

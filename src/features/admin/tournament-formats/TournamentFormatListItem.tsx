@@ -12,7 +12,14 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
-import { deleteTournamentFormat, updateTournamentFormatName } from './api';
+import { deleteTournamentFormat, updateTournamentFormat } from './api';
+import TournamentFormatStructureFields from './TournamentFormatStructureFields';
+import {
+	buildStructurePayload,
+	resizeStructureDraftGroupCount,
+	structureDraftFromFormat,
+	type TournamentFormatStructureDraft,
+} from './tournamentFormatStructureUtils';
 import TournamentFormat from './types/TournamentFormat';
 
 function TooltipIconButton({
@@ -49,39 +56,61 @@ export default function TournamentFormatListItem({
 	const dispatch = useAppDispatch();
 	const [editing, setEditing] = useState(false);
 	const [nameDraft, setNameDraft] = useState(format.name);
+	const [structureDraft, setStructureDraft] = useState<TournamentFormatStructureDraft>(() =>
+		structureDraftFromFormat(format)
+	);
 	const [busy, setBusy] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
 	const linkedCount = format.linkedLeagueCount ?? 0;
 	const canDelete = linkedCount === 0;
+	const canEditStructure = linkedCount === 0;
 	const formatId = format.id;
 
-	const startEdit = (): void => {
+	const resetDraft = (): void => {
 		setNameDraft(format.name);
+		setStructureDraft(structureDraftFromFormat(format));
+	};
+
+	const startEdit = (): void => {
+		resetDraft();
 		setEditing(true);
 	};
 
 	const cancelEdit = (): void => {
-		setNameDraft(format.name);
+		resetDraft();
 		setEditing(false);
 	};
 
-	const handleSaveName = async (): Promise<void> => {
+	const handleSave = async (): Promise<void> => {
 		const trimmed = nameDraft.trim();
-		if (!trimmed || trimmed === format.name || busy || !formatId) {
-			setEditing(false);
+		if (!trimmed || busy || !formatId) {
 			return;
 		}
 		setBusy(true);
 		try {
-			await updateTournamentFormatName(formatId, trimmed);
-			dispatch(showSuccessSnackbar({ message: t('tournamentFormatNameUpdated') }));
+			if (canEditStructure) {
+				const structure = buildStructurePayload(structureDraft, format.formatCode);
+				await updateTournamentFormat(formatId, {
+					name: trimmed,
+					...structure,
+				});
+				dispatch(showSuccessSnackbar({ message: t('tournamentFormatUpdated') }));
+			} else {
+				await updateTournamentFormat(formatId, {
+					name: trimmed,
+					regularStage: null,
+					groupStage: null,
+					playoff: null,
+				});
+				dispatch(showSuccessSnackbar({ message: t('tournamentFormatNameUpdated') }));
+			}
 			setEditing(false);
 			onChanged();
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
-					message: error instanceof Error ? error.message : t('tournamentFormatNameUpdateError'),
+					message: error instanceof Error ? error.message : t('tournamentFormatUpdateError'),
 				})
 			);
 		} finally {
@@ -124,37 +153,85 @@ export default function TournamentFormatListItem({
 				<Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.5 }}>
 					<Box sx={{ flex: 1, minWidth: 0 }}>
 						{editing ? (
-							<TextField
-								fullWidth
-								size="small"
-								value={nameDraft}
-								onChange={(e) => setNameDraft(e.target.value)}
-								disabled={busy}
-								autoFocus
-								onKeyDown={(e) => {
-									if (e.key === 'Enter') {
-										void handleSaveName();
-									}
-									if (e.key === 'Escape') {
-										cancelEdit();
-									}
-								}}
-							/>
+							<>
+								<TextField
+									fullWidth
+									size="small"
+									label={t('tournamentFormatName')}
+									value={nameDraft}
+									onChange={(e) => setNameDraft(e.target.value)}
+									disabled={busy}
+									autoFocus
+									sx={{ mb: canEditStructure ? 1 : 0 }}
+									onKeyDown={(e) => {
+										if (e.key === 'Enter') {
+											void handleSave();
+										}
+										if (e.key === 'Escape') {
+											cancelEdit();
+										}
+									}}
+								/>
+								{canEditStructure ? (
+									<TournamentFormatStructureFields
+										formatCode={format.formatCode}
+										useRegular={structureDraft.useRegular}
+										onUseRegularChange={(value) =>
+											setStructureDraft((prev) => ({ ...prev, useRegular: value }))
+										}
+										regularCount={structureDraft.regularCount}
+										onRegularCountChange={(value) =>
+											setStructureDraft((prev) => ({ ...prev, regularCount: value }))
+										}
+										useGroup={structureDraft.useGroup}
+										onUseGroupChange={(value) =>
+											setStructureDraft((prev) => ({ ...prev, useGroup: value }))
+										}
+										groupCount={structureDraft.groupCount}
+										onGroupCountChange={(value) =>
+											setStructureDraft((prev) => resizeStructureDraftGroupCount(prev, value))
+										}
+										groupSplitSlots={structureDraft.groupSplitSlots}
+										onGroupSplitSlotsChange={(value) =>
+											setStructureDraft((prev) => ({ ...prev, groupSplitSlots: value }))
+										}
+										groupSlotsPerRound={structureDraft.groupSlotsPerRound}
+										onGroupSlotsPerRoundChange={(groupSlotsPerRound) =>
+											setStructureDraft((prev) => ({ ...prev, groupSlotsPerRound }))
+										}
+										usePlayoff={structureDraft.usePlayoff}
+										onUsePlayoffChange={(value) =>
+											setStructureDraft((prev) => ({ ...prev, usePlayoff: value }))
+										}
+										rounds={structureDraft.rounds}
+										onRoundsChange={(rounds) =>
+											setStructureDraft((prev) => ({ ...prev, rounds }))
+										}
+										disabled={busy}
+									/>
+								) : (
+									<Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+										{t('tournamentFormatStructureEditBlocked', { count: linkedCount })}
+									</Typography>
+								)}
+							</>
 						) : (
-							<Typography fontWeight={700}>{format.name}</Typography>
-						)}
-						<Typography variant="caption" color="text.secondary">
-							{format.formatCode}
-						</Typography>
-						{format.expandedSlots && (
-							<Typography variant="caption" display="block" sx={{ mt: 0.5 }}>
-								{t('tournamentFormatSlotsCount', { count: format.expandedSlots.length })}
-							</Typography>
-						)}
-						{linkedCount > 0 && (
-							<Typography variant="caption" color="text.secondary" display="block">
-								{t('tournamentFormatLinkedLeagues', { count: linkedCount })}
-							</Typography>
+							<>
+								<Typography fontWeight={700}>{format.name}</Typography>
+								<Typography variant="caption" color="text.secondary">
+									{format.formatCode}
+								</Typography>
+								{format.expandedSlots && (
+									<Typography variant="caption" display="block" sx={{ mt: 0.5 }}>
+										{t('tournamentFormatSlotsCount', { count: format.expandedSlots.length })}
+									</Typography>
+								)}
+								{linkedCount > 0 && (
+									<Typography variant="caption" color="text.secondary" display="block">
+										{t('tournamentFormatLinkedLeagues', { count: linkedCount })}
+									</Typography>
+								)}
+							</>
 						)}
 					</Box>
 					<Box sx={{ display: 'flex', flexShrink: 0 }}>
@@ -164,7 +241,7 @@ export default function TournamentFormatListItem({
 									title={t('btnText.save')}
 									disabled={busy || !nameDraft.trim()}
 									onClick={() => {
-										void handleSaveName();
+										void handleSave();
 									}}
 									color="success"
 								>

@@ -9,6 +9,8 @@ export default interface League {
 	tournamentFormatId?: string;
 	matchdaySlots?: ExpandedMatchdaySlot[];
 	teams: Team[];
+	/** Нет ставок по лиге — можно удалить из сезона. */
+	removable?: boolean;
 }
 
 export type LeagueId = League['id'];

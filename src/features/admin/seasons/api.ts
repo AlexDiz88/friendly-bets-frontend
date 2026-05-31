@@ -241,3 +241,18 @@ export async function removeTeamFromLeagueInSeason(
 	}
 	return result.json();
 }
+
+export async function removeLeagueFromSeason(seasonId: string, leagueId: string): Promise<Season> {
+	let url = `${
+		import.meta.env.VITE_PRODUCT_SERVER || ''
+	}/api/seasons/${seasonId}/leagues/${leagueId}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/seasons/${seasonId}/leagues/${leagueId}`;
+	}
+	const result = await apiFetch(url, { method: 'DELETE' });
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}

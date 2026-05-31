@@ -211,6 +211,18 @@ export const filterSelectMenuItemSx: SxProps<Theme> = (theme) => {
 	};
 };
 
+export const filterSelectGridMenuItemSx: SxProps<Theme> = [
+	filterSelectMenuItemSx,
+	{
+		mx: 0,
+		my: 0,
+		boxSizing: 'border-box',
+		overflow: 'hidden',
+		wordBreak: 'break-word',
+		hyphens: 'auto',
+	},
+];
+
 /** Пункты списка игроков: без бокового mx, padding как у .MuiSelect-select (0.75). */
 export const filterSelectPlayerMenuItemSx: SxProps<Theme> = [
 	filterSelectMenuItemSx,
@@ -240,6 +252,8 @@ export const filterSelectAllAvatarSx: SxProps<Theme> = {
 export type FilterSelectMenuOptions = {
 	/** Сетка (туры): число колонок для расчёта высоты. */
 	gridColumns?: number;
+	/** Горизонталь якоря меню относительно поля (сетка туров — center). */
+	menuAnchorHorizontal?: 'left' | 'center' | 'right';
 };
 
 export function filterSelectPlayerMenuProps(itemCount: number): SelectProps['MenuProps'] {
@@ -266,6 +280,7 @@ export function filterSelectMenuProps(
 	options?: FilterSelectMenuOptions
 ): SelectProps['MenuProps'] {
 	const isGrid = options?.gridColumns != null && options.gridColumns > 0;
+	const anchorHorizontal = options?.menuAnchorHorizontal ?? (isGrid ? 'center' : 'left');
 	const heightSx = filterSelectMenuPaperHeightSx(
 		itemCount,
 		isGrid ? 'grid' : 'list',
@@ -277,9 +292,31 @@ export function filterSelectMenuProps(
 	) as SxProps<Theme>;
 
 	return {
-		anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-		transformOrigin: { vertical: 'top', horizontal: 'left' },
-		marginThreshold: 0,
+		anchorOrigin: { vertical: 'bottom', horizontal: anchorHorizontal },
+		transformOrigin: { vertical: 'top', horizontal: anchorHorizontal },
+		marginThreshold: isGrid ? 12 : 0,
+		...(isGrid
+			? {
+					PopperProps: {
+						modifiers: [
+							{
+								name: 'preventOverflow',
+								enabled: true,
+								options: {
+									altAxis: true,
+									padding: 12,
+									tether: false,
+									rootBoundary: 'viewport',
+								},
+							},
+							{
+								name: 'flip',
+								enabled: false,
+							},
+						],
+					},
+				}
+			: {}),
 		PaperProps: {
 			sx: paperSx,
 		},

@@ -24,6 +24,7 @@ import { addLeagueToSeason, getActiveSeason, getSeasons } from '../seasons/seaso
 import { selectLeagueCodes } from '../seasons/selectors';
 import LeagueCurrentMatchdayAssignInline from './LeagueCurrentMatchdayAssignInline';
 import LeagueFormatAssignInline from './LeagueFormatAssignInline';
+import LeagueRemoveFromSeasonButton from './LeagueRemoveFromSeasonButton';
 
 export default function AddLeagueInSeason({
 	seasonId,
@@ -100,6 +101,15 @@ export default function AddLeagueInSeason({
 								overflow: 'hidden',
 							}}
 						>
+							{l.removable ? (
+								<Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 0.25 }}>
+									<LeagueRemoveFromSeasonButton
+										seasonId={seasonId}
+										league={l}
+										onRemoved={refreshSeasons}
+									/>
+								</Box>
+							) : null}
 							{l.tournamentFormatId && l.matchdaySlots && l.matchdaySlots.length > 0 ? (
 								<LeagueCurrentMatchdayAssignInline league={l} onSaved={refreshSeasons} />
 							) : l.tournamentFormatId ? (

@@ -9,7 +9,12 @@ export function externalSlotsToMatchdaySlots(
 		value: s.value,
 		slotId: s.slotId ?? s.label,
 		label: s.label,
-		kind: s.kind === 'KNOCKOUT' ? 'KNOCKOUT' : 'REGULAR',
+		kind:
+			s.kind === 'KNOCKOUT'
+				? 'KNOCKOUT'
+				: s.kind === 'GROUP'
+					? 'GROUP'
+					: 'REGULAR',
 	}));
 }
 
