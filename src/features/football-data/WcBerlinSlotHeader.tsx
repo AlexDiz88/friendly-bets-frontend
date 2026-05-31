@@ -10,9 +10,13 @@ import { getBerlinSlotMeta } from '../world-cup-2026/wc26BetSlots';
 
 interface WcBerlinSlotHeaderProps {
 	slotId: string;
+	compact?: boolean;
 }
 
-export default function WcBerlinSlotHeader({ slotId }: WcBerlinSlotHeaderProps): JSX.Element | null {
+export default function WcBerlinSlotHeader({
+	slotId,
+	compact = false,
+}: WcBerlinSlotHeaderProps): JSX.Element | null {
 	const { t, i18n } = useTranslation();
 	const meta = getBerlinSlotMeta(slotId, i18n.language);
 
@@ -21,24 +25,28 @@ export default function WcBerlinSlotHeader({ slotId }: WcBerlinSlotHeaderProps):
 	}
 
 	return (
-		<Box sx={{ mb: 1, px: 0.5 }}>
+		<Box sx={{ mb: compact ? 0.35 : 1, px: 0.5 }}>
 			<Typography variant="caption" sx={wc26SectionHeaderSx}>
 				{t('wc26.betSlots.round', { round: meta.round })}
-			</Typography>
-			<Typography variant="caption" sx={{ ...wc26SlotTitleSx, mt: 0.75, mb: 0.25 }}>
+				{' · '}
 				{t('wc26.betSlots.slotTitle', { index: meta.index })}
 			</Typography>
 			{meta.rangeFrom && meta.rangeTo ? (
-				<Typography variant="caption" sx={wc26SlotRangeSx}>
+				<Typography
+					variant="caption"
+					sx={{ ...wc26SlotRangeSx, mt: compact ? 0.25 : 0.5, display: 'block', textAlign: 'center' }}
+				>
 					{t('wc26.betSlots.range', { from: meta.rangeFrom, to: meta.rangeTo })}
 				</Typography>
 			) : null}
-			<Typography variant="caption" sx={{ ...wc26SlotRuleSx, mt: 0.25 }}>
-				{t('wc26.betSlots.betsRule', {
-					bets: meta.betsRequired,
-					matches: meta.matchCount,
-				})}
-			</Typography>
+			{!compact ? (
+				<Typography variant="caption" sx={{ ...wc26SlotRuleSx, mt: 0.25, display: 'block', textAlign: 'center' }}>
+					{t('wc26.betSlots.betsRule', {
+						bets: meta.betsRequired,
+						matches: meta.matchCount,
+					})}
+				</Typography>
+			) : null}
 		</Box>
 	);
 }

@@ -77,14 +77,32 @@ import {
 	ExternalMatch,
 	ExternalMatchdayPage as MatchdayPageData,
 } from './types/ExternalMatch';
-import WcBerlinSlotHeader from './WcBerlinSlotHeader';
 import ExternalMatchWc26Card from './ExternalMatchWc26Card';
+import WcExternalSlotPanel from './WcExternalSlotPanel';
+import { useWcSlotUserBets } from './useWcSlotUserBets';
 import {
+	betsRequiredForSlot,
 	expectedBerlinMatchCount,
 	filterExternalMatchesForBerlinSlot,
 	isBerlinGroupSlot,
 } from '../world-cup-2026/wc26BetSlots';
-import { wc26DividerSx } from '../world-cup-2026/wc26PageStyles';
+import {
+	externalMatchWcEmptyHintSx,
+	externalMatchWcHeaderCompactSx,
+	externalMatchWcHeaderPanelSx,
+	externalMatchWcLoadingAreaSx,
+	externalMatchWcMatchGridSx,
+	externalMatchWcMatchListSx,
+	externalMatchWcMatchPanelSx,
+	externalMatchWcOddsSyncButtonSx,
+	externalMatchWcOverlineSx,
+	externalMatchWcOverlineTextSx,
+	externalMatchWcPageColumnSx,
+	externalMatchWcPageRootSx,
+	externalMatchWcRefreshSyncButtonSx,
+	externalMatchWcSyncCaptionSx,
+	externalMatchWcTitleSx,
+} from './externalMatchWcPageStyles';
 
 const MATCH_ROW_AVATAR = 26;
 
@@ -288,6 +306,27 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		() => isBerlinGroupSlot(betMatchDay),
 		[betMatchDay]
 	);
+
+	const isWcLeague = effectiveLeagueCode === 'WC';
+
+	const slotBetLimit = useMemo(
+		() => (isWcLeague ? betsRequiredForSlot(betMatchDay) : 0),
+		[isWcLeague, betMatchDay]
+	);
+
+	const currentSlotLabel = useMemo(
+		() => matchdaySlots.find((s) => s.value === effectiveMatchday)?.label,
+		[matchdaySlots, effectiveMatchday]
+	);
+
+	const { bets: userSlotBets, betsByMatch, loading: slotBetsLoading } = useWcSlotUserBets({
+		enabled: isWcLeague && Boolean(user?.id),
+		seasonId: activeSeason?.id,
+		leagueId: selectedLeague?.id,
+		userId: user?.id,
+		matchDay: betMatchDay,
+		refreshKey: data,
+	});
 
 	const calendarMatch = useMemo(
 		() =>
@@ -593,32 +632,63 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return { label: t('externalMatchSyncPolling'), color: 'warning' as const };
 	}, [data?.sync, matchdayNotStarted]);
 
+	const renderWcAdminEditButton = (match: ExternalMatch): JSX.Element | null =>
+		showAdminTools && match.id ? (
+			<Tooltip title={t('gameResultEditScore')}>
+				<span>
+					<IconButton
+						size="small"
+						onClick={(e) => {
+							e.stopPropagation();
+							setEditMatch(match);
+						}}
+						sx={{ p: 0.25 }}
+						aria-label={t('gameResultEditScore')}
+					>
+						<EditIcon sx={{ fontSize: 16 }} />
+					</IconButton>
+				</span>
+			</Tooltip>
+		) : null;
+
 	return (
 		<Box
-			sx={{
-				width: '100%',
-				maxWidth: 430,
-				mx: 'auto',
-				px: 0.5,
-				mt: { xs: -1.5, sm: 0 },
-				pb: 1,
-				overflowX: 'hidden',
-			}}
+			sx={
+				[
+					{
+						width: '100%',
+						maxWidth: 430,
+						mx: 'auto',
+						px: 0.5,
+						mt: { xs: -1.5, sm: 0 },
+						pb: 1,
+						overflowX: 'hidden',
+					},
+					isWcLeague ? externalMatchWcPageRootSx : false,
+					isWcLeague ? externalMatchWcPageColumnSx : false,
+				] as SxProps<Theme>
+			}
 		>
 			<Box
-				sx={{
-					flexShrink: 0,
-					display: 'flex',
-					flexDirection: 'column',
-					gap: 0.5,
-					mb: 1,
-					px: 0.5,
-					pt: 0.25,
-					pb: 0.5,
-					borderRadius: 2,
-					bgcolor: 'background.paper',
-					boxShadow: 1,
-				}}
+				sx={
+					[
+						{
+							flexShrink: 0,
+							display: 'flex',
+							flexDirection: 'column',
+							gap: 0.5,
+							mb: 1,
+							px: 0.5,
+							pt: 0.25,
+							pb: 0.5,
+							borderRadius: 2,
+							bgcolor: 'background.paper',
+							boxShadow: 1,
+						},
+						isWcLeague ? externalMatchWcHeaderPanelSx : false,
+						isWcLeague ? externalMatchWcHeaderCompactSx : false,
+					] as SxProps<Theme>
+				}
 			>
 				<Box
 					sx={{
@@ -630,17 +700,28 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						px: 0.25,
 					}}
 				>
-					<Typography
-						sx={{
-							fontWeight: 700,
-							textAlign: 'center',
-							fontSize: '1rem',
-							lineHeight: 1.2,
-							px: canSync ? 6.5 : 0,
-						}}
-					>
-						{t('externalMatchResults')}
-					</Typography>
+					{isWcLeague ? (
+						<Box sx={{ width: '100%', px: canSync ? 6.5 : 0 }}>
+							<Box sx={externalMatchWcOverlineSx}>
+								<Typography component="span" sx={externalMatchWcOverlineTextSx}>
+									FIFA World Cup 26™
+								</Typography>
+							</Box>
+							<Typography sx={externalMatchWcTitleSx}>{t('externalMatchResults')}</Typography>
+						</Box>
+					) : (
+						<Typography
+							sx={{
+								fontWeight: 700,
+								textAlign: 'center',
+								fontSize: '1rem',
+								lineHeight: 1.2,
+								px: canSync ? 6.5 : 0,
+							}}
+						>
+							{t('externalMatchResults')}
+						</Typography>
+					)}
 					{canSync ? (
 						<Box
 							sx={{
@@ -665,18 +746,22 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										}
 										onClick={() => void handleOddsSyncFromApi()}
 										aria-label={t('externalMatchOddsSyncFromApi')}
-										sx={{
-											width: 26,
-											height: 26,
-											p: 0,
-											bgcolor: 'primary.main',
-											color: 'common.white',
-											'&:hover': { bgcolor: 'primary.dark' },
-											'&.Mui-disabled': {
-												bgcolor: 'action.disabledBackground',
-												color: 'action.disabled',
-											},
-										}}
+										sx={
+											isWcLeague
+												? externalMatchWcOddsSyncButtonSx
+												: {
+														width: 26,
+														height: 26,
+														p: 0,
+														bgcolor: 'primary.main',
+														color: 'common.white',
+														'&:hover': { bgcolor: 'primary.dark' },
+														'&.Mui-disabled': {
+															bgcolor: 'action.disabledBackground',
+															color: 'action.disabled',
+														},
+													}
+										}
 									>
 										{oddsSyncing ? (
 											<CircularProgress size={18} sx={{ color: 'common.white' }} />
@@ -693,18 +778,22 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										disabled={syncing || oddsSyncing || loading}
 										onClick={() => void handleSyncFromApi()}
 										aria-label={t('externalMatchSyncFromApi')}
-										sx={{
-											width: 26,
-											height: 26,
-											p: 0,
-											bgcolor: 'secondary.main',
-											color: 'common.white',
-											'&:hover': { bgcolor: 'secondary.dark' },
-											'&.Mui-disabled': {
-												bgcolor: 'action.disabledBackground',
-												color: 'action.disabled',
-											},
-										}}
+										sx={
+											isWcLeague
+												? externalMatchWcRefreshSyncButtonSx
+												: {
+														width: 26,
+														height: 26,
+														p: 0,
+														bgcolor: 'secondary.main',
+														color: 'common.white',
+														'&:hover': { bgcolor: 'secondary.dark' },
+														'&.Mui-disabled': {
+															bgcolor: 'action.disabledBackground',
+															color: 'action.disabled',
+														},
+													}
+										}
 									>
 										{syncing ? (
 											<CircularProgress size={18} sx={{ color: 'common.white' }} />
@@ -766,6 +855,8 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							alignItems: 'center',
 							justifyContent: 'center',
 							px: 0.5,
+							mb: isWcLeague ? 0.25 : undefined,
+							flexShrink: 0,
 						}}
 					>
 						<Chip
@@ -779,7 +870,16 @@ export default function ExternalMatchdayPage(): JSX.Element {
 								'& .MuiChip-label': { p: 0.75 },
 							}}
 						/>
-						<Typography variant="caption" color="text.secondary" sx={{ px: 1 }}>
+						<Typography
+							variant="caption"
+							color={isWcLeague ? undefined : 'text.secondary'}
+							sx={
+								[
+									{ px: 1 },
+									isWcLeague ? externalMatchWcSyncCaptionSx : false,
+								] as SxProps<Theme>
+							}
+						>
 							{t('externalMatchSyncProgress', {
 								finished: data.sync.finishedMatchCount,
 								total: syncProgressTotal,
@@ -835,71 +935,70 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						calendarMatch.node
 					)}
 					userId={user.id}
-					onBetPlaced={() => void reloadMatchday()}
+					onBetPlaced={() => {
+						void reloadMatchday();
+					}}
 				/>
 			) : null}
 
 			{matchesLoading && (
-				<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-					<CircularProgress />
+				<Box sx={isWcLeague ? externalMatchWcLoadingAreaSx : { display: 'flex', justifyContent: 'center', py: 3 }}>
+					<CircularProgress size={isWcLeague ? 28 : 40} />
 				</Box>
 			)}
 
 			{!matchesLoading && sortedMatches.length === 0 && (
-				<Typography textAlign="center" color="text.secondary" sx={{ py: 3, px: 1 }}>
+				<Typography
+					textAlign="center"
+					color={isWcLeague ? undefined : 'text.secondary'}
+					sx={
+						isWcLeague
+							? ([externalMatchWcEmptyHintSx, { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }] as SxProps<Theme>)
+							: { py: 3, px: 1 }
+					}
+				>
 					{canSync ? t('externalMatchNoDataHintModerator') : t('externalMatchNoDataHint')}
 				</Typography>
 			)}
 
-			{!matchesLoading && sortedMatches.length > 0 && isBerlinGroupSlotActive && (
-				<Box
-					sx={{
-						borderRadius: 2,
-						boxShadow: 2,
-						bgcolor: 'background.paper',
-						px: 0.5,
-						py: 0.75,
-					}}
-				>
-					<WcBerlinSlotHeader slotId={betMatchDay} />
-					<Stack spacing={0} divider={<Box sx={wc26DividerSx} />}>
-						{sortedMatches.map((match: ExternalMatch) => {
-							const betEnabled = canUserBetOnMatch(match);
-							return (
-								<ExternalMatchWc26Card
-									key={match.externalMatchId}
-									match={match}
-									slotId={betMatchDay}
-									clickable={betEnabled}
-									onClick={betEnabled ? () => setPickMatch(match) : undefined}
-									showAdminEdit={showAdminTools && Boolean(match.id)}
-									adminEditButton={
-										showAdminTools && match.id ? (
-											<Tooltip title={t('gameResultEditScore')}>
-												<span>
-													<IconButton
-														size="small"
-														onClick={(e) => {
-															e.stopPropagation();
-															setEditMatch(match);
-														}}
-														sx={{ p: 0.25 }}
-														aria-label={t('gameResultEditScore')}
-													>
-														<EditIcon sx={{ fontSize: 16 }} />
-													</IconButton>
-												</span>
-											</Tooltip>
-										) : null
-									}
-								/>
-							);
-						})}
-					</Stack>
+			{!matchesLoading && sortedMatches.length > 0 && isWcLeague && (
+				<Box sx={[externalMatchWcMatchListSx, { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }] as SxProps<Theme>}>
+					<Box sx={externalMatchWcMatchPanelSx}>
+						<WcExternalSlotPanel
+							slotId={betMatchDay}
+							slotLabel={currentSlotLabel}
+							betsUsed={userSlotBets.length}
+							betsLimit={slotBetLimit}
+							matchCount={sortedMatches.length}
+							betsLoading={slotBetsLoading}
+						/>
+						<Box sx={externalMatchWcMatchGridSx(sortedMatches.length)}>
+							{sortedMatches.map((match: ExternalMatch, index: number) => {
+								const betEnabled = canUserBetOnMatch(match);
+								const matchBet =
+									match.homeTeamId && match.awayTeamId
+										? betsByMatch.get(`${match.homeTeamId}_${match.awayTeamId}`)
+										: undefined;
+								return (
+									<ExternalMatchWc26Card
+										key={match.externalMatchId}
+										match={match}
+										slotId={betMatchDay}
+										userBet={matchBet}
+										isLast={index === sortedMatches.length - 1}
+										clickable={betEnabled}
+										onClick={betEnabled ? () => setPickMatch(match) : undefined}
+										showAdminEdit={showAdminTools && Boolean(match.id)}
+										adminEditButton={renderWcAdminEditButton(match)}
+									/>
+								);
+							})}
+						</Box>
+					</Box>
 				</Box>
 			)}
 
-			{!matchesLoading && sortedMatches.length > 0 && !isBerlinGroupSlotActive && (
+			{!matchesLoading && sortedMatches.length > 0 && !isWcLeague && (
 				<Box
 					sx={{
 						borderRadius: 2,

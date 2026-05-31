@@ -151,16 +151,26 @@ export function filterExternalMatchesForBerlinSlot(
 	);
 }
 
-export function findWc26ScheduleMatchForExternal(
-	match: ExternalMatch,
-	slotId: string
-): Wc26Match | undefined {
-	return getWc26MatchesForSlot(slotId).find(
+function findInScheduleByTeams(match: ExternalMatch, candidates: Wc26Match[]): Wc26Match | undefined {
+	return candidates.find(
 		(scheduled) =>
 			scheduled.home &&
 			scheduled.away &&
 			externalMatchesPair(match, scheduled.home, scheduled.away)
 	);
+}
+
+export function findWc26ScheduleMatchForExternal(
+	match: ExternalMatch,
+	slotId?: string
+): Wc26Match | undefined {
+	if (slotId) {
+		const fromSlot = findInScheduleByTeams(match, getWc26MatchesForSlot(slotId));
+		if (fromSlot) {
+			return fromSlot;
+		}
+	}
+	return findInScheduleByTeams(match, WC26_SCHEDULE);
 }
 
 export interface BerlinSlotMeta {

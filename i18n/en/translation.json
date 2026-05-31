@@ -729,6 +729,10 @@
 			"bettingUnavailable": "Odds betting is unavailable: the active season has no WC league.",
 			"noMatchesInSlot": "No matches synced for this slot yet (Match results → select this slot and refresh)."
 		},
+		"externalResults": {
+			"betsQuota": "Bets: {{used}} / {{limit}}",
+			"betsLoading": "Loading your bets…"
+		},
 		"oddsPick": {
 			"title": "Pick a bet",
 			"bestOdds": "Odds",

@@ -729,6 +729,10 @@
 			"bettingUnavailable": "Quotenwetten nicht verfügbar: in der aktiven Saison gibt es keine WM-Liga.",
 			"noMatchesInSlot": "Spiele für diesen Slot noch nicht synchronisiert (Spielergebnisse → Slot wählen und aktualisieren)."
 		},
+		"externalResults": {
+			"betsQuota": "Wetten: {{used}} / {{limit}}",
+			"betsLoading": "Wetten werden geladen…"
+		},
 		"oddsPick": {
 			"title": "Wette wählen",
 			"bestOdds": "Quote",

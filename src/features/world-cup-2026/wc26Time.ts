@@ -36,6 +36,31 @@ export function kickoffToGerman(
 	return { date: dateBerlin, time };
 }
 
+/** Короткая дата по Berlin из UTC (для карточек результатов). */
+export function formatBerlinDateFromUtc(utcDate: string | undefined, language: string): string {
+	if (!utcDate) {
+		return '—';
+	}
+	return new Intl.DateTimeFormat(wc26DateLocale(language), {
+		timeZone: BERLIN,
+		day: 'numeric',
+		month: 'short',
+	}).format(new Date(utcDate));
+}
+
+/** Короткая дата по Berlin из ISO-даты (YYYY-MM-DD). */
+export function formatBerlinDateFromIsoDate(isoDate: string, language: string): string {
+	const [y, m, d] = isoDate.split('-').map(Number);
+	if (!y || !m || !d) {
+		return '—';
+	}
+	return new Intl.DateTimeFormat(wc26DateLocale(language), {
+		timeZone: BERLIN,
+		day: 'numeric',
+		month: 'short',
+	}).format(new Date(Date.UTC(y, m - 1, d, 12, 0)));
+}
+
 function localPartsToUtcMs(
 	year: number,
 	month: number,
