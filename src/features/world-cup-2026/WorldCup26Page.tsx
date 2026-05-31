@@ -1,16 +1,12 @@
-import {
-	Box,
-	Chip,
-	Container,
-	Stack,
-	Typography,
-} from '@mui/material';
+import { Box, Chip, Container, Stack, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Wc26PageHero from './Wc26PageHero';
 import Wc26MatchCard from './Wc26MatchCard';
 import type { Wc26Match } from './wc26Schedule';
 import {
+	WC26_VIEW_FILTER_MOBILE_ROW1,
+	WC26_VIEW_FILTER_MOBILE_ROW2,
 	WC26_VIEW_FILTER_ORDER,
 	filterWc26Matches,
 	type Wc26ViewFilter,
@@ -21,6 +17,9 @@ import {
 	wc26MatchCountSx,
 	wc26SectionHeaderSx,
 	wc26StageChipSx,
+	wc26StageChipBarMobileSx,
+	wc26StageChipBarRowSx,
+	wc26StageChipBarSx,
 	wc26StickyFilterBarSx,
 } from './wc26PageStyles';
 
@@ -60,6 +59,32 @@ export default function WorldCup26Page(): JSX.Element {
 		[t]
 	);
 
+	const chipsByValue = useMemo(
+		() => new Map(stageChips.map((chip) => [chip.value, chip])),
+		[stageChips]
+	);
+
+	const renderStageChip = (value: Wc26ViewFilter): JSX.Element | null => {
+		const chip = chipsByValue.get(value);
+		if (!chip) {
+			return null;
+		}
+		return (
+			<Chip
+				key={value}
+				label={chip.label}
+				onClick={() => setViewFilter(value)}
+				sx={wc26StageChipSx(viewFilter === value)}
+			/>
+		);
+	};
+
+	const renderChipRow = (filters: Wc26ViewFilter[]): JSX.Element => (
+		<Box sx={wc26StageChipBarRowSx}>
+			{filters.map((value) => renderStageChip(value))}
+		</Box>
+	);
+
 	return (
 		<>
 			<Wc26PageHero />
@@ -75,25 +100,13 @@ export default function WorldCup26Page(): JSX.Element {
 			>
 			<Container maxWidth="sm" disableGutters sx={{ px: { xs: 1.5, sm: 2 } }}>
 				<Box sx={wc26StickyFilterBarSx}>
-					<Stack
-						direction="row"
-						spacing={0.75}
-						sx={{
-							overflowX: 'auto',
-							pb: 0.5,
-							'&::-webkit-scrollbar': { display: 'none' },
-							scrollbarWidth: 'none',
-						}}
-					>
-						{stageChips.map(({ value, label }) => (
-							<Chip
-								key={value}
-								label={label}
-								onClick={() => setViewFilter(value)}
-								sx={wc26StageChipSx(viewFilter === value)}
-							/>
-						))}
-					</Stack>
+					<Box sx={{ ...wc26StageChipBarMobileSx, display: { xs: 'flex', sm: 'none' } }}>
+						{renderChipRow(WC26_VIEW_FILTER_MOBILE_ROW1)}
+						{renderChipRow(WC26_VIEW_FILTER_MOBILE_ROW2)}
+					</Box>
+					<Box sx={{ ...wc26StageChipBarSx, display: { xs: 'none', sm: 'flex' } }}>
+						{stageChips.map(({ value }) => renderStageChip(value))}
+					</Box>
 				</Box>
 
 				<Typography variant="caption" sx={wc26MatchCountSx}>

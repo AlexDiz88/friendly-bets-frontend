@@ -8,6 +8,8 @@
 	"byBetTitles": "По типам ставок",
 	"rules": "Правила",
 	"bets": "Ставки",
+	"allBets": "Все ставки",
+	"matchResults": "Результаты",
 	"language": "Язык",
 	"switchToLightTheme": "Светлая тема",
 	"switchToDarkTheme": "Тёмная тема",
@@ -702,7 +704,7 @@
 		"group": "Группа {{letter}}",
 		"matchCount": "{{count}} матч(ей)",
 		"stages": {
-			"all": "Все",
+			"all": "Все матчи",
 			"bet_slots": "Слоты ставок",
 			"group": "Группы",
 			"group_r1": "1 тур",
@@ -714,7 +716,8 @@
 			"quarter_final": "1/4",
 			"semi_final": "1/2",
 			"third_place": "за 3 место",
-			"final": "Финал"
+			"final": "Финал",
+			"finals": "Финал"
 		},
 		"betSlots": {
 			"hint": "Групповой этап: в каждом слоте выберите матчи для ставок. Туры 1–2 — 2 ставки из 4 матчей, тур 3 — 3 ставки из 6. Время — Berlin (UTC+2).",

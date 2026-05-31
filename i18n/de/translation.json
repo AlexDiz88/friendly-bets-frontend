@@ -8,6 +8,8 @@
 	"byBetTitles": "Nach Wettetyp",
 	"rules": "Regeln",
 	"bets": "Wetten",
+	"allBets": "Alle Wetten",
+	"matchResults": "Ergebnisse",
 	"language": "Sprache",
 	"switchToLightTheme": "Helles Design",
 	"switchToDarkTheme": "Dunkles Design",
@@ -702,7 +704,7 @@
 		"group": "Gruppe {{letter}}",
 		"matchCount": "{{count}} Spiel(e)",
 		"stages": {
-			"all": "Alle",
+			"all": "Alle Spiele",
 			"bet_slots": "Wett-Slots",
 			"group": "Gruppen",
 			"group_r1": "1. Spieltag",
@@ -714,7 +716,8 @@
 			"quarter_final": "Viertelfinale",
 			"semi_final": "Halbfinale",
 			"third_place": "Spiel um Platz 3",
-			"final": "Finale"
+			"final": "Finale",
+			"finals": "Finale"
 		},
 		"betSlots": {
 			"hint": "Gruppenphase: pro Slot Wetten auf ausgewählte Spiele. Runden 1–2: 2 Wetten aus 4 Spielen; Runde 3: 3 Wetten aus 6. Uhrzeit Berlin (UTC+2).",

@@ -53,7 +53,7 @@ export function isHeaderNavPageActive(
 	if (page === t('table')) {
 		return pathname === '/' || pathname === '';
 	}
-	if (page === t('bets')) {
+	if (page === t('allBets')) {
 		if (
 			pathname === '/bets/check' ||
 			pathname.startsWith('/bets/check/') ||
@@ -68,7 +68,7 @@ export function isHeaderNavPageActive(
 		[t('news')]: '/news',
 		[t('byGameweeks')]: '/gameweeks',
 		[t('byBetTitles')]: '/stats/bet-titles',
-		[t('externalMatchResults')]: '/football-data/matchday',
+		[t('matchResults')]: '/football-data/matchday',
 		[t('byLeagues')]: '/stats/leagues',
 		[t('byTeams')]: '/stats/teams',
 		[t('archive')]: '/archive',
@@ -93,12 +93,12 @@ export function useHeaderMenu(): HeaderMenuState {
 
 	const pages = [
 		t('wc26.menu'),
-		t('news'),
 		t('byGameweeks'),
+		t('allBets'),
 		t('byBetTitles'),
-		t('externalMatchResults'),
-		t('byLeagues'),
 		t('byTeams'),
+		t('byLeagues'),
+		t('news'),
 		t('archive'),
 		t('rules'),
 		t('language'),
@@ -122,13 +122,16 @@ export function useHeaderMenu(): HeaderMenuState {
 			case t('byGameweeks'):
 				navigate('/gameweeks');
 				break;
+			case t('allBets'):
+				navigate('/bets/opened');
+				break;
 			case t('byBetTitles'):
 				navigate('/stats/bet-titles');
 				break;
 			case t('footballData'):
 				navigate('/stats/football-data');
 				break;
-			case t('externalMatchResults'):
+			case t('matchResults'):
 				navigate('/football-data/matchday');
 				break;
 			case t('byLeagues'):
@@ -330,10 +333,10 @@ export function HeaderNavCenter({ menu }: { menu: HeaderMenuState }): JSX.Elemen
 				/>
 				<CustomMenuPageText
 					onClick={menu.scrollToTop}
-					href="#/bets/opened"
-					title={menu.t('bets')}
-					active={menu.isNavPageActive(menu.t('bets'))}
-					sx={menu.isNavPageActive(menu.t('bets')) ? headerNavLinkActiveSx : undefined}
+					href="#/football-data/matchday"
+					title={menu.t('matchResults')}
+					active={menu.isNavPageActive(menu.t('matchResults'))}
+					sx={menu.isNavPageActive(menu.t('matchResults')) ? headerNavLinkActiveSx : undefined}
 				/>
 				<Box sx={headerNavDesktopSx}>
 					{menu.pages.map((page) =>

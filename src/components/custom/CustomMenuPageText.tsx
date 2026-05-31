@@ -31,7 +31,7 @@ const CustomMenuPageText = ({
 					py: 0.75,
 					mx: 1.2,
 					fontWeight: 600,
-					fontSize: '1rem',
+					fontSize: '0.9rem',
 					lineHeight: 1.25,
 					textDecoration: 'none',
 					cursor: 'pointer',

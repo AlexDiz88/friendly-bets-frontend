@@ -7,12 +7,13 @@ export type Wc26ViewFilter =
 	| 'group_r2'
 	| 'group_r3'
 	| 'playoffs'
+	/** Матч за 3-е место + финал */
+	| 'finals'
 	| Wc26Stage;
 
-/** Порядок вкладок в UI. */
+/** Порядок вкладок в UI (десктоп — одна панель с переносом). */
 export const WC26_VIEW_FILTER_ORDER: Wc26ViewFilter[] = [
 	'all',
-	'group',
 	'group_r1',
 	'group_r2',
 	'group_r3',
@@ -21,8 +22,19 @@ export const WC26_VIEW_FILTER_ORDER: Wc26ViewFilter[] = [
 	'round_of_16',
 	'quarter_final',
 	'semi_final',
-	'third_place',
-	'final',
+	'finals',
+];
+
+/** Мобильная раскладка: 1-й ряд — групповой этап, 2-й — плей-офф. */
+export const WC26_VIEW_FILTER_MOBILE_ROW1: Wc26ViewFilter[] = ['all', 'group_r1', 'group_r2', 'group_r3'];
+
+export const WC26_VIEW_FILTER_MOBILE_ROW2: Wc26ViewFilter[] = [
+	'playoffs',
+	'round_of_32',
+	'round_of_16',
+	'quarter_final',
+	'semi_final',
+	'finals',
 ];
 
 const KNOCKOUT_STAGES = new Set<Wc26Stage>([
@@ -54,6 +66,8 @@ export function filterWc26Matches(filter: Wc26ViewFilter): Wc26Match[] {
 			return groupRoundMatches(3);
 		case 'playoffs':
 			return WC26_SCHEDULE.filter((m) => KNOCKOUT_STAGES.has(m.stage));
+		case 'finals':
+			return WC26_SCHEDULE.filter((m) => m.stage === 'third_place' || m.stage === 'final');
 		default:
 			return WC26_SCHEDULE.filter((m) => m.stage === filter);
 	}

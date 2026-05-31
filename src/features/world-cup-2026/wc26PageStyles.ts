@@ -26,6 +26,36 @@ export const wc26StickyFilterBarSx: SxProps<Theme> = (theme) => ({
 			: 'rgba(232, 244, 239, 0.92)',
 });
 
+/** Панель вкладок стадий: перенос на 2+ строки вместо горизонтального скролла */
+export const wc26StageChipBarSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'row',
+	flexWrap: 'wrap',
+	alignItems: 'center',
+	gap: 0.75,
+	rowGap: 0.75,
+};
+
+/** Мобильная панель: два ряда по центру */
+export const wc26StageChipBarMobileSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+	gap: 0.75,
+	width: '100%',
+};
+
+export const wc26StageChipBarRowSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'row',
+	flexWrap: 'wrap',
+	justifyContent: 'center',
+	alignItems: 'center',
+	gap: 0.75,
+	rowGap: 0.75,
+	width: '100%',
+};
+
 export function wc26StageChipSx(selected: boolean): SxProps<Theme> {
 	return (theme) => {
 		const isDark = theme.palette.mode === 'dark';
@@ -35,7 +65,7 @@ export function wc26StageChipSx(selected: boolean): SxProps<Theme> {
 			fontSize: '0.75rem',
 			height: 36,
 			borderRadius: 2,
-			'& .MuiChip-label': { px: 1.25 },
+			'& .MuiChip-label': { px: 1 },
 		};
 		if (selected) {
 			return {

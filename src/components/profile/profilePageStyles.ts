@@ -162,6 +162,69 @@ export const profileEditActionsSx: SxProps<Theme> = {
 	},
 };
 
+/** Кнопки «Отмена» + «Сохранить» в одну строку (загрузка аватара и т.п.) */
+export const profileEditActionsRowSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'row',
+	flexWrap: 'wrap',
+	gap: 1,
+	justifyContent: 'flex-end',
+	mt: 1.5,
+	'& .MuiButton-root': {
+		width: 'auto',
+		mr: '0 !important',
+	},
+};
+
+export const profileUploadPanelSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'flex-start',
+	gap: 1,
+	width: '100%',
+};
+
+export const profileUploadHintSx: SxProps<Theme> = {
+	fontSize: '0.8125rem',
+	color: 'text.secondary',
+	fontStyle: 'italic',
+	lineHeight: 1.4,
+};
+
+export const profileRegisteredBannerSx: SxProps<Theme> = {
+	mt: 1.5,
+	p: 1.5,
+	borderRadius: 2,
+	border: 1,
+	borderColor: 'success.main',
+	bgcolor: (theme) =>
+		theme.palette.mode === 'dark' ? 'rgba(6, 95, 70, 0.22)' : 'rgba(236, 253, 245, 0.9)',
+	textAlign: 'center',
+};
+
+export const profileRegisteredBannerTextSx: SxProps<Theme> = {
+	fontSize: '0.9375rem',
+	fontWeight: 600,
+	color: 'success.main',
+	lineHeight: 1.45,
+};
+
+export const profilePlayersListSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'column',
+	gap: 0.5,
+	mt: 0.5,
+	maxHeight: '12rem',
+	overflowY: 'auto',
+};
+
+export const profilePlayerRowSx: SxProps<Theme> = {
+	fontSize: '0.9375rem',
+	fontWeight: 500,
+	lineHeight: 1.35,
+	py: 0.25,
+};
+
 export const profileFullWidthFieldSx: SxProps<Theme> = {
 	width: '100%',
 };

@@ -8,6 +8,8 @@
 	"byBetTitles": "By Bet titles",
 	"rules": "Rules",
 	"bets": "Bets",
+	"allBets": "All bets",
+	"matchResults": "Results",
 	"language": "Language",
 	"switchToLightTheme": "Light theme",
 	"switchToDarkTheme": "Dark theme",
@@ -702,7 +704,7 @@
 		"group": "Group {{letter}}",
 		"matchCount": "{{count}} match(es)",
 		"stages": {
-			"all": "All",
+			"all": "All matches",
 			"bet_slots": "Bet slots",
 			"group": "Groups",
 			"group_r1": "Round 1",
@@ -714,7 +716,8 @@
 			"quarter_final": "Quarter-finals",
 			"semi_final": "Semi-finals",
 			"third_place": "3rd place",
-			"final": "Final"
+			"final": "Final",
+			"finals": "Final"
 		},
 		"betSlots": {
 			"hint": "Group stage: pick matches to bet on in each slot. Rounds 1–2: 2 bets from 4 matches; round 3: 3 bets from 6. Times in Berlin (UTC+2).",
