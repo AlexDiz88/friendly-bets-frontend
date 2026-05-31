@@ -20,6 +20,7 @@ import {
 	structureDraftFromFormat,
 	type TournamentFormatStructureDraft,
 } from './tournamentFormatStructureUtils';
+import { ADMIN_LIST_ITEM_CARD_SX } from '../adminPanelStyles';
 import TournamentFormat from './types/TournamentFormat';
 
 function TooltipIconButton({
@@ -141,15 +142,7 @@ export default function TournamentFormatListItem({
 
 	return (
 		<>
-			<Box
-				sx={{
-					border: 1,
-					borderRadius: 1,
-					p: 1,
-					mb: 1,
-					fontSize: '0.85rem',
-				}}
-			>
+			<Box sx={ADMIN_LIST_ITEM_CARD_SX}>
 				<Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.5 }}>
 					<Box sx={{ flex: 1, minWidth: 0 }}>
 						{editing ? (

@@ -9,7 +9,8 @@ import {
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
 import { useAppDispatch } from '../../../app/hooks';
-import { ADMIN_PANEL_SX } from '../adminPanelStyles';
+import AdminSection from '../AdminSection';
+import { ADMIN_FORM_PANEL_SX } from '../adminPanelStyles';
 import { createTournamentFormat, getTournamentFormats } from './api';
 import TournamentFormatListItem from './TournamentFormatListItem';
 import TournamentFormatStructureFields from './TournamentFormatStructureFields';
@@ -81,18 +82,16 @@ export default function TournamentFormatsManagement(): JSX.Element {
 	};
 
 	return (
-		<Box sx={ADMIN_PANEL_SX}>
-			<Typography sx={{ fontSize: 22, fontWeight: 600, mb: 1.5 }}>{t('tournamentFormatsManagement')}</Typography>
-
+		<AdminSection title={t('tournamentFormatsManagement')}>
 			<CustomButton
-				sx={{ px: 2, mb: 2 }}
+				sx={{ width: '100%', mb: showCreate ? 1.5 : 1 }}
 				onClick={() => setShowCreate(!showCreate)}
 				buttonColor="secondary"
 				buttonText={t('newTournamentFormat')}
 			/>
 
 			{showCreate && (
-				<Box sx={{ textAlign: 'left', px: 1, mb: 2 }}>
+				<Box sx={ADMIN_FORM_PANEL_SX}>
 					<TextField
 						fullWidth
 						size="small"
@@ -143,7 +142,7 @@ export default function TournamentFormatsManagement(): JSX.Element {
 						onRoundsChange={(rounds) => setStructureDraft((prev) => ({ ...prev, rounds }))}
 					/>
 
-					<Box sx={{ textAlign: 'center', mt: 1 }}>
+					<Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 1.5 }}>
 						<CustomCancelButton
 							onClick={() => {
 								setShowCreate(false);
@@ -156,7 +155,7 @@ export default function TournamentFormatsManagement(): JSX.Element {
 			)}
 
 			<CustomButton
-				sx={{ px: 2, mb: showFormatsList ? 1 : 0 }}
+				sx={{ width: '100%', mb: showFormatsList ? 1.5 : 0 }}
 				onClick={() => setShowFormatsList(!showFormatsList)}
 				buttonColor="info"
 				buttonVariant="outlined"
@@ -168,17 +167,14 @@ export default function TournamentFormatsManagement(): JSX.Element {
 			/>
 
 			{showFormatsList && (
-				<Box sx={{ textAlign: 'left' }}>
-					<Typography sx={{ fontWeight: 600, mb: 1, textAlign: 'center' }}>
-						{t('tournamentFormatsList')}
-					</Typography>
+				<Box>
 					{loading && (
-						<Typography variant="body2" sx={{ textAlign: 'center' }}>
+						<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 1 }}>
 							{t('loading')}
 						</Typography>
 					)}
 					{!loading && formats.length === 0 && (
-						<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+						<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 1 }}>
 							{t('tournamentFormatsEmpty')}
 						</Typography>
 					)}
@@ -187,6 +183,6 @@ export default function TournamentFormatsManagement(): JSX.Element {
 					))}
 				</Box>
 			)}
-		</Box>
+		</AdminSection>
 	);
 }

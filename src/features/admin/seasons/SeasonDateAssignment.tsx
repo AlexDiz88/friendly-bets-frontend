@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
 import CustomButton from '../../../components/custom/btn/CustomButton';
 import { showErrorSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
-import { ADMIN_PANEL_SX } from '../adminPanelStyles';
+import AdminSection from '../AdminSection';
 import { getSeasonsWithoutDates } from './seasonDatesApi';
 import SeasonDatesAssignInline from './SeasonDatesAssignInline';
 import { SeasonWithoutDates } from './types/Season';
@@ -38,14 +38,9 @@ export default function SeasonDateAssignment(): JSX.Element {
 	const missingCount = seasons.length;
 
 	return (
-		<Box sx={ADMIN_PANEL_SX}>
-			<Typography sx={{ fontSize: 22, fontWeight: 600, mb: 1 }}>{t('seasonDateAssignment')}</Typography>
-			<Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, px: 0.5 }}>
-				{t('seasonDateAssignmentHint')}
-			</Typography>
-
+		<AdminSection title={t('seasonDateAssignment')} hint={t('seasonDateAssignmentHint')}>
 			<CustomButton
-				sx={{ px: 2, mb: showList ? 1 : 0 }}
+				sx={{ width: '100%', mb: showList ? 1.5 : 0 }}
 				onClick={() => setShowList(!showList)}
 				buttonColor={missingCount > 0 ? 'warning' : 'info'}
 				buttonVariant="outlined"
@@ -57,14 +52,14 @@ export default function SeasonDateAssignment(): JSX.Element {
 			/>
 
 			{showList && (
-				<Box sx={{ textAlign: 'left' }}>
+				<Box>
 					{loading && (
-						<Typography variant="body2" sx={{ textAlign: 'center' }}>
+						<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 1 }}>
 							{t('loading')}
 						</Typography>
 					)}
 					{!loading && missingCount === 0 && (
-						<Typography variant="body2" color="success.main" sx={{ textAlign: 'center' }}>
+						<Typography variant="body2" color="success.main" sx={{ textAlign: 'center', py: 1 }}>
 							{t('allSeasonsHaveDates')}
 						</Typography>
 					)}
@@ -75,6 +70,6 @@ export default function SeasonDateAssignment(): JSX.Element {
 					))}
 				</Box>
 			)}
-		</Box>
+		</AdminSection>
 	);
 }

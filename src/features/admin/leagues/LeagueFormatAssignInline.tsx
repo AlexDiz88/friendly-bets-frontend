@@ -9,6 +9,7 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
+import { ADMIN_INLINE_WARNING_CARD_SX } from '../adminPanelStyles';
 import TournamentFormat from '../tournament-formats/types/TournamentFormat';
 import { assignTournamentFormat } from './api';
 
@@ -60,18 +61,15 @@ export default function LeagueFormatAssignInline({
 
 	return (
 		<Box
-			sx={{
-				border: 1,
-				borderColor: 'warning.light',
-				borderRadius: 1,
-				p: 0.75,
-				bgcolor: 'action.hover',
-				textAlign: 'left',
-				width: '100%',
-				minWidth: 0,
-				overflow: 'hidden',
-				boxSizing: 'border-box',
-			}}
+			sx={[
+				ADMIN_INLINE_WARNING_CARD_SX,
+				{
+					width: '100%',
+					minWidth: 0,
+					overflow: 'hidden',
+					boxSizing: 'border-box',
+				},
+			]}
 		>
 			<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: seasonTitle ? 0.25 : 0.5 }}>
 				<LeagueAvatar leagueCode={leagueCode} height={24} />

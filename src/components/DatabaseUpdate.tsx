@@ -34,7 +34,7 @@ export default function DatabaseUpdate({
 			}
 			stopLoading();
 		},
-		[dispatch]
+		[dispatch, startLoading, stopLoading]
 	);
 
 	const handleDbUpdate = (): void => {
@@ -46,8 +46,13 @@ export default function DatabaseUpdate({
 	};
 
 	return (
-		<Box sx={{ m: '0 auto', textAlign: 'center', width: '20rem', mb: 2, pb: 2, borderBottom: 2 }}>
-			<CustomButton buttonColor="error" onClick={handleDbUpdate} buttonText={t('dbUpdate')} />
+		<Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
+			<CustomButton
+				sx={{ width: '100%' }}
+				buttonColor="error"
+				onClick={handleDbUpdate}
+				buttonText={t('dbUpdate')}
+			/>
 			<Dialog open={openDialog} onClose={handleCloseDialog}>
 				<DialogContent>
 					<Typography>

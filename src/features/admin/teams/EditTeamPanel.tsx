@@ -4,7 +4,6 @@ import {
 	CircularProgress,
 	FilterOptionsState,
 	TextField,
-	Typography,
 } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -113,8 +112,8 @@ export default function EditTeamPanel(): JSX.Element {
 	}, [dispatch, selected, saving, values]);
 
 	return (
-		<Box sx={{ textAlign: 'left', mt: 2 }}>
-			<Typography sx={{ fontWeight: 600, mb: 1 }}>{t('teamEditSection')}</Typography>
+		<Box sx={{ mt: 2.5, pt: 2, borderTop: 1, borderColor: 'divider' }}>
+			<Box sx={{ fontWeight: 600, fontSize: '0.9375rem', mb: 1.5 }}>{t('teamEditSection')}</Box>
 
 			{loading ? (
 				<Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>

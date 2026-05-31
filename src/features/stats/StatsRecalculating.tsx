@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Box, Dialog, DialogActions, DialogContent } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
@@ -14,6 +13,7 @@ import {
 import { apiFetch } from '../../shared/apiClient';
 import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
+import { ADMIN_BUTTON_STACK_SX } from '../admin/adminPanelStyles';
 import { playersStatsFullRecalculation } from './statsSlice';
 
 // TODO: refactor this component
@@ -180,39 +180,31 @@ export default function StatsRecalculating({
 	}, [dispatch]);
 
 	return (
-		<Box sx={{ mt: 0, py: 2 }}>
-			<Box sx={{ fontSize: 22, fontWeight: 600, mb: 1.5 }}>{t('dbManagement')}</Box>
-			<Box>
-				<CustomButton
-					sx={{ mb: 2 }}
-					buttonColor="error"
-					onClick={handleRecalculatePlayerStatsDialog}
-					buttonText={t('mainStatsRecalculating')}
-				/>
-			</Box>
-			<Box>
-				<CustomButton
-					sx={{ mb: 2 }}
-					buttonColor="error"
-					onClick={handleRecalculateTeamStatsDialog}
-					buttonText={t('teamStatsRecalculating')}
-				/>
-			</Box>
-			<Box>
-				<CustomButton
-					sx={{ mb: 2 }}
-					buttonColor="error"
-					onClick={handleRecalculateBetTitlesStatsDialog}
-					buttonText={t('betTitlesStatsRecalculating')}
-				/>
-			</Box>
-			<Box>
-				<CustomButton
-					buttonColor="error"
-					onClick={handleRecalculateGameweekStatsDialog}
-					buttonText={t('gameweekStatsRecalculating')}
-				/>
-			</Box>
+		<Box sx={ADMIN_BUTTON_STACK_SX}>
+			<CustomButton
+				buttonColor="error"
+				buttonVariant="outlined"
+				onClick={handleRecalculatePlayerStatsDialog}
+				buttonText={t('mainStatsRecalculating')}
+			/>
+			<CustomButton
+				buttonColor="error"
+				buttonVariant="outlined"
+				onClick={handleRecalculateTeamStatsDialog}
+				buttonText={t('teamStatsRecalculating')}
+			/>
+			<CustomButton
+				buttonColor="error"
+				buttonVariant="outlined"
+				onClick={handleRecalculateBetTitlesStatsDialog}
+				buttonText={t('betTitlesStatsRecalculating')}
+			/>
+			<CustomButton
+				buttonColor="error"
+				buttonVariant="outlined"
+				onClick={handleRecalculateGameweekStatsDialog}
+				buttonText={t('gameweekStatsRecalculating')}
+			/>
 			<Dialog open={openRecalculatePlayerStatsDialog} onClose={handleCloseDialog}>
 				<DialogContent>
 					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>

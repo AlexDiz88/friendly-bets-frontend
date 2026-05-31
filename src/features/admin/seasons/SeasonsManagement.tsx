@@ -1,4 +1,4 @@
-import { Box, FormControl, Grid, List, TextField, Typography } from '@mui/material';
+import { Box, FormControl, List, TextField } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
@@ -9,6 +9,8 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
+import AdminSection from '../AdminSection';
+import { ADMIN_FORM_PANEL_SX } from '../adminPanelStyles';
 import SeasonInfo from './SeasonInfo';
 import { addSeason, getLeagueCodeList, getSeasonStatusList, getSeasons } from './seasonsSlice';
 import { selectSeasons } from './selectors';
@@ -85,36 +87,36 @@ export default function SeasonsManagement(): JSX.Element {
 	};
 
 	return (
-		<Box sx={{ margin: '0 auto', textAlign: 'center', width: '20rem', borderBottom: 2 }}>
-			<Box sx={{ fontSize: 22, fontWeight: 600, my: 1.5 }}>{t('SeasonsManagement')}</Box>
+		<AdminSection title={t('SeasonsManagement')}>
 			<CustomButton
-				sx={{ px: 2, mb: 2 }}
+				sx={{ width: '100%', mb: showCreateSeason ? 1.5 : 0 }}
 				onClick={() => handleShowCreateNewSeason()}
 				buttonColor="secondary"
 				buttonText={t('newSeason')}
 			/>
+
 			{showCreateSeason && (
-				<>
-					<FormControl fullWidth sx={{ px: 2 }}>
-						<Box sx={{ fontSize: 18, fontWeight: 600 }}>{t('addNewSeason')}</Box>
-						<Box sx={{ my: 1 }}>
-							<TextField
-								fullWidth
-								required
-								id="season-title"
-								label={t('SeasonName')}
-								value={seasonTitle}
-								onChange={handleSeasonTitleChange}
-							/>
-						</Box>
-						<Box sx={{ mb: 2, display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
+				<Box sx={ADMIN_FORM_PANEL_SX}>
+					<FormControl fullWidth>
+						<Box sx={{ fontSize: '0.9375rem', fontWeight: 600, mb: 1.5 }}>{t('addNewSeason')}</Box>
+						<TextField
+							fullWidth
+							required
+							id="season-title"
+							label={t('SeasonName')}
+							size="small"
+							value={seasonTitle}
+							onChange={handleSeasonTitleChange}
+							sx={{ mb: 1.5 }}
+						/>
+						<Box sx={{ mb: 1.5, display: 'flex', flexDirection: 'column', gap: 1 }}>
 							<TextField
 								required
 								type="number"
 								id="season-bets-count"
 								label={t('BetsCountPerMatchday')}
 								size="small"
-								sx={{ maxWidth: '11.5rem', mb: 0.5 }}
+								fullWidth
 								value={seasonBetCount}
 								onChange={handleSeasonBetCountChange}
 							/>
@@ -124,7 +126,7 @@ export default function SeasonsManagement(): JSX.Element {
 								id="season-bet-size"
 								label={t('DefaultBetSizePerMatchday')}
 								size="small"
-								sx={{ maxWidth: '11.5rem' }}
+								fullWidth
 								value={seasonBetSize}
 								onChange={handleSeasonBetSizeChange}
 								inputProps={{ min: 1 }}
@@ -137,6 +139,7 @@ export default function SeasonsManagement(): JSX.Element {
 								id="season-start-date"
 								label={t('seasonStartDate')}
 								size="small"
+								fullWidth
 								value={seasonStartDate}
 								onChange={(e) => setSeasonStartDate(e.target.value)}
 								InputLabelProps={{ shrink: true }}
@@ -148,13 +151,14 @@ export default function SeasonsManagement(): JSX.Element {
 								id="season-end-date"
 								label={t('seasonEndDate')}
 								size="small"
+								fullWidth
 								value={seasonEndDate}
 								onChange={(e) => setSeasonEndDate(e.target.value)}
 								InputLabelProps={{ shrink: true }}
 								inputProps={{ min: seasonStartDate || undefined }}
 							/>
 						</Box>
-						<Box sx={{ mb: 2 }}>
+						<Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
 							<CustomCancelButton onClick={handleShowCreateNewSeason} />
 							<CustomSuccessButton
 								onClick={handleSubmit}
@@ -163,43 +167,40 @@ export default function SeasonsManagement(): JSX.Element {
 							/>
 						</Box>
 					</FormControl>
-				</>
+				</Box>
 			)}
 
 			{!showCreateSeason && (
-				<Box sx={{ mb: 2 }}>
-					{!showAllSeasons && (
-						<Box sx={{ mb: 2 }}>
-							<CustomButton
-								onClick={() => handleShowAllSeasons()}
-								buttonText={t('showAllSeasons')}
-							/>
-						</Box>
+				<Box sx={{ mt: 1.5 }}>
+					{!showAllSeasons ? (
+						<CustomButton
+							sx={{ width: '100%' }}
+							onClick={() => handleShowAllSeasons()}
+							buttonColor="info"
+							buttonVariant="outlined"
+							buttonText={t('showAllSeasons')}
+						/>
+					) : (
+						<CustomButton
+							sx={{ width: '100%', mb: 1.5 }}
+							onClick={() => handleHideAllSeasons()}
+							buttonColor="info"
+							buttonVariant="outlined"
+							buttonText={t('hide')}
+						/>
 					)}
-					{showAllSeasons && (
-						<Box>
-							<CustomButton onClick={() => handleHideAllSeasons()} buttonText={t('hide')} />
-						</Box>
-					)}
-					{showAllSeasons && (
-						<Grid item xs={2} md={2} sx={{ mb: 1 }}>
-							{!!seasons.length && (
-								<>
-									<Typography sx={{ mt: 1.5, mb: 0.5 }}>{t('allSeasonsList')}:</Typography>
-									<List>
-										{seasons
-											.slice()
-											.reverse()
-											.map((season) => (
-												<SeasonInfo key={season.id} data={season} />
-											))}
-									</List>
-								</>
-							)}
-						</Grid>
+					{showAllSeasons && !!seasons.length && (
+						<List disablePadding sx={{ mt: 0.5 }}>
+							{seasons
+								.slice()
+								.reverse()
+								.map((season) => (
+									<SeasonInfo key={season.id} data={season} />
+								))}
+						</List>
 					)}
 				</Box>
 			)}
-		</Box>
+		</AdminSection>
 	);
 }

@@ -8,6 +8,7 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
+import { ADMIN_INLINE_WARNING_CARD_SX } from '../adminPanelStyles';
 import { assignSeasonDates } from './seasonDatesApi';
 import { SeasonWithoutDates } from './types/Season';
 
@@ -48,16 +49,7 @@ export default function SeasonDatesAssignInline({
 	};
 
 	return (
-		<Box
-			sx={{
-				border: 1,
-				borderColor: 'warning.light',
-				borderRadius: 1,
-				p: 0.75,
-				bgcolor: 'action.hover',
-				textAlign: 'left',
-			}}
-		>
+		<Box sx={ADMIN_INLINE_WARNING_CARD_SX}>
 			<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
 				<Typography variant="body2" fontWeight={600} sx={{ flex: 1 }}>
 					{season.title}
