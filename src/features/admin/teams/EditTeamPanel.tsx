@@ -155,7 +155,7 @@ export default function EditTeamPanel(): JSX.Element {
 						unmappedHintsRefreshKey={unmappedHintsRefreshKey}
 					/>
 					<Box sx={{ textAlign: 'center', mt: 1 }}>
-						<CustomCancelButton onClick={handleCancel} />
+						<CustomCancelButton onClick={handleCancel} sx={{ mb: 0.75 }} />
 						<CustomSuccessButton
 							onClick={handleSave}
 							buttonText={t('btnText.save')}

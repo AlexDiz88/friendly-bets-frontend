@@ -1,6 +1,11 @@
 import type { ExternalMatch } from '../football-data/types/ExternalMatch';
 import { WC26_SCHEDULE, type Wc26Match } from './wc26Schedule';
-import { kickoffToGerman, wc26DateLocale } from './wc26Time';
+import {
+	formatBerlinDateFromIsoDate,
+	getBerlinUtcOffsetLabel,
+	kickoffToGerman,
+	venueLocalKickoffToUtcMs,
+} from './wc26Time';
 import type { Wc26TeamId } from './wc26Teams';
 
 const BERLIN_GROUP_SLOT = /^([123]) \[(\d+)\]$/;
@@ -180,6 +185,7 @@ export interface BerlinSlotMeta {
 	matchCount: number;
 	rangeFrom: string;
 	rangeTo: string;
+	utcOffset: string;
 }
 
 export function getBerlinSlotMeta(slotId: string, language: string): BerlinSlotMeta | null {
@@ -188,28 +194,36 @@ export function getBerlinSlotMeta(slotId: string, language: string): BerlinSlotM
 		return null;
 	}
 	const slotMatches = getWc26MatchesForSlot(slotId);
-	const locale = wc26DateLocale(language);
 	const berlinTimes = slotMatches
-		.map((m) => kickoffToGerman(m.date, m.timeLocal, m.venueKey))
-		.sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
+		.map((m) => ({
+			match: m,
+			german: kickoffToGerman(m.date, m.timeLocal, m.venueKey),
+		}))
+		.sort((a, b) =>
+			`${a.german.date}T${a.german.time}`.localeCompare(`${b.german.date}T${b.german.time}`)
+		);
 
 	const formatBerlin = (date: string, time: string): string => {
-		const [y, mo, d] = date.split('-').map(Number);
-		const dt = new Date(y, mo - 1, d);
-		const dateLabel = dt.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+		const dateLabel = formatBerlinDateFromIsoDate(date, language);
 		return `${dateLabel}, ${time}`;
 	};
 
 	const first = berlinTimes[0];
 	const last = berlinTimes[berlinTimes.length - 1];
+	const utcOffset = first
+		? getBerlinUtcOffsetLabel(
+				venueLocalKickoffToUtcMs(first.match.date, first.match.timeLocal, first.match.venueKey)
+			)
+		: '';
 
 	return {
 		round: parsed.round,
 		index: parsed.index,
 		betsRequired: betsRequiredForSlot(slotId),
 		matchCount: slotMatches.length,
-		rangeFrom: first ? formatBerlin(first.date, first.time) : '',
-		rangeTo: last ? formatBerlin(last.date, last.time) : '',
+		rangeFrom: first ? formatBerlin(first.german.date, first.german.time) : '',
+		rangeTo: last ? formatBerlin(last.german.date, last.german.time) : '',
+		utcOffset,
 	};
 }
 

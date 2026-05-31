@@ -49,13 +49,18 @@ export default function ExternalMatchWc26Card({
 		() => findWc26ScheduleMatchForExternal(match, slotId),
 		[match, slotId]
 	);
-	const kickoff = utcToBerlinKickoff(match.utcDate);
-	const dateLabel = useMemo(() => {
+	const { kickoff, dateLabel } = useMemo(() => {
 		if (scheduled) {
 			const german = kickoffToGerman(scheduled.date, scheduled.timeLocal, scheduled.venueKey);
-			return formatBerlinDateFromIsoDate(german.date, i18n.language);
+			return {
+				kickoff: german.time,
+				dateLabel: formatBerlinDateFromIsoDate(german.date, i18n.language),
+			};
 		}
-		return formatBerlinDateFromUtc(match.utcDate, i18n.language);
+		return {
+			kickoff: utcToBerlinKickoff(match.utcDate),
+			dateLabel: formatBerlinDateFromUtc(match.utcDate, i18n.language),
+		};
 	}, [scheduled, match.utcDate, i18n.language]);
 	const gameScore: GameScore | null = match.gameScore ?? null;
 	const scoreView = getExternalMatchScoreView(

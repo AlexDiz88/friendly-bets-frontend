@@ -66,10 +66,10 @@ export default function GameResultScoreEditDialog({
 
 	return (
 		<Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-			<DialogTitle sx={{ textAlign: 'center', pb: 0 }}>
+			<DialogTitle sx={{ textAlign: 'center', pb: 0, px: 1.5 }}>
 				{t('gameResultEditScoreTitle')}
 			</DialogTitle>
-			<DialogContent sx={{ pt: 1 }}>
+			<DialogContent sx={{ pt: 1, px: 1.5 }}>
 				{match && (
 					<ScoreSelector
 						keyId={match.id ?? String(match.externalMatchId)}

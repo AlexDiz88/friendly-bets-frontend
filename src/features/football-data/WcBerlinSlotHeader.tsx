@@ -36,7 +36,11 @@ export default function WcBerlinSlotHeader({
 					variant="caption"
 					sx={{ ...wc26SlotRangeSx, mt: compact ? 0.25 : 0.5, display: 'block', textAlign: 'center' }}
 				>
-					{t('wc26.betSlots.range', { from: meta.rangeFrom, to: meta.rangeTo })}
+					{t('wc26.betSlots.range', {
+						from: meta.rangeFrom,
+						to: meta.rangeTo,
+						utc: meta.utcOffset,
+					})}
 				</Typography>
 			) : null}
 			{!compact ? (

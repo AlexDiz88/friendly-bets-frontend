@@ -49,7 +49,7 @@ export default function CreateNewTeam({
 				unmappedHintsRefreshKey={unmappedHintsRefreshKey}
 			/>
 			<Box sx={{ textAlign: 'center' }}>
-				<CustomCancelButton onClick={handleCancelClick} />
+				<CustomCancelButton onClick={handleCancelClick} sx={{ mb: 0.75 }} />
 				<CustomSuccessButton onClick={handleSaveClick} buttonText={t('btnText.create')} />
 			</Box>
 		</Box>

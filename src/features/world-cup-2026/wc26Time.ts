@@ -8,16 +8,35 @@ export function wc26DateLocale(language: string): string {
 	return 'ru-RU';
 }
 
+/** Локальный пуск на стадионе → UTC (мс). */
+export function venueLocalKickoffToUtcMs(
+	date: string,
+	timeLocal: string,
+	venueKey: string
+): number {
+	const tz = WC26_VENUE_TIMEZONE[venueKey] ?? 'UTC';
+	const [y, m, d] = date.split('-').map(Number);
+	const [hour, minute] = timeLocal.split(':').map(Number);
+	return localPartsToUtcMs(y, m, d, hour, minute, tz);
+}
+
+/** Смещение Europe/Berlin для момента времени, напр. «UTC+2». */
+export function getBerlinUtcOffsetLabel(atMs: number): string {
+	const parts = new Intl.DateTimeFormat('en-US', {
+		timeZone: BERLIN,
+		timeZoneName: 'shortOffset',
+	}).formatToParts(new Date(atMs));
+	const raw = parts.find((p) => p.type === 'timeZoneName')?.value ?? 'UTC';
+	return raw.replace(/^GMT/i, 'UTC');
+}
+
 /** Локальный пуск на стадионе → дата/время по Германии (CEST). */
 export function kickoffToGerman(
 	date: string,
 	timeLocal: string,
 	venueKey: string
 ): { date: string; time: string } {
-	const tz = WC26_VENUE_TIMEZONE[venueKey] ?? 'UTC';
-	const [y, m, d] = date.split('-').map(Number);
-	const [hour, minute] = timeLocal.split(':').map(Number);
-	const utcMs = localPartsToUtcMs(y, m, d, hour, minute, tz);
+	const utcMs = venueLocalKickoffToUtcMs(date, timeLocal, venueKey);
 
 	const time = new Intl.DateTimeFormat('de-DE', {
 		timeZone: BERLIN,
