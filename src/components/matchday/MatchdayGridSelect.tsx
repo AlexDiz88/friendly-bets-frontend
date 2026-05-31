@@ -4,12 +4,9 @@ import {
 	SelectChangeEvent,
 	useMediaQuery,
 	useTheme,
-	type SxProps,
-	type Theme,
 } from '@mui/material';
 import { compactMatchdaySelectSx } from '../selectors/compactSelectSx';
 import {
-	blurFilterSelectOnMenuClose,
 	filterSelectGridMenuItemSx,
 	filterSelectMenuProps,
 } from '../selectors/filterSelectStyles';
@@ -62,7 +59,6 @@ export default function MatchdayGridSelect({
 			size="small"
 			value={safeValue}
 			onChange={handleChange}
-			onClose={blurFilterSelectOnMenuClose}
 			disabled={disabled}
 			aria-label={ariaLabel}
 			renderValue={() =>
@@ -93,6 +89,7 @@ export default function MatchdayGridSelect({
 						maxHeight: 'none',
 						overflowX: 'hidden',
 						overflowY: 'auto',
+						py: 0.5,
 					},
 				},
 			}}
@@ -101,25 +98,23 @@ export default function MatchdayGridSelect({
 				<MenuItem
 					key={slot.value}
 					value={slot.value}
-					sx={
-						[
-							filterSelectGridMenuItemSx,
-							{
-								minWidth: 0,
-								width: '100%',
-								maxWidth: '100%',
-								minHeight: '2.75rem',
-								justifyContent: 'center',
-								px: 0.25,
-								py: 1.5,
-								fontSize: isNarrow ? '0.78rem' : '0.85rem',
-								fontWeight: safeValue === slot.value ? 700 : 600,
-								whiteSpace: 'normal',
-								lineHeight: 1.2,
-								textAlign: 'center',
-							},
-						] as SxProps<Theme>
-					}
+					sx={(theme) => ({
+						...(typeof filterSelectGridMenuItemSx === 'function'
+							? filterSelectGridMenuItemSx(theme)
+							: {}),
+						minWidth: 0,
+						width: '100%',
+						maxWidth: '100%',
+						minHeight: '2.75rem',
+						justifyContent: 'center',
+						px: 0.25,
+						py: 1.5,
+						fontSize: isNarrow ? '0.78rem' : '0.85rem',
+						fontWeight: safeValue === slot.value ? 700 : 600,
+						whiteSpace: 'normal',
+						lineHeight: 1.2,
+						textAlign: 'center',
+					})}
 				>
 					{formatSlotLabel(slot)}
 				</MenuItem>

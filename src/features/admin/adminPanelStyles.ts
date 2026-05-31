@@ -71,8 +71,8 @@ export const ADMIN_SECTION_HINT_SX = {
 
 export const ADMIN_FORM_PANEL_SX = {
 	mt: 1,
-	mb: 1.5,
-	p: 1.5,
+	mb: 1,
+	p: 1,
 	borderRadius: 1.5,
 	bgcolor: 'action.hover',
 	border: 1,
@@ -111,4 +111,36 @@ export const ADMIN_BUTTON_STACK_SX = {
 	gap: 1,
 	alignItems: 'stretch',
 	'& .MuiButton-root': { width: '100%' },
+} as const;
+
+export const ADMIN_FIELD_LABEL_SX = {
+	fontWeight: 600,
+	fontSize: '0.8125rem',
+	mb: 0.5,
+	display: 'block',
+} as const;
+
+/** Единый стиль Select в формах админки — fullWidth, выравнивание значения с иконкой. */
+export const ADMIN_SELECT_SX = {
+	width: '100%',
+	'& .MuiSelect-select': {
+		display: 'flex',
+		alignItems: 'center',
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+	},
+} as const;
+
+export const ADMIN_FORM_FIELD_SX = {
+	mb: 1.5,
+	...ADMIN_SELECT_SX,
+} as const;
+
+/** Select с длинной подписью в узкой колонке админки. */
+export const ADMIN_SELECT_COMPACT_LABEL_SX = {
+	'& .MuiInputLabel-root': {
+		fontSize: '0.6875rem',
+		lineHeight: 1.25,
+	},
 } as const;

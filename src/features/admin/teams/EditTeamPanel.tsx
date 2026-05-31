@@ -112,9 +112,7 @@ export default function EditTeamPanel(): JSX.Element {
 	}, [dispatch, selected, saving, values]);
 
 	return (
-		<Box sx={{ mt: 2.5, pt: 2, borderTop: 1, borderColor: 'divider' }}>
-			<Box sx={{ fontWeight: 600, fontSize: '0.9375rem', mb: 1.5 }}>{t('teamEditSection')}</Box>
-
+		<Box>
 			{loading ? (
 				<Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
 					<CircularProgress size={28} />

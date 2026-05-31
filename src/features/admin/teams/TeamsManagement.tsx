@@ -3,7 +3,7 @@ import { t } from 'i18next';
 import { useState } from 'react';
 import CustomButton from '../../../components/custom/btn/CustomButton';
 import AdminSection from '../AdminSection';
-import { ADMIN_FORM_PANEL_SX } from '../adminPanelStyles';
+import { ADMIN_BUTTON_STACK_SX, ADMIN_FORM_PANEL_SX } from '../adminPanelStyles';
 import AddTeamToLeague from './AddTeamToLeague';
 import CreateNewTeam from './CreateNewTeam';
 import EditTeamPanel from './EditTeamPanel';
@@ -11,6 +11,7 @@ import EditTeamPanel from './EditTeamPanel';
 export default function TeamsManagement(): JSX.Element {
 	const [showAddTeamToLeague, setShowAddTeamToLeague] = useState(false);
 	const [showAddNewTeam, setShowAddNewTeam] = useState(false);
+	const [showEditTeam, setShowEditTeam] = useState(false);
 
 	const handleShowAddNewTeam = (): void => {
 		setShowAddNewTeam(!showAddNewTeam);
@@ -28,38 +29,50 @@ export default function TeamsManagement(): JSX.Element {
 		setShowAddTeamToLeague(!showAddTeamToLeague);
 	};
 
+	const formPanelSx = { ...ADMIN_FORM_PANEL_SX, mb: 0 };
+
 	return (
 		<AdminSection title={t('teamManagement')}>
-			<CustomButton
-				sx={{ width: '100%', mb: showAddNewTeam ? 1.5 : 1 }}
-				onClick={() => handleShowAddNewTeam()}
-				buttonColor="secondary"
-				buttonText={t('newTeam')}
-			/>
-			{showAddNewTeam && (
-				<Box sx={ADMIN_FORM_PANEL_SX}>
-					<CreateNewTeam closeAddNewTeam={closeAddNewTeam} />
-				</Box>
-			)}
+			<Box sx={ADMIN_BUTTON_STACK_SX}>
+				<CustomButton
+					onClick={() => handleShowAddNewTeam()}
+					buttonColor="secondary"
+					buttonText={t('newTeam')}
+				/>
+				{showAddNewTeam && (
+					<Box sx={formPanelSx}>
+						<CreateNewTeam closeAddNewTeam={closeAddNewTeam} />
+					</Box>
+				)}
 
-			{!showAddNewTeam && (
-				<>
-					<CustomButton
-						sx={{ width: '100%', mb: showAddTeamToLeague ? 1.5 : 0 }}
-						onClick={() => handleShowAddTeamToLeague()}
-						buttonColor="info"
-						buttonVariant="outlined"
-						buttonText={t('addTeamToLeague')}
-					/>
-					{showAddTeamToLeague && (
-						<Box sx={ADMIN_FORM_PANEL_SX}>
-							<AddTeamToLeague closeAddTeamToLeague={closeAddTeamToLeague} />
-						</Box>
-					)}
-				</>
-			)}
+				{!showAddNewTeam && (
+					<>
+						<CustomButton
+							onClick={() => handleShowAddTeamToLeague()}
+							buttonColor="info"
+							buttonVariant="outlined"
+							buttonText={t('addTeamToLeague')}
+						/>
+						{showAddTeamToLeague && (
+							<Box sx={formPanelSx}>
+								<AddTeamToLeague closeAddTeamToLeague={closeAddTeamToLeague} />
+							</Box>
+						)}
+					</>
+				)}
 
-			<EditTeamPanel />
+				<CustomButton
+					onClick={() => setShowEditTeam(!showEditTeam)}
+					buttonColor="info"
+					buttonVariant="outlined"
+					buttonText={showEditTeam ? t('hideTeamEditSection') : t('showTeamEditSection')}
+				/>
+				{showEditTeam && (
+					<Box sx={formPanelSx}>
+						<EditTeamPanel />
+					</Box>
+				)}
+			</Box>
 		</AdminSection>
 	);
 }

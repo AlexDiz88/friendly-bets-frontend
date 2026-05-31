@@ -1,23 +1,7 @@
 import type { SelectProps, SxProps, Theme } from '@mui/material';
-import type { SyntheticEvent } from 'react';
 
 /** Общая высота compact-селектов (лига, тур) — 34px. */
 export const COMPACT_SELECT_HEIGHT = 34;
-
-/** MUI Select оставляет focus после выбора (в т.ч. повтор того же пункта) — снимаем при закрытии меню. */
-export function blurFilterSelectOnMenuClose(event: SyntheticEvent): void {
-	const root = event.currentTarget;
-	const blur = (): void => {
-		if (root instanceof HTMLElement) {
-			root.blur();
-		}
-		const active = document.activeElement;
-		if (active instanceof HTMLElement && active !== document.body) {
-			active.blur();
-		}
-	};
-	setTimeout(blur, 0);
-}
 
 /** Высота строки в выпадающем списке (см. filterSelectMenuItemSx minHeight + my). */
 export const FILTER_SELECT_MENU_ITEM_ROW_PX = 44;
@@ -227,17 +211,18 @@ export const filterSelectMenuItemSx: SxProps<Theme> = (theme) => {
 	};
 };
 
-export const filterSelectGridMenuItemSx: SxProps<Theme> = [
-	filterSelectMenuItemSx,
-	{
-		mx: 0,
-		my: 0,
-		boxSizing: 'border-box',
-		overflow: 'hidden',
-		wordBreak: 'break-word',
-		hyphens: 'auto',
-	},
-];
+/** MenuItem принимает sx только как object | function, не вложенный массив. */
+export const filterSelectGridMenuItemSx: SxProps<Theme> = (theme) => ({
+	...(typeof filterSelectMenuItemSx === 'function'
+		? filterSelectMenuItemSx(theme)
+		: filterSelectMenuItemSx),
+	mx: 0,
+	my: 0,
+	boxSizing: 'border-box',
+	overflow: 'hidden',
+	wordBreak: 'break-word',
+	hyphens: 'auto',
+});
 
 /** Пункты списка игроков: без бокового mx, padding как у .MuiSelect-select (0.75). */
 export const filterSelectPlayerMenuItemSx: SxProps<Theme> = [
@@ -308,32 +293,9 @@ export function filterSelectMenuProps(
 	) as SxProps<Theme>;
 
 	return {
-		disableRestoreFocus: true,
 		anchorOrigin: { vertical: 'bottom', horizontal: anchorHorizontal },
 		transformOrigin: { vertical: 'top', horizontal: anchorHorizontal },
 		marginThreshold: isGrid ? 12 : 0,
-		...(isGrid
-			? {
-					PopperProps: {
-						modifiers: [
-							{
-								name: 'preventOverflow',
-								enabled: true,
-								options: {
-									altAxis: true,
-									padding: 12,
-									tether: false,
-									rootBoundary: 'viewport',
-								},
-							},
-							{
-								name: 'flip',
-								enabled: false,
-							},
-						],
-					},
-				}
-			: {}),
 		PaperProps: {
 			sx: paperSx,
 		},

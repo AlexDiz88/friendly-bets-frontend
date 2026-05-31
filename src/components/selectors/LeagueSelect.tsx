@@ -8,7 +8,6 @@ import {
 	filterSelectAllLabelSx,
 	filterSelectLeagueLayoutSx,
 	filterSelectMenuItemSx,
-	blurFilterSelectOnMenuClose,
 	filterSelectMenuProps,
 	filterSelectRootSx,
 } from './filterSelectStyles';
@@ -65,7 +64,6 @@ const LeagueSelect = ({
 			id="league-select"
 			value={safeValue}
 			onChange={onChange}
-			onClose={blurFilterSelectOnMenuClose}
 			MenuProps={filterSelectMenuProps(menuItemCount)}
 		>
 			{!withoutAll && (

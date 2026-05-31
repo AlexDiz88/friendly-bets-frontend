@@ -1,9 +1,9 @@
-import CheckIcon from '@mui/icons-material/Check';
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
 import LeagueAvatar from '../../../components/custom/avatar/LeagueAvatar';
+import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import MatchdayGridSelect from '../../../components/matchday/MatchdayGridSelect';
 import {
 	expandedSlotsToMatchdaySlots,
@@ -16,12 +16,17 @@ import {
 } from '../../../components/custom/snackbar/snackbarSlice';
 import League from './types/League';
 import { setLeagueCurrentMatchday } from './api';
+import LeagueRemoveFromSeasonButton from './LeagueRemoveFromSeasonButton';
 
 export default function LeagueCurrentMatchdayAssignInline({
 	league,
+	formatCode,
+	seasonId,
 	onSaved,
 }: {
 	league: League;
+	formatCode?: string;
+	seasonId: string;
 	onSaved: () => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -68,7 +73,8 @@ export default function LeagueCurrentMatchdayAssignInline({
 				border: 1,
 				borderColor: 'divider',
 				borderRadius: 1,
-				p: 0.75,
+				px: 0.25,
+				py: 0.75,
 				bgcolor: 'background.paper',
 				textAlign: 'left',
 				width: '100%',
@@ -77,12 +83,24 @@ export default function LeagueCurrentMatchdayAssignInline({
 				boxSizing: 'border-box',
 			}}
 		>
-			<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+			<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: formatCode ? 0.25 : 0.5 }}>
 				<LeagueAvatar leagueCode={league.leagueCode} height={24} />
 				<Typography variant="body2" fontWeight={600} sx={{ flex: 1, minWidth: 0 }}>
 					{league.name}
 				</Typography>
+				{league.removable ? (
+					<LeagueRemoveFromSeasonButton
+						seasonId={seasonId}
+						league={league}
+						onRemoved={onSaved}
+					/>
+				) : null}
 			</Box>
+			{formatCode ? (
+				<Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5, pl: 3.5 }}>
+					{formatCode}
+				</Typography>
+			) : null}
 			<Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>
 				{t('leagueCurrentMatchday')}
 			</Typography>
@@ -95,21 +113,15 @@ export default function LeagueCurrentMatchdayAssignInline({
 					disabled={saving}
 					aria-label={t('leagueCurrentMatchday')}
 				/>
-				<Tooltip title={t('btnText.save')} arrow>
-					<Box component="span" sx={{ flexShrink: 0, display: 'inline-flex' }}>
-						<IconButton
-							color="success"
-							size="small"
-							disabled={saving}
-							onClick={() => {
-								void handleSave();
-							}}
-							aria-label={t('btnText.save')}
-						>
-							<CheckIcon fontSize="small" />
-						</IconButton>
-					</Box>
-				</Tooltip>
+				<CustomSuccessButton
+					buttonText={t('btnText.save')}
+					disabled={saving}
+					onClick={() => {
+						void handleSave();
+					}}
+					sx={{ height: '2rem', px: 1, mr: 0, minWidth: 0, flexShrink: 0 }}
+					textSize="0.75rem"
+				/>
 			</Box>
 		</Box>
 	);

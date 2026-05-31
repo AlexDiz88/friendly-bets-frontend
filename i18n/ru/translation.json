@@ -305,6 +305,8 @@
 	"teamNameDe": "Название (DE)",
 	"teamApiDataSection": "Данные API",
 	"teamEditSection": "Редактирование команд",
+	"showTeamEditSection": "Редактирование команд",
+	"hideTeamEditSection": "Скрыть редактирование команд",
 	"teamSelectToEdit": "Выберите команду",
 	"teamWasSuccessfullyUpdated": "Команда обновлена",
 	"teamFootballDataId": "ID команды в football-data.org",

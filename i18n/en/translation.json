@@ -305,6 +305,8 @@
 	"teamNameDe": "Display name (DE)",
 	"teamApiDataSection": "API data",
 	"teamEditSection": "Edit existing teams",
+	"showTeamEditSection": "Edit existing teams",
+	"hideTeamEditSection": "Hide team editing",
 	"teamSelectToEdit": "Select a team",
 	"teamWasSuccessfullyUpdated": "Team updated",
 	"teamFootballDataId": "football-data.org team ID",

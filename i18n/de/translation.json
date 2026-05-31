@@ -305,6 +305,8 @@
 	"teamNameDe": "Anzeigename (DE)",
 	"teamApiDataSection": "API-Daten",
 	"teamEditSection": "Teams bearbeiten",
+	"showTeamEditSection": "Teams bearbeiten",
+	"hideTeamEditSection": "Team-Bearbeitung ausblenden",
 	"teamSelectToEdit": "Team auswählen",
 	"teamWasSuccessfullyUpdated": "Team aktualisiert",
 	"teamFootballDataId": "football-data.org Team-ID",

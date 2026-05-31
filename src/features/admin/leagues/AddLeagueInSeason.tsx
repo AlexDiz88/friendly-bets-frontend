@@ -8,7 +8,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { t } from 'i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import LeagueAvatar from '../../../components/custom/avatar/LeagueAvatar';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
@@ -46,6 +46,11 @@ export default function AddLeagueInSeason({
 			.then((page) => setFormats(page.formats))
 			.catch(() => setFormats([]));
 	}, []);
+
+	const formatCodeById = useMemo(
+		() => new Map(formats.map((f) => [f.id, f.formatCode])),
+		[formats]
+	);
 
 	const refreshSeasons = useCallback(() => {
 		dispatch(getSeasons());
@@ -89,19 +94,27 @@ export default function AddLeagueInSeason({
 			<Typography sx={{ mt: 1.5 }}>{t(`allLeaguesList`)}:</Typography>
 			{leagues && leagues.length > 0 ? (
 				<List sx={{ borderBottom: 1, py: 0 }}>
-					{leagues.map((l) => (
+					{leagues.map((l) => {
+						const formatCode = l.tournamentFormatId
+							? formatCodeById.get(l.tournamentFormatId)
+							: undefined;
+						const hasMatchdayInline =
+							Boolean(l.tournamentFormatId) &&
+							Boolean(l.matchdaySlots?.length);
+
+						return (
 						<ListItem
 							key={l.id}
 							sx={{
 								flexDirection: 'column',
 								alignItems: 'stretch',
-								px: 0.5,
+								px: 0.25,
 								py: 0.75,
 								minWidth: 0,
 								overflow: 'hidden',
 							}}
 						>
-							{l.removable ? (
+							{l.removable && !hasMatchdayInline ? (
 								<Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 0.25 }}>
 									<LeagueRemoveFromSeasonButton
 										seasonId={seasonId}
@@ -110,11 +123,21 @@ export default function AddLeagueInSeason({
 									/>
 								</Box>
 							) : null}
-							{l.tournamentFormatId && l.matchdaySlots && l.matchdaySlots.length > 0 ? (
-								<LeagueCurrentMatchdayAssignInline league={l} onSaved={refreshSeasons} />
+							{hasMatchdayInline ? (
+								<LeagueCurrentMatchdayAssignInline
+									league={l}
+									formatCode={formatCode}
+									seasonId={seasonId}
+									onSaved={refreshSeasons}
+								/>
 							) : l.tournamentFormatId ? (
 								<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
 									<LeagueAvatar leagueCode={l.leagueCode} height={28} fullName />
+									{formatCode ? (
+										<Typography variant="caption" color="text.secondary">
+											{formatCode}
+										</Typography>
+									) : null}
 								</Box>
 							) : (
 								<LeagueFormatAssignInline
@@ -126,7 +149,8 @@ export default function AddLeagueInSeason({
 								/>
 							)}
 						</ListItem>
-					))}
+						);
+					})}
 				</List>
 			) : (
 				<Box sx={{ fontWeight: 600, color: 'brown' }}>{t(`noLeaguesInThisSeason`)}</Box>
