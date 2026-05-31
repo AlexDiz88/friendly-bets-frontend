@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { compactMatchdaySelectSx } from '../selectors/compactSelectSx';
 import {
+	blurFilterSelectOnMenuClose,
 	filterSelectGridMenuItemSx,
 	filterSelectMenuProps,
 } from '../selectors/filterSelectStyles';
@@ -61,6 +62,7 @@ export default function MatchdayGridSelect({
 			size="small"
 			value={safeValue}
 			onChange={handleChange}
+			onClose={blurFilterSelectOnMenuClose}
 			disabled={disabled}
 			aria-label={ariaLabel}
 			renderValue={() =>

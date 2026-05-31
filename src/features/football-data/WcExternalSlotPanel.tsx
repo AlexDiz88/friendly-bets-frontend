@@ -61,7 +61,7 @@ export default function WcExternalSlotPanel({
 							: t('wc26.betSlots.betsRule', { bets: safeLimit, matches: matchCount })}
 					</Typography>
 				</Box>
-				<Box sx={{ display: 'flex', gap: 0.45, flexShrink: 0 }}>
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, flexShrink: 0, py: 0.15 }}>
 					{Array.from({ length: safeLimit }, (_, i) => (
 						<Box
 							key={i}

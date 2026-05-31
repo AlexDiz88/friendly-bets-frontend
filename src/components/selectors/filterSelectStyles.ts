@@ -1,7 +1,23 @@
 import type { SelectProps, SxProps, Theme } from '@mui/material';
+import type { SyntheticEvent } from 'react';
 
 /** Общая высота compact-селектов (лига, тур) — 34px. */
 export const COMPACT_SELECT_HEIGHT = 34;
+
+/** MUI Select оставляет focus после выбора (в т.ч. повтор того же пункта) — снимаем при закрытии меню. */
+export function blurFilterSelectOnMenuClose(event: SyntheticEvent): void {
+	const root = event.currentTarget;
+	const blur = (): void => {
+		if (root instanceof HTMLElement) {
+			root.blur();
+		}
+		const active = document.activeElement;
+		if (active instanceof HTMLElement && active !== document.body) {
+			active.blur();
+		}
+	};
+	setTimeout(blur, 0);
+}
 
 /** Высота строки в выпадающем списке (см. filterSelectMenuItemSx minHeight + my). */
 export const FILTER_SELECT_MENU_ITEM_ROW_PX = 44;
@@ -292,6 +308,7 @@ export function filterSelectMenuProps(
 	) as SxProps<Theme>;
 
 	return {
+		disableRestoreFocus: true,
 		anchorOrigin: { vertical: 'bottom', horizontal: anchorHorizontal },
 		transformOrigin: { vertical: 'top', horizontal: anchorHorizontal },
 		marginThreshold: isGrid ? 12 : 0,

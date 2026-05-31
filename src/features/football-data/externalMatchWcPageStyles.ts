@@ -155,18 +155,19 @@ export const externalMatchWcBetsQuotaSx: SxProps<Theme> = (theme) => {
 			? 'linear-gradient(90deg, rgba(0,75,48,0.35) 0%, rgba(100,75,0,0.22) 100%)'
 			: 'linear-gradient(90deg, rgba(236,253,245,0.95) 0%, rgba(240,232,200,0.9) 100%)',
 		'& .wc-quota-dot': {
-			width: 7,
-			height: 7,
+			width: 12,
+			height: 12,
 			borderRadius: '50%',
 			flexShrink: 0,
 		},
 		'& .wc-quota-dot--filled': {
 			background: full,
-			boxShadow: isDark ? '0 0 6px rgba(94, 234, 212, 0.45)' : 'none',
+			boxShadow: isDark ? '0 0 8px rgba(94, 234, 212, 0.5)' : '0 0 4px rgba(4, 90, 55, 0.25)',
 		},
 		'& .wc-quota-dot--empty': {
 			background: empty,
-			border: `1px solid ${isDark ? 'rgba(157, 232, 196, 0.35)' : 'rgba(4, 90, 55, 0.25)'}`,
+			border: `1.5px solid ${isDark ? 'rgba(157, 232, 196, 0.4)' : 'rgba(4, 90, 55, 0.3)'}`,
+			boxSizing: 'border-box',
 		},
 	};
 };

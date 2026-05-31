@@ -701,7 +701,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					}}
 				>
 					{isWcLeague ? (
-						<Box sx={{ width: '100%', px: canSync ? 6.5 : 0 }}>
+						<Box sx={{ width: '100%', px: canSync ? 6.5 : 0, pt: 1 }}>
 							<Box sx={externalMatchWcOverlineSx}>
 								<Typography component="span" sx={externalMatchWcOverlineTextSx}>
 									FIFA World Cup 26™
