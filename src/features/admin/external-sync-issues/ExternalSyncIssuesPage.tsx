@@ -4,6 +4,7 @@ import {
 	Chip,
 	CircularProgress,
 	IconButton,
+	Link as MuiLink,
 	Tooltip,
 	Typography,
 } from '@mui/material';
@@ -11,10 +12,20 @@ import { useTheme } from '@mui/material/styles';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { useAppDispatch } from '../../../app/hooks';
 import CustomButton from '../../../components/custom/btn/CustomButton';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
-import { clearExternalSyncIssues, getExternalSyncIssues, notifyExternalSyncIssuesChanged } from './api';
+import {
+	buildTeamMappingAdminLink,
+	extractTeamMappingFromIssue,
+} from '../teams/teamMappingLinkUtils';
+import {
+	clearExternalSyncIssues,
+	deleteExternalSyncIssue,
+	getExternalSyncIssues,
+	notifyExternalSyncIssuesChanged,
+} from './api';
 import {
 	EXTERNAL_SYNC_ISSUES_COUNT_CHIP_SX,
 	EXTERNAL_SYNC_ISSUES_EMPTY_SX,
@@ -129,10 +140,14 @@ function ExternalSyncIssueCard({
 	issue,
 	index,
 	total,
+	deleting,
+	onDelete,
 }: {
 	issue: ExternalSyncIssue;
 	index: number;
 	total: number;
+	deleting: boolean;
+	onDelete: (id: string) => void;
 }): JSX.Element {
 	const theme = useTheme();
 	const { i18n } = useTranslation();
@@ -142,6 +157,8 @@ function ExternalSyncIssueCard({
 	const issueLabel = issueTypeLabel(issue.issueType);
 	const contextLines = buildIssueContextLines(issue, i18n.language);
 	const teamIdLines = buildIssueTeamIdLines(issue);
+	const teamMapping = extractTeamMappingFromIssue(issue);
+	const teamMappingLink = teamMapping ? buildTeamMappingAdminLink(teamMapping) : null;
 
 	return (
 		<Box
@@ -220,7 +237,40 @@ function ExternalSyncIssueCard({
 							</Box>
 						) : null}
 					</Box>
+					<Tooltip title={t('externalSyncIssuesDeleteEntry')} arrow>
+						<span>
+							<IconButton
+								aria-label={t('externalSyncIssuesDeleteEntry')}
+								size="small"
+								disabled={deleting}
+								onClick={() => onDelete(issue.id)}
+								sx={{
+									flexShrink: 0,
+									border: 1,
+									borderColor: 'divider',
+									'&:not(:disabled):hover': {
+										borderColor: theme.palette.error.light,
+										color: theme.palette.error.main,
+									},
+								}}
+							>
+								<DeleteIcon fontSize="small" />
+							</IconButton>
+						</span>
+					</Tooltip>
 				</Box>
+			{teamMappingLink ? (
+				<Box sx={{ mb: 0.75, pl: 0.25 }}>
+					<MuiLink
+						component={Link}
+						to={teamMappingLink}
+						underline="hover"
+						sx={{ fontSize: '0.8125rem', fontWeight: 600 }}
+					>
+						{t('externalSyncIssuesOpenTeamMapping')}
+					</MuiLink>
+				</Box>
+			) : null}
 			{(issue.homeTeamName || issue.awayTeamName) ? (
 					<Box
 						sx={{
@@ -285,6 +335,7 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 	const theme = useTheme();
 	const [issues, setIssues] = useState<ExternalSyncIssue[]>([]);
 	const [loading, setLoading] = useState(false);
+	const [deletingId, setDeletingId] = useState<string | null>(null);
 
 	const load = useCallback(async () => {
 		setLoading(true);
@@ -321,6 +372,28 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 			);
 		}
 	};
+
+	const handleDeleteIssue = useCallback(
+		async (id: string): Promise<void> => {
+			setDeletingId(id);
+			try {
+				await deleteExternalSyncIssue(id);
+				setIssues((prev) => prev.filter((issue) => issue.id !== id));
+				notifyExternalSyncIssuesChanged();
+				dispatch(showSuccessSnackbar({ message: t('externalSyncIssuesEntryDeleted') }));
+			} catch (error) {
+				dispatch(
+					showErrorSnackbar({
+						message:
+							error instanceof Error ? error.message : t('externalSyncIssuesDeleteError'),
+					})
+				);
+			} finally {
+				setDeletingId(null);
+			}
+		},
+		[dispatch]
+	);
 
 	return (
 		<Box sx={EXTERNAL_SYNC_ISSUES_PAGE_SX}>
@@ -378,6 +451,8 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 							issue={issue}
 							index={index}
 							total={issues.length}
+							deleting={deletingId === issue.id}
+							onDelete={handleDeleteIssue}
 						/>
 					))}
 				</Box>

@@ -9,6 +9,7 @@ import {
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
 import TeamFormFields from './TeamFormFields';
+import { notifyExternalSyncIssuesChanged } from '../external-sync-issues/api';
 import { emptyTeamFormValues, formValuesToCreatePayload, mergeTeamFormPatch } from './teamFormUtils';
 import { createTeam } from './teamsSlice';
 
@@ -29,6 +30,7 @@ export default function CreateNewTeam({
 		const dispatchResult = await dispatch(createTeam(formValuesToCreatePayload(values)));
 		if (createTeam.fulfilled.match(dispatchResult)) {
 			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyCreated') }));
+			notifyExternalSyncIssuesChanged();
 			setValues(emptyTeamFormValues());
 			setUnmappedHintsRefreshKey((k) => k + 1);
 		}

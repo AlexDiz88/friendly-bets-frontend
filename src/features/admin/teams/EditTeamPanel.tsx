@@ -4,10 +4,12 @@ import {
 	CircularProgress,
 	FilterOptionsState,
 	TextField,
+	Typography,
 } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import TeamAvatar from '../../../components/custom/avatar/TeamAvatar';
 import {
@@ -23,6 +25,11 @@ import {
 } from '../../../components/custom/snackbar/snackbarSlice';
 import TeamFormFields from './TeamFormFields';
 import TeamFormStatusIcon from './TeamFormStatusIcon';
+import { notifyExternalSyncIssuesChanged } from '../external-sync-issues/api';
+import {
+	buildExternalAliasPrefill,
+	findTeamByExternalAlias,
+} from './teamMappingLinkUtils';
 import { selectTeams } from './selectors';
 import {
 	emptyTeamFormValues,
@@ -35,12 +42,22 @@ import { getAllTeams, updateTeam } from './teamsSlice';
 export default function EditTeamPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const { i18n } = useTranslation();
+	const [searchParams] = useSearchParams();
 	const teams = useAppSelector(selectTeams);
 	const [loading, setLoading] = useState(false);
 	const [selected, setSelected] = useState<Team | null>(null);
 	const [values, setValues] = useState(emptyTeamFormValues);
 	const [saving, setSaving] = useState(false);
 	const [unmappedHintsRefreshKey, setUnmappedHintsRefreshKey] = useState(0);
+	const [deepLinkHandled, setDeepLinkHandled] = useState(false);
+
+	const prefillProvider = searchParams.get('provider') ?? undefined;
+	const prefillExternalId = searchParams.get('externalId') ?? undefined;
+	const prefillExternalName = searchParams.get('externalName') ?? undefined;
+	const prefillTeamId = searchParams.get('teamId') ?? undefined;
+	const hasMappingPrefill = Boolean(
+		prefillProvider && (prefillExternalId || prefillExternalName)
+	);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -79,6 +96,56 @@ export default function EditTeamPanel(): JSX.Element {
 		}
 	}, [selected]);
 
+	useEffect(() => {
+		if (loading || deepLinkHandled) {
+			return;
+		}
+		if (prefillTeamId) {
+			const team = teams.find((item) => item.id === prefillTeamId);
+			if (team) {
+				setSelected(team);
+				setDeepLinkHandled(true);
+			}
+			return;
+		}
+		if (hasMappingPrefill && prefillProvider) {
+			const matched = findTeamByExternalAlias(
+				teams,
+				prefillProvider,
+				prefillExternalId,
+				prefillExternalName
+			);
+			if (matched) {
+				setSelected(matched);
+				setDeepLinkHandled(true);
+			}
+		}
+	}, [
+		deepLinkHandled,
+		hasMappingPrefill,
+		loading,
+		prefillExternalId,
+		prefillExternalName,
+		prefillProvider,
+		prefillTeamId,
+		teams,
+	]);
+
+	useEffect(() => {
+		if (!selected || !hasMappingPrefill || !prefillProvider) {
+			return;
+		}
+		const prefill = buildExternalAliasPrefill(
+			prefillProvider,
+			prefillExternalId,
+			prefillExternalName
+		);
+		if (Object.keys(prefill).length === 0) {
+			return;
+		}
+		setValues((prev) => ({ ...prev, ...prefill }));
+	}, [hasMappingPrefill, prefillExternalId, prefillExternalName, prefillProvider, selected]);
+
 	const handleChange = (patch: Partial<typeof values>): void => {
 		setValues((prev) => ({ ...prev, ...patch }));
 	};
@@ -102,6 +169,7 @@ export default function EditTeamPanel(): JSX.Element {
 		setSaving(false);
 		if (updateTeam.fulfilled.match(result)) {
 			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyUpdated') }));
+			notifyExternalSyncIssuesChanged();
 			setSelected(null);
 			setValues(emptyTeamFormValues());
 			setUnmappedHintsRefreshKey((k) => k + 1);
@@ -141,6 +209,15 @@ export default function EditTeamPanel(): JSX.Element {
 					sx={{ mb: 1.5 }}
 				/>
 			)}
+
+			{hasMappingPrefill && !selected ? (
+				<Typography variant="body2" sx={{ mb: 1.5, opacity: 0.85, textAlign: 'left' }}>
+					{t('externalSyncIssuesTeamMappingPrefillHint', {
+						name: prefillExternalName ?? '—',
+						id: prefillExternalId ?? '—',
+					})}
+				</Typography>
+			) : null}
 
 			{selected ? (
 				<Box>

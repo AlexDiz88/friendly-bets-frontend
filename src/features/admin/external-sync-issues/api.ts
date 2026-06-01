@@ -61,3 +61,14 @@ export async function clearExternalSyncIssues(): Promise<void> {
 	}
 }
 
+export async function deleteExternalSyncIssue(id: string): Promise<void> {
+	const result = await apiFetch(apiUrl(`/api/admin/api-sync-issues/${encodeURIComponent(id)}`), {
+		method: 'DELETE',
+	});
+	if (result.status >= 400) {
+		const body = await result.json().catch(() => ({ message: '' }));
+		const { message } = body as { message?: string };
+		throw new Error(message || 'delete failed');
+	}
+}
+
