@@ -1,5 +1,5 @@
 import { apiFetch } from '../../shared/apiClient';
-import { OddsDemoEventDetail, OddsDemoEventSummary } from './types';
+import { OddsDemoDebugDetail, OddsDemoEventDetail, OddsDemoEventSummary } from './types';
 
 function apiUrl(path: string): string {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
@@ -19,6 +19,15 @@ export async function listOddsDemoEvents(leagueSlug: string): Promise<OddsDemoEv
 
 export async function getOddsDemoEvent(eventId: number): Promise<OddsDemoEventDetail> {
 	const result = await apiFetch(apiUrl(`/api/odds/demo/events/${eventId}`));
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function getOddsDemoEventDebug(eventId: number): Promise<OddsDemoDebugDetail> {
+	const result = await apiFetch(apiUrl(`/api/odds/demo/events/${eventId}/debug`));
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);

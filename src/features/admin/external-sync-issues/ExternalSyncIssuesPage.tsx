@@ -65,6 +65,18 @@ function issueTypeLabel(issueType: string | undefined): string {
 	if (issueType === 'SECONDARY_PROVIDER_UNAVAILABLE') {
 		return t('externalSyncIssuesIssueTypeSecondaryUnavailable');
 	}
+	if (issueType === 'ODDS_MARKET_UNMAPPED') {
+		return t('externalSyncIssuesIssueTypeOddsMarketUnmapped');
+	}
+	if (issueType === 'ODDS_SELECTION_UNMAPPED') {
+		return t('externalSyncIssuesIssueTypeOddsSelectionUnmapped');
+	}
+	if (issueType === 'ODDS_QUOTE_MISMATCH') {
+		return t('externalSyncIssuesIssueTypeOddsQuoteMismatch');
+	}
+	if (issueType === 'ODDS_QUOTE_REJECTED') {
+		return t('externalSyncIssuesIssueTypeOddsQuoteRejected');
+	}
 	return issueType ?? '';
 }
 

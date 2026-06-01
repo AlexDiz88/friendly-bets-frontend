@@ -20,3 +20,31 @@ export type OddsDemoEventDetail = OddsDemoEventSummary & {
 	marketGroups: import('../../components/odds/oddsTypes').OddsMarketGroup[];
 	fetchedAt: string;
 };
+
+export type OddsMappingTraceEntry = {
+	bookmaker: string;
+	marketName: string;
+	rawRowJson: string;
+	category?: string;
+	mappingStatus: string;
+	rejectReason?: string;
+	rejectDetail?: string;
+	betTitleCode?: number;
+	betTitleIsNot?: boolean;
+	betTitleLabel?: string;
+	odds?: string;
+	selectionCode?: string;
+	line?: string;
+};
+
+export type OddsDemoDebugDetail = {
+	oddsApiEventId: number;
+	home: string;
+	away: string;
+	bookmakers: string[];
+	fetchedAt: string;
+	rawBookmakers: Record<string, unknown[]>;
+	mappingTraceByBookmaker: Record<string, OddsMappingTraceEntry[]>;
+	mergedMarketGroups: import('../../components/odds/oddsTypes').OddsMarketGroup[];
+	mappingIssues: string[];
+};

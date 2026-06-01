@@ -32,19 +32,23 @@ export default function Homepage(): JSX.Element {
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 	const [scoreChangeIssues, setScoreChangeIssues] = useState(false);
+	const [oddsMappingIssues, setOddsMappingIssues] = useState(false);
 
 	const loadSyncIssuesStatus = useCallback(async (): Promise<void> => {
 		try {
 			const status = await getExternalSyncIssuesStatus();
 			setScoreChangeIssues(Boolean(status.hasScoreChangeIssues));
+			setOddsMappingIssues(Boolean(status.hasOddsMappingIssues));
 		} catch {
 			setScoreChangeIssues(false);
+			setOddsMappingIssues(false);
 		}
 	}, []);
 
 	useEffect(() => {
 		if (!isStaffRole(user?.role)) {
 			setScoreChangeIssues(false);
+			setOddsMappingIssues(false);
 			return;
 		}
 		void loadSyncIssuesStatus();
@@ -128,6 +132,12 @@ export default function Homepage(): JSX.Element {
 							{isStaffRole(user?.role) && scoreChangeIssues ? (
 								<Alert severity="warning" sx={{ mb: 2, textAlign: 'left' }}>
 									{t('externalSyncIssuesHomeAlert')}{' '}
+									<Link to="/external-sync-issues">{t('externalSyncIssuesTitle')}</Link>
+								</Alert>
+							) : null}
+							{isStaffRole(user?.role) && oddsMappingIssues ? (
+								<Alert severity="warning" sx={{ mb: 2, textAlign: 'left' }}>
+									{t('oddsMappingIssuesHomeAlert')}{' '}
 									<Link to="/external-sync-issues">{t('externalSyncIssuesTitle')}</Link>
 								</Alert>
 							) : null}
