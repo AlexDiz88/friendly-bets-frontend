@@ -18,7 +18,7 @@
 	"nextMatchday": "Следующий тур",
 	"externalMatchSyncFromApi": "Загрузить с football-data.org",
 	"externalMatchOddsSyncFromApi": "Загрузить кэфы с odds-api.io",
-	"externalMatchOddsSyncSuccess": "Кэфы обновлены: {{saved}} записей, {{failures}} матчей без сопоставления, {{teamFailures}} несоответствий по командам",
+	"externalMatchOddsSyncSuccess": "Кэфы обновлены для {{matches}} матчей, {{failures}} без сопоставления, {{teamFailures}} несоответствий по командам",
 	"externalMatchOddsSyncError": "Не удалось загрузить кэфы",
 	"externalMatchSyncSuccess": "Результаты тура обновлены",
 	"externalMatchSyncError": "Не удалось загрузить данные",

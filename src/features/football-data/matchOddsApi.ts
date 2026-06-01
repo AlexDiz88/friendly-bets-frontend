@@ -31,13 +31,19 @@ export type OddsApiSyncResult = {
 export async function syncOddsMatchdayFromApi(
 	leagueId: string,
 	matchday: number,
-	season: string
+	season: string,
+	gameResultIds?: string[]
 ): Promise<OddsApiSyncResult> {
 	const params = new URLSearchParams({
 		leagueId,
 		matchday: String(matchday),
 		season,
 	});
+	if (gameResultIds?.length) {
+		for (const id of gameResultIds) {
+			params.append('gameResultIds', id);
+		}
+	}
 	const result = await apiFetch(apiUrl(`/api/admin/odds/sync-matchday?${params}`), {
 		method: 'POST',
 	});

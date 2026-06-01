@@ -23,6 +23,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
+	showWarningSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
@@ -287,6 +288,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [oddsSyncing, setOddsSyncing] = useState(false);
 	const [editMatch, setEditMatch] = useState<ExternalMatch | null>(null);
 	const [pickMatch, setPickMatch] = useState<ExternalMatch | null>(null);
+	const [slotBetsRefreshKey, setSlotBetsRefreshKey] = useState(0);
 	const [adminOptionsEnabled, setAdminOptionsEnabled] = useState(false);
 	const [calendarsReady, setCalendarsReady] = useState(false);
 
@@ -321,13 +323,18 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		[matchdaySlots, effectiveMatchday]
 	);
 
+	const slotBetsRefreshDep = useMemo(
+		() => ({ data, slotBetsRefreshKey }),
+		[data, slotBetsRefreshKey]
+	);
+
 	const { bets: userSlotBets, betsByMatch, loading: slotBetsLoading } = useWcSlotUserBets({
 		enabled: isWcLeague && Boolean(user?.id),
 		seasonId: activeSeason?.id,
 		leagueId: selectedLeague?.id,
 		userId: user?.id,
 		matchDay: betMatchDay,
-		refreshKey: data,
+		refreshKey: slotBetsRefreshDep,
 	});
 
 	const calendarMatch = useMemo(() => {
@@ -619,23 +626,30 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		if (!selectedLeague?.id) {
 			return;
 		}
+		const gameResultIds = data?.matches
+			?.map((m) => m.id)
+			.filter((id): id is string => Boolean(id));
 		setOddsSyncing(true);
 		try {
 			const result = await syncOddsMatchdayFromApi(
 				selectedLeague.id,
 				effectiveMatchday,
-				externalSeason
+				externalSeason,
+				gameResultIds
 			);
 			notifyExternalSyncIssuesChanged();
-			dispatch(
-				showSuccessSnackbar({
-					message: t('externalMatchOddsSyncSuccess', {
-						saved: result.oddsDocumentsSaved,
-						failures: result.mappingFailures,
-						teamFailures: result.teamMappingFailures,
-					}),
-				})
-			);
+			const toastPayload = {
+				message: t('externalMatchOddsSyncSuccess', {
+					matches: result.matchesEligible,
+					failures: result.mappingFailures,
+					teamFailures: result.teamMappingFailures,
+				}),
+			};
+			if (result.mappingFailures > 0 || result.teamMappingFailures > 0) {
+				dispatch(showWarningSnackbar(toastPayload));
+			} else {
+				dispatch(showSuccessSnackbar(toastPayload));
+			}
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
@@ -1037,7 +1051,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					)}
 					userId={user.id}
 					onBetPlaced={() => {
-						void reloadMatchday();
+						setSlotBetsRefreshKey((k) => k + 1);
 					}}
 				/>
 			) : null}

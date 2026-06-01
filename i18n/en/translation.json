@@ -18,7 +18,7 @@
 	"nextMatchday": "Next matchday",
 	"externalMatchSyncFromApi": "Fetch from football-data.org",
 	"externalMatchOddsSyncFromApi": "Fetch odds from odds-api.io",
-	"externalMatchOddsSyncSuccess": "Odds updated: {{saved}} saved, {{failures}} match mapping failures, {{teamFailures}} team mismatches",
+	"externalMatchOddsSyncSuccess": "Odds updated for {{matches}} matches, {{failures}} mapping failures, {{teamFailures}} team mismatches",
 	"externalMatchOddsSyncError": "Failed to fetch odds",
 	"externalMatchSyncSuccess": "Matchday results updated",
 	"externalMatchSyncError": "Failed to fetch data",

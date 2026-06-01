@@ -151,7 +151,7 @@ export default function OddsPickDialog({
 			if (addOpenedBet.rejected.match(result)) {
 				throw new Error(result.error.message ?? 'unknownError');
 			}
-			dispatch(showSuccessSnackbar({ message: 'wc26.oddsPick.success' }));
+			dispatch(showSuccessSnackbar({ message: t('wc26.oddsPick.success') }));
 			setConfirmOpen(false);
 			onBetPlaced();
 			onClose();
