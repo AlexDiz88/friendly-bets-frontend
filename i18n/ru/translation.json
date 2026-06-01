@@ -682,6 +682,8 @@
 			"doubleChance": "Двойной шанс",
 			"handicap": "Форы",
 			"totals": "Тоталы",
+			"resultTotalOver": "Результат + Тотал больше",
+			"resultTotalUnder": "Результат + Тотал меньше",
 			"btts": "Обе забьют",
 			"goals": "Голы",
 			"exactTotalGoals": "Точный тотал голов",

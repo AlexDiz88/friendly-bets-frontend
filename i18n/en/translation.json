@@ -682,6 +682,8 @@
 			"doubleChance": "Double chance",
 			"handicap": "Handicap",
 			"totals": "Totals",
+			"resultTotalOver": "Result + Total Over",
+			"resultTotalUnder": "Result + Total Under",
 			"btts": "Both teams to score",
 			"goals": "Goals",
 			"exactTotalGoals": "Exact total goals",

@@ -682,6 +682,8 @@
 			"doubleChance": "Doppelte Chance",
 			"handicap": "Handicap",
 			"totals": "Über/Unter",
+			"resultTotalOver": "Ergebnis + Über",
+			"resultTotalUnder": "Ergebnis + Unter",
 			"btts": "Beide treffen",
 			"goals": "Tore",
 			"exactTotalGoals": "Genaue Toranzahl",
