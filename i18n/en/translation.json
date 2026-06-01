@@ -754,8 +754,9 @@
 		"oddsPick": {
 			"title": "Pick a bet",
 			"bestOdds": "Odds",
-			"confirmTitle": "Confirm your bet",
-			"confirmHelper": "After confirmation, odds and selection are locked.",
+			"confirmTitle": "Bet confirmation",
+			"confirmHelper": "Please verify the selection and odds below. Once submitted, they cannot be changed.",
+			"betLabel": "Bet:",
 			"oddsLine": "{{label}} — {{odds}}",
 			"betChip": "{{title}} @ {{odds}}",
 			"success": "Bet accepted",

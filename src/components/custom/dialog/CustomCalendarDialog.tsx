@@ -11,6 +11,7 @@ interface DialogProps {
 	summaryComponent?: JSX.Element;
 	helperText?: string;
 	buttonAcceptText?: string;
+	contentWidth?: string;
 }
 
 export default function CustomCalendarDialog({
@@ -21,13 +22,25 @@ export default function CustomCalendarDialog({
 	summaryComponent,
 	helperText,
 	buttonAcceptText,
+	contentWidth,
 }: DialogProps): JSX.Element {
 	return (
-		<Dialog open={open} onClose={onClose}>
-			<DialogContent>
-				<Box sx={{ fontSize: '1rem', width: '14rem' }}>
+		<Dialog
+			open={open}
+			onClose={onClose}
+			PaperProps={{ sx: { overflow: 'hidden', maxWidth: 'calc(100vw - 1.5rem)' } }}
+		>
+			<DialogContent sx={{ overflow: 'hidden', py: 2 }}>
+				<Box
+					sx={{
+						fontSize: '1rem',
+						width: contentWidth ?? '14rem',
+						maxWidth: '100%',
+						boxSizing: 'border-box',
+					}}
+				>
 					{title && <Box sx={{ fontWeight: 600 }}>{title}</Box>}
-					<Box sx={{ my: 1 }}>{helperText}</Box>
+					<Box sx={{ my: 1, lineHeight: 1.45, overflowWrap: 'anywhere' }}>{helperText}</Box>
 					{summaryComponent && summaryComponent}
 				</Box>
 			</DialogContent>

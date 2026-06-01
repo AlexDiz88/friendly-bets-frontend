@@ -16,6 +16,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTranslation } from 'react-i18next';
 import { OddsMarketGroup } from './oddsTypes';
 import BetTitle from '../../features/bets/types/BetTitle';
+import { formatPickOdds } from './formatPickOdds';
 import {
 	oddsPickAccordionDetailsSx,
 	oddsPickAccordionSummarySx,
@@ -124,11 +125,11 @@ export default function OddsMarketGroupAccordion({
 				sx={oddsPickAccordionSx}
 			>
 				<AccordionSummary expandIcon={<ExpandMoreIcon />} sx={oddsPickAccordionSummarySx}>
-					<Typography fontWeight={700} fontSize="0.9rem">
+					<Typography fontWeight={700} fontSize="0.9rem" textTransform="none">
 						{title}
 						<Typography
 							component="span"
-							sx={{ ml: 0.75, fontWeight: 600, opacity: 0.75, fontSize: '0.85rem' }}
+							sx={{ ml: 0.75, fontWeight: 600, fontSize: '0.85rem', opacity: 0.72 }}
 						>
 							({group.rows.length})
 						</Typography>
@@ -165,7 +166,7 @@ export default function OddsMarketGroupAccordion({
 									{row.displayLabel}
 								</Typography>
 								<Typography component="span" sx={oddsPickRowOddsSx}>
-									{displayOdds}
+									{displayOdds === '—' ? displayOdds : formatPickOdds(displayOdds)}
 								</Typography>
 							</Box>
 						);

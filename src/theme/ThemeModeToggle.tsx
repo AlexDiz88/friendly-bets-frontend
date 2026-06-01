@@ -7,7 +7,11 @@ import { selectUser } from '../features/auth/selectors';
 import { headerIconButtonSx } from '../components/header/headerPageStyles';
 import { useThemeMode } from './ThemeModeContext';
 
-export default function ThemeModeToggle(): JSX.Element | null {
+type Props = {
+	iconButtonSx?: SxProps<Theme>;
+};
+
+export default function ThemeModeToggle({ iconButtonSx }: Props): JSX.Element | null {
 	const user = useAppSelector(selectUser);
 	const { mode, toggleTheme } = useThemeMode();
 	const isDark = mode === 'dark';
@@ -23,7 +27,12 @@ export default function ThemeModeToggle(): JSX.Element | null {
 				<IconButton
 					onClick={toggleTheme}
 					aria-label={isDark ? t('switchToLightTheme') : t('switchToDarkTheme')}
-					sx={[headerIconButtonSx, { ml: 1 }] as SxProps<Theme>}
+					sx={
+						[
+							headerIconButtonSx,
+							iconButtonSx ?? { ml: 1 },
+						] as SxProps<Theme>
+					}
 				>
 					{isDark ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}
 				</IconButton>

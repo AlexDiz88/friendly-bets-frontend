@@ -14,6 +14,7 @@ import { useAppDispatch } from '../../app/hooks';
 import OddsMarketGroupAccordion, {
 	type OddsRowSelection,
 } from './OddsMarketGroupAccordion';
+import { formatPickOdds } from './formatPickOdds';
 import { OddsEventMarkets } from './oddsTypes';
 import CustomCalendarDialog from '../custom/dialog/CustomCalendarDialog';
 import {
@@ -25,10 +26,13 @@ import { addOpenedBet } from '../../features/bets/betsSlice';
 import { ExternalMatch } from '../../features/football-data/types/ExternalMatch';
 import { matchSideToDisplayTeam } from '../../features/football-data/externalMatchDisplay';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../utils/teamDisplay';
+import ThemeModeToggle from '../../theme/ThemeModeToggle';
 import {
 	oddsPickDialogBodySx,
 	oddsPickDialogCloseBtnSx,
+	oddsPickDialogHeaderActionsSx,
 	oddsPickDialogHeaderSx,
+	oddsPickDialogThemeToggleSx,
 	oddsPickDialogPaperSx,
 	oddsPickDialogRootSx,
 	oddsPickDialogTeamAvatarSx,
@@ -38,6 +42,16 @@ import {
 	oddsPickDialogTitleRowSx,
 	oddsPickDialogTitleSx,
 	oddsPickDialogVsSx,
+	oddsPickConfirmBetLabelSx,
+	oddsPickConfirmBetRowSx,
+	oddsPickConfirmBetTitleSx,
+	oddsPickConfirmOddsSx,
+	oddsPickConfirmSummarySx,
+	oddsPickConfirmTeamAvatarSx,
+	oddsPickConfirmTeamNameSx,
+	oddsPickConfirmTeamSideSx,
+	oddsPickConfirmTeamsRowSx,
+	oddsPickConfirmVsSx,
 	oddsPickEmptySx,
 } from './oddsPickDialogStyles';
 
@@ -152,15 +166,12 @@ export default function OddsPickDialog({
 		}
 	};
 
-	const confirmHelper = useMemo(() => {
+	const confirmOddsText = useMemo(() => {
 		if (!selection) {
 			return '';
 		}
-		return t('wc26.oddsPick.oddsLine', {
-			label: selection.displayLabel,
-			odds: selection.clientOdds,
-		});
-	}, [selection, t]);
+		return formatPickOdds(selection.clientOdds);
+	}, [selection]);
 
 	return (
 		<>
@@ -178,9 +189,12 @@ export default function OddsPickDialog({
 							<Typography component="h2" sx={oddsPickDialogTitleSx}>
 								{t('wc26.oddsPick.title')}
 							</Typography>
-							<Button onClick={onClose} sx={oddsPickDialogCloseBtnSx}>
-								{t('close')}
-							</Button>
+							<Box sx={oddsPickDialogHeaderActionsSx}>
+								<ThemeModeToggle iconButtonSx={oddsPickDialogThemeToggleSx} />
+								<Button onClick={onClose} sx={oddsPickDialogCloseBtnSx}>
+									{t('close')}
+								</Button>
+							</Box>
 						</Box>
 						<Box sx={oddsPickDialogTeamsRowSx}>
 							<Typography sx={oddsPickDialogHomeTeamNameSx}>
@@ -206,7 +220,12 @@ export default function OddsPickDialog({
 					<Box sx={oddsPickDialogBodySx}>
 						{loading ? (
 							<Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-								<CircularProgress size={32} sx={{ color: '#9de8c4' }} />
+								<CircularProgress
+									size={32}
+									sx={(t) => ({
+										color: t.palette.mode === 'dark' ? '#9de8c4' : '#046a3d',
+									})}
+								/>
 							</Box>
 						) : markets && markets.marketGroups.length > 0 ? (
 							markets.marketGroups.map((group) => (
@@ -233,11 +252,45 @@ export default function OddsPickDialog({
 				onSave={() => void handleConfirm()}
 				title={t('wc26.oddsPick.confirmTitle')}
 				helperText={t('wc26.oddsPick.confirmHelper')}
+				contentWidth="min(18rem, calc(100vw - 2.5rem))"
 				summaryComponent={
-					confirmHelper ? (
-						<Typography variant="body2" sx={{ mt: 1, fontWeight: 600 }}>
-							{confirmHelper}
-						</Typography>
+					selection ? (
+						<Box sx={oddsPickConfirmSummarySx}>
+							<Box sx={oddsPickConfirmTeamsRowSx}>
+								<Box sx={oddsPickConfirmTeamSideSx}>
+									<Avatar
+										variant="square"
+										src={resolveTeamLogoUrl(homeTeam)}
+										sx={oddsPickConfirmTeamAvatarSx}
+									/>
+									<Typography sx={oddsPickConfirmTeamNameSx}>
+										{resolveTeamDisplayName(homeTeam, t, i18n.language)}
+									</Typography>
+								</Box>
+								<Typography sx={oddsPickConfirmVsSx}>—</Typography>
+								<Box sx={oddsPickConfirmTeamSideSx}>
+									<Avatar
+										variant="square"
+										src={resolveTeamLogoUrl(awayTeam)}
+										sx={oddsPickConfirmTeamAvatarSx}
+									/>
+									<Typography sx={oddsPickConfirmTeamNameSx}>
+										{resolveTeamDisplayName(awayTeam, t, i18n.language)}
+									</Typography>
+								</Box>
+							</Box>
+							<Box sx={oddsPickConfirmBetRowSx}>
+								<Typography component="span" sx={oddsPickConfirmBetLabelSx}>
+									{t('wc26.oddsPick.betLabel')}
+								</Typography>
+								<Typography component="span" sx={oddsPickConfirmBetTitleSx}>
+									{selection.displayLabel}
+								</Typography>
+							</Box>
+							<Typography component="p" sx={oddsPickConfirmOddsSx}>
+								{confirmOddsText}
+							</Typography>
+						</Box>
 					) : undefined
 				}
 			/>

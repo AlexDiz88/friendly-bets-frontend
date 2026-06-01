@@ -747,8 +747,9 @@
 		"oddsPick": {
 			"title": "Wette wählen",
 			"bestOdds": "Quote",
-			"confirmTitle": "Wette bestätigen",
-			"confirmHelper": "Nach Bestätigung sind Quote und Auswahl fixiert.",
+			"confirmTitle": "Wettbestätigung",
+			"confirmHelper": "Bitte prüfen Sie Auswahl und Quote. Nach dem Absenden sind Änderungen nicht mehr möglich.",
+			"betLabel": "Wette:",
 			"oddsLine": "{{label}} — {{odds}}",
 			"betChip": "{{title}} @ {{odds}}",
 			"success": "Wette angenommen",
