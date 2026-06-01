@@ -33,6 +33,46 @@ export function extractTeamMappingFromIssue(issue: ExternalSyncIssue): TeamMappi
 	return null;
 }
 
+export const TEAM_MAPPING_SEARCH_PARAM_KEYS = [
+	'provider',
+	'externalId',
+	'externalName',
+	'teamId',
+] as const;
+
+export function readTeamMappingFromSearchParams(
+	searchParams: URLSearchParams
+): TeamMappingRef | null {
+	const provider = searchParams.get('provider');
+	if (!provider) {
+		return null;
+	}
+	const externalId = searchParams.get('externalId') ?? undefined;
+	const externalName = searchParams.get('externalName') ?? undefined;
+	if (!externalId && !externalName) {
+		return null;
+	}
+	return { provider, externalId, externalName };
+}
+
+export function clearTeamMappingSearchParams(
+	setSearchParams: (
+		next: URLSearchParams | ((prev: URLSearchParams) => URLSearchParams),
+		opts?: { replace?: boolean }
+	) => void
+): void {
+	setSearchParams(
+		(prev) => {
+			const next = new URLSearchParams(prev);
+			for (const key of TEAM_MAPPING_SEARCH_PARAM_KEYS) {
+				next.delete(key);
+			}
+			return next;
+		},
+		{ replace: true }
+	);
+}
+
 export function buildTeamMappingAdminLink(mapping: TeamMappingRef): string {
 	const params = new URLSearchParams({ openTeamEdit: '1', provider: mapping.provider });
 	if (mapping.externalId) {

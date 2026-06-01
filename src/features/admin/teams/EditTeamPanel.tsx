@@ -7,7 +7,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { t } from 'i18next';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
@@ -28,7 +28,10 @@ import TeamFormStatusIcon from './TeamFormStatusIcon';
 import { notifyExternalSyncIssuesChanged } from '../external-sync-issues/api';
 import {
 	buildExternalAliasPrefill,
+	clearTeamMappingSearchParams,
 	findTeamByExternalAlias,
+	readTeamMappingFromSearchParams,
+	type TeamMappingRef,
 } from './teamMappingLinkUtils';
 import { selectTeams } from './selectors';
 import {
@@ -42,22 +45,40 @@ import { getAllTeams, updateTeam } from './teamsSlice';
 export default function EditTeamPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const { i18n } = useTranslation();
-	const [searchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 	const teams = useAppSelector(selectTeams);
 	const [loading, setLoading] = useState(false);
 	const [selected, setSelected] = useState<Team | null>(null);
 	const [values, setValues] = useState(emptyTeamFormValues);
 	const [saving, setSaving] = useState(false);
 	const [unmappedHintsRefreshKey, setUnmappedHintsRefreshKey] = useState(0);
-	const [deepLinkHandled, setDeepLinkHandled] = useState(false);
+	const [mappingSession, setMappingSession] = useState<TeamMappingRef | null>(null);
+	const prefillTeamIdRef = useRef<string | null>(null);
+	const mappingUrlConsumedRef = useRef(false);
 
-	const prefillProvider = searchParams.get('provider') ?? undefined;
-	const prefillExternalId = searchParams.get('externalId') ?? undefined;
-	const prefillExternalName = searchParams.get('externalName') ?? undefined;
 	const prefillTeamId = searchParams.get('teamId') ?? undefined;
-	const hasMappingPrefill = Boolean(
-		prefillProvider && (prefillExternalId || prefillExternalName)
-	);
+
+	const exitMappingMode = useCallback((): void => {
+		setMappingSession(null);
+		prefillTeamIdRef.current = null;
+		clearTeamMappingSearchParams(setSearchParams);
+	}, [setSearchParams]);
+
+	useEffect(() => {
+		if (mappingUrlConsumedRef.current) {
+			return;
+		}
+		const fromUrl = readTeamMappingFromSearchParams(searchParams);
+		const teamIdFromUrl = searchParams.get('teamId');
+		if (!fromUrl && !teamIdFromUrl) {
+			return;
+		}
+		mappingUrlConsumedRef.current = true;
+		if (fromUrl) {
+			setMappingSession(fromUrl);
+		}
+		clearTeamMappingSearchParams(setSearchParams);
+	}, [searchParams, setSearchParams]);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -89,62 +110,60 @@ export default function EditTeamPanel(): JSX.Element {
 	);
 
 	useEffect(() => {
-		if (selected) {
-			setValues(teamToFormValues(selected));
-		} else {
-			setValues(emptyTeamFormValues());
+		if (loading || !mappingSession) {
+			return;
 		}
-	}, [selected]);
+		if (prefillTeamIdRef.current != null) {
+			return;
+		}
+		const matched = findTeamByExternalAlias(
+			teams,
+			mappingSession.provider,
+			mappingSession.externalId,
+			mappingSession.externalName
+		);
+		if (matched) {
+			setSelected(matched);
+		}
+	}, [loading, mappingSession, teams]);
 
 	useEffect(() => {
-		if (loading || deepLinkHandled) {
+		if (loading || prefillTeamIdRef.current != null) {
 			return;
 		}
 		if (prefillTeamId) {
 			const team = teams.find((item) => item.id === prefillTeamId);
 			if (team) {
 				setSelected(team);
-				setDeepLinkHandled(true);
-			}
-			return;
-		}
-		if (hasMappingPrefill && prefillProvider) {
-			const matched = findTeamByExternalAlias(
-				teams,
-				prefillProvider,
-				prefillExternalId,
-				prefillExternalName
-			);
-			if (matched) {
-				setSelected(matched);
-				setDeepLinkHandled(true);
 			}
 		}
-	}, [
-		deepLinkHandled,
-		hasMappingPrefill,
-		loading,
-		prefillExternalId,
-		prefillExternalName,
-		prefillProvider,
-		prefillTeamId,
-		teams,
-	]);
+	}, [loading, prefillTeamId, teams]);
 
 	useEffect(() => {
-		if (!selected || !hasMappingPrefill || !prefillProvider) {
+		if (!selected) {
+			setValues(emptyTeamFormValues());
 			return;
 		}
-		const prefill = buildExternalAliasPrefill(
-			prefillProvider,
-			prefillExternalId,
-			prefillExternalName
-		);
-		if (Object.keys(prefill).length === 0) {
+		const base = teamToFormValues(selected);
+		if (
+			mappingSession &&
+			(prefillTeamIdRef.current === null || prefillTeamIdRef.current === selected.id)
+		) {
+			if (prefillTeamIdRef.current === null) {
+				prefillTeamIdRef.current = selected.id;
+			}
+			setValues({
+				...base,
+				...buildExternalAliasPrefill(
+					mappingSession.provider,
+					mappingSession.externalId,
+					mappingSession.externalName
+				),
+			});
 			return;
 		}
-		setValues((prev) => ({ ...prev, ...prefill }));
-	}, [hasMappingPrefill, prefillExternalId, prefillExternalName, prefillProvider, selected]);
+		setValues(base);
+	}, [mappingSession, selected]);
 
 	const handleChange = (patch: Partial<typeof values>): void => {
 		setValues((prev) => ({ ...prev, ...patch }));
@@ -170,6 +189,7 @@ export default function EditTeamPanel(): JSX.Element {
 		if (updateTeam.fulfilled.match(result)) {
 			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyUpdated') }));
 			notifyExternalSyncIssuesChanged();
+			exitMappingMode();
 			setSelected(null);
 			setValues(emptyTeamFormValues());
 			setUnmappedHintsRefreshKey((k) => k + 1);
@@ -177,7 +197,7 @@ export default function EditTeamPanel(): JSX.Element {
 		if (updateTeam.rejected.match(result)) {
 			dispatch(showErrorSnackbar({ message: result.error.message }));
 		}
-	}, [dispatch, selected, saving, values]);
+	}, [dispatch, exitMappingMode, selected, saving, values]);
 
 	return (
 		<Box>
@@ -210,11 +230,11 @@ export default function EditTeamPanel(): JSX.Element {
 				/>
 			)}
 
-			{hasMappingPrefill && !selected ? (
+			{mappingSession && !selected ? (
 				<Typography variant="body2" sx={{ mb: 1.5, opacity: 0.85, textAlign: 'left' }}>
 					{t('externalSyncIssuesTeamMappingPrefillHint', {
-						name: prefillExternalName ?? '—',
-						id: prefillExternalId ?? '—',
+						name: mappingSession.externalName ?? '—',
+						id: mappingSession.externalId ?? '—',
 					})}
 				</Typography>
 			) : null}

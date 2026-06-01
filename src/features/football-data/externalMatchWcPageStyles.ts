@@ -199,7 +199,7 @@ export const externalMatchWcKickoffDateSx: SxProps<Theme> = (theme) => ({
 export const externalMatchWcBetChipSx: SxProps<Theme> = (theme) => {
 	const isDark = theme.palette.mode === 'dark';
 	return {
-		height: 20,
+		height: 22,
 		maxWidth: '100%',
 		border: '1px solid',
 		borderColor: isDark ? 'rgba(255, 214, 0, 0.38)' : 'rgba(184, 134, 11, 0.45)',
@@ -208,10 +208,11 @@ export const externalMatchWcBetChipSx: SxProps<Theme> = (theme) => {
 			: 'linear-gradient(135deg, #dceee4 0%, #f0e8c8 100%)',
 		color: isDark ? '#fff8e7' : '#034d2e',
 		'& .MuiChip-label': {
-			px: 0.65,
-			fontSize: '0.625rem',
+			px: 0.7,
+			fontSize: '0.7rem',
 			fontWeight: 700,
-			lineHeight: 1.2,
+			lineHeight: 1.25,
+			whiteSpace: 'normal',
 		},
 	};
 };
@@ -295,7 +296,7 @@ export function externalMatchWcCardRowSx(
 		return {
 			display: 'flex',
 			flexDirection: 'column',
-			justifyContent: 'center',
+			justifyContent: 'flex-start',
 			minHeight: 0,
 			height: '100%',
 			py: { xs: 0.55, sm: 0.65 },

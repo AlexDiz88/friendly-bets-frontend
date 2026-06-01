@@ -11,6 +11,7 @@ import {
 	formatBerlinDateFromUtc,
 	kickoffToGerman,
 } from '../world-cup-2026/wc26Time';
+import { getFullBetTitle } from '../../components/utils/stringTransform';
 import type Bet from '../bets/types/Bet';
 import {
 	externalMatchWcBetChipSx,
@@ -75,9 +76,9 @@ export default function ExternalMatchWc26Card({
 	const hasTeams = Boolean(scheduled?.home && scheduled?.away);
 	const interactive = clickable && Boolean(onClick);
 	const betChipLabel =
-		userBet?.betTitle?.label != null && userBet.betOdds != null
+		userBet?.betTitle != null && userBet.betOdds != null
 			? t('wc26.oddsPick.betChip', {
-					title: userBet.betTitle.label,
+					title: getFullBetTitle(userBet.betTitle),
 					odds: userBet.betOdds,
 				})
 			: null;
@@ -132,58 +133,72 @@ export default function ExternalMatchWc26Card({
 				<Box
 					sx={{
 						display: 'flex',
+						flexDirection: 'column',
 						alignItems: 'center',
-						gap: { xs: 0.5, sm: 0.75 },
+						justifyContent: 'center',
+						gap: 0.2,
 						width: '100%',
 						flex: 1,
 						minHeight: 0,
 					}}
 				>
-					<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', minWidth: 0 }}>
-						<Wc26TeamFlag teamId={scheduled!.home!} side="home" />
-					</Box>
-
 					<Box
 						sx={{
-							textAlign: 'center',
-							flexShrink: 0,
-							px: 0.2,
-							minWidth: '3.75rem',
 							display: 'flex',
-							flexDirection: 'column',
 							alignItems: 'center',
-							justifyContent: 'center',
-							gap: 0.1,
+							gap: { xs: 0.5, sm: 0.75 },
+							width: '100%',
 						}}
 					>
-						<Typography component="span" sx={externalMatchWcKickoffDateSx}>
-							{dateLabel}
-						</Typography>
-						<Typography component="span" sx={wc26KickoffTimeSx}>
-							{kickoff}
-						</Typography>
-						{scoreView !== '—' ? (
-							<Typography
-								variant="caption"
-								sx={{
-									fontWeight: 800,
-									fontSize: '0.8rem',
-									lineHeight: 1.1,
-									color: (theme) =>
-										theme.palette.mode === 'dark' ? '#ffe566' : '#6b5200',
-								}}
-							>
-								{scoreView}
+						<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', minWidth: 0 }}>
+							<Wc26TeamFlag teamId={scheduled!.home!} side="home" />
+						</Box>
+
+						<Box
+							sx={{
+								textAlign: 'center',
+								flexShrink: 0,
+								px: 0.2,
+								minWidth: '3.25rem',
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								justifyContent: 'center',
+								gap: 0.1,
+							}}
+						>
+							<Typography component="span" sx={externalMatchWcKickoffDateSx}>
+								{dateLabel}
 							</Typography>
-						) : null}
-						{betChipLabel ? (
-							<Chip size="small" label={betChipLabel} sx={externalMatchWcBetChipSx} />
-						) : null}
+							<Typography component="span" sx={wc26KickoffTimeSx}>
+								{kickoff}
+							</Typography>
+							{scoreView !== '—' ? (
+								<Typography
+									variant="caption"
+									sx={{
+										fontWeight: 800,
+										fontSize: '0.8rem',
+										lineHeight: 1.1,
+										color: (theme) =>
+											theme.palette.mode === 'dark' ? '#ffe566' : '#6b5200',
+									}}
+								>
+									{scoreView}
+								</Typography>
+							) : null}
+						</Box>
+
+						<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-start', minWidth: 0 }}>
+							<Wc26TeamFlag teamId={scheduled!.away!} side="away" />
+						</Box>
 					</Box>
 
-					<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-start', minWidth: 0 }}>
-						<Wc26TeamFlag teamId={scheduled!.away!} side="away" />
-					</Box>
+					{betChipLabel ? (
+						<Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', px: 0.25 }}>
+							<Chip size="small" label={betChipLabel} sx={externalMatchWcBetChipSx} />
+						</Box>
+					) : null}
 				</Box>
 			) : scheduled?.labelKey ? (
 				<Box
