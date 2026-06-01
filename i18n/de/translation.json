@@ -659,6 +659,7 @@
 		"selection": "Auswahl",
 		"groups": {
 			"matchResult": "Spielausgang",
+			"halfTimeResult": "1. Halbzeit",
 			"doubleChance": "Doppelte Chance",
 			"handicap": "Handicap",
 			"totals": "Über/Unter",

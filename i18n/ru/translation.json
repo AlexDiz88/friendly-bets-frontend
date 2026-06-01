@@ -659,6 +659,7 @@
 		"selection": "Исход",
 		"groups": {
 			"matchResult": "Исход матча",
+			"halfTimeResult": "1-й тайм",
 			"doubleChance": "Двойной шанс",
 			"handicap": "Форы",
 			"totals": "Тоталы",

@@ -666,6 +666,7 @@
 		"selection": "Selection",
 		"groups": {
 			"matchResult": "Match result",
+			"halfTimeResult": "1st half",
 			"doubleChance": "Double chance",
 			"handicap": "Handicap",
 			"totals": "Totals",
