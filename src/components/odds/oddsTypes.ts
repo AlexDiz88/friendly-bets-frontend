@@ -10,6 +10,7 @@ export type OddsLineRow = {
 	bestOdds?: string;
 	bestBookmaker?: string;
 	betTitle?: BetTitle;
+	crossBookmakerMismatch?: boolean;
 };
 
 export type OddsMarketGroup = {

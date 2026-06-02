@@ -151,6 +151,8 @@
 	"externalSyncIssuesLoadError": "Fehler beim Laden des Logs",
 	"externalSyncIssuesCleared": "Log geleert",
 	"externalSyncIssuesClearError": "Fehler beim Leeren des Logs",
+	"externalSyncIssuesClearAllTitle": "Gesamtes Log leeren?",
+	"externalSyncIssuesClearAllHelper": "Alle {{count}} Einträge werden gelöscht. Dies kann nicht rückgängig gemacht werden.",
 	"externalSyncIssuesHomeAlert": "football-data hat den Spielstand eines bereits gespeicherten Spiels geändert. Prüfen Sie das Log und korrigieren Sie das Ergebnis bei Bedarf manuell:",
 	"externalSyncIssuesIssueTypeApiScoreChanged": "API-Spielstand geändert",
 	"externalSyncIssuesIssueTypeTeamMappingMissing": "Team-Mapping fehlt",

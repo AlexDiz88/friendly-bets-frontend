@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAppDispatch } from '../../../app/hooks';
 import CustomButton from '../../../components/custom/btn/CustomButton';
+import CustomCalendarDialog from '../../../components/custom/dialog/CustomCalendarDialog';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
 import {
 	buildTeamMappingAdminLink,
@@ -348,6 +349,8 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 	const [issues, setIssues] = useState<ExternalSyncIssue[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [deletingId, setDeletingId] = useState<string | null>(null);
+	const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
+	const [clearing, setClearing] = useState(false);
 
 	const load = useCallback(async () => {
 		setLoading(true);
@@ -371,17 +374,21 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 	}, [load]);
 
 	const handleClear = async (): Promise<void> => {
+		setClearing(true);
 		try {
 			await clearExternalSyncIssues();
 			setIssues([]);
 			notifyExternalSyncIssuesChanged();
 			dispatch(showSuccessSnackbar({ message: t('externalSyncIssuesCleared') }));
+			setClearConfirmOpen(false);
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
 					message: error instanceof Error ? error.message : t('externalSyncIssuesClearError'),
 				})
 			);
+		} finally {
+			setClearing(false);
 		}
 	};
 
@@ -432,8 +439,8 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 					<span>
 						<IconButton
 							aria-label={t('btnText.clear')}
-							onClick={handleClear}
-							disabled={loading || issues.length === 0}
+							onClick={() => setClearConfirmOpen(true)}
+							disabled={loading || clearing || issues.length === 0}
 							sx={{
 								border: 1,
 								borderColor: 'divider',
@@ -469,6 +476,20 @@ export default function ExternalSyncIssuesPage(): JSX.Element {
 					))}
 				</Box>
 			)}
+
+			<CustomCalendarDialog
+				open={clearConfirmOpen}
+				onClose={() => {
+					if (!clearing) {
+						setClearConfirmOpen(false);
+					}
+				}}
+				onSave={() => void handleClear()}
+				title={t('externalSyncIssuesClearAllTitle')}
+				helperText={t('externalSyncIssuesClearAllHelper', { count: issues.length })}
+				buttonAcceptText={t('btnText.clear')}
+				contentWidth="18rem"
+			/>
 		</Box>
 	);
 }

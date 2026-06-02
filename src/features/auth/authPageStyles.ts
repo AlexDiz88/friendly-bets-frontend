@@ -82,8 +82,8 @@ export const authLinksStackSx: SxProps<Theme> = {
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
-	gap: 1.25,
-	mt: 2,
+	gap: 2,
+	mt: 3,
 };
 
 export const authSecondaryLinkSx: SxProps<Theme> = (theme) => {
@@ -91,6 +91,8 @@ export const authSecondaryLinkSx: SxProps<Theme> = (theme) => {
 	return {
 		fontSize: '0.875rem',
 		fontWeight: 500,
+		py: 0.5,
+		lineHeight: 1.4,
 		color: isDark ? 'rgba(232, 238, 248, 0.78)' : 'primary.main',
 		textDecorationColor: isDark ? 'rgba(232, 238, 248, 0.42)' : undefined,
 		'&:hover': {
@@ -104,6 +106,8 @@ export const authRegisterLinkSx: SxProps<Theme> = (theme) => {
 	return {
 		fontSize: '0.9375rem',
 		fontWeight: 600,
+		py: 0.5,
+		lineHeight: 1.4,
 		color: isDark ? 'rgba(232, 238, 248, 0.88)' : 'primary.main',
 		textDecorationColor: isDark ? 'rgba(232, 238, 248, 0.45)' : undefined,
 		'&:hover': {

@@ -322,6 +322,7 @@ export default function OddsMarketGroupAccordion({
 						</TableHead>
 						<TableBody>
 							{group.rows.map((row) => {
+								const isMismatch = showSourcePaths && Boolean(row.crossBookmakerMismatch);
 								const isSelected =
 									selectable &&
 									row.selectionKey === selectedKey &&
@@ -331,6 +332,7 @@ export default function OddsMarketGroupAccordion({
 									selectable &&
 									useBest &&
 									!disabled &&
+									!isMismatch &&
 									row.selectionKey &&
 									row.bestBookmaker &&
 									displayOdds !== '—';
@@ -338,15 +340,29 @@ export default function OddsMarketGroupAccordion({
 								return (
 									<TableRow
 										key={`${row.line ?? ''}-${row.selectionCode}-${row.selectionKey ?? ''}`}
-										hover={Boolean(clickable)}
+										hover={Boolean(clickable) && !isMismatch}
 										selected={isSelected}
 										onClick={() => handleRowClick(row)}
 										sx={{
 											cursor: clickable ? 'pointer' : 'default',
 											'&.Mui-selected': { bgcolor: 'action.selected' },
-											...(showSourcePaths && {
-												'&:hover': { bgcolor: 'action.hover' },
+											...(isMismatch && {
+												bgcolor: (theme) =>
+													theme.palette.mode === 'light'
+														? 'rgba(255, 235, 235, 0.95)'
+														: 'rgba(244, 67, 54, 0.14)',
+												'& .MuiTableCell-root': { fontWeight: 700 },
+												'&:hover': {
+													bgcolor: (theme) =>
+														theme.palette.mode === 'light'
+															? 'rgba(255, 228, 228, 0.98)'
+															: 'rgba(244, 67, 54, 0.2)',
+												},
 											}),
+											...(showSourcePaths &&
+												!isMismatch && {
+													'&:hover': { bgcolor: 'action.hover' },
+												}),
 										}}
 									>
 										{showLine && (

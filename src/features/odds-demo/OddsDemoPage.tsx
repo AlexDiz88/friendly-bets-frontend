@@ -56,6 +56,8 @@ import {
 	oddsDemoPanelSx,
 	oddsDemoTitleSx,
 	oddsDemoToolbarRowSx,
+	oddsDemoDebugTabsSx,
+	oddsDemoDebugTabsWrapSx,
 	oddsDemoViewTabsSx,
 } from './oddsDemoPageStyles';
 
@@ -709,9 +711,10 @@ export default function OddsDemoPage(): JSX.Element {
 									value={viewTab}
 									onChange={(_, v: number) => setViewTab(v)}
 									sx={oddsDemoViewTabsSx}
+									TabIndicatorProps={{ sx: { display: 'none' } }}
 								>
-									<Tab label={t('oddsDemo.tabOdds', 'Кэфы')} />
-									<Tab label={t('oddsDemo.tabMapping', 'Маппинг')} />
+									<Tab disableRipple label={t('oddsDemo.tabOdds', 'Кэфы')} />
+									<Tab disableRipple label={t('oddsDemo.tabMapping', 'Маппинг')} />
 								</Tabs>
 							)}
 
@@ -731,17 +734,22 @@ export default function OddsDemoPage(): JSX.Element {
 											{debugDetail.mappingIssues.slice(0, 5).join(' · ')}
 										</Typography>
 									)}
-									<Tabs
-										value={debugTab}
-										onChange={(_, v: number) => setDebugTab(v)}
-										variant="scrollable"
-										sx={{ mb: 1, minHeight: 32, '& .MuiTab-root': { minHeight: 32, py: 0.25 } }}
-									>
-										{bookmakers.map((bk) => (
-											<Tab key={bk} label={bk} />
-										))}
-										<Tab label={t('oddsDemo.debugMerged', 'Итог (merged)')} />
-									</Tabs>
+									<Box sx={oddsDemoDebugTabsWrapSx}>
+										<Tabs
+											value={debugTab}
+											onChange={(_, v: number) => setDebugTab(v)}
+											variant="scrollable"
+											scrollButtons="auto"
+											allowScrollButtonsMobile
+											sx={oddsDemoDebugTabsSx}
+											TabIndicatorProps={{ sx: { display: 'none' } }}
+										>
+											{bookmakers.map((bk) => (
+												<Tab key={bk} disableRipple label={bk} />
+											))}
+											<Tab disableRipple label={t('oddsDemo.debugMerged', 'Итог (merged)')} />
+										</Tabs>
+									</Box>
 									{debugTab < bookmakers.length ? (
 										<MappingTraceTable rows={debugTrace} />
 									) : (

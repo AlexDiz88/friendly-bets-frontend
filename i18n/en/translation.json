@@ -151,6 +151,8 @@
 	"externalSyncIssuesLoadError": "Failed to load issues log",
 	"externalSyncIssuesCleared": "Issues log cleared",
 	"externalSyncIssuesClearError": "Failed to clear issues log",
+	"externalSyncIssuesClearAllTitle": "Clear the entire log?",
+	"externalSyncIssuesClearAllHelper": "All {{count}} entries will be deleted. This cannot be undone.",
 	"externalSyncIssuesHomeAlert": "football-data changed the score of an already saved match. Check the log and correct the result manually if needed:",
 	"externalSyncIssuesIssueTypeApiScoreChanged": "API score changed",
 	"externalSyncIssuesIssueTypeTeamMappingMissing": "team mapping missing",

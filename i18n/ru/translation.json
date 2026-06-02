@@ -151,6 +151,8 @@
 	"externalSyncIssuesLoadError": "Не удалось загрузить лог",
 	"externalSyncIssuesCleared": "Лог очищен",
 	"externalSyncIssuesClearError": "Не удалось очистить лог",
+	"externalSyncIssuesClearAllTitle": "Очистить весь лог?",
+	"externalSyncIssuesClearAllHelper": "Будут удалены все {{count}} записей. Действие необратимо.",
 	"externalSyncIssuesHomeAlert": "football-data изменил счёт уже сохранённого матча. Проверьте лог и при необходимости исправьте результат вручную:",
 	"externalSyncIssuesIssueTypeApiScoreChanged": "изменение счёта API",
 	"externalSyncIssuesIssueTypeTeamMappingMissing": "нет маппинга команды",

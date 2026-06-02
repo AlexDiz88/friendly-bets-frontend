@@ -12,10 +12,11 @@ export const oddsDemoPageRootSx: SxProps<Theme> = {
 };
 
 export const oddsDemoTitleSx: SxProps<Theme> = {
-	fontFamily: '"Shantell Sans", cursive',
+	fontFamily: "'Exo 2'",
 	fontWeight: 700,
-	fontSize: { xs: '1.35rem', sm: '1.55rem' },
+	fontSize: { xs: '1.25rem', sm: '1.375rem' },
 	letterSpacing: '-0.02em',
+	lineHeight: 1.25,
 	mb: 0.5,
 };
 
@@ -122,14 +123,98 @@ export const oddsDemoApiEventsPreviewSx: SxProps<Theme> = (theme) => ({
 	fontFamily: 'monospace',
 });
 
-export const oddsDemoViewTabsSx: SxProps<Theme> = {
-	minHeight: 36,
-	mb: 1.5,
-	'& .MuiTab-root': {
-		minHeight: 36,
-		py: 0.5,
-		fontSize: '0.8125rem',
-		textTransform: 'none',
-		fontWeight: 600,
-	},
+/** Основные табы: Кэфы / Маппинг — крупная сегмент-панель на всю ширину. */
+export const oddsDemoViewTabsSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		minHeight: 48,
+		mb: 2,
+		borderRadius: 2.5,
+		p: 0.625,
+		bgcolor: isDark ? alpha(ODDS_DEMO_ACCENT, 0.07) : alpha(ODDS_DEMO_ACCENT, 0.1),
+		border: '1px solid',
+		borderColor: alpha(ODDS_DEMO_ACCENT, isDark ? 0.28 : 0.35),
+		'& .MuiTabs-indicator': { display: 'none' },
+		'& .MuiTabs-flexContainer': { gap: 0.75 },
+		'& .MuiTab-root': {
+			flex: 1,
+			minHeight: 40,
+			minWidth: 0,
+			py: 0.875,
+			px: 2,
+			borderRadius: 2,
+			fontFamily: "'Exo 2'",
+			fontSize: '1rem',
+			fontWeight: 600,
+			textTransform: 'none',
+			color: 'text.secondary',
+			transition: 'background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease',
+			'&:hover': {
+				color: 'text.primary',
+				bgcolor: isDark ? alpha(ODDS_DEMO_ACCENT, 0.1) : alpha(ODDS_DEMO_ACCENT, 0.12),
+			},
+			'&.Mui-selected': {
+				color: isDark ? '#fff' : theme.palette.text.primary,
+				bgcolor: isDark ? alpha(ODDS_DEMO_ACCENT, 0.32) : alpha(ODDS_DEMO_ACCENT, 0.28),
+				boxShadow: isDark
+					? `0 3px 12px ${alpha(ODDS_DEMO_ACCENT, 0.28)}`
+					: `0 3px 10px ${alpha(ODDS_DEMO_ACCENT, 0.22)}`,
+			},
+		},
+	};
 };
+
+/** Вложенные табы букмекеров — компактные chip-кнопки без общей «коробки». */
+export const oddsDemoDebugTabsSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		minHeight: 36,
+		mb: 1.5,
+		p: 0,
+		bgcolor: 'transparent',
+		border: 'none',
+		borderBottom: '1px solid',
+		borderColor: 'divider',
+		'& .MuiTabs-indicator': { display: 'none' },
+		'& .MuiTabs-flexContainer': { gap: 0.625 },
+		'& .MuiTab-root': {
+			minHeight: 28,
+			minWidth: 0,
+			py: 0.375,
+			px: 1.25,
+			borderRadius: '999px',
+			fontSize: '0.6875rem',
+			fontWeight: 700,
+			letterSpacing: '0.05em',
+			textTransform: 'uppercase',
+			color: 'text.secondary',
+			border: '1px solid',
+			borderColor: 'transparent',
+			opacity: 1,
+			transition: 'background 0.15s ease, color 0.15s ease, border-color 0.15s ease',
+			'&:hover': {
+				color: 'text.primary',
+				borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(15,23,42,0.12)',
+				bgcolor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.03)',
+			},
+			'&.Mui-selected': {
+				color: ODDS_DEMO_ACCENT_SOFT,
+				borderColor: alpha(ODDS_DEMO_ACCENT_SOFT, isDark ? 0.55 : 0.5),
+				bgcolor: isDark ? alpha(ODDS_DEMO_ACCENT_SOFT, 0.12) : alpha(ODDS_DEMO_ACCENT_SOFT, 0.1),
+				boxShadow: 'none',
+			},
+		},
+		'& .MuiTab-root:last-of-type.Mui-selected': {
+			color: ODDS_DEMO_ACCENT,
+			borderColor: alpha(ODDS_DEMO_ACCENT, isDark ? 0.55 : 0.45),
+			bgcolor: isDark ? alpha(ODDS_DEMO_ACCENT, 0.12) : alpha(ODDS_DEMO_ACCENT, 0.1),
+		},
+	};
+};
+
+export const oddsDemoDebugTabsWrapSx: SxProps<Theme> = (theme) => ({
+	pl: { xs: 0, sm: 1.5 },
+	ml: { xs: 0, sm: 0.5 },
+	borderLeft: { xs: 'none', sm: '3px solid' },
+	borderColor: { sm: alpha(ODDS_DEMO_ACCENT_SOFT, theme.palette.mode === 'dark' ? 0.35 : 0.4) },
+});
