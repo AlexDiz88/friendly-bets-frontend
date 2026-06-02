@@ -5,6 +5,7 @@ export type OddsLineRow = {
 	selectionCode: string;
 	displayLabel: string;
 	bookmakerOdds: Record<string, string>;
+	bookmakerSourcePaths?: Record<string, string>;
 	selectionKey?: string;
 	bestOdds?: string;
 	bestBookmaker?: string;
