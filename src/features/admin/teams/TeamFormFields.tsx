@@ -1,7 +1,7 @@
 import { Box, FormControl, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import UnmappedTeamNameHints from './UnmappedTeamNameHints';
-import { FOOTBALL_DATA_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
+import { FOOTBALL_DATA_PROVIDER, MARATHONBET_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
 import {
 	hasFootballDataApiMapping,
 	hasOddsApiMapping,
@@ -77,6 +77,21 @@ export default function TeamFormFields({
 					variant="outlined"
 					value={values.nameDe}
 					onChange={(e) => onChange({ nameDe: e.target.value })}
+				/>
+			</Box>
+
+			<Typography sx={{ mt: 1.5, mb: 0.5, fontWeight: 600, textAlign: 'left' }}>
+				{t('teamMarathonbetSection')}
+			</Typography>
+			<Box sx={{ my: 1 }}>
+				<TextField
+					fullWidth
+					id="marathonbet-external-name"
+					label={t('teamMarathonbetExternalName')}
+					variant="outlined"
+					value={values.marathonbetExternalName}
+					onChange={(e) => onChange({ marathonbetExternalName: e.target.value })}
+					helperText={t('teamMarathonbetExternalNameHint')}
 				/>
 			</Box>
 

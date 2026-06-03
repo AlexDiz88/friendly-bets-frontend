@@ -240,7 +240,7 @@ export const externalMatchWcSyncCaptionSx: SxProps<Theme> = (theme) => ({
 	color: theme.palette.mode === 'dark' ? 'rgba(157, 232, 196, 0.85)' : '#5c4a00',
 });
 
-function wc26ToolbarIconButton(role: 'gold' | 'green'): SxProps<Theme> {
+function wc26ToolbarIconButton(role: 'gold' | 'green' | 'burgundy'): SxProps<Theme> {
 	return (theme) => {
 		const isDark = theme.palette.mode === 'dark';
 		const gold = {
@@ -261,7 +261,16 @@ function wc26ToolbarIconButton(role: 'gold' | 'green'): SxProps<Theme> {
 				? 'linear-gradient(135deg, #008552 0%, #006b42 100%)'
 				: 'linear-gradient(135deg, #057a4a 0%, #046a3d 100%)',
 		};
-		const p = role === 'gold' ? gold : green;
+		const burgundy = {
+			border: isDark ? 'rgba(220, 100, 100, 0.42)' : 'rgba(140, 40, 40, 0.5)',
+			bg: isDark
+				? 'linear-gradient(135deg, #5c1818 0%, #7a2424 100%)'
+				: 'linear-gradient(135deg, #7a1f1f 0%, #9b2d2d 100%)',
+			hover: isDark
+				? 'linear-gradient(135deg, #7a2424 0%, #9b2d2d 100%)'
+				: 'linear-gradient(135deg, #9b2d2d 0%, #b83a3a 100%)',
+		};
+		const p = role === 'gold' ? gold : role === 'green' ? green : burgundy;
 		return {
 			width: 26,
 			height: 26,
@@ -285,6 +294,7 @@ function wc26ToolbarIconButton(role: 'gold' | 'green'): SxProps<Theme> {
 }
 
 export const externalMatchWcOddsSyncButtonSx = wc26ToolbarIconButton('gold');
+export const externalMatchWcMarathonbetSyncButtonSx = wc26ToolbarIconButton('burgundy');
 export const externalMatchWcRefreshSyncButtonSx = wc26ToolbarIconButton('green');
 
 export function externalMatchWcCardRowSx(

@@ -1,5 +1,6 @@
 import EditIcon from '@mui/icons-material/Edit';
 import PaidIcon from '@mui/icons-material/Paid';
+import PriceChangeIcon from '@mui/icons-material/PriceChange';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
 	Avatar,
@@ -66,6 +67,7 @@ import {
 	syncMatchdayFromApi,
 } from './footballDataApi';
 import { syncOddsMatchdayFromApi } from './matchOddsApi';
+import { syncMarathonbetSlot } from '../marathonbet-odds/marathonbetOddsApi';
 import { notifyExternalSyncIssuesChanged } from '../admin/external-sync-issues/api';
 import {
 	getMatchStatusChipColor,
@@ -96,6 +98,7 @@ import {
 	externalMatchWcMatchGridSx,
 	externalMatchWcMatchListSx,
 	externalMatchWcMatchPanelSx,
+	externalMatchWcMarathonbetSyncButtonSx,
 	externalMatchWcOddsSyncButtonSx,
 	externalMatchWcOverlineSx,
 	externalMatchWcOverlineTextSx,
@@ -286,6 +289,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(false);
 	const [syncing, setSyncing] = useState(false);
 	const [oddsSyncing, setOddsSyncing] = useState(false);
+	const [marathonbetSyncing, setMarathonbetSyncing] = useState(false);
 	const [editMatch, setEditMatch] = useState<ExternalMatch | null>(null);
 	const [pickMatch, setPickMatch] = useState<ExternalMatch | null>(null);
 	const [slotBetsRefreshKey, setSlotBetsRefreshKey] = useState(0);
@@ -622,6 +626,47 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		}
 	};
 
+	const handleMarathonbetSyncFromApi = async (): Promise<void> => {
+		if (!selectedLeague?.id || !isWcLeague) {
+			return;
+		}
+		const gameResultIds = data?.matches
+			?.map((m) => m.id)
+			.filter((id): id is string => Boolean(id));
+		setMarathonbetSyncing(true);
+		try {
+			const result = await syncMarathonbetSlot(
+				selectedLeague.id,
+				effectiveMatchday,
+				externalSeason,
+				gameResultIds
+			);
+			notifyExternalSyncIssuesChanged();
+			const toastPayload = {
+				message: t('externalMatchMarathonbetSyncSuccess', {
+					matched: result.matchesMatched,
+					eligible: result.matchesEligible,
+					saved: result.mergedSaved,
+					sse: result.sseCalls,
+					failures: result.mappingFailures,
+				}),
+			};
+			if (result.mappingFailures > 0) {
+				dispatch(showWarningSnackbar(toastPayload));
+			} else {
+				dispatch(showSuccessSnackbar(toastPayload));
+			}
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : 'unknownError',
+				})
+			);
+		} finally {
+			setMarathonbetSyncing(false);
+		}
+	};
+
 	const handleOddsSyncFromApi = async (): Promise<void> => {
 		if (!selectedLeague?.id) {
 			return;
@@ -810,7 +855,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					}}
 				>
 					{isWcLeague ? (
-						<Box sx={{ width: '100%', px: canSync ? 6.5 : 0, pt: 1 }}>
+						<Box sx={{ width: '100%', px: canSync ? (isWcLeague ? 9.5 : 6.5) : 0, pt: 1 }}>
 							<Box sx={externalMatchWcOverlineSx}>
 								<Typography component="span" sx={externalMatchWcOverlineTextSx}>
 									FIFA World Cup 26™
@@ -825,7 +870,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 								textAlign: 'center',
 								fontSize: '1rem',
 								lineHeight: 1.2,
-								px: canSync ? 6.5 : 0,
+								px: canSync ? (isWcLeague ? 9.5 : 6.5) : 0,
 							}}
 						>
 							{t('externalMatchResults')}
@@ -843,11 +888,37 @@ export default function ExternalMatchdayPage(): JSX.Element {
 								gap: 0.25,
 							}}
 						>
+							{isWcLeague ? (
+								<Tooltip title={t('externalMatchMarathonbetSyncFromApi')}>
+									<span>
+										<IconButton
+											size="small"
+											disabled={
+												marathonbetSyncing ||
+												oddsSyncing ||
+												syncing ||
+												loading ||
+												!selectedLeague?.id
+											}
+											onClick={() => void handleMarathonbetSyncFromApi()}
+											aria-label={t('externalMatchMarathonbetSyncFromApi')}
+											sx={externalMatchWcMarathonbetSyncButtonSx}
+										>
+											{marathonbetSyncing ? (
+												<CircularProgress size={18} sx={{ color: 'common.white' }} />
+											) : (
+												<PriceChangeIcon sx={{ fontSize: 18, color: 'common.white' }} />
+											)}
+										</IconButton>
+									</span>
+								</Tooltip>
+							) : null}
 							<Tooltip title={t('externalMatchOddsSyncFromApi')}>
 								<span>
 									<IconButton
 										size="small"
 										disabled={
+											marathonbetSyncing ||
 											oddsSyncing ||
 											syncing ||
 											loading ||
@@ -884,7 +955,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 								<span>
 									<IconButton
 										size="small"
-										disabled={syncing || oddsSyncing || loading}
+										disabled={syncing || oddsSyncing || marathonbetSyncing || loading}
 										onClick={() => void handleSyncFromApi()}
 										aria-label={t('externalMatchSyncFromApi')}
 										sx={

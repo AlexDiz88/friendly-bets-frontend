@@ -3,3 +3,6 @@ export const FOOTBALL_DATA_PROVIDER = 'football-data';
 
 /** {@link backend TeamTitleUtils.ODDS_API_PROVIDER} */
 export const ODDS_API_PROVIDER = 'odds-api.io';
+
+/** {@link backend TeamTitleUtils.MARATHONBET_PROVIDER} */
+export const MARATHONBET_PROVIDER = 'marathonbet';

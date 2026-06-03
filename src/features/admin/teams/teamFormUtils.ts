@@ -1,7 +1,7 @@
 import i18n from '../../../i18n';
 import NewTeam from './types/NewTeam';
 import Team, { TeamDisplayNames, TeamExternalAlias } from './types/Team';
-import { FOOTBALL_DATA_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
+import { FOOTBALL_DATA_PROVIDER, MARATHONBET_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
 
 export type TeamFormValues = {
 	title: string;
@@ -13,6 +13,7 @@ export type TeamFormValues = {
 	footballDataExternalName: string;
 	oddsApiTeamId: string;
 	oddsApiExternalName: string;
+	marathonbetExternalName: string;
 };
 
 export function emptyTeamFormValues(): TeamFormValues {
@@ -26,6 +27,7 @@ export function emptyTeamFormValues(): TeamFormValues {
 		footballDataExternalName: '',
 		oddsApiTeamId: '',
 		oddsApiExternalName: '',
+		marathonbetExternalName: '',
 	};
 }
 
@@ -117,6 +119,7 @@ export function isTeamFormComplete(values: TeamFormValues): boolean {
 export function teamToFormValues(team: Team): TeamFormValues {
 	const fdAlias = team.externalAliases?.find((a) => a.provider === FOOTBALL_DATA_PROVIDER);
 	const oddsAlias = team.externalAliases?.find((a) => a.provider === ODDS_API_PROVIDER);
+	const marathonAlias = team.externalAliases?.find((a) => a.provider === MARATHONBET_PROVIDER);
 	return applyI18nDisplayNamesToFormValues(
 		{
 			title: team.title ?? '',
@@ -133,6 +136,7 @@ export function teamToFormValues(team: Team): TeamFormValues {
 			footballDataExternalName: fdAlias?.externalName ?? '',
 			oddsApiTeamId: oddsAlias?.externalId != null ? String(oddsAlias.externalId) : '',
 			oddsApiExternalName: oddsAlias?.externalName ?? '',
+			marathonbetExternalName: marathonAlias?.externalName ?? '',
 		},
 		true
 	);
@@ -175,6 +179,17 @@ function buildFootballDataAlias(values: TeamFormValues): TeamExternalAlias | und
 	};
 }
 
+function buildMarathonbetAlias(values: TeamFormValues): TeamExternalAlias | undefined {
+	const name = values.marathonbetExternalName.trim();
+	if (!name) {
+		return undefined;
+	}
+	return {
+		provider: MARATHONBET_PROVIDER,
+		externalName: name,
+	};
+}
+
 function buildOddsApiAlias(values: TeamFormValues): TeamExternalAlias | undefined {
 	const name = values.oddsApiExternalName.trim();
 	const idRaw = values.oddsApiTeamId.trim();
@@ -210,6 +225,12 @@ export function buildExternalAliases(
 		byProvider.set(ODDS_API_PROVIDER, odds);
 	} else {
 		byProvider.delete(ODDS_API_PROVIDER);
+	}
+	const marathon = buildMarathonbetAlias(values);
+	if (marathon) {
+		byProvider.set(MARATHONBET_PROVIDER, marathon);
+	} else {
+		byProvider.delete(MARATHONBET_PROVIDER);
 	}
 	return [...byProvider.values()];
 }

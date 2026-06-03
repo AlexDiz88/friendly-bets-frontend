@@ -46,6 +46,12 @@ export function getProviderColors(theme: Theme, provider: string | undefined) {
 			bg: alpha('#ce93d8', theme.palette.mode === 'dark' ? 0.16 : 0.12),
 		};
 	}
+	if (p.includes('marathon')) {
+		return {
+			color: '#ffb74d',
+			bg: alpha('#ffb74d', theme.palette.mode === 'dark' ? 0.16 : 0.12),
+		};
+	}
 	return {
 		color: theme.palette.text.secondary,
 		bg: alpha(theme.palette.text.secondary, 0.1),

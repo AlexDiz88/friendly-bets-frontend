@@ -78,6 +78,9 @@ function issueTypeLabel(issueType: string | undefined): string {
 	if (issueType === 'ODDS_QUOTE_REJECTED') {
 		return t('externalSyncIssuesIssueTypeOddsQuoteRejected');
 	}
+	if (issueType === 'MARATHONBET_FETCH_FAILED') {
+		return t('externalSyncIssuesIssueTypeMarathonbetFetchFailed');
+	}
 	return issueType ?? '';
 }
 
