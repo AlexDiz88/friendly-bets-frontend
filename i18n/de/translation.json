@@ -658,7 +658,33 @@
 		"leagueSlugRequired": "odds-api Liga-Slug erforderlich",
 		"oddsApiBookmakersNotConfigured": "odds-api-Buchmacher nicht konfiguriert",
 		"oddsSyncNoMatchdayMatches": "Keine nicht gestarteten Spiele im gewählten Spieltag. Zuerst Ergebnisse von football-data.org laden",
-		"oddsDemoEventIdsRequired": "Mindestens eine gültige Spiel-ID angeben"
+		"oddsDemoEventIdsRequired": "Mindestens eine gültige Spiel-ID angeben",
+		"marathonbetFetchFailed": "Daten von Marathonbet konnten nicht geladen werden",
+		"marathonbetInvalidTreeId": "Ungültige Marathonbet-Event-ID",
+		"marathonbetParseFailed": "Marathonbet-Antwort konnte nicht verarbeitet werden"
+	},
+
+	"marathonbetOdds": {
+		"menuLink": "Marathonbet (Scrape)",
+		"title": "Marathonbet: Event-Quoten",
+		"hint": "Daten von new.marathonbet.ru über interne SSE-API (kein offizielles XML). Der Server muss die Seite erreichen. URL-ID ist treeId.",
+		"treeId": "Event tree ID",
+		"treeIdPlaceholder": "25819358",
+		"fetch": "Laden",
+		"defaultUrl": "Beispiel: /su/sport/event/25819358",
+		"eventInfo": "Spiel",
+		"startTime": "Anstoß (UTC)",
+		"competition": "Wettbewerb",
+		"source": "Quelle",
+		"fetchedAt": "Geladen um",
+		"matchResult": "Spielergebnis",
+		"handicaps": "Sieg mit Handicap",
+		"selection": "Auswahl",
+		"odds": "Quote",
+		"warnings": "Hinweise",
+		"warning.matchResultNotFound": "Markt „Spielergebnis“ nicht gefunden",
+		"warning.handicapNotFound": "Handicap-Märkte nicht gefunden",
+		"noData": "„Laden“ klicken, um Quoten abzurufen"
 	},
 
 	"oddsDemo": {

@@ -658,7 +658,33 @@
 		"leagueSlugRequired": "odds-api league slug is required",
 		"oddsApiBookmakersNotConfigured": "odds-api bookmakers are not configured",
 		"oddsSyncNoMatchdayMatches": "No not-started matches in the selected matchday. Fetch results from football-data.org first",
-		"oddsDemoEventIdsRequired": "Enter at least one valid match ID"
+		"oddsDemoEventIdsRequired": "Enter at least one valid match ID",
+		"marathonbetFetchFailed": "Failed to fetch data from Marathonbet",
+		"marathonbetInvalidTreeId": "Invalid Marathonbet event ID",
+		"marathonbetParseFailed": "Failed to parse Marathonbet response"
+	},
+
+	"marathonbetOdds": {
+		"menuLink": "Marathonbet (scrape)",
+		"title": "Marathonbet: event odds",
+		"hint": "Data from new.marathonbet.ru via internal SSE API (not the official affiliate XML). Server must reach the site. URL ID is treeId.",
+		"treeId": "Event tree ID",
+		"treeIdPlaceholder": "25819358",
+		"fetch": "Load",
+		"defaultUrl": "Example: /su/sport/event/25819358",
+		"eventInfo": "Match",
+		"startTime": "Kick-off (UTC)",
+		"competition": "Competition",
+		"source": "Source",
+		"fetchedAt": "Fetched at",
+		"matchResult": "Match result",
+		"handicaps": "Handicap win",
+		"selection": "Selection",
+		"odds": "Odds",
+		"warnings": "Warnings",
+		"warning.matchResultNotFound": "Match result market not found",
+		"warning.handicapNotFound": "Handicap markets not found",
+		"noData": "Click Load to fetch odds"
 	},
 
 	"oddsDemo": {

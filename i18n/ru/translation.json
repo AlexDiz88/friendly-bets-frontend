@@ -658,7 +658,33 @@
 		"leagueSlugRequired": "Укажите slug лиги odds-api",
 		"oddsApiBookmakersNotConfigured": "Не настроены букмекеры odds-api",
 		"oddsSyncNoMatchdayMatches": "Нет не начавшихся матчей в выбранном туре. Сначала загрузите результаты с football-data.org",
-		"oddsDemoEventIdsRequired": "Укажите хотя бы один корректный ID матча"
+		"oddsDemoEventIdsRequired": "Укажите хотя бы один корректный ID матча",
+		"marathonbetFetchFailed": "Не удалось получить данные с Marathonbet",
+		"marathonbetInvalidTreeId": "Некорректный ID события Marathonbet",
+		"marathonbetParseFailed": "Не удалось разобрать ответ Marathonbet"
+	},
+
+	"marathonbetOdds": {
+		"menuLink": "Marathonbet (скрап)",
+		"title": "Marathonbet: кэфы события",
+		"hint": "Данные с new.marathonbet.ru через внутренний SSE API (не официальный XML). Для стабильной работы нужен доступ сервера к сайту. ID в URL — treeId.",
+		"treeId": "Tree ID события",
+		"treeIdPlaceholder": "25819358",
+		"fetch": "Загрузить",
+		"defaultUrl": "Пример: /su/sport/event/25819358",
+		"eventInfo": "Матч",
+		"startTime": "Начало (UTC)",
+		"competition": "Турнир",
+		"source": "Источник",
+		"fetchedAt": "Загружено",
+		"matchResult": "Результат матча",
+		"handicaps": "Победа с учётом форы",
+		"selection": "Исход",
+		"odds": "Кэф",
+		"warnings": "Предупреждения",
+		"warning.matchResultNotFound": "Рынок «Результат матча» не найден",
+		"warning.handicapNotFound": "Рынки форы не найдены",
+		"noData": "Нажмите «Загрузить», чтобы получить кэфы"
 	},
 
 	"oddsDemo": {
