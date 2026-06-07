@@ -588,6 +588,7 @@
 		"invalidStatus": "Ungültiger Status",
 		"youAlreadyRegisteredInSeason": "Sie sind bereits für diese Saison registriert",
 		"administratorNotAllowedRegisterInSeason": "Administrator darf sich nicht für Saisons registrieren",
+		"seasonRegistrationClosed": "Die Anmeldung für dieses Turnier ist geschlossen",
 		"fillUsernameInProfile": "Bitte füllen Sie zuerst das Feld 'Username' in Ihrem Profil aus",
 		"seasonAlreadyHasSameStatus": "Saison hat bereits diesen Status",
 		"seasonWithThisTitleAlreadyExist": "Saison mit diesem Titel existiert bereits",

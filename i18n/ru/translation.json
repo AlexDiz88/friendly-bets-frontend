@@ -588,6 +588,7 @@
 		"invalidStatus": "Недопустимый статус",
 		"youAlreadyRegisteredInSeason": "Вы уже зарегистрированы на этом турнире",
 		"administratorNotAllowedRegisterInSeason": "Администратор не имеет права регистрироваться на турнирах",
+		"seasonRegistrationClosed": "Регистрация на этот турнир закрыта",
 		"fillUsernameInProfile": "Сначала заполните поле 'Имя' в личном кабинете",
 		"seasonAlreadyHasSameStatus": "Сезон уже имеет этот статус",
 		"seasonWithThisTitleAlreadyExist": "Сезон с таким названием уже существует",

@@ -588,6 +588,7 @@
 		"invalidStatus": "Invalid status",
 		"youAlreadyRegisteredInSeason": "You are already registered in season",
 		"administratorNotAllowedRegisterInSeason": "Administrator are not allowed to register in season",
+		"seasonRegistrationClosed": "Registration for this tournament is closed",
 		"fillUsernameInProfile": "Fill out the 'Username' field in your profile",
 		"seasonAlreadyHasSameStatus": "Season already has this status",
 		"seasonWithThisTitleAlreadyExist": "Season with this title already exists",
