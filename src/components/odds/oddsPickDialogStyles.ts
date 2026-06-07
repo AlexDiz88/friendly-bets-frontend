@@ -609,3 +609,99 @@ export const oddsPickConfirmOddsSx: SxProps<Theme> = (theme) => ({
 			? '0 0 20px rgba(255, 217, 102, 0.28)'
 			: '0 1px 8px rgba(139, 105, 20, 0.18)',
 });
+
+export const oddsPickConfirmProcessingWrapSx: SxProps<Theme> = {
+	position: 'relative',
+	width: '100%',
+};
+
+export const oddsPickConfirmSummaryDimmedSx: SxProps<Theme> = {
+	opacity: 0.38,
+	filter: 'blur(1.5px)',
+	transform: 'scale(0.98)',
+	transition: 'opacity 0.28s ease, filter 0.28s ease, transform 0.28s ease',
+	pointerEvents: 'none',
+	userSelect: 'none',
+};
+
+export const oddsPickConfirmProcessingOverlaySx: SxProps<Theme> = (theme) => {
+	const p = oddsPickPalette(theme.palette.mode);
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		position: 'absolute',
+		inset: '-0.35rem -0.5rem',
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 1.25,
+		borderRadius: 2,
+		zIndex: 1,
+		background: isDark
+			? 'radial-gradient(ellipse 90% 70% at 50% 40%, rgba(0, 107, 66, 0.42) 0%, rgba(11, 20, 36, 0.88) 72%)'
+			: 'radial-gradient(ellipse 90% 70% at 50% 40%, rgba(0, 168, 107, 0.18) 0%, rgba(255, 255, 255, 0.92) 72%)',
+		backdropFilter: 'blur(6px)',
+		border: '1px solid',
+		borderColor: p.goldBorder,
+		boxShadow: isDark
+			? '0 0 28px rgba(0, 200, 120, 0.22), inset 0 0 24px rgba(255, 214, 0, 0.06)'
+			: '0 8px 24px rgba(4, 90, 55, 0.12), inset 0 0 20px rgba(255, 214, 0, 0.08)',
+		animation: 'oddsPickConfirmOverlayIn 0.32s ease',
+		'@keyframes oddsPickConfirmOverlayIn': {
+			from: { opacity: 0, transform: 'scale(0.96)' },
+			to: { opacity: 1, transform: 'scale(1)' },
+		},
+	};
+};
+
+export const oddsPickConfirmProcessingSpinnerRingSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		position: 'relative',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: 56,
+		height: 56,
+		'&::before': {
+			content: '""',
+			position: 'absolute',
+			inset: 0,
+			borderRadius: '50%',
+			border: '2px solid',
+			borderColor: isDark ? 'rgba(255, 214, 0, 0.22)' : 'rgba(184, 134, 11, 0.28)',
+			animation: 'oddsPickConfirmRingPulse 1.6s ease-in-out infinite',
+		},
+		'@keyframes oddsPickConfirmRingPulse': {
+			'0%, 100%': { transform: 'scale(1)', opacity: 0.55 },
+			'50%': { transform: 'scale(1.08)', opacity: 1 },
+		},
+	};
+};
+
+export const oddsPickConfirmProcessingSpinnerSx: SxProps<Theme> = (theme) => {
+	const p = oddsPickPalette(theme.palette.mode);
+	return {
+		color: theme.palette.mode === 'dark' ? p.gold : p.greenDeep,
+		filter: theme.palette.mode === 'dark' ? 'drop-shadow(0 0 8px rgba(255, 217, 102, 0.45))' : 'none',
+	};
+};
+
+export const oddsPickConfirmProcessingTextSx: SxProps<Theme> = (theme) => {
+	const p = oddsPickPalette(theme.palette.mode);
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		fontWeight: 700,
+		fontSize: { xs: '0.9rem', sm: '1rem' },
+		lineHeight: 1.25,
+		textAlign: 'center',
+		color: isDark ? p.green : p.greenDeep,
+		px: 1,
+		maxWidth: '100%',
+		animation: 'oddsPickConfirmTextPulse 1.4s ease-in-out infinite',
+		'@keyframes oddsPickConfirmTextPulse': {
+			'0%, 100%': { opacity: 0.72 },
+			'50%': { opacity: 1 },
+		},
+	};
+};

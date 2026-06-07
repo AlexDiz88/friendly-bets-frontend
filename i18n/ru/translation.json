@@ -145,7 +145,8 @@
 		"reset": "Сбросить",
 		"save": "Сохранить",
 		"refresh": "Обновить",
-		"clear": "Очистить"
+		"clear": "Очистить",
+		"processing": "Обработка…"
 	},
 	"externalSyncIssuesTitle": "Лог ошибок",
 	"externalSyncIssuesHasIssues": "В логе есть записи",
@@ -795,6 +796,7 @@
 			"resultTotal12Under": "12 + Тотал меньше",
 			"resultTotal12Over": "12 + Тотал больше",
 			"btts": "Обе забьют",
+			"resultBtts": "Результат матча + Обе забьют",
 			"goals": "Голы",
 			"exactTotalGoals": "Точный тотал голов",
 			"teamTotalHome": "Инд. тотал хозяев",
@@ -803,6 +805,8 @@
 			"halfCorrectScore": "Точный счёт (по таймам)",
 			"firstHalfCorrectScore": "1й тайм",
 			"secondHalfCorrectScore": "2й тайм",
+			"cleanWin": "Победа всухую",
+			"winGoalDifference": "Победа с точной разницей голов",
 			"other": "Прочее"
 		}
 	},
@@ -886,6 +890,10 @@
 			"bestOdds": "Кэф",
 			"confirmTitle": "Подтверждение ставки",
 			"confirmHelper": "Проверьте исход и коэффициент. После отправки изменить их будет нельзя.",
+			"submittingTitle": "Принимаем ставку",
+			"submittingHelper": "Пожалуйста, подождите — не закрывайте окно.",
+			"submitting": "Обработка ставки...",
+			"submittingButton": "Отправка…",
 			"betLabel": "Ставка:",
 			"oddsLine": "{{label}} — {{odds}}",
 			"betChip": "{{title}} @ {{odds}}",

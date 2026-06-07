@@ -145,7 +145,8 @@
 		"reset": "Reset",
 		"save": "Save",
 		"refresh": "Refresh",
-		"clear": "Clear"
+		"clear": "Clear",
+		"processing": "Processing…"
 	},
 	"externalSyncIssuesTitle": "Error log",
 	"externalSyncIssuesHasIssues": "The log has entries",
@@ -795,6 +796,7 @@
 			"resultTotal12Under": "12 + Total Under",
 			"resultTotal12Over": "12 + Total Over",
 			"btts": "Both teams to score",
+			"resultBtts": "Match result + BTTS",
 			"goals": "Goals",
 			"exactTotalGoals": "Exact total goals",
 			"teamTotalHome": "Home team total",
@@ -803,6 +805,8 @@
 			"halfCorrectScore": "Half-time correct score",
 			"firstHalfCorrectScore": "1st half",
 			"secondHalfCorrectScore": "2nd half",
+			"cleanWin": "Win to nil",
+			"winGoalDifference": "Win by exact margin",
 			"other": "Other"
 		}
 	},
@@ -886,6 +890,10 @@
 			"bestOdds": "Odds",
 			"confirmTitle": "Bet confirmation",
 			"confirmHelper": "Please verify the selection and odds below. Once submitted, they cannot be changed.",
+			"submittingTitle": "Placing your bet",
+			"submittingHelper": "Please wait — do not close this window.",
+			"submitting": "Processing bet...",
+			"submittingButton": "Submitting…",
 			"betLabel": "Bet:",
 			"oddsLine": "{{label}} — {{odds}}",
 			"betChip": "{{title}} @ {{odds}}",

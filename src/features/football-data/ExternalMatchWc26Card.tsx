@@ -12,6 +12,7 @@ import {
 	kickoffToGerman,
 } from '../world-cup-2026/wc26Time';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
+import { formatPickOdds } from '../../components/odds/formatPickOdds';
 import type Bet from '../bets/types/Bet';
 import {
 	externalMatchWcBetChipSx,
@@ -79,7 +80,7 @@ export default function ExternalMatchWc26Card({
 		userBet?.betTitle != null && userBet.betOdds != null
 			? t('wc26.oddsPick.betChip', {
 					title: getFullBetTitle(userBet.betTitle),
-					odds: userBet.betOdds,
+					odds: formatPickOdds(userBet.betOdds),
 				})
 			: null;
 

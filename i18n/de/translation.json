@@ -145,7 +145,8 @@
 		"reset": "Reset",
 		"save": "Speichern",
 		"refresh": "Aktualisieren",
-		"clear": "Leeren"
+		"clear": "Leeren",
+		"processing": "Verarbeitung…"
 	},
 	"externalSyncIssuesTitle": "Fehlerprotokoll",
 	"externalSyncIssuesHasIssues": "Der Log enthält Einträge",
@@ -795,6 +796,7 @@
 			"resultTotal12Under": "12 + Unter",
 			"resultTotal12Over": "12 + Über",
 			"btts": "Beide treffen",
+			"resultBtts": "Spielergebnis + Beide treffen",
 			"goals": "Tore",
 			"exactTotalGoals": "Genaue Toranzahl",
 			"teamTotalHome": "Heim-Teamtotal",
@@ -803,6 +805,8 @@
 			"halfCorrectScore": "Halbzeit-Ergebnis",
 			"firstHalfCorrectScore": "1. Halbzeit",
 			"secondHalfCorrectScore": "2. Halbzeit",
+			"cleanWin": "Siege zu Null",
+			"winGoalDifference": "Sieg mit genauem Torabstand",
 			"other": "Sonstige"
 		}
 	},
@@ -886,6 +890,10 @@
 			"bestOdds": "Quote",
 			"confirmTitle": "Wettbestätigung",
 			"confirmHelper": "Bitte prüfen Sie Auswahl und Quote. Nach dem Absenden sind Änderungen nicht mehr möglich.",
+			"submittingTitle": "Wette wird angenommen",
+			"submittingHelper": "Bitte warten — schließen Sie das Fenster nicht.",
+			"submitting": "Wette wird verarbeitet...",
+			"submittingButton": "Senden…",
 			"betLabel": "Wette:",
 			"oddsLine": "{{label}} — {{odds}}",
 			"betChip": "{{title}} @ {{odds}}",

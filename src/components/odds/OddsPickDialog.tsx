@@ -47,6 +47,12 @@ import {
 	oddsPickConfirmBetRowSx,
 	oddsPickConfirmBetTitleSx,
 	oddsPickConfirmOddsSx,
+	oddsPickConfirmProcessingOverlaySx,
+	oddsPickConfirmProcessingSpinnerRingSx,
+	oddsPickConfirmProcessingSpinnerSx,
+	oddsPickConfirmProcessingTextSx,
+	oddsPickConfirmProcessingWrapSx,
+	oddsPickConfirmSummaryDimmedSx,
 	oddsPickConfirmSummarySx,
 	oddsPickConfirmTeamAvatarSx,
 	oddsPickConfirmTeamNameSx,
@@ -263,46 +269,70 @@ export default function OddsPickDialog({
 				open={confirmOpen}
 				onClose={() => !submitting && setConfirmOpen(false)}
 				onSave={() => void handleConfirm()}
-				title={t('wc26.oddsPick.confirmTitle')}
-				helperText={t('wc26.oddsPick.confirmHelper')}
+				title={
+					submitting
+						? t('wc26.oddsPick.submittingTitle')
+						: t('wc26.oddsPick.confirmTitle')
+				}
+				helperText={submitting ? t('wc26.oddsPick.submittingHelper') : t('wc26.oddsPick.confirmHelper')}
 				contentWidth="min(18rem, calc(100vw - 2.5rem))"
+				submitting={submitting}
+				submittingButtonText={t('wc26.oddsPick.submittingButton')}
 				summaryComponent={
 					selection ? (
-						<Box sx={oddsPickConfirmSummarySx}>
-							<Box sx={oddsPickConfirmTeamsRowSx}>
-								<Box sx={oddsPickConfirmTeamSideSx}>
-									<Avatar
-										variant="square"
-										src={resolveTeamLogoUrl(homeTeam)}
-										sx={oddsPickConfirmTeamAvatarSx}
-									/>
-									<Typography sx={oddsPickConfirmTeamNameSx}>
-										{resolveTeamDisplayName(homeTeam, t, i18n.language)}
+						<Box sx={oddsPickConfirmProcessingWrapSx}>
+							<Box
+								sx={
+									submitting
+										? [oddsPickConfirmSummarySx, oddsPickConfirmSummaryDimmedSx]
+										: oddsPickConfirmSummarySx
+								}
+							>
+								<Box sx={oddsPickConfirmTeamsRowSx}>
+									<Box sx={oddsPickConfirmTeamSideSx}>
+										<Avatar
+											variant="square"
+											src={resolveTeamLogoUrl(homeTeam)}
+											sx={oddsPickConfirmTeamAvatarSx}
+										/>
+										<Typography sx={oddsPickConfirmTeamNameSx}>
+											{resolveTeamDisplayName(homeTeam, t, i18n.language)}
+										</Typography>
+									</Box>
+									<Typography sx={oddsPickConfirmVsSx}>—</Typography>
+									<Box sx={oddsPickConfirmTeamSideSx}>
+										<Avatar
+											variant="square"
+											src={resolveTeamLogoUrl(awayTeam)}
+											sx={oddsPickConfirmTeamAvatarSx}
+										/>
+										<Typography sx={oddsPickConfirmTeamNameSx}>
+											{resolveTeamDisplayName(awayTeam, t, i18n.language)}
+										</Typography>
+									</Box>
+								</Box>
+								<Box sx={oddsPickConfirmBetRowSx}>
+									<Typography component="span" sx={oddsPickConfirmBetLabelSx}>
+										{t('wc26.oddsPick.betLabel')}
+									</Typography>
+									<Typography component="span" sx={oddsPickConfirmBetTitleSx}>
+										{selection.displayLabel}
 									</Typography>
 								</Box>
-								<Typography sx={oddsPickConfirmVsSx}>—</Typography>
-								<Box sx={oddsPickConfirmTeamSideSx}>
-									<Avatar
-										variant="square"
-										src={resolveTeamLogoUrl(awayTeam)}
-										sx={oddsPickConfirmTeamAvatarSx}
-									/>
-									<Typography sx={oddsPickConfirmTeamNameSx}>
-										{resolveTeamDisplayName(awayTeam, t, i18n.language)}
+								<Typography component="p" sx={oddsPickConfirmOddsSx}>
+									{confirmOddsText}
+								</Typography>
+							</Box>
+							{submitting ? (
+								<Box sx={oddsPickConfirmProcessingOverlaySx}>
+									<Box sx={oddsPickConfirmProcessingSpinnerRingSx}>
+										<CircularProgress size={36} thickness={4} sx={oddsPickConfirmProcessingSpinnerSx} />
+									</Box>
+									<Typography sx={oddsPickConfirmProcessingTextSx}>
+										{t('wc26.oddsPick.submitting')}
 									</Typography>
 								</Box>
-							</Box>
-							<Box sx={oddsPickConfirmBetRowSx}>
-								<Typography component="span" sx={oddsPickConfirmBetLabelSx}>
-									{t('wc26.oddsPick.betLabel')}
-								</Typography>
-								<Typography component="span" sx={oddsPickConfirmBetTitleSx}>
-									{selection.displayLabel}
-								</Typography>
-							</Box>
-							<Typography component="p" sx={oddsPickConfirmOddsSx}>
-								{confirmOddsText}
-							</Typography>
+							) : null}
 						</Box>
 					) : undefined
 				}

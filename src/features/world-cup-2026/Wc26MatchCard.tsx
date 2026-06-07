@@ -5,6 +5,7 @@ import Wc26TeamFlag from './Wc26TeamFlag';
 import { kickoffToGerman } from './wc26Time';
 import type { Wc26Match } from './wc26Schedule';
 import { wc26KickoffTimeSx, wc26MatchMetaSx } from './wc26PageStyles';
+import { formatPickOdds } from '../../components/odds/formatPickOdds';
 import Bet from '../bets/types/Bet';
 
 interface Wc26MatchCardProps {
@@ -66,7 +67,7 @@ export default function Wc26MatchCard({
 							size="small"
 							label={t('wc26.oddsPick.betChip', {
 								title: userBet.betTitle.label,
-								odds: userBet.betOdds,
+								odds: formatPickOdds(userBet.betOdds),
 							})}
 							sx={{ height: 20, fontSize: '0.65rem' }}
 						/>
