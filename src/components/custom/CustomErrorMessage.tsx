@@ -13,7 +13,16 @@ const CustomErrorMessage = ({
 	return (
 		<>
 			{message ? (
-				<Box sx={{ fontWeight: 600, px: 2, py: 5, color: 'brown', textAlign: 'center', ...sx }}>
+				<Box
+					sx={{
+						fontWeight: 600,
+						px: 2,
+						py: 5,
+						color: (theme) => (theme.palette.mode === 'dark' ? theme.palette.secondary.light : 'brown'),
+						textAlign: 'center',
+						...sx,
+					}}
+				>
 					{info ? t(message) : t(`error.${message}`)}
 				</Box>
 			) : (
