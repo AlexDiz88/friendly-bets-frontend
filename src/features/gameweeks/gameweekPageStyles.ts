@@ -247,3 +247,25 @@ export const gameweekThinkingIconSx: SxProps<Theme> = (theme) => ({
 	color: theme.palette.mode === 'dark' ? '#fb923c' : '#E76B0C',
 	fontSize: '2rem',
 });
+
+export const gameweekPageEmptySx: SxProps<Theme> = {
+	textAlign: 'center',
+	px: 2,
+	py: 5,
+	maxWidth: 420,
+	mx: 'auto',
+};
+
+export const gameweekPageEmptyTitleSx: SxProps<Theme> = (theme) => ({
+	fontWeight: 600,
+	fontSize: '1.05rem',
+	mb: 1,
+	color: statsThemePalette(theme).name,
+});
+
+export const gameweekPageEmptyHintSx: SxProps<Theme> = (theme) => ({
+	fontSize: '0.9rem',
+	lineHeight: 1.45,
+	color: statsThemePalette(theme).bodyText,
+	opacity: 0.85,
+});

@@ -37,11 +37,11 @@ export default function LeaguesStatsPage(): JSX.Element {
 	};
 
 	useEffect(() => {
-		if (statsByLeagues?.length === 1) {
+		if (statsByLeagues.length > 0 && !selectedLeagueCode) {
 			setSelectedLeagueName(statsByLeagues[0].simpleLeague.leagueCode);
 			setSelectedLeague(statsByLeagues[0]);
 		}
-	}, [statsByLeagues]);
+	}, [statsByLeagues, selectedLeagueCode]);
 
 	useEffect(() => {
 		if (activeSeasonId) {

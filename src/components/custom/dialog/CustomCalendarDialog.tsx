@@ -14,6 +14,7 @@ interface DialogProps {
 	contentWidth?: string;
 	submitting?: boolean;
 	submittingButtonText?: string;
+	disableTextSelection?: boolean;
 }
 
 export default function CustomCalendarDialog({
@@ -27,6 +28,7 @@ export default function CustomCalendarDialog({
 	contentWidth,
 	submitting = false,
 	submittingButtonText,
+	disableTextSelection = false,
 }: DialogProps): JSX.Element {
 	const handleClose = () => {
 		if (submitting) {
@@ -48,6 +50,7 @@ export default function CustomCalendarDialog({
 						width: contentWidth ?? '14rem',
 						maxWidth: '100%',
 						boxSizing: 'border-box',
+						...(disableTextSelection ? { userSelect: 'none' } : {}),
 					}}
 				>
 					{title && <Box sx={{ fontWeight: 600 }}>{title}</Box>}
