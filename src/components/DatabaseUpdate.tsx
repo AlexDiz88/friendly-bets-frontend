@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../app/hooks';
 import { dbUpdate } from '../features/admin/seasons/seasonsSlice';
 import CustomButton from './custom/btn/CustomButton';
+import { destructiveActionHintSx } from './custom/btn/customButtonStyles';
 import CustomCancelButton from './custom/btn/CustomCancelButton';
 import CustomSuccessButton from './custom/btn/CustomSuccessButton';
 import { showErrorSnackbar, showSuccessSnackbar } from './custom/snackbar/snackbarSlice';
@@ -33,7 +34,7 @@ export default function DatabaseUpdate({
 			}
 			stopLoading();
 		},
-		[dispatch]
+		[dispatch, startLoading, stopLoading]
 	);
 
 	const handleDbUpdate = (): void => {
@@ -45,9 +46,10 @@ export default function DatabaseUpdate({
 	};
 
 	return (
-		<Box sx={{ m: '0 auto', textAlign: 'center', width: '20rem', mb: 2, pb: 2, borderBottom: 2 }}>
+		<Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
 			<CustomButton
-				sx={{ backgroundColor: 'brown' }}
+				sx={{ width: '100%' }}
+				buttonColor="error"
 				onClick={handleDbUpdate}
 				buttonText={t('dbUpdate')}
 			/>
@@ -55,7 +57,7 @@ export default function DatabaseUpdate({
 				<DialogContent>
 					<Typography>
 						<b>{t('dbUpdate')}?</b>
-						<Box component="span" sx={{ color: 'brown', fontWeight: 600 }}>
+						<Box component="span" sx={destructiveActionHintSx}>
 							<br />
 							{t('thisActionCannotBeCanceled')}
 						</Box>

@@ -1,4 +1,4 @@
-import { Avatar, Box } from '@mui/material';
+import { Avatar, Box, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
 import Team from '../../../features/admin/teams/types/Team';
 import { pathToLogoImage } from '../../utils/imgBase64Converter';
@@ -12,7 +12,7 @@ const TeamsAvatars = ({
 	homeTeam: Team | undefined;
 	awayTeam: Team | undefined;
 	height?: number;
-	sx?: {};
+	sx?: SxProps<Theme>;
 }): JSX.Element => {
 	return (
 		<Box

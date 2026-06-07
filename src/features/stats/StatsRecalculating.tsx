@@ -1,17 +1,19 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Box, Dialog, DialogActions, DialogContent } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
+import { destructiveActionHintSx } from '../../components/custom/btn/customButtonStyles';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
+import { apiFetch } from '../../shared/apiClient';
 import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
+import { ADMIN_BUTTON_STACK_SX } from '../admin/adminPanelStyles';
 import { playersStatsFullRecalculation } from './statsSlice';
 
 // TODO: refactor this component
@@ -65,7 +67,7 @@ export default function StatsRecalculating({
 					if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 						url = `/api/stats/season/${activeSeasonId}/recalculation/teams`;
 					}
-					const response = await fetch(`${url}`);
+					const response = await apiFetch(`${url}`);
 
 					if (response.ok) {
 						dispatch(showSuccessSnackbar({ message: t('statsWasSuccessfullyRecalculated') }));
@@ -97,7 +99,7 @@ export default function StatsRecalculating({
 					if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 						url = `/api/stats/season/${activeSeasonId}/recalculation/bet-titles`;
 					}
-					const response = await fetch(`${url}`);
+					const response = await apiFetch(`${url}`);
 
 					if (response.ok) {
 						dispatch(showSuccessSnackbar({ message: t('statsWasSuccessfullyRecalculated') }));
@@ -129,7 +131,7 @@ export default function StatsRecalculating({
 					if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 						url = `/api/stats/season/${activeSeasonId}/recalculation/gameweeks`;
 					}
-					const response = await fetch(`${url}`);
+					const response = await apiFetch(`${url}`);
 
 					if (response.ok) {
 						dispatch(showSuccessSnackbar({ message: t('statsWasSuccessfullyRecalculated') }));
@@ -178,41 +180,36 @@ export default function StatsRecalculating({
 	}, [dispatch]);
 
 	return (
-		<Box sx={{ mt: 0, py: 2 }}>
-			<Box sx={{ fontSize: 22, fontWeight: 600, mb: 1.5 }}>{t('dbManagement')}</Box>
-			<Box>
-				<CustomButton
-					sx={{ mb: 2, backgroundColor: 'brown' }}
-					onClick={handleRecalculatePlayerStatsDialog}
-					buttonText={t('mainStatsRecalculating')}
-				/>
-			</Box>
-			<Box>
-				<CustomButton
-					sx={{ mb: 2, backgroundColor: 'brown' }}
-					onClick={handleRecalculateTeamStatsDialog}
-					buttonText={t('teamStatsRecalculating')}
-				/>
-			</Box>
-			<Box>
-				<CustomButton
-					sx={{ mb: 2, backgroundColor: 'brown' }}
-					onClick={handleRecalculateBetTitlesStatsDialog}
-					buttonText={t('betTitlesStatsRecalculating')}
-				/>
-			</Box>
-			<Box>
-				<CustomButton
-					sx={{ backgroundColor: 'brown' }}
-					onClick={handleRecalculateGameweekStatsDialog}
-					buttonText={t('gameweekStatsRecalculating')}
-				/>
-			</Box>
+		<Box sx={ADMIN_BUTTON_STACK_SX}>
+			<CustomButton
+				buttonColor="error"
+				buttonVariant="outlined"
+				onClick={handleRecalculatePlayerStatsDialog}
+				buttonText={t('mainStatsRecalculating')}
+			/>
+			<CustomButton
+				buttonColor="error"
+				buttonVariant="outlined"
+				onClick={handleRecalculateTeamStatsDialog}
+				buttonText={t('teamStatsRecalculating')}
+			/>
+			<CustomButton
+				buttonColor="error"
+				buttonVariant="outlined"
+				onClick={handleRecalculateBetTitlesStatsDialog}
+				buttonText={t('betTitlesStatsRecalculating')}
+			/>
+			<CustomButton
+				buttonColor="error"
+				buttonVariant="outlined"
+				onClick={handleRecalculateGameweekStatsDialog}
+				buttonText={t('gameweekStatsRecalculating')}
+			/>
 			<Dialog open={openRecalculatePlayerStatsDialog} onClose={handleCloseDialog}>
 				<DialogContent>
 					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 						{t('mainStatsWillBeRecalculated')}
-						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('thisActionCannotBeCanceled')}</Box>
+						<Box sx={destructiveActionHintSx}>{t('thisActionCannotBeCanceled')}</Box>
 					</Box>
 				</DialogContent>
 				<DialogActions>
@@ -225,7 +222,7 @@ export default function StatsRecalculating({
 				<DialogContent>
 					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 						{t('teamStatsWillBeRecalculated')}
-						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('thisActionCannotBeCanceled')}</Box>
+						<Box sx={destructiveActionHintSx}>{t('thisActionCannotBeCanceled')}</Box>
 					</Box>
 				</DialogContent>
 				<DialogActions>
@@ -238,7 +235,7 @@ export default function StatsRecalculating({
 				<DialogContent>
 					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 						{t('gameweekStatsWillBeRecalculated')}
-						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('thisActionCannotBeCanceled')}</Box>
+						<Box sx={destructiveActionHintSx}>{t('thisActionCannotBeCanceled')}</Box>
 					</Box>
 				</DialogContent>
 				<DialogActions>
@@ -251,7 +248,7 @@ export default function StatsRecalculating({
 				<DialogContent>
 					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
 						{t('betTitlesStatsWillBeRecalculated')}
-						<Box sx={{ color: 'brown', fontWeight: 600 }}>{t('thisActionCannotBeCanceled')}</Box>
+						<Box sx={destructiveActionHintSx}>{t('thisActionCannotBeCanceled')}</Box>
 					</Box>
 				</DialogContent>
 				<DialogActions>

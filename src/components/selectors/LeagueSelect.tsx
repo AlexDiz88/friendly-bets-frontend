@@ -1,7 +1,16 @@
-import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { Avatar, Box, MenuItem, Select, SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
 import League from '../../features/admin/leagues/types/League';
-import LeagueAvatar from '../custom/avatar/LeagueAvatar';
+import LeagueAvatar, { leagueLogoAvatarSx } from '../custom/avatar/LeagueAvatar';
+import { compactLeagueSelectSx } from './compactSelectSx';
+import {
+	filterSelectAllAvatarSx,
+	filterSelectAllLabelSx,
+	filterSelectLeagueLayoutSx,
+	filterSelectMenuItemSx,
+	filterSelectMenuProps,
+	filterSelectRootSx,
+} from './filterSelectStyles';
 
 interface LeagueSelectProps {
 	value: string;
@@ -9,6 +18,7 @@ interface LeagueSelectProps {
 	leagues: League[] | undefined;
 	withoutAll?: boolean;
 	fullLeagueNames?: boolean;
+	compact?: boolean;
 }
 
 const LeagueSelect = ({
@@ -17,40 +27,78 @@ const LeagueSelect = ({
 	leagues,
 	withoutAll,
 	fullLeagueNames,
+	compact,
 }: LeagueSelectProps): JSX.Element => {
+	const avatarHeight = compact ? 23 : 27;
+	const menuMinWidth = compact ? '5.5rem' : '6.5rem';
+	const leagueCodes = leagues?.map((l) => l.leagueCode) ?? [];
+	const allValue = t('all');
+	const safeValue =
+		!withoutAll && value === allValue
+			? allValue
+			: leagueCodes.includes(value)
+				? value
+				: '';
+
+	const rootSx: SxProps<Theme> = (
+		compact
+			? compactLeagueSelectSx
+			: [
+					filterSelectRootSx('standard'),
+					filterSelectLeagueLayoutSx,
+					fullLeagueNames
+						? { minWidth: '15rem', maxWidth: '100%', flex: '1 1 auto' }
+						: { minWidth: '7rem' },
+				]
+	) as SxProps<Theme>;
+
+	const menuItemCount = (withoutAll ? 0 : 1) + (leagues?.length ?? 0);
+
 	return (
 		<Select
 			autoWidth
 			size="small"
-			sx={{ minWidth: fullLeagueNames ? '15rem' : '7rem', ml: -0.2 }}
+			displayEmpty={withoutAll}
+			sx={rootSx}
 			labelId="league-label"
 			id="league-select"
-			value={value}
+			value={safeValue}
 			onChange={onChange}
+			MenuProps={filterSelectMenuProps(menuItemCount)}
 		>
 			{!withoutAll && (
-				<MenuItem key={t('all')} sx={{ ml: -0.5, minWidth: '6.5rem' }} value={t('all')}>
-					<Box sx={{ display: 'flex', alignItems: 'center' }}>
+				<MenuItem sx={filterSelectMenuItemSx} value={allValue}>
+					<Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
 						<Avatar
 							variant="square"
-							sx={{ width: 27, height: 27 }}
+							sx={[filterSelectAllAvatarSx, leagueLogoAvatarSx] as SxProps<Theme>}
 							alt="league_logo"
-							// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 							src={`${import.meta.env.PUBLIC_URL || ''}/upload/logo/total.png`}
 						/>
-
-						<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t('all')}</Typography>
+						<Box component="span" sx={filterSelectAllLabelSx}>
+							{t('all')}
+						</Box>
 					</Box>
 				</MenuItem>
 			)}
 
 			{leagues &&
 				leagues.map((l) => (
-					<MenuItem sx={{ ml: -0.5, minWidth: '6.5rem' }} key={l.id} value={l.leagueCode}>
+					<MenuItem
+						sx={[filterSelectMenuItemSx, { minWidth: menuMinWidth }] as SxProps<Theme>}
+						key={l.id}
+						value={l.leagueCode}
+					>
 						<LeagueAvatar
 							leagueCode={l.leagueCode}
-							sx={{ justifyContent: 'start' }}
-							avasx={{ mr: 1 }}
+							height={avatarHeight}
+							sx={{
+								justifyContent: 'start',
+								mr: compact ? 0.25 : 0.5,
+								mb: 0,
+								fontSize: compact ? '0.8rem' : '0.875rem',
+							}}
+							avasx={{ mr: compact ? 0.5 : 0.75 }}
 							fullName={fullLeagueNames}
 						/>
 					</MenuItem>

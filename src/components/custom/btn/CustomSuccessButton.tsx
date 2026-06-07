@@ -1,28 +1,51 @@
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
+import type { SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
+import {
+	customButtonLabelSx,
+	customButtonRootSx,
+	type CustomButtonVariant,
+} from './customButtonStyles';
 
 const CustomSuccessButton = ({
 	onClick,
 	buttonVariant = 'contained',
 	buttonText = t('btnText.accept'),
 	sx,
-	textSize = '0.9rem',
+	textSize = '0.875rem',
+	disabled = false,
+	loading = false,
 }: {
 	onClick(event: React.MouseEvent<HTMLButtonElement>): void;
-	buttonVariant?: 'text' | 'contained' | 'outlined';
+	buttonVariant?: CustomButtonVariant;
 	buttonText?: string;
-	sx?: {};
+	sx?: SxProps<Theme>;
 	textSize?: string;
+	disabled?: boolean;
+	loading?: boolean;
 }): JSX.Element => {
 	return (
 		<Button
-			sx={{ height: '2rem', px: 1, mr: 1, ...sx }}
+			disableElevation
+			color="inherit"
+			sx={
+				[
+					customButtonRootSx('success', buttonVariant),
+					{ height: '2.25rem', px: 1.75, mr: 1 },
+					loading ? { display: 'inline-flex', alignItems: 'center', gap: 1 } : null,
+					sx,
+				] as SxProps<Theme>
+			}
 			variant={buttonVariant}
-			color="success"
 			onClick={onClick}
+			disabled={disabled || loading}
 		>
-			<Typography variant="button" fontWeight="600" fontSize={textSize} fontFamily="Shantell Sans">
+			{loading ? (
+				<CircularProgress size={16} thickness={5} sx={{ color: 'inherit', flexShrink: 0 }} />
+			) : null}
+			<Typography component="span" sx={customButtonLabelSx(textSize)}>
 				{buttonText}
 			</Typography>
 		</Button>

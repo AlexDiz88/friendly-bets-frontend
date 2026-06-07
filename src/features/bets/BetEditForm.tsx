@@ -1,7 +1,6 @@
 import { Dangerous } from '@mui/icons-material';
 import {
 	Box,
-	Checkbox,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -12,16 +11,24 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
+import CustomCheckbox from '../../components/custom/controls/CustomCheckbox';
+import { toggleInlineRowSx } from '../../components/custom/controls/customToggleStyles';
 import CustomCancelButton from '../../components/custom/btn/CustomCancelButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
+import {
+	isValidBetOddsInput,
+	isValidBetSizeInput,
+	parseDecimalInput,
+} from '../../components/utils/decimalInput';
 import {
 	gameScoreInputStringValidation,
 	transformToGameScore,
@@ -41,9 +48,10 @@ import {
 } from '../admin/calendars/calendarsSlice';
 import { selectAllCalendarNodes } from '../admin/calendars/selectors';
 import Calendar from '../admin/calendars/types/Calendar';
-import { selectActiveSeasonId } from '../admin/seasons/selectors';
+import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
+import { betInputSelectedBetSx } from './betInputPageStyles';
 import BetInputOdds from './BetInputOdds';
 import BetInputPlayer from './BetInputPlayer';
 import BetInputTeams from './BetInputTeams';
@@ -68,6 +76,7 @@ export default function BetEditForm({
 }): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
+	const activeSeason = useAppSelector(selectActiveSeason);
 	const calendarNodes = useAppSelector(selectAllCalendarNodes);
 	const [calendar, setCalendar] = useState<Calendar | undefined>();
 	const [updatedUser, setUpdatedUser] = useState<SimpleUser>(bet.player);
@@ -88,7 +97,11 @@ export default function BetEditForm({
 
 	const handleBetUpdateSave = useCallback(async () => {
 		setBetUpdateOpenDialog(false);
-		const betOddsToNumber = Number(updatedBetOdds?.trim().replace(',', '.'));
+		if (!isValidBetOddsInput(updatedBetOdds ?? '') || !isValidBetSizeInput(updatedBetSize ?? '')) {
+			dispatch(showErrorSnackbar({ message: 'betCoefIsNotNumber' }));
+			return;
+		}
+		const betOddsToNumber = parseDecimalInput(updatedBetOdds ?? '');
 		const dispatchResult = await dispatch(
 			updateBet({
 				editedBetId: bet.id,
@@ -237,7 +250,14 @@ export default function BetEditForm({
 				</Typography>
 			</Box>
 			<BetInputPlayer defaultValue={bet.player} onUserSelect={handleUserSelection} />
-			<MatchDayForm matchDay={bet.matchDay} onMatchDay={handleMatchDaySelection} />
+			<MatchDayForm
+				matchDay={updatedMatchDay ?? bet.matchDay}
+				leagueCode={activeSeason?.leagues?.find((l) => l.id === bet.leagueId)?.leagueCode}
+				matchdaySlots={
+					activeSeason?.leagues?.find((l) => l.id === bet.leagueId)?.matchdaySlots
+				}
+				onMatchDay={handleMatchDaySelection}
+			/>
 			{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}
 			<BetInputTeams
 				defaultHomeTeamName={bet.homeTeam?.title}
@@ -253,16 +273,12 @@ export default function BetEditForm({
 				<Box sx={{ my: 2, width: '18.2rem' }}>
 					<Box sx={{ display: 'flex' }}>
 						<Typography
-							sx={{
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-								fontSize: '0.85rem',
-								width: '17rem',
-								height: '2.3rem',
-								border: '1px solid rgba(0, 0, 0, 0.23)',
-								borderRadius: '4px',
-							}}
+							sx={
+								[
+									betInputSelectedBetSx,
+									{ width: '17rem', height: '2.3rem', ml: 0 },
+								] as SxProps<Theme>
+							}
 						>
 							{getFullBetTitle(updatedBetTitle)}
 						</Typography>
@@ -270,13 +286,14 @@ export default function BetEditForm({
 							<Dangerous color="error" sx={{ mt: -1.75, ml: -1.5, fontSize: '3rem' }} />
 						</IconButton>
 					</Box>
-					<Checkbox
-						sx={{ pt: 0.5 }}
-						checked={updatedBetTitle?.isNot ?? false}
-						onChange={handleIsNotChange}
-						inputProps={{ 'aria-label': 'controlled' }}
-					/>
-					{t('not')}
+					<Box component="span" sx={toggleInlineRowSx}>
+						<CustomCheckbox
+							checked={updatedBetTitle?.isNot ?? false}
+							onChange={handleIsNotChange}
+							inputProps={{ 'aria-label': 'controlled' }}
+						/>
+						<Typography component="span">{t('not')}</Typography>
+					</Box>
 				</Box>
 			)}
 

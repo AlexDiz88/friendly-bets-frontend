@@ -3,6 +3,7 @@ import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
 import TeamAvatar from '../../components/custom/avatar/TeamAvatar';
+import UserAvatar from '../../components/custom/avatar/UserAvatar';
 import {
 	gameScoreInputStringValidation,
 	getGameScoreView,
@@ -36,7 +37,15 @@ export default function BetSummaryInfo({
 			<Box sx={{ textAlign: 'left', borderBottom: 1, pb: 0.3, mb: 1.5 }}>
 				<b>{message}</b>
 			</Box>
-			<b>{t('player')}:</b> {player?.username}
+			<Box sx={{ display: 'flex', alignItems: 'center' }}>
+				<b>{t('player')}:</b>
+				<UserAvatar
+					player={player}
+					height={27}
+					sx={{ mb: 0, ml: 0.5, fontWeight: 400 }}
+					avasx={{ border: 0, mr: 0.3 }}
+				/>
+			</Box>
 			<Box sx={{ display: 'flex', alignItems: 'center' }}>
 				<b>{t('league')}:</b>
 				<LeagueAvatar leagueCode={leagueCode} fullName sx={{ ml: 0.5 }} />

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { apiFetch } from '../../shared/apiClient';
 import LeagueStats from './types/LeagueStats';
 import PlayerStats from './types/PlayerStats';
 import { PlayerStatsByBetTitles } from './types/PlayerStatsByBetTitles';
@@ -11,7 +12,7 @@ export async function getAllPlayersStatsBySeason(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -26,7 +27,7 @@ export async function getAllPlayersStatsByLeagues(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}/leagues`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -41,7 +42,7 @@ export async function getAllStatsByTeamsInSeason(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}/teams`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -56,7 +57,7 @@ export async function getAllStatsByBetTitlesInSeason(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}/bet-titles`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -75,7 +76,7 @@ export async function getStatsByTeams(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}/league/${leagueId}/user/${userId}`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -90,7 +91,7 @@ export async function playersStatsFullRecalculation(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}/recalculation`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -106,7 +107,7 @@ export async function getAllPlayersStats(): Promise<{
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/my/bets';
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);

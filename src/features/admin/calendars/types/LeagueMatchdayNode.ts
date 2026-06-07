@@ -5,5 +5,6 @@ export default interface LeagueMatchdayNode {
 	leagueCode: string;
 	matchDay: string;
 	betCountLimit: number;
+	defaultBetSize: number;
 	bets: Bet[];
 }

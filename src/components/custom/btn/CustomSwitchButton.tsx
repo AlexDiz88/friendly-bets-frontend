@@ -1,55 +1,74 @@
+import type { SxProps, Theme } from '@mui/material';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+
+const defaultButtonSx: SxProps<Theme> = {
+	height: '2.3rem',
+	minWidth: 0,
+	boxShadow: 'none',
+	textTransform: 'none',
+	borderRadius: 0,
+	bgcolor: 'transparent',
+	color: 'inherit',
+	'&:hover': {
+		bgcolor: 'transparent',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		bgcolor: 'transparent',
+		boxShadow: 'none',
+	},
+	'&:focus': {
+		bgcolor: 'transparent',
+		boxShadow: 'none',
+	},
+};
 
 const CustomSwitchButton = ({
 	onClick,
 	buttonText,
 	isActive,
 	sx,
+	labelSx,
 }: {
 	onClick(event: React.MouseEvent<HTMLButtonElement>): void;
 	buttonText: string;
 	isActive?: boolean;
-	sx?: {};
+	sx?: SxProps<Theme>;
+	labelSx?: SxProps<Theme>;
 }): JSX.Element => {
-	return (
-		<Button
-			sx={{
-				height: '2.3rem',
-				boxShadow: 'none',
-				bgcolor: 'white',
-				color: '#6E7175',
+	const legacySx: SxProps<Theme> = sx
+		? sx
+		: {
 				pb: 0.5,
-				textTransform: 'none',
-				borderRadius: 0,
-				borderBottom: isActive ? '2px solid #1c77d0' : '2px solid white',
+				color: '#6E7175',
+				borderBottom: isActive ? '2px solid #1c77d0' : '2px solid transparent',
 				'&:active': {
-					bgcolor: 'white',
-					boxShadow: 'none',
 					borderBottomColor: '#074078',
 				},
-				'&:hover': {
-					bgcolor: 'white',
-					boxShadow: 'none',
-				},
-				'&:focus': {
-					bgcolor: 'white',
-					boxShadow: 'none',
-				},
-				...sx,
-			}}
+			};
+
+	return (
+		<Button
+			color="inherit"
+			disableElevation
+			variant="text"
 			onClick={onClick}
+			sx={[defaultButtonSx, legacySx] as SxProps<Theme>}
 		>
 			<Typography
-				sx={{
-					fontWeight: 600,
-					fontSize: '1rem',
-					fontFamily: "'Exo 2'",
-					textTransform: 'none',
-					'&:active': {
-						color: '#1c77d0',
-					},
-				}}
+				component="span"
+				sx={
+					[
+						{
+							fontWeight: 600,
+							fontSize: '1rem',
+							fontFamily: "'Exo 2'",
+							textTransform: 'none',
+						},
+						labelSx ?? {},
+					] as SxProps<Theme>
+				}
 			>
 				{buttonText}
 			</Typography>

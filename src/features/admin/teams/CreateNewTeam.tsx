@@ -1,4 +1,4 @@
-import { Box, FormControl, TextField } from '@mui/material';
+import { Box } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
@@ -8,6 +8,9 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
+import TeamFormFields from './TeamFormFields';
+import { notifyExternalSyncIssuesChanged } from '../external-sync-issues/api';
+import { emptyTeamFormValues, formValuesToCreatePayload, mergeTeamFormPatch } from './teamFormUtils';
 import { createTeam } from './teamsSlice';
 
 export default function CreateNewTeam({
@@ -16,63 +19,41 @@ export default function CreateNewTeam({
 	closeAddNewTeam: (close: boolean) => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
-	const [title, setTitle] = useState<string>('');
-	const [country, setCountry] = useState<string>('');
+	const [values, setValues] = useState(emptyTeamFormValues);
+	const [unmappedHintsRefreshKey, setUnmappedHintsRefreshKey] = useState(0);
+
+	const handleChange = (patch: Partial<ReturnType<typeof emptyTeamFormValues>>): void => {
+		setValues((prev) => mergeTeamFormPatch(prev, patch));
+	};
 
 	const handleSaveClick = useCallback(async () => {
-		const dispatchResult = await dispatch(createTeam({ title, country }));
+		const dispatchResult = await dispatch(createTeam(formValuesToCreatePayload(values)));
 		if (createTeam.fulfilled.match(dispatchResult)) {
 			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyCreated') }));
-			setTitle('');
-			setCountry('');
+			notifyExternalSyncIssuesChanged();
+			setValues(emptyTeamFormValues());
+			setUnmappedHintsRefreshKey((k) => k + 1);
 		}
 		if (createTeam.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
-	}, [dispatch, country, title]);
-
-	const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-		setTitle(event.target.value);
-	};
-
-	const handleCountryChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-		setCountry(event.target.value);
-	};
+	}, [dispatch, values]);
 
 	const handleCancelClick = (): void => {
 		closeAddNewTeam(false);
 	};
 
 	return (
-		<FormControl>
-			<Box sx={{ my: 1 }}>
-				<TextField
-					fullWidth
-					required
-					id="team-name-en"
-					label={t('teamTitle')}
-					variant="outlined"
-					value={title}
-					onChange={handleTitleChange}
-					helperText={t('teamNameMustBeEqualLogoName')}
-				/>
-			</Box>
-			<Box sx={{ my: 1 }}>
-				<TextField
-					fullWidth
-					required
-					id="team-country"
-					label={t('teamCountry')}
-					variant="outlined"
-					value={country}
-					onChange={handleCountryChange}
-					helperText={t('abbreviatedTeamCountry')}
-				/>
-			</Box>
-			<Box>
-				<CustomCancelButton onClick={handleCancelClick} />
+		<Box sx={{ textAlign: 'left' }}>
+			<TeamFormFields
+				values={values}
+				onChange={handleChange}
+				unmappedHintsRefreshKey={unmappedHintsRefreshKey}
+			/>
+			<Box sx={{ textAlign: 'center' }}>
+				<CustomCancelButton onClick={handleCancelClick} sx={{ mb: 0.75 }} />
 				<CustomSuccessButton onClick={handleSaveClick} buttonText={t('btnText.create')} />
 			</Box>
-		</FormControl>
+		</Box>
 	);
 }

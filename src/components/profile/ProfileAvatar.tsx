@@ -1,12 +1,32 @@
-import { Avatar, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
 import CustomButton from '../custom/btn/CustomButton';
 import UploadForm from '../UploadAvatarForm';
-import { avatarBase64Converter } from '../utils/imgBase64Converter';
 
-const ProfileAvatar = ({ avatar }: { avatar: string | undefined }): JSX.Element => {
+type ProfileAvatarProps = {
+	avatar?: string;
+	compact?: boolean;
+};
+
+export default function ProfileAvatar({ compact = false }: ProfileAvatarProps): JSX.Element {
 	const [showUploadForm, setShowUploadForm] = useState(false);
+
+	if (compact) {
+		return (
+			<Box sx={{ mt: 1.25 }}>
+				{!showUploadForm ? (
+					<CustomButton
+						onClick={() => setShowUploadForm(true)}
+						buttonText={t('changePhoto')}
+						sx={{ width: { xs: '100%', sm: 'auto' } }}
+					/>
+				) : (
+					<UploadForm onClose={() => setShowUploadForm(false)} />
+				)}
+			</Box>
+		);
+	}
 
 	return (
 		<Box
@@ -18,11 +38,6 @@ const ProfileAvatar = ({ avatar }: { avatar: string | undefined }): JSX.Element 
 				alignItems: 'center',
 			}}
 		>
-			<Avatar
-				sx={{ mr: 1, mb: 2, height: '7rem', width: '7rem', border: 1 }}
-				alt="user_avatar"
-				src={avatarBase64Converter(avatar)}
-			/>
 			{!showUploadForm ? (
 				<CustomButton onClick={() => setShowUploadForm(true)} buttonText={t('changePhoto')} />
 			) : (
@@ -30,6 +45,4 @@ const ProfileAvatar = ({ avatar }: { avatar: string | undefined }): JSX.Element 
 			)}
 		</Box>
 	);
-};
-
-export default ProfileAvatar;
+}

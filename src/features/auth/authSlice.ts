@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { t } from 'i18next';
 import { saveUserLanguageAsync } from '../languages/languageSlice';
+import { saveUserThemeSettingsAsync } from '../theme/themeSlice';
 import * as api from './api';
 import AuthState from './types/AuthState';
 import Credentials from './types/Credentials';
@@ -122,8 +123,7 @@ const authSlice = createSlice({
 				state.authChecked = true;
 			})
 
-			.addCase(register.fulfilled, (state, action) => {
-				state.user = action.payload;
+			.addCase(register.fulfilled, (state) => {
 				state.registerFormError = undefined;
 			})
 			.addCase(register.rejected, (state, action) => {
@@ -151,6 +151,9 @@ const authSlice = createSlice({
 				state.error = action.error.message;
 			})
 			.addCase(saveUserLanguageAsync.fulfilled, (state, action) => {
+				state.user = action.payload;
+			})
+			.addCase(saveUserThemeSettingsAsync.fulfilled, (state, action) => {
 				state.user = action.payload;
 			});
 	},

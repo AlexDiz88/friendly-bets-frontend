@@ -2,21 +2,30 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
 	Box,
-	Button,
-	FormControl,
 	IconButton,
 	InputAdornment,
 	Link,
 	Snackbar,
 	TextField,
-	Typography,
 } from '@mui/material';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { t } from 'i18next';
 import { forwardRef, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { login, register } from './authSlice';
+import CustomButton from '../../components/custom/btn/CustomButton';
+import { register, resetRegisterFormError } from './authSlice';
+import {
+	authCardSx,
+	authFieldSx,
+	authLinksStackSx,
+	authPageRootSx,
+	authRegisterLinkSx,
+	authSubmitButtonSx,
+	authSubtitleSx,
+	authTextFieldSx,
+	authTitleSx,
+} from './authPageStyles';
 import { selectRegisterFormError } from './selectors';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
@@ -48,13 +57,17 @@ function Register(): JSX.Element {
 		setShowPassword((prevShowPassword: boolean) => !prevShowPassword);
 	};
 
+	const clearRegisterError = useCallback(() => {
+		dispatch(resetRegisterFormError());
+	}, [dispatch]);
+
 	const handleSubmit = useCallback(
 		async (event?: React.FormEvent) => {
 			event?.preventDefault();
 
 			const dispatchResult = await dispatch(
 				register({
-					email,
+					email: email.toLowerCase(),
 					password,
 					passwordRepeat,
 				})
@@ -62,9 +75,8 @@ function Register(): JSX.Element {
 
 			if (register.fulfilled.match(dispatchResult)) {
 				setOpenSuccessSnackbar(true);
-				await dispatch(login({ email, password }));
 				setTimeout(() => {
-					navigate('/my/profile');
+					navigate('/auth/login');
 				}, snackbarDuration);
 			}
 			if (register.rejected.match(dispatchResult)) {
@@ -74,173 +86,147 @@ function Register(): JSX.Element {
 		[dispatch, email, navigate, password, passwordRepeat]
 	);
 
-	const handleNameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		setEmail(event.target.value);
-	}, []);
+	const handleEmailChange = useCallback(
+		(event: React.ChangeEvent<HTMLInputElement>) => {
+			setEmail(event.target.value);
+			clearRegisterError();
+		},
+		[clearRegisterError]
+	);
 
-	const handlePasswordChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		setPassword(event.target.value);
-	}, []);
+	const handlePasswordChange = useCallback(
+		(event: React.ChangeEvent<HTMLInputElement>) => {
+			setPassword(event.target.value);
+			clearRegisterError();
+		},
+		[clearRegisterError]
+	);
 
-	const handlePasswordRepeatChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		setPasswordRepeat(event.target.value);
-	}, []);
+	const handlePasswordRepeatChange = useCallback(
+		(event: React.ChangeEvent<HTMLInputElement>) => {
+			setPasswordRepeat(event.target.value);
+			clearRegisterError();
+		},
+		[clearRegisterError]
+	);
 
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
 		if (event.key === 'Enter') {
-			handleSubmit();
+			void handleSubmit();
 		}
 	};
 
-	return (
-		<>
-			<Box
-				sx={{
-					margin: '0 auto',
-					textAlign: 'center',
-					width: '14rem',
-					display: 'flex',
-					justifyContent: 'center',
-				}}
+	const passwordVisibilityAdornment = (
+		<InputAdornment position="end">
+			<IconButton
+				aria-label="toggle password visibility"
+				onClick={handleTogglePasswordVisibility}
+				edge="end"
+				tabIndex={-1}
 			>
-				<FormControl>
-					<Box
-						sx={{
-							display: 'flex',
-							justifyContent: 'center',
-							fontSize: 30,
-							fontWeight: 600,
-							textAlign: 'center',
-							mt: 3,
-							mb: 2,
-						}}
-					>
-						{t('signUpPage')}
-					</Box>
-					<Box sx={{ my: 2 }}>
-						<TextField
-							fullWidth
-							required
-							id="email"
-							label="E-mail"
-							variant="outlined"
-							value={email}
-							onChange={handleNameChange}
-							onKeyDown={handleKeyDown}
-						/>
-					</Box>
-					<Box sx={{ my: 2 }}>
-						<TextField
-							fullWidth
-							required
-							id="password"
-							label={t('password')}
-							variant="outlined"
-							type={showPassword ? 'text' : 'password'}
-							value={password}
-							onChange={handlePasswordChange}
-							onKeyDown={handleKeyDown}
-							InputProps={{
-								endAdornment: (
-									<InputAdornment position="end">
-										<IconButton
-											aria-label="toggle password visibility"
-											onClick={handleTogglePasswordVisibility}
-											edge="end"
-											tabIndex={-1}
-										>
-											{showPassword ? <VisibilityOff /> : <Visibility />}
-										</IconButton>
-									</InputAdornment>
-								),
-							}}
-						/>
-					</Box>
-					<Box sx={{ my: 2 }}>
-						<TextField
-							fullWidth
-							required
-							id="password-repeat"
-							label={t('passwordRepeat')}
-							variant="outlined"
-							type={showPassword ? 'text' : 'password'}
-							value={passwordRepeat}
-							onChange={handlePasswordRepeatChange}
-							onKeyDown={handleKeyDown}
-							InputProps={{
-								endAdornment: (
-									<InputAdornment position="end">
-										<IconButton
-											aria-label="toggle password visibility"
-											onClick={handleTogglePasswordVisibility}
-											edge="end"
-											tabIndex={-1}
-										>
-											{showPassword ? <VisibilityOff /> : <Visibility />}
-										</IconButton>
-									</InputAdornment>
-								),
-							}}
-						/>
-					</Box>
-					<Box sx={{ my: 2 }}>
-						<Button
-							onClick={handleSubmit}
-							fullWidth
-							sx={{ height: '3rem' }}
-							variant="contained"
-							type="submit"
-							size="large"
-						>
-							<Typography
-								variant="button"
-								fontWeight="600"
-								fontSize="1.1rem"
-								fontFamily="Shantell Sans"
-							>
-								{t('btnText.signUp')}
-							</Typography>
-						</Button>
-					</Box>
+				{showPassword ? <VisibilityOff /> : <Visibility />}
+			</IconButton>
+		</InputAdornment>
+	);
 
-					<Snackbar
-						anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-						sx={{
-							justifyContent: 'center',
-							mb: 3,
+	return (
+		<Box sx={authPageRootSx} component="section">
+			<Box sx={authCardSx} component="form" onSubmit={handleSubmit}>
+				<Box sx={authTitleSx}>{t('signUpPage')}</Box>
+				<Box sx={authSubtitleSx}>{t('signUpPageSubtitle')}</Box>
+
+				<Box sx={authFieldSx}>
+					<TextField
+						fullWidth
+						required
+						id="email"
+						label="E-mail"
+						variant="outlined"
+						value={email}
+						onChange={handleEmailChange}
+						onKeyDown={handleKeyDown}
+						autoComplete="email"
+						sx={authTextFieldSx}
+					/>
+				</Box>
+				<Box sx={authFieldSx}>
+					<TextField
+						fullWidth
+						required
+						id="password"
+						label={t('password')}
+						variant="outlined"
+						type={showPassword ? 'text' : 'password'}
+						value={password}
+						onChange={handlePasswordChange}
+						onKeyDown={handleKeyDown}
+						autoComplete="new-password"
+						sx={authTextFieldSx}
+						InputProps={{
+							endAdornment: passwordVisibilityAdornment,
 						}}
-						open={openSuccessSnackbar}
-						autoHideDuration={snackbarDuration}
-						onClose={handleSnackbarClose}
-					>
-						<Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '15rem' }}>
-							{t('signUpSuccess')}
-						</Alert>
-					</Snackbar>
-					<Snackbar
-						anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-						sx={{
-							justifyContent: 'center',
-							mb: 3,
+					/>
+				</Box>
+				<Box sx={authFieldSx}>
+					<TextField
+						fullWidth
+						required
+						id="password-repeat"
+						label={t('passwordRepeat')}
+						variant="outlined"
+						type={showPassword ? 'text' : 'password'}
+						value={passwordRepeat}
+						onChange={handlePasswordRepeatChange}
+						onKeyDown={handleKeyDown}
+						autoComplete="new-password"
+						sx={authTextFieldSx}
+						InputProps={{
+							endAdornment: passwordVisibilityAdornment,
 						}}
-						open={openErrorSnackbar}
-						autoHideDuration={snackbarErrorDuration}
-						onClose={handleSnackbarClose}
-					>
-						<Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '15rem' }}>
-							{error && (
-								<Box>
-									{t('signUpError')} {error}
-								</Box>
-							)}
-						</Alert>
-					</Snackbar>
-				</FormControl>
+					/>
+				</Box>
+
+				<CustomButton
+					onClick={() => void handleSubmit()}
+					buttonText={t('btnText.signUp')}
+					buttonColor="primary"
+					textSize="1.05rem"
+					sx={authSubmitButtonSx}
+				/>
+
+				<Box sx={authLinksStackSx}>
+					<Link href="#/auth/login" sx={authRegisterLinkSx} underline="hover">
+						{t('haveLogin')}
+					</Link>
+				</Box>
 			</Box>
-			<Box sx={{ fontSize: 16, mt: 3, textAlign: 'center' }}>
-				<Link href="#/auth/login">{t('haveLogin')}</Link>
-			</Box>
-		</>
+
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+				sx={{ justifyContent: 'center', mb: 3 }}
+				open={openSuccessSnackbar}
+				autoHideDuration={snackbarDuration}
+				onClose={handleSnackbarClose}
+			>
+				<Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '15rem' }}>
+					{t('signUpCheckEmail')}
+				</Alert>
+			</Snackbar>
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+				sx={{ justifyContent: 'center', mb: 3 }}
+				open={openErrorSnackbar}
+				autoHideDuration={snackbarErrorDuration}
+				onClose={handleSnackbarClose}
+			>
+				<Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '15rem' }}>
+					{t('signUpError')}
+					{error && (
+						<Box>{t(`error.${error}`, { defaultValue: error })}</Box>
+					)}
+				</Alert>
+			</Snackbar>
+		</Box>
 	);
 }
 

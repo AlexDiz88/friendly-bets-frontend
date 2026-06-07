@@ -14,11 +14,15 @@ import Profile from './components/profile/Profile';
 import SeasonRegister from './components/profile/SeasonRegister';
 import AdminCabinet from './features/admin/AdminCabinet';
 import MatchdayCalendar from './features/admin/calendars/MatchdayCalendar';
+import ExternalSyncIssuesPage from './features/admin/external-sync-issues/ExternalSyncIssuesPage';
 import { getActiveSeason, getActiveSeasonId } from './features/admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from './features/admin/seasons/selectors';
+import ForgotPassword from './features/auth/ForgotPassword';
 import Login from './features/auth/Login';
 import PrivateRoute from './features/auth/PrivateRoute';
 import Register from './features/auth/Register';
+import ResetPassword from './features/auth/ResetPassword';
+import VerifyEmail from './features/auth/VerifyEmail';
 import { getProfile } from './features/auth/authSlice';
 import { selectUser } from './features/auth/selectors';
 import BetEditList from './features/bets/BetEditList';
@@ -28,6 +32,10 @@ import BetsCheck from './features/bets/BetsCheck';
 import BetsList from './features/bets/BetsList';
 import CompletedBetsList from './features/bets/CompletedBetsList';
 import OpenedBetsList from './features/bets/OpenedBetsList';
+import ExternalMatchdayPage from './features/football-data/ExternalMatchdayPage';
+import MarathonbetOddsPage from './features/marathonbet-odds/MarathonbetOddsPage';
+import OddsDemoPage from './features/odds-demo/OddsDemoPage';
+import WorldCup26Page from './features/world-cup-2026/WorldCup26Page';
 import GameList from './features/football-data/gameResults/GameList';
 import Gameweek from './features/gameweeks/Gameweek';
 import BetTitlesStatsPage from './features/stats/BetTitlesStatsPage';
@@ -69,9 +77,20 @@ function App(): JSX.Element {
 				<Route path="/" element={<Homepage />} />
 				<Route path="/auth/login" element={<Login />} />
 				<Route path="/auth/register" element={<Register />} />
+				<Route path="/auth/verify-email" element={<VerifyEmail />} />
+				<Route path="/auth/forgot-password" element={<ForgotPassword />} />
+				<Route path="/auth/reset-password" element={<ResetPassword />} />
 
 				<Route element={<PrivateRoute roles={['ADMIN']} />}>
 					<Route path="/admin/cabinet" element={<AdminCabinet />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/external-sync-issues" element={<ExternalSyncIssuesPage />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/marathonbet-odds" element={<MarathonbetOddsPage />} />
 				</Route>
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
@@ -111,8 +130,11 @@ function App(): JSX.Element {
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
 				<Route path="/stats/bet-titles" element={<BetTitlesStatsPage />} />
 				<Route path="/stats/football-data" element={<GameList />} />
+				<Route path="/football-data/matchday" element={<ExternalMatchdayPage />} />
+				<Route path="/odds-demo" element={<OddsDemoPage />} />
 				<Route path="/gameweeks" element={<Gameweek />} />
 				<Route path="/news" element={<News />} />
+				<Route path="/world-cup-2026" element={<WorldCup26Page />} />
 				<Route path="/rules" element={<RulesPage />} />
 				<Route path="/archive" element={<Archive />} />
 				<Route path="/my/stats" element={<MyStats />} />

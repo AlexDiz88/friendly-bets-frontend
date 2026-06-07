@@ -1,42 +1,47 @@
 import { Typography } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
+import { headerNavLinkSx } from '../header/headerPageStyles';
 
 const CustomMenuPageText = ({
 	title,
 	href,
 	onClick,
 	onClickCapture,
+	active,
+	sx,
 }: {
 	title: string;
 	href?: string;
 	onClick?(event: React.MouseEvent<HTMLAnchorElement>): void;
 	onClickCapture?(event: React.MouseEvent<HTMLAnchorElement>): void;
+	active?: boolean;
+	sx?: SxProps<Theme>;
 }): JSX.Element => {
 	return (
-		<>
-			<Typography
-				variant="h5"
-				noWrap
-				component="a"
-				href={href}
-				onClick={onClick}
-				onClickCapture={onClickCapture}
-				sx={{
+		<Typography
+			variant="h5"
+			noWrap
+			component="a"
+			href={href}
+			onClick={onClick}
+			onClickCapture={onClickCapture}
+			sx={[
+				{
 					px: { xs: 0, md: 0.5 },
-					my: 2,
+					py: 0.75,
 					mx: 1.2,
 					fontWeight: 600,
-					fontSize: '1rem',
-					color: 'inherit',
+					fontSize: '0.9rem',
+					lineHeight: 1.25,
 					textDecoration: 'none',
 					cursor: 'pointer',
-					'&:hover': {
-						color: '#ff9800',
-					},
-				}}
-			>
-				{title}
-			</Typography>
-		</>
+				},
+				active ? undefined : headerNavLinkSx,
+				...(Array.isArray(sx) ? sx : sx ? [sx] : []),
+			]}
+		>
+			{title}
+		</Typography>
 	);
 };
 

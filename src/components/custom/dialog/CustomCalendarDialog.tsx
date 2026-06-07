@@ -11,6 +11,9 @@ interface DialogProps {
 	summaryComponent?: JSX.Element;
 	helperText?: string;
 	buttonAcceptText?: string;
+	contentWidth?: string;
+	submitting?: boolean;
+	submittingButtonText?: string;
 }
 
 export default function CustomCalendarDialog({
@@ -21,22 +24,50 @@ export default function CustomCalendarDialog({
 	summaryComponent,
 	helperText,
 	buttonAcceptText,
+	contentWidth,
+	submitting = false,
+	submittingButtonText,
 }: DialogProps): JSX.Element {
+	const handleClose = () => {
+		if (submitting) {
+			return;
+		}
+		onClose();
+	};
+
 	return (
-		<Dialog open={open} onClose={onClose}>
-			<DialogContent>
-				<Box sx={{ fontSize: '1rem', width: '14rem' }}>
+		<Dialog
+			open={open}
+			onClose={handleClose}
+			PaperProps={{ sx: { overflow: 'hidden', maxWidth: 'calc(100vw - 1.5rem)' } }}
+		>
+			<DialogContent sx={{ overflow: 'hidden', py: 2 }}>
+				<Box
+					sx={{
+						fontSize: '1rem',
+						width: contentWidth ?? '14rem',
+						maxWidth: '100%',
+						boxSizing: 'border-box',
+					}}
+				>
 					{title && <Box sx={{ fontWeight: 600 }}>{title}</Box>}
-					<Box sx={{ my: 1 }}>{helperText}</Box>
+					{helperText ? (
+						<Box sx={{ my: 1, lineHeight: 1.45, overflowWrap: 'anywhere' }}>{helperText}</Box>
+					) : null}
 					{summaryComponent && summaryComponent}
 				</Box>
 			</DialogContent>
 			<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 				<DialogActions>
-					<CustomCancelButton onClick={onClose} />
+					<CustomCancelButton onClick={handleClose} disabled={submitting} />
 					<CustomSuccessButton
 						onClick={onSave}
-						buttonText={buttonAcceptText || t('btnText.accept')}
+						loading={submitting}
+						buttonText={
+							submitting
+								? submittingButtonText || t('btnText.processing')
+								: buttonAcceptText || t('btnText.accept')
+						}
 					/>
 				</DialogActions>
 			</Box>

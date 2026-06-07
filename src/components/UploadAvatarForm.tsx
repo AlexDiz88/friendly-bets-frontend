@@ -1,11 +1,12 @@
-/* eslint-disable import/named */
-import { Box, Button, FormControl, InputLabel, TextField, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { t } from 'i18next';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { PixelCrop } from 'react-image-crop';
 import { useAppDispatch } from '../app/hooks';
 import { getProfile, uploadUserAvatar } from '../features/auth/authSlice';
-import CustomCancelButton from './custom/btn/CustomCancelButton';
+import CustomButton from './custom/btn/CustomButton';
+import ProfileEditActions from './profile/ProfileEditActions';
+import { profileUploadHintSx, profileUploadPanelSx } from './profile/profilePageStyles';
 import { showErrorSnackbar, showSuccessSnackbar } from './custom/snackbar/snackbarSlice';
 import ImageCropper from './utils/ImageCropper';
 import convertHeicToJpeg from './utils/convertHeicToJpeg';
@@ -17,9 +18,9 @@ interface UploadFormProps {
 
 const UploadAvatarForm = ({ onClose }: UploadFormProps): JSX.Element => {
 	const dispatch = useAppDispatch();
+	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [fileToUpload, setFileToUpload] = useState<File | null>(null);
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
-	const [animate, setAnimate] = useState(false);
 	const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
 
 	const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'heic'];
@@ -41,7 +42,6 @@ const UploadAvatarForm = ({ onClose }: UploadFormProps): JSX.Element => {
 			} else {
 				setImageUrl(URL.createObjectURL(file));
 			}
-			setAnimate(true);
 		}
 	};
 
@@ -52,9 +52,7 @@ const UploadAvatarForm = ({ onClose }: UploadFormProps): JSX.Element => {
 		}
 	};
 
-	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-		event.preventDefault();
-
+	const handleSubmit = async (): Promise<void> => {
 		if (!fileToUpload) {
 			dispatch(showErrorSnackbar({ message: t('fileNotChosen') }));
 			return;
@@ -75,17 +73,16 @@ const UploadAvatarForm = ({ onClose }: UploadFormProps): JSX.Element => {
 		if (uploadUserAvatar.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
 		}
-		setAnimate(false);
 	};
 
-	const handleCancel = (): void => {
-		onClose();
+	const handleSelectFileClick = (): void => {
+		fileInputRef.current?.click();
 	};
 
 	return (
-		<Box>
+		<Box sx={profileUploadPanelSx} component="form" onSubmit={(e) => e.preventDefault()}>
 			{imageUrl && (
-				<Box>
+				<Box sx={{ mb: 1.5 }}>
 					<ImageCropper
 						src={imageUrl}
 						onCropComplete={handleCropComplete}
@@ -93,64 +90,32 @@ const UploadAvatarForm = ({ onClose }: UploadFormProps): JSX.Element => {
 					/>
 				</Box>
 			)}
-			<FormControl component="form" onSubmit={handleSubmit}>
-				<InputLabel htmlFor="imageInput" />
-				<TextField
-					type="file"
-					id="imageInput"
-					inputProps={{ accept: 'image/jpeg,image/png,image/webp,image/heic' }}
-					onChange={handleImageChange}
-					style={{ display: 'none' }}
-				/>
 
-				<label htmlFor="imageInput">
-					<Button
-						component="span"
-						variant={animate ? 'contained' : 'outlined'}
-						color={animate ? 'warning' : 'info'}
-						sx={{
-							height: '2.5rem',
-							px: 1,
-							borderColor: '#F0F0F0DC',
-							display: 'flex',
-							alignItems: 'center',
-							position: 'relative',
-							overflow: 'hidden',
-							backgroundColor: animate ? '#ed6c00' : '#D7D7D7DC',
-							transition: 'background-color 1.5s ease',
-						}}
-					>
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="'Exo 2'"
-							color={animate ? 'whitesmoke' : '#1C3780FF'}
-						>
-							{fileToUpload ? t('selectAnotherFile') : t('selectFile')}
-						</Typography>
-					</Button>
-				</label>
-				<Box>
-					<Typography sx={{ fontFamily: "'Exo 2'", fontSize: '0.85rem' }}>
-						*{t('maxFileSize50MB')}
-					</Typography>
-				</Box>
+			<input
+				ref={fileInputRef}
+				type="file"
+				id="imageInput"
+				accept="image/jpeg,image/png,image/webp,image/heic"
+				onChange={handleImageChange}
+				hidden
+			/>
 
-				<Box sx={{ mt: 2, mb: 1, mr: 1 }}>
-					<CustomCancelButton onClick={handleCancel} />
-					<Button type="submit" sx={{ height: '2rem', px: 1 }} variant="contained" color="success">
-						<Typography
-							variant="button"
-							fontWeight="600"
-							fontSize="0.9rem"
-							fontFamily="Shantell Sans"
-						>
-							{t('btnText.accept')}
-						</Typography>
-					</Button>
-				</Box>
-			</FormControl>
+			<CustomButton
+				onClick={handleSelectFileClick}
+				buttonText={fileToUpload ? t('selectAnotherFile') : t('selectFile')}
+				buttonVariant="outlined"
+				buttonColor={imageUrl ? 'warning' : 'primary'}
+				sx={{ width: { xs: '100%', sm: 'auto' } }}
+			/>
+
+			<Typography sx={profileUploadHintSx}>*{t('maxFileSize50MB')}</Typography>
+
+			<ProfileEditActions
+				inline
+				onCancel={onClose}
+				onSave={() => void handleSubmit()}
+				saveText={t('btnText.accept')}
+			/>
 		</Box>
 	);
 };

@@ -1,7 +1,11 @@
 import { Dangerous } from '@mui/icons-material';
-import { Box, Checkbox, IconButton, Switch, TextField, Typography } from '@mui/material';
+import { Box, IconButton, TextField, Typography } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
+import CustomCheckbox from '../../components/custom/controls/CustomCheckbox';
+import CustomSwitch from '../../components/custom/controls/CustomSwitch';
+import { toggleInlineRowSx } from '../../components/custom/controls/customToggleStyles';
 import { t } from 'i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomBetInputDialog from '../../components/custom/dialog/CustomBetInputDialog';
@@ -10,6 +14,12 @@ import {
 	showSuccessSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
+import {
+	isValidBetOddsInput,
+	isValidBetSizeInput,
+	parseDecimalInput,
+	isAllowedIntegerInput,
+} from '../../components/utils/decimalInput';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
 import CalendarNode from '../admin/calendars/CalendarNode';
 import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
@@ -20,6 +30,12 @@ import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import SimpleUser from '../auth/types/SimpleUser';
+import {
+	FALLBACK_DEFAULT_BET_SIZE,
+	findLeagueMatchdayInCalendars,
+	resolveBetSizeForBetInput,
+	resolveSeasonDefaultBetSize,
+} from './betSizeDefaults';
 import BetInputLeague from './BetInputLeague';
 import BetInputOdds from './BetInputOdds';
 import BetInputPlayer from './BetInputPlayer';
@@ -27,7 +43,13 @@ import BetInputTeams from './BetInputTeams';
 import BetInputTitle from './BetInputTitle';
 import BetSummaryInfo from './BetSummaryInfo';
 import MatchDayForm from './MatchDayForm';
+import { resolveDefaultMatchDay } from '../../components/utils/matchdaySlots';
 import { addEmptyBet, addOpenedBet } from './betsSlice';
+import {
+	betInputPageRootSx,
+	betInputSelectedBetSx,
+	betInputTextFieldSx,
+} from './betInputPageStyles';
 import BetTitle from './types/BetTitle';
 
 export default function BetInputContainer(): JSX.Element {
@@ -41,7 +63,9 @@ export default function BetInputContainer(): JSX.Element {
 	const [matchDay, setMatchDay] = useState<string>('1');
 	const [selectedHomeTeam, setSelectedHomeTeam] = useState<Team | undefined>(undefined);
 	const [selectedAwayTeam, setSelectedAwayTeam] = useState<Team | undefined>(undefined);
-	const [selectedEmptyBetSize, setSelectedEmptyBetSize] = useState<string>('10');
+	const [selectedEmptyBetSize, setSelectedEmptyBetSize] = useState<string>(
+		String(resolveSeasonDefaultBetSize(season ?? undefined))
+	);
 	const [resetTeams, setResetTeams] = useState(false);
 	const [isEmptyBet, setIsEmptyBet] = useState(false);
 	const [selectedBetTitle, setSelectedBetTitle] = useState<BetTitle>();
@@ -62,7 +86,11 @@ export default function BetInputContainer(): JSX.Element {
 	const handleSaveClick = useCallback(async () => {
 		setOpenDialog(false);
 		if (season && selectedUser && selectedHomeTeam && selectedAwayTeam) {
-			const betOddsToNumber = Number(selectedBetOdds.trim().replace(',', '.'));
+			if (!isValidBetOddsInput(selectedBetOdds) || !isValidBetSizeInput(selectedBetSize)) {
+				dispatch(showErrorSnackbar({ message: 'betCoefIsNotNumber' }));
+				return;
+			}
+			const betOddsToNumber = parseDecimalInput(selectedBetOdds);
 
 			const dispatchResult = await dispatch(
 				addOpenedBet({
@@ -108,6 +136,7 @@ export default function BetInputContainer(): JSX.Element {
 		selectedUser,
 		t,
 		calendar,
+		dispatch,
 	]);
 
 	// добавление пустой ставки
@@ -161,6 +190,7 @@ export default function BetInputContainer(): JSX.Element {
 	const handleLeagueSelection = (league: League): void => {
 		setSelectedLeague(league);
 		setSelectedLeagueId(league.id);
+		setMatchDay(resolveDefaultMatchDay(league.currentMatchDay, league.matchdaySlots));
 		setSelectedHomeTeam(undefined);
 		setSelectedAwayTeam(undefined);
 		setSelectedBetTitle(undefined);
@@ -177,6 +207,12 @@ export default function BetInputContainer(): JSX.Element {
 
 	const handleAwayTeamSelection = (awayTeam: Team): void => {
 		setSelectedAwayTeam(awayTeam);
+		requestAnimationFrame(() => {
+			const active = document.activeElement;
+			if (active instanceof HTMLElement) {
+				active.blur();
+			}
+		});
 	};
 
 	const handleBetCancel = (): void => {
@@ -202,6 +238,9 @@ export default function BetInputContainer(): JSX.Element {
 
 	const handleEmptyBetSize = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const size = event.target.value;
+		if (!isAllowedIntegerInput(size)) {
+			return;
+		}
 		setSelectedEmptyBetSize(size);
 	};
 
@@ -231,22 +270,44 @@ export default function BetInputContainer(): JSX.Element {
 		setOpenDialogTwoEmptyBet(false);
 	};
 
-	useEffect(() => {
-		const res = calendarNodes.find((c) =>
-			c.leagueMatchdayNodes.some((n) => {
-				if (n.leagueCode === selectedLeague?.leagueCode) {
-					return n.matchDay === matchDay;
-				}
-			})
-		);
-		setCalendar(res);
-	}, [selectedLeague, matchDay]);
+	const calendarMatch = useMemo(
+		() =>
+			findLeagueMatchdayInCalendars(
+				calendarNodes,
+				selectedLeague?.leagueCode,
+				matchDay,
+				selectedLeague?.id
+			),
+		[calendarNodes, selectedLeague?.leagueCode, selectedLeague?.id, matchDay]
+	);
 
 	useEffect(() => {
-		if (season) {
-			dispatch(getAllSeasonCalendarNodes(season?.id));
+		setCalendar(calendarMatch?.calendar);
+	}, [calendarMatch]);
+
+	const resolvedDefaultBetSize = useMemo(() => {
+		if (!season) {
+			return String(FALLBACK_DEFAULT_BET_SIZE);
 		}
-	}, [season]);
+		return String(
+			resolveBetSizeForBetInput(
+				resolveSeasonDefaultBetSize(season),
+				matchDay,
+				calendarMatch?.node
+			)
+		);
+	}, [season, calendarMatch, matchDay]);
+
+	useEffect(() => {
+		setSelectedEmptyBetSize(resolvedDefaultBetSize);
+		setSelectedBetSize(resolvedDefaultBetSize);
+	}, [resolvedDefaultBetSize]);
+
+	useEffect(() => {
+		if (season?.id) {
+			dispatch(getAllSeasonCalendarNodes(season.id));
+		}
+	}, [dispatch, season?.id]);
 
 	useEffect(() => {
 		if (!season) {
@@ -255,27 +316,18 @@ export default function BetInputContainer(): JSX.Element {
 	}, []);
 
 	return (
-		<Box
-			sx={{
-				m: 1,
-				mb: 10,
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-				minWidth: '15rem',
-			}}
-		>
+		<Box sx={betInputPageRootSx}>
 			<Typography sx={{ textAlign: 'center', borderBottom: 2, pb: 1, mx: 2 }}>
 				{t('addBets')}
 			</Typography>
-			<Typography sx={{ textAlign: 'left', mx: 1, mt: 1, fontWeight: '600' }}>
-				{t('emptyBet')}?
-				<Switch
+			<Box sx={[toggleInlineRowSx, { mx: 1, mt: 1 }] as SxProps<Theme>}>
+				<Typography sx={{ fontWeight: '600' }}>{t('emptyBet')}?</Typography>
+				<CustomSwitch
 					checked={isEmptyBet}
 					onChange={handleEmptyBet}
 					inputProps={{ 'aria-label': 'controlled' }}
 				/>
-			</Typography>
+			</Box>
 			<BetInputPlayer defaultValue={undefined} onUserSelect={handleUserSelection} />
 			{selectedUser && (
 				<Box>
@@ -284,7 +336,9 @@ export default function BetInputContainer(): JSX.Element {
 						<>
 							<MatchDayForm
 								key={selectedLeague.id}
-								matchDay={selectedLeague ? selectedLeague.currentMatchDay : '1'}
+								matchDay={matchDay}
+								leagueCode={selectedLeague.leagueCode}
+								matchdaySlots={selectedLeague.matchdaySlots}
 								onMatchDay={handleMatchDay}
 							/>
 							{calendar ? <CalendarNode calendar={calendar} /> : <CalendarNode noCalendar />}
@@ -308,19 +362,7 @@ export default function BetInputContainer(): JSX.Element {
 					{selectedBetTitle && (
 						<Box sx={{ my: 2, width: '18.2rem' }}>
 							<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-								<Typography
-									sx={{
-										ml: 1,
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-										fontSize: '0.85rem',
-										width: '19rem',
-										height: '2.4rem',
-										border: '1px solid rgba(0, 0, 0, 0.23)',
-										borderRadius: '4px',
-									}}
-								>
+								<Typography sx={betInputSelectedBetSx}>
 									{getFullBetTitle(selectedBetTitle)}
 								</Typography>
 								<IconButton sx={{ p: 0 }} onClick={handleBetCancel}>
@@ -330,17 +372,25 @@ export default function BetInputContainer(): JSX.Element {
 									/>
 								</IconButton>
 							</Box>
-							<Checkbox
-								sx={{ pt: 0.5 }}
-								checked={selectedBetTitle.isNot}
-								onChange={handleIsNotChange}
-								inputProps={{ 'aria-label': 'controlled' }}
-							/>
-							{t('not')}
+							<Box component="span" sx={toggleInlineRowSx}>
+								<CustomCheckbox
+									checked={selectedBetTitle.isNot}
+									onChange={handleIsNotChange}
+									inputProps={{ 'aria-label': 'controlled' }}
+								/>
+								<Typography component="span">{t('not')}</Typography>
+							</Box>
 						</Box>
 					)}
-					{selectedBetTitle && <BetInputOdds onOddsSelect={handleOddsSelection} />}
-					{showSendButton && selectedBetOdds && selectedBetSize && (
+					{selectedBetTitle && (
+						<BetInputOdds
+							defaultBetSize={selectedBetSize || resolvedDefaultBetSize}
+							onOddsSelect={handleOddsSelection}
+						/>
+					)}
+					{showSendButton &&
+						isValidBetOddsInput(selectedBetOdds) &&
+						isValidBetSizeInput(selectedBetSize) && (
 						<CustomButton
 							sx={{ mt: 3, height: '3rem', px: 6 }}
 							onClick={handleOpenDialog}
@@ -363,7 +413,13 @@ export default function BetInputContainer(): JSX.Element {
 					>
 						<Typography sx={{ ml: 2, mr: 0.5, fontWeight: '600' }}> {t('amount')}</Typography>
 						<Box component="form" autoComplete="off" sx={{ width: '3rem', pt: 0 }}>
-							<TextField size="small" value={selectedEmptyBetSize} onChange={handleEmptyBetSize} />
+							<TextField
+								size="small"
+								sx={betInputTextFieldSx as SxProps<Theme>}
+								value={selectedEmptyBetSize}
+								onChange={handleEmptyBetSize}
+								inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+							/>
 						</Box>
 					</Box>
 					<CustomButton

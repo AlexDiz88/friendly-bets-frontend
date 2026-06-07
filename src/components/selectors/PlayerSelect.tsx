@@ -1,7 +1,17 @@
-import { Avatar, Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { Avatar, Box, MenuItem, Select, SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
+import { useMemo } from 'react';
 import User from '../../features/auth/types/User';
 import UserAvatar from '../custom/avatar/UserAvatar';
+import {
+	filterSelectAllAvatarSx,
+	filterSelectAllLabelSx,
+	filterSelectPlayerMenuItemSx,
+	filterSelectPlayerMenuProps,
+	filterSelectPlayerLayoutSx,
+	filterSelectRootSx,
+} from './filterSelectStyles';
+import { sortPlayersForSelect } from './sortPlayersForSelect';
 
 interface PlayerSelectProps {
 	value: string;
@@ -10,39 +20,52 @@ interface PlayerSelectProps {
 }
 
 const PlayerSelect = ({ value, onChange, players }: PlayerSelectProps): JSX.Element => {
+	const sortedPlayers = useMemo(
+		() => (players ? sortPlayersForSelect(players) : []),
+		[players]
+	);
+	const menuItemCount = 1 + sortedPlayers.length;
+
 	return (
 		<Select
-			autoWidth
 			size="small"
-			sx={{ minWidth: '11.5rem', ml: 0.5 }}
+			sx={
+				[
+					filterSelectRootSx('standard'),
+					filterSelectPlayerLayoutSx,
+					{ minWidth: { xs: 0, sm: '10rem' } },
+				] as SxProps<Theme>
+			}
 			labelId="player-title-label"
 			id="player-title-select"
 			value={value}
 			onChange={onChange}
+			MenuProps={filterSelectPlayerMenuProps(menuItemCount)}
 		>
-			<MenuItem key={t('all')} sx={{ ml: -0.5, mb: 0.5, minWidth: '11rem' }} value={t('all')}>
-				<Box sx={{ display: 'flex', alignItems: 'center' }}>
+			<MenuItem sx={filterSelectPlayerMenuItemSx} value={t('all')}>
+				<Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
 					<Avatar
-						variant="square"
-						sx={{ height: 27, width: 27 }}
+						variant="circular"
+						sx={filterSelectAllAvatarSx}
 						alt="all_players_logo"
-						src="/upload/avatars/cool_man.jpg"
+						src={`${import.meta.env.PUBLIC_URL || ''}/upload/avatars/cool_man.jpg`}
 					/>
-
-					<Typography sx={{ mx: 1, fontSize: '1rem' }}>{t('all')}</Typography>
+					<Box component="span" sx={[filterSelectAllLabelSx, { ml: 0.5, mr: 0 }] as SxProps<Theme>}>
+						{t('all')}
+					</Box>
 				</Box>
 			</MenuItem>
-			{players &&
-				players
-					.slice()
-					.sort((a, b) => (a.username && b.username ? a.username.localeCompare(b.username) : 0))
-					.map((p) => (
-						<MenuItem key={p.id} sx={{ ml: -1, mb: 0.5, minWidth: '6.5rem' }} value={p.username}>
+			{sortedPlayers.map((p) => (
+						<MenuItem
+							key={p.id}
+							sx={filterSelectPlayerMenuItemSx}
+							value={p.username}
+						>
 							<UserAvatar
 								player={p}
-								height={27}
-								sx={{ my: 0, fontWeight: 400 }}
-								avasx={{ border: 0, mr: 1 }}
+								height={28}
+								sx={{ my: 0, mb: 0, ml: 0, fontWeight: 500, fontSize: '0.875rem' }}
+								avasx={{ border: 0, mr: 0.75, height: 28, width: 28 }}
 							/>
 						</MenuItem>
 					))}

@@ -75,17 +75,20 @@ export default function SeasonInfo({
 	return (
 		<Box
 			sx={{
-				border: 2,
+				border: 1,
+				borderColor: 'divider',
 				borderRadius: 2,
-				mb: 2,
-				px: 1,
-				boxShadow: '0px 2px 18px rgba(0, 0, 0, 0.25), 0px 4px 18px rgba(0, 0, 0, 0.25)',
+				mb: 1.5,
+				p: 1.5,
+				bgcolor: 'background.default',
 			}}
 		>
-			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-				<EventNote sx={{ m: 1 }} fontSize="large" color="info" />
-				<b>{title}</b>
-				<Box>
+			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+				<EventNote sx={{ flexShrink: 0 }} fontSize="medium" color="info" />
+				<Box component="span" sx={{ flex: 1, fontWeight: 600, fontSize: '0.9375rem', textAlign: 'left' }}>
+					{title}
+				</Box>
+				<Box sx={{ flexShrink: 0 }}>
 					{status === 'CREATED' && (
 						<IconButton>
 							<NoteAdd fontSize="large" color="disabled" />
@@ -118,9 +121,9 @@ export default function SeasonInfo({
 					{t('actualStatus')}: {status}
 				</InputLabel>
 				{!showStatusOptions && (
-					<Box sx={{ my: 1, display: 'flex', justifyContent: 'center' }}>
+					<Box sx={{ my: 1, display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
 						<CustomButton
-							sx={{ border: 2, mr: 0.5 }}
+							sx={{ flex: 1, minWidth: '7rem' }}
 							onClick={() => handleStatusChangeClick()}
 							buttonColor="info"
 							buttonVariant="outlined"
@@ -128,8 +131,10 @@ export default function SeasonInfo({
 							buttonText={t('changeStatus')}
 						/>
 						<CustomButton
+							sx={{ flex: 1, minWidth: '7rem' }}
 							onClick={() => handleLeaguesClick()}
 							buttonColor="info"
+							buttonVariant="outlined"
 							buttonSize="small"
 							buttonText={t('leaguesList')}
 						/>

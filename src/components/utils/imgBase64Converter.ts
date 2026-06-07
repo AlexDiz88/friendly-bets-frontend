@@ -7,7 +7,7 @@ export const pathToLogoImage = (logo: string | undefined): string => {
 	if (!logo) {
 		return `${avatarBasePath}no_image.png`;
 	}
-	return `${avatarBasePath}${logo.toLowerCase().replace(/\s/g, '_')}.png`;
+	return `${avatarBasePath}${logo.toLowerCase().replace(/[\s_]/g, '')}.png`;
 };
 
 // deprecated

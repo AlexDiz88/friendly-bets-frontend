@@ -16,14 +16,32 @@ export const dbUpdate = createAsyncThunk('seasons/dbUpdate', async () => api.dbU
 
 export const addSeason = createAsyncThunk(
 	'seasons/addSeason',
-	async ({ title, betCountPerMatchDay }: { title: string; betCountPerMatchDay: number }) => {
+	async ({
+		title,
+		betCountPerMatchDay,
+		defaultBetSize,
+		startDate,
+		endDate,
+	}: {
+		title: string;
+		betCountPerMatchDay: number;
+		defaultBetSize: number;
+		startDate: string;
+		endDate: string;
+	}) => {
 		if (!title.trim()) {
 			throw new Error('Название сезона не должно быть пустым');
+		}
+		if (!startDate || !endDate) {
+			throw new Error('seasonDatesRequired');
 		}
 		if (betCountPerMatchDay && betCountPerMatchDay <= 0) {
 			throw new Error('Количество ставок на игровой день должно быть больше 0');
 		}
-		return api.addSeason(title, betCountPerMatchDay);
+		if (defaultBetSize && defaultBetSize <= 0) {
+			throw new Error('Размер ставки должен быть больше 0');
+		}
+		return api.addSeason(title, betCountPerMatchDay, defaultBetSize, startDate, endDate);
 	}
 );
 
@@ -66,11 +84,19 @@ export const registrationInSeason = createAsyncThunk(
 
 export const addLeagueToSeason = createAsyncThunk(
 	'seasons/addLeagueToSeason',
-	async ({ seasonId, leagueCode }: { seasonId: string; leagueCode: string }) => {
+	async ({
+		seasonId,
+		leagueCode,
+		tournamentFormatId,
+	}: {
+		seasonId: string;
+		leagueCode: string;
+		tournamentFormatId?: string;
+	}) => {
 		if (!leagueCode.trim()) {
 			throw new Error('Название лиги не должно быть пустым');
 		}
-		return api.addLeagueToSeason(seasonId, leagueCode);
+		return api.addLeagueToSeason(seasonId, leagueCode, tournamentFormatId?.trim() || undefined);
 	}
 );
 
@@ -78,6 +104,18 @@ export const addTeamToLeagueInSeason = createAsyncThunk(
 	'seasons/addTeamToLeagueInSeason',
 	async ({ seasonId, leagueId, teamId }: { seasonId: string; leagueId: string; teamId: string }) =>
 		api.addTeamToLeagueInSeason(seasonId, leagueId, teamId)
+);
+
+export const removeTeamFromLeagueInSeason = createAsyncThunk(
+	'seasons/removeTeamFromLeagueInSeason',
+	async ({ seasonId, leagueId, teamId }: { seasonId: string; leagueId: string; teamId: string }) =>
+		api.removeTeamFromLeagueInSeason(seasonId, leagueId, teamId)
+);
+
+export const removeLeagueFromSeason = createAsyncThunk(
+	'seasons/removeLeagueFromSeason',
+	async ({ seasonId, leagueId }: { seasonId: string; leagueId: string }) =>
+		api.removeLeagueFromSeason(seasonId, leagueId)
 );
 
 const seasonsSlice = createSlice({
@@ -161,6 +199,14 @@ const seasonsSlice = createSlice({
 				);
 			})
 			.addCase(addLeagueToSeason.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
+			.addCase(removeLeagueFromSeason.fulfilled, (state, action) => {
+				state.seasons = state.seasons.map((season) =>
+					season.id === action.payload.id ? action.payload : season
+				);
+			})
+			.addCase(removeLeagueFromSeason.rejected, (state, action) => {
 				state.error = action.error.message;
 			});
 	},

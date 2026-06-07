@@ -1,170 +1,243 @@
-import { Box, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import dayjs from 'dayjs';
+import { Box, CircularProgress } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomErrorMessage from '../../components/custom/CustomErrorMessage';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import { showErrorSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
-import CalendarNode from '../admin/calendars/CalendarNode';
 import {
-	getBetsByCalendarNode,
-	getSeasonCalendarHasBetsNodes,
+	fetchGameweekBets,
+	fetchGameweeksOverview,
+	invalidateGameweeksBetsCache,
 } from '../admin/calendars/calendarsSlice';
-import { selectCalendarNodesHasBets } from '../admin/calendars/selectors';
+import {
+	selectBetsByCalendarNodeId,
+	selectCalendarNodesHasBets,
+	selectGameweeksBetsLoading,
+} from '../admin/calendars/selectors';
 import Calendar from '../admin/calendars/types/Calendar';
+import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
-import BetsPage from '../bets/types/BetsPage';
+import GameweekCalendarSelect from './GameweekCalendarSelect';
 import GameweekPlayerContainer from './GameweekPlayersContainer';
 import GameweekStats from './GameweekStats';
+import {
+	GAMEWEEK_NEIGHBOR_PREFETCH_DELAY_MS,
+	pickDefaultCalendarNode,
+	prefetchGameweekNeighborBets,
+} from './gameweekCalendarUtils';
 
 const Gameweek = (): JSX.Element => {
 	const dispatch = useAppDispatch();
+	const location = useLocation();
 	const activeSeason = useAppSelector(selectActiveSeason);
-	const calendarNodes: Calendar[] = useAppSelector(selectCalendarNodesHasBets);
+	const calendarNodes = useAppSelector(selectCalendarNodesHasBets);
 	const [selectedCalendarNode, setSelectedCalendarNode] = useState<Calendar | undefined>(undefined);
-	const [gameweekBets, setGameweekBets] = useState<BetsPage | undefined>(undefined);
-	const [loading, setLoading] = useState(true);
-	const [loadingError, setLoadingError] = useState(false);
+	const [overviewLoading, setOverviewLoading] = useState(true);
+	const [overviewError, setOverviewError] = useState(false);
 
-	useFetchActiveSeason(activeSeason?.id);
+	const seasonId = activeSeason?.id;
+	const selectedNodeId = selectedCalendarNode?.id;
+	const cachedBets = useAppSelector(selectBetsByCalendarNodeId(selectedNodeId));
+	const betsLoading = useAppSelector(selectGameweeksBetsLoading);
 
-	const gameweekCardsCount =
-		selectedCalendarNode?.leagueMatchdayNodes?.reduce((sum, node) => {
-			return sum + (node.betCountLimit ?? 0);
-		}, 0) ?? 0;
+	useFetchActiveSeason(seasonId);
 
-	const handleSelectCalendar = (event: SelectChangeEvent<string>): void => {
-		const selectedId = event.target.value;
-		const selectedNode = calendarNodes.find((node) => node.id === selectedId);
-		setSelectedCalendarNode(selectedNode);
+	useEffect(() => {
+		if (!activeSeason) {
+			dispatch(getActiveSeason());
+		}
+	}, [activeSeason, dispatch]);
+
+	const loadBetsForNode = useCallback(
+		(nodeId: string): void => {
+			void dispatch(fetchGameweekBets(nodeId));
+		},
+		[dispatch]
+	);
+
+	const selectCalendarNode = useCallback(
+		(node: Calendar | undefined, options?: { skipBetsFetch?: boolean }): void => {
+			if (!node || !seasonId) {
+				setSelectedCalendarNode(node);
+				return;
+			}
+			setSelectedCalendarNode(node);
+			if (!options?.skipBetsFetch) {
+				loadBetsForNode(node.id);
+			}
+		},
+		[seasonId, loadBetsForNode]
+	);
+
+	const handleSelectCalendar = (nodeId: string): void => {
+		const node = calendarNodes.find((n) => n.id === nodeId);
+		selectCalendarNode(node);
 	};
 
 	useEffect(() => {
-		const fetchBets = async (): Promise<void> => {
-			if (selectedCalendarNode) {
-				setLoading(true);
-				const dispatchResult = await dispatch(getBetsByCalendarNode(selectedCalendarNode.id));
+		if (location.pathname !== '/gameweeks') {
+			return;
+		}
+		if (!seasonId) {
+			setOverviewLoading(true);
+			return;
+		}
 
-				if (getBetsByCalendarNode.fulfilled.match(dispatchResult)) {
-					setGameweekBets(dispatchResult.payload);
+		let cancelled = false;
+
+		const loadOverview = async (): Promise<void> => {
+			setOverviewLoading(true);
+			setOverviewError(false);
+			dispatch(invalidateGameweeksBetsCache());
+
+			try {
+				const result = await dispatch(fetchGameweeksOverview({ seasonId }));
+
+				if (cancelled) {
+					return;
 				}
-				if (getBetsByCalendarNode.rejected.match(dispatchResult)) {
-					dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
+
+				if (fetchGameweeksOverview.rejected.match(result)) {
+					setOverviewError(true);
+					dispatch(showErrorSnackbar({ message: result.error.message }));
+					return;
 				}
-				setLoading(false);
+
+				const nodes = result.payload.calendarNodes;
+
+				if (nodes.length === 0) {
+					setSelectedCalendarNode(undefined);
+					return;
+				}
+
+				const defaultNode = pickDefaultCalendarNode(nodes);
+
+				if (defaultNode) {
+					setSelectedCalendarNode(defaultNode);
+					void dispatch(fetchGameweekBets(defaultNode.id));
+				} else {
+					setSelectedCalendarNode(undefined);
+				}
+			} finally {
+				if (!cancelled) {
+					setOverviewLoading(false);
+				}
 			}
 		};
-		fetchBets();
-	}, [selectedCalendarNode]);
+
+		void loadOverview();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [seasonId, location.pathname, dispatch]);
 
 	useEffect(() => {
-		if (calendarNodes.length > 0 && !selectedCalendarNode) {
-			const now = dayjs().add(-1, 'day');
-
-			const activeNode = calendarNodes.find(
-				(node) =>
-					node.startDate &&
-					node.endDate &&
-					now.isAfter(node.startDate) &&
-					now.isBefore(node.endDate)
-			);
-
-			if (activeNode) {
-				setSelectedCalendarNode(activeNode);
-			} else {
-				const closestNode = calendarNodes.reduce((prev, curr) => {
-					const prevDiff = prev.startDate ? Math.abs(now.diff(prev.startDate)) : Infinity;
-					const currDiff = curr.startDate ? Math.abs(now.diff(curr.startDate)) : Infinity;
-
-					return currDiff < prevDiff ? curr : prev;
-				});
-				setSelectedCalendarNode(closestNode);
-			}
+		if (calendarNodes.length === 0 || !selectedCalendarNode?.id) {
+			return;
 		}
-	}, [calendarNodes]);
+		const freshNode = calendarNodes.find((node) => node.id === selectedCalendarNode.id);
+		if (
+			freshNode &&
+			(freshNode.isFinished !== selectedCalendarNode.isFinished ||
+				freshNode.gameweekStats.length !== selectedCalendarNode.gameweekStats.length)
+		) {
+			setSelectedCalendarNode(freshNode);
+		}
+	}, [
+		calendarNodes,
+		selectedCalendarNode?.id,
+		selectedCalendarNode?.isFinished,
+		selectedCalendarNode?.gameweekStats.length,
+	]);
 
 	useEffect(() => {
-		if (activeSeason) {
-			setLoading(true);
-			dispatch(getSeasonCalendarHasBetsNodes(activeSeason?.id))
-				.then(() => {
-					setLoading(false);
-				})
-				.catch(() => {
-					setLoadingError(true);
-					setLoading(false);
-				});
-		} else {
-			setLoading(false);
+		if (location.pathname !== '/gameweeks') {
+			return;
 		}
-	}, [activeSeason]);
+		if (!selectedNodeId || calendarNodes.length === 0) {
+			return;
+		}
+		if (cachedBets === undefined) {
+			return;
+		}
+
+		const timeoutId = window.setTimeout(() => {
+			prefetchGameweekNeighborBets(calendarNodes, selectedNodeId, (neighborId) => {
+				void dispatch(fetchGameweekBets(neighborId));
+			});
+		}, GAMEWEEK_NEIGHBOR_PREFETCH_DELAY_MS);
+
+		return () => {
+			window.clearTimeout(timeoutId);
+		};
+	}, [location.pathname, selectedNodeId, cachedBets, calendarNodes, dispatch]);
+
+	const gameweekCardsCount =
+		selectedCalendarNode?.leagueMatchdayNodes?.reduce((sum, node) => sum + (node.betCountLimit ?? 0), 0) ??
+		0;
+
+	const showBetsSection = useMemo(() => {
+		if (!selectedCalendarNode || !activeSeason) {
+			return false;
+		}
+		if (cachedBets?.bets) {
+			return true;
+		}
+		return betsLoading;
+	}, [selectedCalendarNode, activeSeason, cachedBets, betsLoading]);
+
+	if (!seasonId || overviewLoading) {
+		return <CustomLoading />;
+	}
+
+	if (overviewError) {
+		return <CustomLoadingError />;
+	}
 
 	return (
-		<>
-			<Box>
-				{loading ? (
-					<CustomLoading />
-				) : (
+		<Box>
+			{calendarNodes.length > 0 ? (
+				<>
+					<Box sx={{ mb: 1, mx: 1, textAlign: 'center', fontWeight: 600 }}>
+						{t('chooseGameweekForDetailedView')}
+					</Box>
+					<Box sx={{ margin: '0 auto', width: '18rem' }}>
+						<GameweekCalendarSelect
+							calendars={calendarNodes}
+							value={selectedCalendarNode?.id ?? ''}
+							onChange={handleSelectCalendar}
+						/>
+					</Box>
 					<Box>
-						{loadingError ? (
-							<CustomLoadingError />
-						) : (
+						{selectedCalendarNode && activeSeason && (
 							<>
-								{calendarNodes.length > 0 ? (
-									<>
-										<Box sx={{ mb: 1, mx: 1, textAlign: 'center', fontWeight: 600 }}>
-											{t('chooseGameweekForDetailedView')}
+								<GameweekStats calendarNode={selectedCalendarNode} />
+								{showBetsSection ? (
+									cachedBets?.bets ? (
+										<GameweekPlayerContainer
+											activeSeason={activeSeason}
+											bets={cachedBets.bets}
+											gameweekCardsCount={gameweekCardsCount}
+										/>
+									) : (
+										<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+											<CircularProgress size={32} />
 										</Box>
-										<Box sx={{ margin: '0 auto', width: '18rem' }}>
-											<Select
-												sx={{
-													borderRadius: 2,
-													'.MuiSelect-select': {
-														p: 0,
-														m: 0,
-														border: '1px solid #123456DB',
-														borderRadius: 2,
-													},
-												}}
-												value={selectedCalendarNode?.id ?? ''}
-												onChange={handleSelectCalendar}
-											>
-												{calendarNodes.map((c) => (
-													<MenuItem key={c.id} value={c.id}>
-														<Box sx={{ width: '15rem' }}>
-															<CalendarNode calendar={c} />
-														</Box>
-													</MenuItem>
-												))}
-											</Select>
-										</Box>
-										<Box>
-											{activeSeason && gameweekBets?.bets && selectedCalendarNode ? (
-												<Box>
-													<GameweekStats calendarNode={selectedCalendarNode} />
-													<GameweekPlayerContainer
-														activeSeason={activeSeason}
-														bets={gameweekBets.bets}
-														gameweekCardsCount={gameweekCardsCount}
-													/>
-												</Box>
-											) : (
-												<CustomLoading />
-											)}
-										</Box>
-									</>
-								) : (
-									<CustomErrorMessage message="noGameweeks" />
-								)}
+									)
+								) : null}
 							</>
 						)}
 					</Box>
-				)}
-			</Box>
-		</>
+				</>
+			) : (
+				<CustomErrorMessage message="noGameweeks" />
+			)}
+		</Box>
 	);
 };
 

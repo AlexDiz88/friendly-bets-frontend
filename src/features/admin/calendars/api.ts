@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { apiFetch } from '../../../shared/apiClient';
 import BetsPage from '../../bets/types/BetsPage';
 import Calendar from './types/Calendar';
 import NewCalendar from './types/NewCalendar';
@@ -10,7 +11,31 @@ export async function getAllSeasonCalendarNodes(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/calendars/seasons/${seasonId}`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export interface GameweeksOverviewResponse {
+	calendarNodes: Calendar[];
+	bets: BetsPage | null;
+}
+
+export async function getGameweeksOverview(
+	seasonId: string,
+	calendarNodeId?: string
+): Promise<GameweeksOverviewResponse> {
+	const params = calendarNodeId ? `?calendarNodeId=${encodeURIComponent(calendarNodeId)}` : '';
+	let url = `${
+		import.meta.env.VITE_PRODUCT_SERVER || ''
+	}/api/calendars/seasons/${seasonId}/gameweeks-overview${params}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/calendars/seasons/${seasonId}/gameweeks-overview${params}`;
+	}
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -27,7 +52,7 @@ export async function getSeasonCalendarHasBetsNodes(
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/calendars/seasons/${seasonId}/has-bets`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -40,7 +65,7 @@ export async function getActualCalendarNodeBets(seasonId: string): Promise<BetsP
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/calendars/seasons/${seasonId}/actual`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -53,7 +78,7 @@ export async function createCalendarNode(newCalendarNode: NewCalendar): Promise<
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/calendars';
 	}
-	const result = await fetch(`${url}`, {
+	const result = await apiFetch(`${url}`, {
 		method: 'POST',
 		body: JSON.stringify(newCalendarNode),
 		headers: {
@@ -72,7 +97,7 @@ export async function getBetsByCalendarNode(calendarNodeId: string): Promise<Bet
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/calendars/${calendarNodeId}/bets`;
 	}
-	const result = await fetch(`${url}`);
+	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
@@ -85,7 +110,7 @@ export async function deleteCalendarNode(calendarNodeId: string): Promise<Calend
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/calendars/${calendarNodeId}`;
 	}
-	const result = await fetch(url, {
+	const result = await apiFetch(url, {
 		method: 'DELETE',
 		headers: {
 			'Content-Type': 'application/json',

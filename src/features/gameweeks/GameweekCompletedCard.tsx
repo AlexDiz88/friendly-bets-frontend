@@ -1,15 +1,15 @@
 import { GppBad, GppGood, RestorePage } from '@mui/icons-material';
-import { Avatar, Box } from '@mui/material';
+import { Avatar, Box, type SxProps, type Theme } from '@mui/material';
 import { getGameScoreView } from '../../components/utils/gameScoreValidation';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
-import {
-	BET_STATUS_RETURNED,
-	BET_STATUS_WON,
-	GAMEWEEK_CARD_HEIGHT,
-	GAMEWEEK_CARD_MAX_WIDTH,
-	GAMEWEEK_CARD_MIN_WIDTH,
-} from '../../constants';
+import { BET_STATUS_RETURNED, BET_STATUS_WON } from '../../constants';
 import Bet from '../bets/types/Bet';
+import {
+	gameweekBalanceChangeSx,
+	gameweekCardScoreSx,
+	gameweekCompactStatusCardSx,
+	gameweekStatusIconSx,
+} from './gameweekPageStyles';
 
 const GameweekCompletedCard = ({
 	bet,
@@ -32,32 +32,11 @@ const GameweekCompletedCard = ({
 		part1 = gameScoreView;
 	}
 
+	const statusKind =
+		bet.betStatus === BET_STATUS_WON ? 'won' : bet.betStatus === BET_STATUS_RETURNED ? 'returned' : 'lost';
+
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				flexDirection: 'column',
-				minWidth: GAMEWEEK_CARD_MIN_WIDTH,
-				maxWidth: GAMEWEEK_CARD_MAX_WIDTH,
-				height: GAMEWEEK_CARD_HEIGHT,
-				border: 2,
-				mx: 0.5,
-				mb: 0.5,
-				p: 0.3,
-				borderRadius: 2,
-				bgcolor:
-					bet.betStatus === BET_STATUS_WON
-						? '#daf3db'
-						: bet.betStatus === BET_STATUS_RETURNED
-						? '#f8f9d6'
-						: '#f3dada',
-				boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.7)',
-				cursor: 'pointer',
-			}}
-			onClick={onClick}
-		>
+		<Box sx={gameweekCompactStatusCardSx(statusKind)} onClick={onClick}>
 			<Box>
 				<Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 					<Avatar
@@ -67,13 +46,12 @@ const GameweekCompletedCard = ({
 						src={pathToLogoImage(bet.homeTeam?.title)}
 					/>
 					<Box
-						sx={{
-							px: 0.5,
-							pb: 0.3,
-							textAlign: 'center',
-							fontSize: index === -1 ? '1.1rem' : '0.95rem',
-							fontWeight: 600,
-						}}
+						sx={
+							[
+								gameweekCardScoreSx,
+								{ fontSize: index === -1 ? '1.1rem' : '0.95rem' },
+							] as SxProps<Theme>
+						}
 					>
 						{index === -1 ? (
 							<Box>{part1}</Box>
@@ -97,21 +75,22 @@ const GameweekCompletedCard = ({
 				<Box>
 					<Box sx={{ display: 'flex', alignItems: 'center', ml: -1, mt: -0.3 }}>
 						{bet.betStatus === BET_STATUS_WON ? (
-							<GppGood sx={{ color: 'green', scale: '85%' }} />
+							<GppGood sx={[gameweekStatusIconSx('won'), { transform: 'scale(0.85)' }] as SxProps<Theme>} />
 						) : bet.betStatus === BET_STATUS_RETURNED ? (
-							<RestorePage sx={{ color: '#b89e00' }} />
+							<RestorePage sx={gameweekStatusIconSx('returned')} />
 						) : (
-							<GppBad sx={{ color: '#bd0000' }} />
+							<GppBad sx={gameweekStatusIconSx('lost')} />
 						)}
 					</Box>
 				</Box>
 				{bet.balanceChange !== undefined && (
 					<Box
-						sx={{
-							fontWeight: 600,
-							fontSize: '1.1rem',
-							color: bet.balanceChange > 0 ? 'green' : bet.balanceChange < 0 ? 'brown' : 'black',
-						}}
+						sx={
+							[
+								gameweekBalanceChangeSx(bet.balanceChange),
+								{ fontSize: '1.1rem' },
+							] as SxProps<Theme>
+						}
 					>
 						{Number.isInteger(bet.balanceChange) ? bet.balanceChange : bet.balanceChange.toFixed(2)}
 						€

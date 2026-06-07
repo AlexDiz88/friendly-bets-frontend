@@ -1,8 +1,14 @@
 import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import LeagueAvatar from '../../components/custom/avatar/LeagueAvatar';
+import {
+	betInputMenuItemSx,
+	betInputSelectMenuProps,
+	betInputSelectSx,
+} from './betInputPageStyles';
 import League from '../admin/leagues/types/League';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
@@ -43,15 +49,20 @@ export default function BetInputLeague({
 			<Select
 				autoWidth
 				size="small"
-				sx={{ minWidth: '15rem', mb: 1 }}
+				sx={betInputSelectSx as SxProps<Theme>}
 				labelId="season-title-label"
 				id="season-title-select"
 				value={selectedLeagueName}
 				onChange={handleSeasonChange}
+				MenuProps={betInputSelectMenuProps(leagues?.length ?? 0)}
 			>
 				{leagues &&
 					leagues.map((l) => (
-						<MenuItem sx={{ mx: 0, minWidth: '14.5rem' }} key={l.id} value={l.leagueCode}>
+						<MenuItem
+							sx={[betInputMenuItemSx, { mx: 0, minWidth: '14.5rem' }] as SxProps<Theme>}
+							key={l.id}
+							value={l.leagueCode}
+						>
 							<LeagueAvatar leagueCode={l.leagueCode} fullName sx={{ justifyContent: 'start' }} />
 						</MenuItem>
 					))}

@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import CustomButtonGroupPagination from '../../components/custom/btn/CustomButtonGroupPagination';
+import BetsPagination from './BetsPagination';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
@@ -10,6 +10,7 @@ import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 import { getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import BetEditButtons from './BetEditButtons';
+import { betEditPageRootSx } from './betsPageStyles';
 import { getAllBets } from './betsSlice';
 import CompleteBetCard from './CompleteBetCard';
 import EmptyBetCard from './EmptyBetCard';
@@ -53,8 +54,8 @@ export default function BetEditList(): JSX.Element {
 	}, [activeSeasonId, page]);
 
 	return (
-		<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-			<Box sx={{ borderBottom: 1, textAlign: 'center', mx: 3, pb: 0.5, mb: 1.5 }}>
+		<Box sx={betEditPageRootSx}>
+			<Box sx={{ borderBottom: 1, textAlign: 'center', pb: 0.5, mb: 1.5 }}>
 				{t('editingBets')}
 			</Box>
 
@@ -112,10 +113,11 @@ export default function BetEditList(): JSX.Element {
 							</Box>
 						</Box>
 					)}
-					<CustomButtonGroupPagination
+					<BetsPagination
 						page={page}
 						totalPages={totalPages}
-						handlePageChange={handlePageChange}
+						onPageChange={handlePageChange}
+						navigationAriaLabel="editingBets"
 					/>
 				</Box>
 			)}

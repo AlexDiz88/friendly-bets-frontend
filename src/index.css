@@ -1,8 +1,16 @@
 body {
 	margin: 0;
-	font-family: 'Exo 2';
+	font-family: 'Exo 2', sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+
+html {
+	color-scheme: light;
+}
+
+html[data-theme='dark'] {
+	color-scheme: dark;
 }
 
 code {

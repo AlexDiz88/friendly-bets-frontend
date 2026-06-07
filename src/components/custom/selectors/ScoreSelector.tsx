@@ -1,5 +1,7 @@
 import { Add, Remove } from '@mui/icons-material';
-import { Box, Collapse, FormControlLabel, IconButton, Switch, Typography } from '@mui/material';
+import { Box, Collapse, FormControlLabel, IconButton, Typography } from '@mui/material';
+import CustomSwitch from '../controls/CustomSwitch';
+import { toggleFormControlLabelSx } from '../controls/customToggleStyles';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import GameScore from '../../../features/bets/types/GameScore';
@@ -95,7 +97,8 @@ export default function ScoreSelector({
 
 			<Box sx={{ mb: 2 }}>
 				<FormControlLabel
-					control={<Switch checked={showExtra} onChange={() => setShowExtra(!showExtra)} />}
+					sx={toggleFormControlLabelSx}
+					control={<CustomSwitch checked={showExtra} onChange={() => setShowExtra(!showExtra)} />}
 					label={t('addExtraTimes')}
 				/>
 			</Box>

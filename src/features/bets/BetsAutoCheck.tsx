@@ -18,7 +18,7 @@ import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selec
 import Team from '../admin/teams/types/Team';
 import { getOpenedBets, sendGameResults } from './betsSlice';
 import { selectOpenedBets } from './selectors';
-import { ExternalMatchdayData } from './types/ExternalMatchData';
+import { betsLeagueFilterTabSx } from './betsPageStyles';
 import GameResult from './types/GameResult';
 import GameScore from './types/GameScore';
 
@@ -103,25 +103,6 @@ export default function BetsAutoCheck(): JSX.Element {
 		});
 	};
 
-	const fetchExternalResults = async (matchday: number): Promise<ExternalMatchdayData> => {
-		const apiKey = process.env.FOOTBALL_DATA_API_KEY;
-		if (!apiKey) throw new Error('FOOTBALL_DATA_API_KEY is not defined');
-
-		const url = `http://api.football-data.org/v4/competitions/PL/matches?matchday=${matchday}`;
-		const res = await fetch(url, {
-			headers: { 'X-Auth-Token': apiKey },
-		});
-
-		const data = await res.json();
-		return data;
-	};
-
-	useEffect(() => {
-		if (!activeSeasonId) return;
-		const interval = setInterval(fetchExternalResults, 300_000);
-		return () => clearInterval(interval);
-	}, [activeSeasonId, uniqueGames, inputValues]);
-
 	const handleSubmitResults = async (): Promise<void> => {
 		setIsSubmitting(true);
 		const gameResults: GameResult[] = [];
@@ -195,15 +176,8 @@ export default function BetsAutoCheck(): JSX.Element {
 					{activeSeason && activeSeason.leagues && (
 						<Box sx={{ display: 'flex', justifyContent: 'center', mt: 1, mb: 2 }}>
 							<Button
-								sx={{
-									borderRadius: 0,
-									borderBottom: selectedLeague === t('all') ? 1 : 0,
-									color: selectedLeague === t('all') ? 'brown' : 'black',
-									fontFamily: "'Exo 2'",
-									px: 0.5,
-									mr: 1,
-									fontWeight: selectedLeague === t('all') ? 'bold' : 'normal',
-								}}
+								color="inherit"
+								sx={betsLeagueFilterTabSx(selectedLeague === t('all'))}
 								onClick={() => handleLeagueChange(t('all'))}
 							>
 								{t('all')}
@@ -212,15 +186,8 @@ export default function BetsAutoCheck(): JSX.Element {
 							{activeSeason.leagues.map((l) => (
 								<Button
 									key={l.leagueCode}
-									sx={{
-										borderRadius: 0,
-										borderBottom: selectedLeague === l.leagueCode ? 1 : 0,
-										color: selectedLeague === l.leagueCode ? 'brown' : 'black',
-										fontFamily: "'Exo 2'",
-										px: 0.5,
-										mr: 1,
-										fontWeight: selectedLeague === l.leagueCode ? 'bold' : 'normal',
-									}}
+									color="inherit"
+									sx={betsLeagueFilterTabSx(selectedLeague === l.leagueCode)}
 									onClick={() => handleLeagueChange(l.leagueCode)}
 								>
 									{t(`leagueShortName.${l.leagueCode}`)}

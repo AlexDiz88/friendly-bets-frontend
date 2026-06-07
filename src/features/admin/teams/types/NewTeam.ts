@@ -1,6 +1,9 @@
+import { TeamDisplayNames, TeamExternalAlias } from './Team';
+
 export default interface NewTeam {
-	id: string;
 	title: string;
 	country: string;
-	logo?: string;
+	displayNames?: TeamDisplayNames;
+	externalAliases?: TeamExternalAlias[];
+	footballDataTeamId?: number;
 }
