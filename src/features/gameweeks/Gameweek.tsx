@@ -1,9 +1,8 @@
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import CustomErrorMessage from '../../components/custom/CustomErrorMessage';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import { showErrorSnackbar } from '../../components/custom/snackbar/snackbarSlice';
@@ -11,6 +10,7 @@ import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import {
 	fetchGameweekBets,
 	fetchGameweeksOverview,
+	getAllSeasonCalendarNodes,
 	invalidateGameweeksBetsCache,
 } from '../admin/calendars/calendarsSlice';
 import {
@@ -29,6 +29,13 @@ import {
 	pickDefaultCalendarNode,
 	prefetchGameweekNeighborBets,
 } from './gameweekCalendarUtils';
+import {
+	gameweekPageEmptyHintSx,
+	gameweekPageEmptySx,
+	gameweekPageEmptyTitleSx,
+} from './gameweekPageStyles';
+
+type GameweekEmptyReason = 'no-bets' | 'no-calendar';
 
 const Gameweek = (): JSX.Element => {
 	const dispatch = useAppDispatch();
@@ -38,6 +45,7 @@ const Gameweek = (): JSX.Element => {
 	const [selectedCalendarNode, setSelectedCalendarNode] = useState<Calendar | undefined>(undefined);
 	const [overviewLoading, setOverviewLoading] = useState(true);
 	const [overviewError, setOverviewError] = useState(false);
+	const [emptyReason, setEmptyReason] = useState<GameweekEmptyReason>('no-calendar');
 
 	const seasonId = activeSeason?.id;
 	const selectedNodeId = selectedCalendarNode?.id;
@@ -111,8 +119,22 @@ const Gameweek = (): JSX.Element => {
 
 				if (nodes.length === 0) {
 					setSelectedCalendarNode(undefined);
+					const allCalendarsResult = await dispatch(getAllSeasonCalendarNodes(seasonId));
+					if (cancelled) {
+						return;
+					}
+					if (
+						getAllSeasonCalendarNodes.fulfilled.match(allCalendarsResult) &&
+						allCalendarsResult.payload.calendarNodes.length > 0
+					) {
+						setEmptyReason('no-bets');
+					} else {
+						setEmptyReason('no-calendar');
+					}
 					return;
 				}
+
+				setEmptyReason('no-calendar');
 
 				const defaultNode = pickDefaultCalendarNode(nodes);
 
@@ -235,7 +257,22 @@ const Gameweek = (): JSX.Element => {
 					</Box>
 				</>
 			) : (
-				<CustomErrorMessage message="noGameweeks" />
+				<Box sx={gameweekPageEmptySx}>
+					<Typography sx={gameweekPageEmptyTitleSx}>
+						{t(
+							emptyReason === 'no-bets'
+								? 'gameweeksNoBetsYetTitle'
+								: 'gameweeksNoCalendarYetTitle'
+						)}
+					</Typography>
+					<Typography sx={gameweekPageEmptyHintSx}>
+						{t(
+							emptyReason === 'no-bets'
+								? 'gameweeksNoBetsYetHint'
+								: 'gameweeksNoCalendarYetHint'
+						)}
+					</Typography>
+				</Box>
 			)}
 		</Box>
 	);

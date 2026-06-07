@@ -270,13 +270,10 @@ export default function OddsPickDialog({
 				open={confirmOpen}
 				onClose={() => !submitting && setConfirmOpen(false)}
 				onSave={() => void handleConfirm()}
-				title={
-					submitting
-						? t('wc26.oddsPick.submittingTitle')
-						: t('wc26.oddsPick.confirmTitle')
-				}
+				title={submitting ? t('wc26.oddsPick.submittingTitle') : undefined}
 				helperText={submitting ? t('wc26.oddsPick.submittingHelper') : t('wc26.oddsPick.confirmHelper')}
 				contentWidth="min(18rem, calc(100vw - 2.5rem))"
+				disableTextSelection
 				submitting={submitting}
 				submittingButtonText={t('wc26.oddsPick.submittingButton')}
 				summaryComponent={

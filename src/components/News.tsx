@@ -1,11 +1,11 @@
 import { Box, Container } from '@mui/material';
-import { t } from 'i18next';
-import ScheduleEuro2024 from './news/ScheduleEuro2024';
-import StartSeason2324 from './news/StartSeason2324';
-import StartSeason2425 from './news/StartSeason2425';
-import StartSeason2526 from './news/StartSeason2526';
+import { useTranslation } from 'react-i18next';
+import NewsCard from './news/NewsCard';
+import { NEWS_ITEMS } from './news/newsItems';
 
 export default function News(): JSX.Element {
+	const { t } = useTranslation();
+
 	return (
 		<Container>
 			<Box
@@ -20,10 +20,9 @@ export default function News(): JSX.Element {
 			>
 				{t('websiteNews')}
 			</Box>
-			<StartSeason2526 />
-			<StartSeason2425 />
-			<ScheduleEuro2024 />
-			<StartSeason2324 />
+			{NEWS_ITEMS.map((item) => (
+				<NewsCard key={item.id} item={item} />
+			))}
 		</Container>
 	);
 }
