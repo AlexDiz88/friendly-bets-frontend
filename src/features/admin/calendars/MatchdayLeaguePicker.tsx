@@ -3,12 +3,13 @@ import { Avatar, Box, IconButton, Typography } from '@mui/material';
 import CustomSwitch from '../../../components/custom/controls/CustomSwitch';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CustomCancelButton from '../../../components/custom/btn/CustomCancelButton';
 import CustomLeagueButton from '../../../components/custom/btn/CustomLeagueButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import CustomErrorMessage from '../../../components/custom/CustomErrorMessage';
 import { pathToLogoImage } from '../../../components/utils/imgBase64Converter';
-import { MATCHDAY_TITLE_FINAL } from '../../../constants';
+import matchDayTitleViewTransform from '../../../components/utils/matchDayTitleViewTransform';
 import {
 	suggestedBetSizeForCalendarMatchday,
 } from '../../bets/betSizeDefaults';
@@ -33,6 +34,7 @@ const MatchdayLeaguePicker = ({
 	defaultSeasonBetLimit,
 	defaultSeasonBetSize,
 }: MatchdayLeaguePickerProps): JSX.Element => {
+	const { i18n } = useTranslation();
 	const [selectedLeague, setSelectedLeague] = useState<League | undefined>(undefined);
 	const [showLeagues, setShowLeagues] = useState<boolean>(true);
 	const [showMatchDayForm, setShowMatchDayForm] = useState<boolean>(false);
@@ -299,9 +301,7 @@ const MatchdayLeaguePicker = ({
 									<Box sx={{ mx: 0.5 }}>
 										<Typography sx={calendarNodeMatchdayTextSx}>
 											{t(`leagueFullName.${lmn.leagueCode}`)} -{' '}
-											{lmn.matchDay === MATCHDAY_TITLE_FINAL
-												? t(`playoffStage.${lmn.matchDay}`)
-												: lmn.matchDay}
+											{matchDayTitleViewTransform(lmn.matchDay, i18n.language)}
 										</Typography>
 									</Box>
 								</Box>

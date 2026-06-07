@@ -1,13 +1,15 @@
 import { Avatar, Box, Typography, type SxProps, type Theme } from '@mui/material';
 import dayjs from 'dayjs';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { leagueLogoAvatarSx } from '../../components/custom/avatar/LeagueAvatar';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
-import { MATCHDAY_TITLE_FINAL } from '../../constants';
+import matchDayTitleViewTransform from '../../components/utils/matchDayTitleViewTransform';
 import Calendar from '../admin/calendars/types/Calendar';
 import { gameweekCalendarDateSx, gameweekCalendarMatchdaySx } from './gameweekPageStyles';
 
 export default function GameweekCalendarOption({ calendar }: { calendar: Calendar }): JSX.Element {
+	const { i18n } = useTranslation();
+
 	return (
 		<Box sx={{ py: 0.25 }}>
 			<Typography sx={gameweekCalendarDateSx}>
@@ -24,9 +26,7 @@ export default function GameweekCalendarOption({ calendar }: { calendar: Calenda
 							src={pathToLogoImage(node.leagueCode)}
 						/>
 						<Typography sx={gameweekCalendarMatchdaySx}>
-							{node.matchDay === MATCHDAY_TITLE_FINAL
-								? t(`playoffStage.${node.matchDay}`)
-								: node.matchDay}
+							{matchDayTitleViewTransform(node.matchDay, i18n.language)}
 						</Typography>
 					</Box>
 				))}

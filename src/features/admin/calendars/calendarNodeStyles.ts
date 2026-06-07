@@ -25,6 +25,13 @@ export const calendarNodeMatchdayTextSx: SxProps<Theme> = (theme) => ({
 	color: theme.palette.mode === 'dark' ? '#bfdbfe' : '#1e3471',
 });
 
+export const calendarNodeBetMetaSx: SxProps<Theme> = (theme) => ({
+	fontSize: '0.72rem',
+	lineHeight: 1.25,
+	pl: '2.05rem',
+	color: theme.palette.mode === 'dark' ? 'rgba(191, 219, 254, 0.72)' : 'rgba(30, 52, 113, 0.65)',
+});
+
 export const calendarNodeNoCalendarSx: SxProps<Theme> = (theme) => ({
 	fontWeight: 600,
 	width: '12rem',
