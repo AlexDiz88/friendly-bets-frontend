@@ -309,6 +309,73 @@ export const oddsPickAccordionDetailsSx: SxProps<Theme> = (theme) => {
 	};
 };
 
+/** Область подкатегорий внутри parent-аккордеона — без бокового inset-поля. */
+export const oddsPickNestedParentDetailsSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		px: 0.5,
+		pt: 0.75,
+		pb: 0.75,
+		bgcolor: isDark ? 'rgba(8, 14, 24, 0.45)' : 'rgba(248, 251, 249, 0.72)',
+		backgroundImage: 'none',
+	};
+};
+
+export const oddsPickNestedListSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'column',
+	gap: 0.35,
+};
+
+/** Подкатегория — приглушённее parent, без золотой полосы. */
+export const oddsPickSubAccordionSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		mb: 0,
+		borderRadius: '10px !important',
+		overflow: 'hidden',
+		border: '1px solid',
+		borderColor: isDark ? 'rgba(0, 200, 120, 0.12)' : 'rgba(4, 90, 55, 0.1)',
+		bgcolor: isDark ? 'rgba(8, 14, 24, 0.78)' : 'rgba(255, 255, 255, 0.98)',
+		boxShadow: isDark ? 'inset 0 1px 0 rgba(255, 255, 255, 0.03)' : '0 1px 4px rgba(4, 90, 55, 0.04)',
+		'&:before': { display: 'none' },
+		'&.Mui-expanded': { margin: 0 },
+	};
+};
+
+export const oddsPickSubAccordionSummarySx: SxProps<Theme> = (theme) => {
+	const p = oddsPickPalette(theme.palette.mode);
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		minHeight: 40,
+		px: 1.25,
+		background: isDark
+			? 'linear-gradient(90deg, rgba(0, 42, 28, 0.72) 0%, rgba(0, 55, 36, 0.58) 100%)'
+			: 'linear-gradient(90deg, rgba(240, 247, 243, 1) 0%, rgba(232, 241, 236, 1) 100%)',
+		color: isDark ? 'rgba(157, 232, 196, 0.88)' : p.textMuted,
+		borderBottom: '1px solid',
+		borderColor: isDark ? 'rgba(0, 200, 120, 0.08)' : 'rgba(4, 90, 55, 0.08)',
+		'&.Mui-expanded': { minHeight: 40 },
+		'& .MuiAccordionSummary-content': {
+			my: 0.65,
+			pl: 0.25,
+			'&.Mui-expanded': { my: 0.65 },
+		},
+		'& .MuiAccordionSummary-expandIconWrapper': {
+			color: isDark ? 'rgba(157, 232, 196, 0.5)' : 'rgba(90, 122, 104, 0.55)',
+		},
+	};
+};
+
+export const oddsPickSubAccordionDetailsSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		px: 0.5,
+		py: 0.5,
+		bgcolor: isDark ? 'rgba(6, 11, 20, 0.55)' : 'rgba(248, 251, 249, 0.95)',
+	};
+};
+
 export const oddsPickRowSx = (clickable: boolean): SxProps<Theme> => (theme) => {
 	const p = oddsPickPalette(theme.palette.mode);
 	const isDark = theme.palette.mode === 'dark';

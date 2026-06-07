@@ -24,6 +24,9 @@ import {
 	oddsPickRowLabelSx,
 	oddsPickRowOddsSx,
 	oddsPickRowSx,
+	oddsPickSubAccordionDetailsSx,
+	oddsPickSubAccordionSummarySx,
+	oddsPickSubAccordionSx,
 } from './oddsPickDialogStyles';
 
 const LINE_COLUMN_CATEGORIES = new Set([
@@ -32,6 +35,16 @@ const LINE_COLUMN_CATEGORIES = new Set([
 	'TEAM_TOTAL_HOME',
 	'TEAM_TOTAL_AWAY',
 ]);
+
+function rowReactKey(row: OddsMarketGroup['rows'][number]): string {
+	if (row.selectionKey) {
+		return row.selectionKey;
+	}
+	const bet = row.betTitle;
+	const betPart =
+		bet != null ? `${bet.code}:${bet.isNot ? '1' : '0'}` : '';
+	return `${betPart}|${row.line ?? ''}|${row.selectionCode}`;
+}
 
 export type OddsRowSelection = {
 	selectionKey: string;
@@ -54,6 +67,8 @@ type Props = {
 	selectedBookmaker?: string | null;
 	onSelect?: (selection: OddsRowSelection) => void;
 	disabled?: boolean;
+	/** Вложенная подкатегория внутри parent-группы (другой оттенок, компактнее). */
+	nested?: boolean;
 };
 
 export default function OddsMarketGroupAccordion({
@@ -67,6 +82,7 @@ export default function OddsMarketGroupAccordion({
 	selectedBookmaker,
 	onSelect,
 	disabled = false,
+	nested = false,
 }: Props): JSX.Element {
 	const { t } = useTranslation();
 	const showLine = LINE_COLUMN_CATEGORIES.has(group.category);
@@ -207,20 +223,32 @@ export default function OddsMarketGroupAccordion({
 			<Accordion
 				defaultExpanded={!group.collapsedByDefault}
 				disableGutters
-				sx={oddsPickAccordionSx}
+				sx={nested ? oddsPickSubAccordionSx : oddsPickAccordionSx}
 			>
-				<AccordionSummary expandIcon={<ExpandMoreIcon />} sx={oddsPickAccordionSummarySx}>
-					<Typography fontWeight={700} fontSize="0.9rem" textTransform="none">
+				<AccordionSummary
+					expandIcon={<ExpandMoreIcon />}
+					sx={nested ? oddsPickSubAccordionSummarySx : oddsPickAccordionSummarySx}
+				>
+					<Typography
+						fontWeight={nested ? 600 : 700}
+						fontSize={nested ? '0.84rem' : '0.9rem'}
+						textTransform="none"
+					>
 						{title}
 						<Typography
 							component="span"
-							sx={{ ml: 0.75, fontWeight: 600, fontSize: '0.85rem', opacity: 0.72 }}
+							sx={{
+								ml: 0.75,
+								fontWeight: 600,
+								fontSize: nested ? '0.8rem' : '0.85rem',
+								opacity: nested ? 0.65 : 0.72,
+							}}
 						>
 							({group.rows.length})
 						</Typography>
 					</Typography>
 				</AccordionSummary>
-				<AccordionDetails sx={oddsPickAccordionDetailsSx}>
+				<AccordionDetails sx={nested ? oddsPickSubAccordionDetailsSx : oddsPickAccordionDetailsSx}>
 					{group.rows.map((row) => {
 						const displayOdds = row.bestOdds ?? '—';
 						const clickable =
@@ -231,7 +259,7 @@ export default function OddsMarketGroupAccordion({
 
 						return (
 							<Box
-								key={`${row.line ?? ''}-${row.selectionCode}-${row.selectionKey ?? ''}`}
+								key={rowReactKey(row)}
 								role={clickable ? 'button' : undefined}
 								tabIndex={clickable ? 0 : undefined}
 								onClick={() => handleRowClick(row)}
@@ -339,7 +367,7 @@ export default function OddsMarketGroupAccordion({
 
 								return (
 									<TableRow
-										key={`${row.line ?? ''}-${row.selectionCode}-${row.selectionKey ?? ''}`}
+										key={rowReactKey(row)}
 										hover={Boolean(clickable) && !isMismatch}
 										selected={isSelected}
 										onClick={() => handleRowClick(row)}

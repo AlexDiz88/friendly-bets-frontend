@@ -73,14 +73,6 @@ const betTitleGroups: BetTitleGroup[] = [
 				range: [2001, 2100],
 			},
 			{
-				title: 'Счёт 1й тайм',
-				range: [2201, 2250],
-			},
-			{
-				title: 'Счёт 2й тайм',
-				range: [2251, 2300],
-			},
-			{
 				title: 'Тайм / Матч',
 				range: [2101, 2150],
 			},
@@ -215,6 +207,19 @@ const betTitleGroups: BetTitleGroup[] = [
 			{
 				title: 'Прочие счета',
 				range: [1251, 1300],
+			},
+		],
+	},
+	{
+		title: 'Точный счёт (по таймам)',
+		subgroups: [
+			{
+				title: '1й тайм',
+				range: [2201, 2250],
+			},
+			{
+				title: '2й тайм',
+				range: [2251, 2300],
 			},
 		],
 	},

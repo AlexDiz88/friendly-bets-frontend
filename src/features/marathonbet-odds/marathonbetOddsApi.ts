@@ -36,6 +36,7 @@ export type MarathonbetScrapeResult = {
 	totalMarkets?: MarathonbetMarket[];
 	correctScoreMarkets?: MarathonbetMarket[];
 	doubleChanceMarkets?: MarathonbetMarket[];
+	resultTotalMarkets?: MarathonbetMarket[];
 	warnings: string[];
 };
 

@@ -529,15 +529,21 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 								labelPlacement="start"
 							/>
 						</Box>
-						<Tabs value={marketTab} onChange={(_, v: number) => setMarketTab(v)} sx={{ mb: 2 }}>
+						<Tabs value={marketTab} onChange={(_, v: number) => setMarketTab(v)} sx={{ mb: 2 }} variant="scrollable">
 							<Tab
 								label={`${t('marathonbetOdds.matchResult')} (${visibleMarkets(eventData.matchResultMarkets, showIgnoredProd).length})`}
+							/>
+							<Tab
+								label={`${t('marathonbetOdds.doubleChance')} (${visibleMarkets(eventData.doubleChanceMarkets ?? [], showIgnoredProd).length})`}
 							/>
 							<Tab
 								label={`${t('marathonbetOdds.handicaps')} (${visibleMarkets(eventData.handicapMarkets, showIgnoredProd).length})`}
 							/>
 							<Tab
 								label={`${t('marathonbetOdds.totals')} (${visibleMarkets(eventData.totalMarkets ?? [], showIgnoredProd).length})`}
+							/>
+							<Tab
+								label={`${t('marathonbetOdds.resultTotal')} (${visibleMarkets(eventData.resultTotalMarkets ?? [], showIgnoredProd).length})`}
 							/>
 							<Tab
 								label={`${t('marathonbetOdds.correctScore')} (${visibleMarkets(eventData.correctScoreMarkets ?? [], showIgnoredProd).length})`}
@@ -547,12 +553,24 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 							<MarketsTable markets={eventData.matchResultMarkets} showIgnoredProd={showIgnoredProd} />
 						)}
 						{marketTab === 1 && (
-							<MarketsTable markets={eventData.handicapMarkets} showIgnoredProd={showIgnoredProd} />
+							<MarketsTable
+								markets={eventData.doubleChanceMarkets ?? []}
+								showIgnoredProd={showIgnoredProd}
+							/>
 						)}
 						{marketTab === 2 && (
-							<MarketsTable markets={eventData.totalMarkets ?? []} showIgnoredProd={showIgnoredProd} />
+							<MarketsTable markets={eventData.handicapMarkets} showIgnoredProd={showIgnoredProd} />
 						)}
 						{marketTab === 3 && (
+							<MarketsTable markets={eventData.totalMarkets ?? []} showIgnoredProd={showIgnoredProd} />
+						)}
+						{marketTab === 4 && (
+							<MarketsTable
+								markets={eventData.resultTotalMarkets ?? []}
+								showIgnoredProd={showIgnoredProd}
+							/>
+						)}
+						{marketTab === 5 && (
 							<MarketsTable
 								markets={eventData.correctScoreMarkets ?? []}
 								showIgnoredProd={showIgnoredProd}

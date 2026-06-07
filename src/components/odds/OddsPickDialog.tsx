@@ -14,6 +14,7 @@ import { useAppDispatch } from '../../app/hooks';
 import OddsMarketGroupAccordion, {
 	type OddsRowSelection,
 } from './OddsMarketGroupAccordion';
+import OddsNestedMarketGroupAccordion from './OddsNestedMarketGroupAccordion';
 import { formatPickOdds } from './formatPickOdds';
 import { OddsEventMarkets } from './oddsTypes';
 import CustomCalendarDialog from '../custom/dialog/CustomCalendarDialog';
@@ -228,17 +229,29 @@ export default function OddsPickDialog({
 								/>
 							</Box>
 						) : markets && markets.marketGroups.length > 0 ? (
-							markets.marketGroups.map((group) => (
-								<OddsMarketGroupAccordion
-									key={group.groupKey}
-									group={group}
-									bookmakers={markets.bookmakers}
-									displayMode="best"
-									pickMode
-									selectable
-									onSelect={handleSelect}
-								/>
-							))
+							markets.marketGroups.map((group) =>
+								group.subgroups && group.subgroups.length > 0 ? (
+									<OddsNestedMarketGroupAccordion
+										key={group.groupKey}
+										group={group}
+										bookmakers={markets.bookmakers}
+										displayMode="best"
+										pickMode
+										selectable
+										onSelect={handleSelect}
+									/>
+								) : (
+									<OddsMarketGroupAccordion
+										key={group.groupKey}
+										group={group}
+										bookmakers={markets.bookmakers}
+										displayMode="best"
+										pickMode
+										selectable
+										onSelect={handleSelect}
+									/>
+								)
+							)
 						) : (
 							<Typography sx={oddsPickEmptySx}>{t('wc26.oddsPick.noMarkets')}</Typography>
 						)}

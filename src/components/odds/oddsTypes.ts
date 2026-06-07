@@ -19,6 +19,7 @@ export type OddsMarketGroup = {
 	sortOrder: number;
 	collapsedByDefault: boolean;
 	rows: OddsLineRow[];
+	subgroups?: OddsMarketGroup[];
 };
 
 export type OddsEventMarkets = {
