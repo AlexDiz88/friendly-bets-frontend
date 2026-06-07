@@ -1,12 +1,14 @@
 import { DoDisturbOn } from '@mui/icons-material';
-import { Avatar, Box, IconButton, Typography } from '@mui/material';
+import { Avatar, Box, IconButton, Tooltip, Typography } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { leagueLogoAvatarSx } from '../../../components/custom/avatar/LeagueAvatar';
 import { pathToLogoImage } from '../../../components/utils/imgBase64Converter';
-import { MATCHDAY_TITLE_FINAL } from '../../../constants';
+import matchDayTitleViewTransform from '../../../components/utils/matchDayTitleViewTransform';
 import {
+	calendarNodeBetMetaSx,
 	calendarNodeMatchdayTextSx,
 	calendarNodeNoCalendarSx,
 	calendarNodeSx,
@@ -24,6 +26,8 @@ const CalendarNode = ({
 	deleteIcon?: boolean;
 	noCalendar?: boolean;
 }): JSX.Element => {
+	const { i18n } = useTranslation();
+
 	return (
 		<Box sx={calendarNodeSx}>
 			{calendar && (
@@ -32,33 +36,48 @@ const CalendarNode = ({
 						{calendar.startDate ? dayjs(calendar.startDate).format('DD.MM') : ''} -{' '}
 						{calendar.endDate ? dayjs(calendar.endDate).format('DD.MM') : ''}
 					</Box>
-					<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-						<Box sx={{ display: 'flex', alignItems: 'center' }}>
+					<Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+						<Box sx={{ flex: 1, minWidth: 0 }}>
 							{calendar.leagueMatchdayNodes &&
-								calendar.leagueMatchdayNodes.map((node, index) => (
-									<Box key={index}>
-										<Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
-											<Avatar
-												variant="square"
-												sx={
-													[{ width: 27, height: 27 }, leagueLogoAvatarSx] as SxProps<Theme>
-												}
-												alt="league_logo"
-												src={pathToLogoImage(node.leagueCode)}
-											/>
-											<Typography sx={calendarNodeMatchdayTextSx}>
-												{node.matchDay === MATCHDAY_TITLE_FINAL
-													? t(`playoffStage.${node.matchDay}`)
-													: node.matchDay}
-											</Typography>
+								calendar.leagueMatchdayNodes.map((node, index) => {
+									const matchDayLabel = matchDayTitleViewTransform(
+										node.matchDay,
+										i18n.language
+									);
+									const betMetaTooltip = `${t('maxBetsPerMatchday')}: ${node.betCountLimit}, ${t('maxBetSizePerMatchday')}: ${node.defaultBetSize}`;
+
+									return (
+										<Box
+											key={`${node.leagueId}-${node.matchDay}-${index}`}
+											sx={{ mb: index < calendar.leagueMatchdayNodes.length - 1 ? 0.75 : 0 }}
+										>
+											<Box sx={{ display: 'flex', alignItems: 'center' }}>
+												<Avatar
+													variant="square"
+													sx={
+														[
+															{ width: 27, height: 27 },
+															leagueLogoAvatarSx,
+														] as SxProps<Theme>
+													}
+													alt="league_logo"
+													src={pathToLogoImage(node.leagueCode)}
+												/>
+												<Typography sx={calendarNodeMatchdayTextSx}>{matchDayLabel}</Typography>
+											</Box>
+											<Tooltip title={betMetaTooltip}>
+												<Typography sx={calendarNodeBetMetaSx}>
+													{node.betCountLimit} · {node.defaultBetSize}
+												</Typography>
+											</Tooltip>
 										</Box>
-									</Box>
-								))}
+									);
+								})}
 						</Box>
 
 						{deleteIcon && !calendar.hasBets && (
 							<IconButton
-								sx={{ mt: -3, mr: 1, p: 0, color: 'red', scale: '150%' }}
+								sx={{ mt: -0.5, mr: 0.5, p: 0, color: 'red', scale: '150%', flexShrink: 0 }}
 								onClick={onClick}
 							>
 								<DoDisturbOn />

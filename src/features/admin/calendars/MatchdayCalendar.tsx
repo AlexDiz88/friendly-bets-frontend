@@ -28,8 +28,8 @@ const MatchdayCalendar = (): JSX.Element => {
 	const [startDate, setStartDate] = useState<Dayjs | null>(null);
 	const [endDate, setEndDate] = useState<Dayjs | null>(null);
 	const [leagueMatchdayNodes, setLeagueMatchdayNodes] = useState<LeagueMatchdayNode[]>([]);
-	const [showCalendarList, setShowCalendarList] = useState(false);
-	const [showCalendarListButton, setShowCalendarListButton] = useState(true);
+	const [showCalendarList, setShowCalendarList] = useState(true);
+	const [showCalendarListButton, setShowCalendarListButton] = useState(false);
 
 	useFetchActiveSeason(activeSeason?.id);
 	useFetchCurrentUser();
