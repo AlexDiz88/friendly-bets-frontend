@@ -33,6 +33,9 @@ export interface ExternalMatch {
 	awayTeamLogoKey?: string | null;
 	homeTeamDisplayNames?: TeamDisplayNames | null;
 	awayTeamDisplayNames?: TeamDisplayNames | null;
+	/** FIFA-код страны (напр. COD), если команда найдена в БД. */
+	homeTeamCountry?: string | null;
+	awayTeamCountry?: string | null;
 	gameScore?: GameScore | null;
 	finalized?: boolean;
 	finalizedAt?: string;

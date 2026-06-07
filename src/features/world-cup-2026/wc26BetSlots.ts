@@ -124,18 +124,37 @@ function nameMatchesFifa(name: string | null | undefined, fifa: Wc26TeamId): boo
 	);
 }
 
+function sideNameCandidates(
+	match: ExternalMatch,
+	side: 'home' | 'away'
+): Array<string | null | undefined> {
+	const displayNames =
+		side === 'home' ? match.homeTeamDisplayNames : match.awayTeamDisplayNames;
+	const country = side === 'home' ? match.homeTeamCountry : match.awayTeamCountry;
+	return [
+		side === 'home' ? match.homeTeamName : match.awayTeamName,
+		side === 'home' ? match.homeTeamTitle : match.awayTeamTitle,
+		displayNames?.en,
+		displayNames?.ru,
+		displayNames?.de,
+		country,
+	];
+}
+
+function sideMatchesFifa(
+	match: ExternalMatch,
+	side: 'home' | 'away',
+	fifa: Wc26TeamId
+): boolean {
+	return sideNameCandidates(match, side).some((candidate) => nameMatchesFifa(candidate, fifa));
+}
+
 function externalMatchesPair(
 	match: ExternalMatch,
 	homeFifa: Wc26TeamId,
 	awayFifa: Wc26TeamId
 ): boolean {
-	const homeOk =
-		nameMatchesFifa(match.homeTeamName, homeFifa) ||
-		nameMatchesFifa(match.homeTeamTitle, homeFifa);
-	const awayOk =
-		nameMatchesFifa(match.awayTeamName, awayFifa) ||
-		nameMatchesFifa(match.awayTeamTitle, awayFifa);
-	return homeOk && awayOk;
+	return sideMatchesFifa(match, 'home', homeFifa) && sideMatchesFifa(match, 'away', awayFifa);
 }
 
 export function filterExternalMatchesForBerlinSlot(
