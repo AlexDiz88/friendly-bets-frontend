@@ -10,12 +10,15 @@ import {
 	Collapse,
 	IconButton,
 	IconButtonProps,
+	type SxProps,
+	type Theme,
 } from '@mui/material';
 import { green } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import NewsTrans from './NewsTrans';
+import { applyNewsVideoVolume, isNewsVideoSrc } from './newsMedia';
 import type { NewsItemConfig } from './newsItems';
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -36,6 +39,66 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 type Props = {
 	item: NewsItemConfig;
 };
+
+function NewsVideo({
+	src,
+	alt,
+	height,
+	sx,
+}: {
+	src: string;
+	alt: string;
+	height?: number;
+	sx?: SxProps<Theme>;
+}): JSX.Element {
+	return (
+		<CardMedia
+			component="video"
+			src={src}
+			title={alt}
+			controls
+			autoPlay
+			loop
+			playsInline
+			preload="metadata"
+			onLoadedMetadata={(event) => applyNewsVideoVolume(event.currentTarget)}
+			sx={{
+				width: '100%',
+				height: height ?? 'auto',
+				display: 'block',
+				objectFit: 'cover',
+				backgroundColor: 'black',
+				...sx,
+			}}
+		/>
+	);
+}
+
+function NewsMedia({
+	src,
+	alt,
+	height,
+	sx,
+}: {
+	src: string;
+	alt: string;
+	height?: number;
+	sx?: SxProps<Theme>;
+}): JSX.Element {
+	if (isNewsVideoSrc(src)) {
+		return <NewsVideo src={src} alt={alt} height={height} sx={sx} />;
+	}
+
+	return (
+		<CardMedia
+			component="img"
+			height={height ?? 194}
+			image={src}
+			alt={alt}
+			sx={sx}
+		/>
+	);
+}
 
 export default function NewsCard({ item }: Props): JSX.Element {
 	const { t } = useTranslation();
@@ -76,11 +139,10 @@ export default function NewsCard({ item }: Props): JSX.Element {
 					title={t(`siteNews:${item.i18nKey}.title`)}
 					subheader={t(`siteNews:${item.i18nKey}.date`)}
 				/>
-				<CardMedia
-					component="img"
-					height={item.coverImage.height ?? 194}
-					image={item.coverImage.src}
+				<NewsMedia
+					src={item.coverImage.src}
 					alt={item.coverImage.alt}
+					height={item.coverImage.height}
 				/>
 				<CardContent>
 					<NewsTrans
@@ -97,10 +159,9 @@ export default function NewsCard({ item }: Props): JSX.Element {
 						{item.blocks.map((block, index) => {
 							if (block.type === 'image') {
 								return (
-									<CardMedia
+									<NewsMedia
 										key={`${item.id}-img-${index}`}
-										component="img"
-										image={block.src}
+										src={block.src}
 										alt={block.alt}
 										sx={block.sx}
 									/>

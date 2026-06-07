@@ -1,4 +1,24 @@
 {
+	"Wc2026": {
+		"title": "World Cup 2026",
+		"date": "June 8, 2026",
+		"header": "We're gearing up seriously for the World Cup — the site has had a major update. The highlights are one click away.",
+		"expandLabel": "More details",
+		"blocks": {
+			"intro": "The 2026 World Cup is just around the corner, and I've prepared a major update to our site. Below are the key changes only — no extra technical details.",
+			"s1Title": "<accent>1. Automatic bet submission by participants</accent>",
+			"s1p1": "The key change this season — bets no longer need to be sent to the moderator in the group chat: participants submit them directly on the site. Each bet goes straight into the shared system and appears for everyone in real time.",
+			"s2Title": "<accent>2. Match results</accent>",
+			"s2p1": "A full match results section is now available — scores, match status, and matchday navigation. For World Cup 2026 there is a dedicated tournament page with the schedule and fixtures.",
+			"s3Title": "<accent>3. Automatic bet settlement</accent>",
+			"s3p1": "After a match ends, the system fetches the score from external sources — and immediately processes all bets on that match. This builds on last season's automation into a complete «match → result → bet outcome» cycle.",
+			"s4Title": "<accent>4. Light and dark theme</accent>",
+			"s4p1": "You can switch the appearance theme in your profile. Dark mode is easier on the eyes in the evening; light mode is the familiar daytime classic.",
+			"s5Title": "<accent>5. Redesign of many pages</accent>",
+			"s5p1": "Bets, statistics, «By matchday», match results, the World Cup 2026 page, profile, and other sections have been refreshed. The interface is more consistent and easier to use on a phone.",
+			"closing": "<closing>Good luck with your World Cup 2026 predictions!</closing>"
+		}
+	},
 	"Season2526": {
 		"title": "Start of the 2025-2026 Season",
 		"date": "August 10, 2025",

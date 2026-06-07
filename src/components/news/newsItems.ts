@@ -30,6 +30,30 @@ export type NewsItemConfig = {
 
 export const NEWS_ITEMS: NewsItemConfig[] = [
 	{
+		id: 'wc2026',
+		i18nKey: 'Wc2026',
+		order: 5,
+		coverImage: {
+			src: '/upload/img/WC2026-intro.mp4',
+			alt: 'FIFA World Cup 2026',
+			height: 320,
+		},
+		blocks: [
+			{ type: 'trans', blockKey: 'intro' },
+			{ type: 'trans', blockKey: 's1Title', sx: { color: 'brown' } },
+			{ type: 'trans', blockKey: 's1p1' },
+			{ type: 'trans', blockKey: 's2Title', sx: { color: 'brown', mt: 2 } },
+			{ type: 'trans', blockKey: 's2p1' },
+			{ type: 'trans', blockKey: 's3Title', sx: { color: 'brown', mt: 2 } },
+			{ type: 'trans', blockKey: 's3p1' },
+			{ type: 'trans', blockKey: 's4Title', sx: { color: 'brown', mt: 2 } },
+			{ type: 'trans', blockKey: 's4p1' },
+			{ type: 'trans', blockKey: 's5Title', sx: { color: 'brown', mt: 2 } },
+			{ type: 'trans', blockKey: 's5p1' },
+			{ type: 'trans', blockKey: 'closing', sx: { color: 'green', px: 2, pt: 2 } },
+		],
+	},
+	{
 		id: 'season2526',
 		i18nKey: 'Season2526',
 		order: 4,

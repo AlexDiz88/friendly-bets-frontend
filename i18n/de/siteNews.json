@@ -1,4 +1,24 @@
 {
+	"Wc2026": {
+		"title": "WM 2026",
+		"date": "8. Juni 2026",
+		"header": "Wir bereiten uns ernsthaft auf die Weltmeisterschaft vor — die Website wurde stark überarbeitet. Das Wichtigste auf einen Klick.",
+		"expandLabel": "Mehr erfahren",
+		"blocks": {
+			"intro": "Die Weltmeisterschaft 2026 steht vor der Tür, und ich habe ein umfangreiches Update unserer Website vorbereitet. Unten nur die wichtigsten Änderungen — ohne unnötige technische Details.",
+			"s1Title": "<accent>1. Automatische Wettabgabe durch Teilnehmer</accent>",
+			"s1p1": "Die zentrale Änderung dieser Saison — Wetten müssen nicht mehr dem Moderator im Gruppenchat geschickt werden: Teilnehmer reichen sie direkt auf der Website ein. Jede Wette landet sofort im gemeinsamen System und ist für alle in Echtzeit sichtbar.",
+			"s2Title": "<accent>2. Spielergebnisse</accent>",
+			"s2p1": "Es gibt jetzt einen vollständigen Bereich mit aktuellen Ergebnissen — Spielstand, Spielstatus, Navigation nach Spieltagen. Für die WM 2026 gibt es eine eigene Turnierseite mit Spielplan und Begegnungen.",
+			"s3Title": "<accent>3. Automatische Wettauswertung</accent>",
+			"s3p1": "Nach Spielende holt sich das System den Spielstand aus externen Quellen — und wertet alle Wetten auf dieses Spiel sofort aus. Das baut die Automatisierung der letzten Saison zu einem vollständigen Zyklus «Spiel → Ergebnis → Wettresultat» aus.",
+			"s4Title": "<accent>4. Helles und dunkles Design</accent>",
+			"s4p1": "Im Profil lässt sich das Erscheinungsbild umschalten. Der dunkle Modus ist abends angenehm, der helle Modus bleibt die vertraute Tagesansicht.",
+			"s5Title": "<accent>5. Redesign vieler Seiten</accent>",
+			"s5p1": "Wetten, Statistik, «Nach Spieltagen», Spielergebnisse, die WM-2026-Seite, Profil und weitere Bereiche wurden überarbeitet. Die Oberfläche ist einheitlicher und auf dem Smartphone besser nutzbar.",
+			"closing": "<closing>Viel Erfolg bei euren WM-2026-Tipps!</closing>"
+		}
+	},
 	"Season2526": {
 		"title": "Start der Saison 2025-2026",
 		"date": "10. August 2025",
