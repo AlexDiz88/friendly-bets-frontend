@@ -39,7 +39,7 @@ const API_NAMES_BY_FIFA: Record<Wc26TeamId, string[]> = {
 	KSA: ['Saudi Arabia', 'SaudiArabia'],
 	URU: ['Uruguay'],
 	ESP: ['Spain'],
-	CPV: ['Cabo Verde', 'Cape Verde', 'CaboVerde'],
+	CPV: ['Cabo Verde', 'Cape Verde', 'Cape Verde Islands', 'CaboVerde'],
 	IRN: ['IR Iran', 'Iran'],
 	NZL: ['New Zealand'],
 	BEL: ['Belgium'],
