@@ -8,6 +8,7 @@ import {
 	useMediaQuery,
 	useTheme,
 } from '@mui/material';
+import { SxProps, Theme } from '@mui/material/styles';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '../../app/hooks';
@@ -283,9 +284,9 @@ export default function OddsPickDialog({
 						<Box sx={oddsPickConfirmProcessingWrapSx}>
 							<Box
 								sx={
-									submitting
+									(submitting
 										? [oddsPickConfirmSummarySx, oddsPickConfirmSummaryDimmedSx]
-										: oddsPickConfirmSummarySx
+										: oddsPickConfirmSummarySx) as SxProps<Theme>
 								}
 							>
 								<Box sx={oddsPickConfirmTeamsRowSx}>

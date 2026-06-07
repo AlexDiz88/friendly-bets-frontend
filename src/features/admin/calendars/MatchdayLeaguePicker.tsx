@@ -296,12 +296,14 @@ const MatchdayLeaguePicker = ({
 										alt="league_logo"
 										src={pathToLogoImage(lmn.leagueCode)}
 									/>
-									<Typography sx={[{ mx: 0.5 }, calendarNodeMatchdayTextSx]}>
-										{t(`leagueFullName.${lmn.leagueCode}`)} -{' '}
-										{lmn.matchDay === MATCHDAY_TITLE_FINAL
-											? t(`playoffStage.${lmn.matchDay}`)
-											: lmn.matchDay}
-									</Typography>
+									<Box sx={{ mx: 0.5 }}>
+										<Typography sx={calendarNodeMatchdayTextSx}>
+											{t(`leagueFullName.${lmn.leagueCode}`)} -{' '}
+											{lmn.matchDay === MATCHDAY_TITLE_FINAL
+												? t(`playoffStage.${lmn.matchDay}`)
+												: lmn.matchDay}
+										</Typography>
+									</Box>
 								</Box>
 								<Typography sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
 									{t('maxBetsPerMatchday')}: {lmn.betCountLimit}, {t('amount')}:{' '}

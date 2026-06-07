@@ -17,6 +17,7 @@ import {
 	Typography,
 	useTheme,
 } from '@mui/material';
+import { SxProps, Theme } from '@mui/material/styles';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -627,21 +628,26 @@ export default function OddsDemoPage(): JSX.Element {
 													<Box
 														component="span"
 														onClick={(e) => handleCopyEventIdToInput(ev.oddsApiEventId, e)}
-														sx={[
-															oddsDemoEventIdChipSx,
-															{
-																userSelect: 'none',
-																flexShrink: 0,
-																cursor: 'pointer',
-																'&:hover': { filter: 'brightness(1.15)' },
-															},
-														]}
+														sx={
+															[
+																oddsDemoEventIdChipSx,
+																{
+																	userSelect: 'none',
+																	flexShrink: 0,
+																	cursor: 'pointer',
+																	'&:hover': { filter: 'brightness(1.15)' },
+																},
+															] as SxProps<Theme>
+														}
 													>
 														{ev.oddsApiEventId}
 													</Box>
 												</Tooltip>
 											) : (
-												<Box component="span" sx={[oddsDemoEventIdChipSx, { flexShrink: 0 }]}>
+												<Box
+													component="span"
+													sx={[oddsDemoEventIdChipSx, { flexShrink: 0 }] as SxProps<Theme>}
+												>
 													{ev.oddsApiEventId}
 												</Box>
 											)}

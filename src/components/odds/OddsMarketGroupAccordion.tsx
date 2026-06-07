@@ -12,6 +12,7 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material';
+import { Theme } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTranslation } from 'react-i18next';
 import { OddsMarketGroup } from './oddsTypes';
@@ -155,7 +156,7 @@ export default function OddsMarketGroupAccordion({
 					py: 1,
 					color: 'text.primary',
 					whiteSpace: 'nowrap',
-					bgcolor: (theme) =>
+					bgcolor: (theme: Theme) =>
 						theme.palette.mode === 'light'
 							? theme.palette.grey[100]
 							: theme.palette.grey[800],
