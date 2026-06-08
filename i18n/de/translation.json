@@ -777,6 +777,7 @@
 			"matchResult": "Spielausgang/Halbzeit",
 			"doubleChance": "Doppelte Chance",
 			"handicap": "Handicap",
+			"periodHandicap": "Handicap (Halbzeiten)",
 			"totals": "Über/Unter",
 			"halfTotals": "Totale (Halbzeiten)",
 			"halfFull": "Halbzeit/Endstand",

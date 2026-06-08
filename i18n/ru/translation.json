@@ -777,6 +777,7 @@
 			"matchResult": "Исход матча/тайма",
 			"doubleChance": "Двойной шанс",
 			"handicap": "Форы",
+			"periodHandicap": "Форы (по таймам)",
 			"totals": "Тоталы",
 			"halfTotals": "Тоталы (по таймам)",
 			"halfFull": "Тайм/Матч",
