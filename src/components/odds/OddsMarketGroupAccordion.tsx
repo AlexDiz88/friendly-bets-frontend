@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { OddsMarketGroup } from './oddsTypes';
 import BetTitle from '../../features/bets/types/BetTitle';
 import { formatPickOdds } from './formatPickOdds';
+import { oddsGroupTitle } from './oddsGroupTitle';
 import {
 	oddsPickAccordionDetailsSx,
 	oddsPickAccordionSummarySx,
@@ -88,7 +89,7 @@ export default function OddsMarketGroupAccordion({
 }: Props): JSX.Element {
 	const { t } = useTranslation();
 	const showLine = LINE_COLUMN_CATEGORIES.has(group.category);
-	const title = t(`oddsDemo.groups.${group.groupKey}`, group.groupKey);
+	const title = oddsGroupTitle(t, group.groupKey);
 	const useBest = displayMode === 'best';
 
 	const renderOddsCell = (odds: string | undefined, sourcePath?: string) => {
