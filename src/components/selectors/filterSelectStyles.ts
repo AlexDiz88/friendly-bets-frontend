@@ -258,6 +258,7 @@ export type FilterSelectMenuOptions = {
 };
 
 export function filterSelectPlayerMenuProps(itemCount: number): SelectProps['MenuProps'] {
+	const maxHeight = filterSelectListMenuMaxHeightCss(itemCount);
 	return {
 		...filterSelectMenuProps(itemCount),
 		// Иначе Popover сдвигает меню от якоря (особенно у края viewport).
@@ -266,7 +267,7 @@ export function filterSelectPlayerMenuProps(itemCount: number): SelectProps['Men
 			sx: {
 				py: 0.5,
 				px: 0,
-				maxHeight: 'none',
+				maxHeight,
 				overflowY: 'auto',
 				width: '100%',
 				boxSizing: 'border-box',
@@ -282,6 +283,9 @@ export function filterSelectMenuProps(
 ): SelectProps['MenuProps'] {
 	const isGrid = options?.gridColumns != null && options.gridColumns > 0;
 	const anchorHorizontal = options?.menuAnchorHorizontal ?? (isGrid ? 'center' : 'left');
+	const maxHeight = isGrid
+		? filterSelectGridMenuMaxHeightCss(itemCount, options?.gridColumns ?? 1)
+		: filterSelectListMenuMaxHeightCss(itemCount);
 	const heightSx = filterSelectMenuPaperHeightSx(
 		itemCount,
 		isGrid ? 'grid' : 'list',
@@ -302,8 +306,9 @@ export function filterSelectMenuProps(
 		MenuListProps: {
 			sx: {
 				py: 0.5,
-				maxHeight: 'none',
+				maxHeight,
 				overflowY: 'auto',
+				WebkitOverflowScrolling: 'touch',
 			},
 		},
 	};
