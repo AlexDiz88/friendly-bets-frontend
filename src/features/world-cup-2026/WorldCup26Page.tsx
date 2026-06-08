@@ -15,6 +15,7 @@ import { kickoffToGerman, wc26DateLocale } from './wc26Time';
 import {
 	wc26DividerSx,
 	wc26MatchCountSx,
+	wc26PageNoSelectSx,
 	wc26SectionHeaderSx,
 	wc26StageChipSx,
 	wc26StageChipBarMobileSx,
@@ -22,6 +23,7 @@ import {
 	wc26StageChipBarSx,
 	wc26StickyFilterBarSx,
 } from './wc26PageStyles';
+import { useWc26ScheduleScores } from './useWc26ScheduleScores';
 
 function groupMatchesByGermanDate(matches: Wc26Match[]): Map<string, Wc26Match[]> {
 	const map = new Map<string, Wc26Match[]>();
@@ -45,6 +47,7 @@ export default function WorldCup26Page(): JSX.Element {
 	const { t, i18n } = useTranslation();
 	const dateLocale = wc26DateLocale(i18n.language);
 	const [viewFilter, setViewFilter] = useState<Wc26ViewFilter>('all');
+	const scheduleScores = useWc26ScheduleScores();
 
 	const filtered = useMemo(() => filterWc26Matches(viewFilter), [viewFilter]);
 	const byDate = useMemo(() => groupMatchesByGermanDate(filtered), [filtered]);
@@ -86,7 +89,7 @@ export default function WorldCup26Page(): JSX.Element {
 	);
 
 	return (
-		<>
+		<Box sx={wc26PageNoSelectSx}>
 			<Wc26PageHero />
 			<Box
 				sx={{
@@ -133,7 +136,11 @@ export default function WorldCup26Page(): JSX.Element {
 									divider={<Box sx={wc26DividerSx} />}
 								>
 									{dayMatches.map((match) => (
-										<Wc26MatchCard key={match.id} match={match} />
+										<Wc26MatchCard
+											key={match.id}
+											match={match}
+											scoreView={scheduleScores.get(match.id)}
+										/>
 									))}
 								</Stack>
 							</Box>
@@ -142,6 +149,6 @@ export default function WorldCup26Page(): JSX.Element {
 				</Stack>
 			</Container>
 			</Box>
-		</>
+		</Box>
 	);
 }

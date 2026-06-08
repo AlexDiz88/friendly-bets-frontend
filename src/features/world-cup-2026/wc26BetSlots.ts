@@ -184,6 +184,18 @@ function findInScheduleByTeams(match: ExternalMatch, candidates: Wc26Match[]): W
 	);
 }
 
+export function findExternalMatchForWc26Schedule(
+	scheduled: Wc26Match,
+	externalMatches: ExternalMatch[]
+): ExternalMatch | undefined {
+	if (!scheduled.home || !scheduled.away) {
+		return undefined;
+	}
+	return externalMatches.find((ext) =>
+		externalMatchesPair(ext, scheduled.home!, scheduled.away!)
+	);
+}
+
 export function findWc26ScheduleMatchForExternal(
 	match: ExternalMatch,
 	slotId?: string

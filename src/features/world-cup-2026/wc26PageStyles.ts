@@ -1,6 +1,12 @@
 import type { SxProps, Theme } from '@mui/material';
 import { APP_STICKY_BELOW_HEADER_TOP } from '../../components/header/headerLayout';
 
+/** Запрет выделения текста на странице расписания ЧМ. */
+export const wc26PageNoSelectSx: SxProps<Theme> = {
+	userSelect: 'none',
+	WebkitUserSelect: 'none',
+};
+
 export const wc26TitleShineKeyframes = {
 	'@keyframes wc26TitleShine': {
 		'0%, 100%': { backgroundPosition: '0% 50%' },
@@ -168,6 +174,14 @@ export const wc26MatchMetaSx: SxProps<Theme> = (theme) => ({
 	fontSize: '0.65rem',
 	fontWeight: 600,
 	color: theme.palette.mode === 'dark' ? 'rgba(157, 232, 196, 0.65)' : '#5a7a68',
+});
+
+export const wc26MatchScoreSx: SxProps<Theme> = (theme) => ({
+	display: 'block',
+	fontWeight: 800,
+	fontSize: '0.8rem',
+	lineHeight: 1.1,
+	color: theme.palette.mode === 'dark' ? '#ffe566' : '#6b5200',
 });
 
 export const wc26KickoffTimeSx: SxProps<Theme> = (theme) => ({
