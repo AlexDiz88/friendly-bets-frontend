@@ -2,6 +2,8 @@ import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/mater
 import type { SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { resolveTeamDisplayName } from '../utils/teamDisplay';
 import {
 	betInputMenuItemSx,
 	betInputSelectMenuProps,
@@ -25,6 +27,7 @@ const blurActiveElement = (): void => {
 };
 
 const TeamSelect = ({ label, value, onChange, teams }: TeamSelectProps): JSX.Element => {
+	const { i18n } = useTranslation();
 	const [open, setOpen] = useState(false);
 
 	const sortedTeams = useMemo(
@@ -32,11 +35,14 @@ const TeamSelect = ({ label, value, onChange, teams }: TeamSelectProps): JSX.Ele
 			teams
 				? [...teams].sort((a, b) =>
 						a.title && b.title
-							? t(`teams:${a.title}`).localeCompare(t(`teams:${b.title}`))
+							? resolveTeamDisplayName(a, t, i18n.language).localeCompare(
+									resolveTeamDisplayName(b, t, i18n.language),
+									i18n.language
+								)
 							: 0
 					)
 				: [],
-		[teams]
+		[teams, i18n.language]
 	);
 
 	const handleChange = (event: SelectChangeEvent<string>): void => {
