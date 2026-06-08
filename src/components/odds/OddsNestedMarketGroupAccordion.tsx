@@ -8,6 +8,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTranslation } from 'react-i18next';
 import OddsMarketGroupAccordion, { type OddsRowSelection } from './OddsMarketGroupAccordion';
+import { oddsGroupTitle } from './oddsGroupTitle';
 import { OddsMarketGroup } from './oddsTypes';
 import {
 	oddsPickAccordionSummarySx,
@@ -36,7 +37,7 @@ export default function OddsNestedMarketGroupAccordion({
 	disabled = false,
 }: Props): JSX.Element {
 	const { t } = useTranslation();
-	const title = t(`oddsDemo.groups.${group.groupKey}`, group.groupKey);
+	const title = oddsGroupTitle(t, group.groupKey);
 	const subgroups = group.subgroups ?? [];
 	const rowCount = subgroups.reduce((sum, sub) => sum + (sub.rows?.length ?? 0), 0);
 
