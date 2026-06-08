@@ -24,14 +24,6 @@ const betTitleGroups: BetTitleGroup[] = [
 				range: [251, 300],
 			},
 			{
-				title: '1Х + Тотал меньше',
-				range: [301, 350],
-			},
-			{
-				title: '1Х + Тотал больше',
-				range: [351, 400],
-			},
-			{
 				title: 'Х + Тотал меньше',
 				range: [401, 450],
 			},
@@ -46,6 +38,14 @@ const betTitleGroups: BetTitleGroup[] = [
 			{
 				title: 'П2 + Тотал больше',
 				range: [551, 600],
+			},
+			{
+				title: '1Х + Тотал меньше',
+				range: [301, 350],
+			},
+			{
+				title: '1Х + Тотал больше',
+				range: [351, 400],
 			},
 			{
 				title: 'Х2 + Тотал меньше',
