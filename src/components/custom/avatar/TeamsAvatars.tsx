@@ -1,7 +1,8 @@
 import { Avatar, Box, type SxProps, type Theme } from '@mui/material';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import Team from '../../../features/admin/teams/types/Team';
-import { pathToLogoImage } from '../../utils/imgBase64Converter';
+import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../utils/teamDisplay';
+import { leagueLogoAvatarSx } from './LeagueAvatar';
 
 const TeamsAvatars = ({
 	homeTeam,
@@ -14,6 +15,8 @@ const TeamsAvatars = ({
 	height?: number;
 	sx?: SxProps<Theme>;
 }): JSX.Element => {
+	const { t, i18n } = useTranslation();
+
 	return (
 		<Box
 			sx={{
@@ -25,19 +28,19 @@ const TeamsAvatars = ({
 			}}
 		>
 			<Avatar
-				sx={{ mr: 0.3, height, width: height }}
+				sx={[{ mr: 0.3, height, width: height }, leagueLogoAvatarSx] as SxProps<Theme>}
 				variant="square"
 				alt="team_logo"
-				src={pathToLogoImage(homeTeam?.title)}
+				src={resolveTeamLogoUrl(homeTeam)}
 			/>
-			{t(`teams:${homeTeam?.title || ''}`)}
+			{resolveTeamDisplayName(homeTeam, t, i18n.language)}
 			<Avatar
-				sx={{ mr: 0.3, ml: 1, height, width: height }}
+				sx={[{ mr: 0.3, ml: 1, height, width: height }, leagueLogoAvatarSx] as SxProps<Theme>}
 				variant="square"
 				alt="team_logo"
-				src={pathToLogoImage(awayTeam?.title)}
+				src={resolveTeamLogoUrl(awayTeam)}
 			/>
-			{t(`teams:${awayTeam?.title || ''}`)}
+			{resolveTeamDisplayName(awayTeam, t, i18n.language)}
 		</Box>
 	);
 };

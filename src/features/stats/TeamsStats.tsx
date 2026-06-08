@@ -15,7 +15,8 @@ import {
 } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
-import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
+import { useTranslation } from 'react-i18next';
+import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import StatsTableIdentityCell, { STATS_COLLAPSE_MS } from './StatsTableIdentityCell';
 import {
 	statsBalanceNegativeSx,
@@ -43,6 +44,8 @@ interface RowProps {
 }
 
 function Row({ tStats }: RowProps): JSX.Element {
+	const { i18n } = useTranslation();
+	const teamLabel = resolveTeamDisplayName(tStats.team, t, i18n.language);
 	const [open, setOpen] = useState(false);
 	const toggleOpen = (): void => setOpen((prev) => !prev);
 
@@ -67,10 +70,10 @@ function Row({ tStats }: RowProps): JSX.Element {
 					avatarVariant="square"
 					leading={<KeyboardArrowDownIcon sx={statsExpandIconSx(open)} />}
 					leadingSx={statsLeadingSx(open)}
-					avatarSrc={pathToLogoImage(tStats.team.title)}
+					avatarSrc={resolveTeamLogoUrl(tStats.team)}
 					avatarAlt="team_logo"
 					avatarSize={24}
-					label={t(`teams:${tStats.team.title}`)}
+					label={teamLabel}
 					labelSx={statsPlayerNameSx}
 				/>
 				<TableCell align="center" sx={statsBetsCellSx}>
@@ -100,7 +103,7 @@ function Row({ tStats }: RowProps): JSX.Element {
 					<Collapse in={open} timeout={STATS_COLLAPSE_MS} unmountOnExit>
 						<Box sx={{ margin: 0, textAlign: 'center' }}>
 							<Typography component="div" sx={statsExpandedTitleSx}>
-								{t('additionalStats')} ({tStats.team.title})
+								{t('additionalStats')} ({teamLabel})
 							</Typography>
 							<Table size="small" aria-label="purchases">
 								<TableBody>
