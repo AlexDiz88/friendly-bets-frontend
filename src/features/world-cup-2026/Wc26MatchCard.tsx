@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import Wc26TeamFlag from './Wc26TeamFlag';
 import { kickoffToGerman } from './wc26Time';
 import type { Wc26Match } from './wc26Schedule';
-import { wc26KickoffTimeSx, wc26MatchMetaSx } from './wc26PageStyles';
+import { wc26KickoffTimeSx, wc26MatchMetaSx, wc26MatchScoreSx } from './wc26PageStyles';
 import { formatPickOdds } from '../../components/odds/formatPickOdds';
 import Bet from '../bets/types/Bet';
 
 interface Wc26MatchCardProps {
 	match: Wc26Match;
+	scoreView?: string;
 	onClick?: () => void;
 	clickable?: boolean;
 	userBet?: Bet;
@@ -17,6 +18,7 @@ interface Wc26MatchCardProps {
 
 export default function Wc26MatchCard({
 	match,
+	scoreView,
 	onClick,
 	clickable = false,
 	userBet,
@@ -95,9 +97,28 @@ export default function Wc26MatchCard({
 						<Wc26TeamFlag teamId={match.home!} side="home" />
 					</Box>
 
-					<Typography component="span" sx={wc26KickoffTimeSx}>
-						{german.time}
-					</Typography>
+					<Box
+						sx={{
+							textAlign: 'center',
+							flexShrink: 0,
+							px: 0.2,
+							minWidth: '3.25rem',
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+							justifyContent: 'center',
+							gap: 0.1,
+						}}
+					>
+						<Typography component="span" sx={wc26KickoffTimeSx}>
+							{german.time}
+						</Typography>
+						{scoreView ? (
+							<Typography component="span" sx={wc26MatchScoreSx}>
+								{scoreView}
+							</Typography>
+						) : null}
+					</Box>
 
 					<Box
 						sx={{
