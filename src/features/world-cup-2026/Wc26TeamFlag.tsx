@@ -9,10 +9,12 @@ export type Wc26TeamSide = 'home' | 'away';
 interface Wc26TeamFlagProps {
 	teamId: Wc26TeamId;
 	side: Wc26TeamSide;
+	/** Уменьшенные флаг и подпись (страница результатов ЧМ, плотная сетка слота). */
+	compact?: boolean;
 }
 
 /** Сторона матча: слева «название + флаг», справа «флаг + название» (как на FIFA). */
-export default function Wc26TeamFlag({ teamId, side }: Wc26TeamFlagProps): JSX.Element {
+export default function Wc26TeamFlag({ teamId, side, compact = false }: Wc26TeamFlagProps): JSX.Element {
 	const { t } = useTranslation();
 	const team = WC26_TEAMS[teamId];
 	const [imgFailed, setImgFailed] = useState(false);
@@ -22,7 +24,10 @@ export default function Wc26TeamFlag({ teamId, side }: Wc26TeamFlagProps): JSX.E
 			noWrap
 			sx={{
 				fontWeight: 400,
-				fontSize: { xs: '0.8rem', sm: '0.875rem' },
+				fontSize: compact
+					? { xs: '0.72rem', sm: '0.8rem' }
+					: { xs: '0.8rem', sm: '0.875rem' },
+				lineHeight: compact ? 1.2 : undefined,
 				minWidth: 0,
 			}}
 		>
@@ -32,8 +37,8 @@ export default function Wc26TeamFlag({ teamId, side }: Wc26TeamFlagProps): JSX.E
 	const flag = (
 		<Box
 			sx={{
-				width: 24,
-				height: 16,
+				width: compact ? 22 : 24,
+				height: compact ? 14 : 16,
 				flexShrink: 0,
 				borderRadius: 0.25,
 				overflow: 'hidden',
@@ -66,7 +71,7 @@ export default function Wc26TeamFlag({ teamId, side }: Wc26TeamFlagProps): JSX.E
 			sx={{
 				display: 'flex',
 				alignItems: 'center',
-				gap: 0.75,
+				gap: compact ? 0.5 : 0.75,
 				minWidth: 0,
 			}}
 		>

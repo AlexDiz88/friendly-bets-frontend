@@ -18,6 +18,15 @@ export async function getSeasonsWithoutDates(): Promise<{ seasons: SeasonWithout
 	return result.json();
 }
 
+export async function getAllSeasons(): Promise<{ seasons: Season[] }> {
+	const result = await apiFetch(apiUrl('/api/seasons'));
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 export async function assignSeasonDates(
 	seasonId: string,
 	startDate: string,

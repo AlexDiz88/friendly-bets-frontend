@@ -18,8 +18,9 @@ import {
 	externalMatchWcBetChipSx,
 	externalMatchWcCardRowSx,
 	externalMatchWcKickoffDateSx,
+	externalMatchWcKickoffTimeSx,
 } from './externalMatchWcPageStyles';
-import { wc26KickoffTimeSx, wc26MatchMetaSx } from '../world-cup-2026/wc26PageStyles';
+import { wc26MatchMetaSx } from '../world-cup-2026/wc26PageStyles';
 import { getExternalMatchScoreView } from './externalMatchScoreView';
 import { translateMatchStatus, getMatchStatusChipColor } from './matchStatusI18n';
 import type { ExternalMatch } from './types/ExternalMatch';
@@ -106,7 +107,7 @@ export default function ExternalMatchWc26Card({
 					display: 'flex',
 					justifyContent: 'space-between',
 					alignItems: 'center',
-					mb: 0.2,
+					mb: 0.1,
 					gap: 0.5,
 					flexShrink: 0,
 				}}
@@ -121,8 +122,8 @@ export default function ExternalMatchWc26Card({
 						label={statusLabel}
 						color={statusColor}
 						sx={{
-							height: 17,
-							fontSize: '0.55rem',
+							height: 15,
+							fontSize: '0.52rem',
 							'& .MuiChip-label': { px: 0.45, py: 0 },
 						}}
 					/>
@@ -137,7 +138,7 @@ export default function ExternalMatchWc26Card({
 						flexDirection: 'column',
 						alignItems: 'center',
 						justifyContent: 'center',
-						gap: 0.2,
+						gap: 0.1,
 						width: '100%',
 						flex: 1,
 						minHeight: 0,
@@ -147,12 +148,12 @@ export default function ExternalMatchWc26Card({
 						sx={{
 							display: 'flex',
 							alignItems: 'center',
-							gap: { xs: 0.5, sm: 0.75 },
+							gap: { xs: 0.35, sm: 0.6 },
 							width: '100%',
 						}}
 					>
 						<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', minWidth: 0 }}>
-							<Wc26TeamFlag teamId={scheduled!.home!} side="home" />
+							<Wc26TeamFlag teamId={scheduled!.home!} side="home" compact />
 						</Box>
 
 						<Box
@@ -165,13 +166,13 @@ export default function ExternalMatchWc26Card({
 								flexDirection: 'column',
 								alignItems: 'center',
 								justifyContent: 'center',
-								gap: 0.1,
+								gap: 0.05,
 							}}
 						>
 							<Typography component="span" sx={externalMatchWcKickoffDateSx}>
 								{dateLabel}
 							</Typography>
-							<Typography component="span" sx={wc26KickoffTimeSx}>
+							<Typography component="span" sx={externalMatchWcKickoffTimeSx}>
 								{kickoff}
 							</Typography>
 							{scoreView !== '—' ? (
@@ -191,7 +192,7 @@ export default function ExternalMatchWc26Card({
 						</Box>
 
 						<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-start', minWidth: 0 }}>
-							<Wc26TeamFlag teamId={scheduled!.away!} side="away" />
+							<Wc26TeamFlag teamId={scheduled!.away!} side="away" compact />
 						</Box>
 					</Box>
 
@@ -208,7 +209,7 @@ export default function ExternalMatchWc26Card({
 						flexDirection: 'column',
 						alignItems: 'center',
 						justifyContent: 'center',
-						gap: 0.15,
+						gap: 0.1,
 						flex: 1,
 						minHeight: 0,
 					}}
@@ -217,7 +218,7 @@ export default function ExternalMatchWc26Card({
 						{dateLabel}
 					</Typography>
 					<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap', justifyContent: 'center' }}>
-						<Typography component="span" sx={wc26KickoffTimeSx}>
+						<Typography component="span" sx={externalMatchWcKickoffTimeSx}>
 							{kickoff}
 						</Typography>
 						<Typography
