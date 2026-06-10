@@ -186,11 +186,25 @@ export const externalMatchWcBetsQuotaSubSx: SxProps<Theme> = (theme) => ({
 	lineHeight: 1.2,
 });
 
+export const externalMatchWcKickoffTimeSx: SxProps<Theme> = (theme) => ({
+	flexShrink: 0,
+	fontWeight: 700,
+	fontSize: { xs: '0.95rem', sm: '1.05rem' },
+	fontVariantNumeric: 'tabular-nums',
+	lineHeight: 1,
+	px: 0.25,
+	color: theme.palette.mode === 'dark' ? '#ffe566' : '#6b5200',
+	textShadow:
+		theme.palette.mode === 'dark'
+			? '0 0 12px rgba(255, 230, 102, 0.25)'
+			: 'none',
+});
+
 export const externalMatchWcKickoffDateSx: SxProps<Theme> = (theme) => ({
 	display: 'block',
-	fontSize: '0.625rem',
+	fontSize: '0.58rem',
 	fontWeight: 600,
-	lineHeight: 1.15,
+	lineHeight: 1.1,
 	letterSpacing: '0.02em',
 	color: theme.palette.mode === 'dark' ? 'rgba(157, 232, 196, 0.72)' : '#5a7a68',
 	textTransform: 'none',
@@ -199,7 +213,7 @@ export const externalMatchWcKickoffDateSx: SxProps<Theme> = (theme) => ({
 export const externalMatchWcBetChipSx: SxProps<Theme> = (theme) => {
 	const isDark = theme.palette.mode === 'dark';
 	return {
-		height: 22,
+		height: 20,
 		maxWidth: '100%',
 		border: '1px solid',
 		borderColor: isDark ? 'rgba(255, 214, 0, 0.38)' : 'rgba(184, 134, 11, 0.45)',
@@ -209,7 +223,7 @@ export const externalMatchWcBetChipSx: SxProps<Theme> = (theme) => {
 		color: isDark ? '#fff8e7' : '#034d2e',
 		'& .MuiChip-label': {
 			px: 0.7,
-			fontSize: '0.7rem',
+			fontSize: '0.65rem',
 			fontWeight: 700,
 			lineHeight: 1.25,
 			whiteSpace: 'normal',
@@ -309,7 +323,7 @@ export function externalMatchWcCardRowSx(
 			justifyContent: 'flex-start',
 			minHeight: 0,
 			height: '100%',
-			py: { xs: 0.55, sm: 0.65 },
+			py: { xs: 0.45, sm: 0.55 },
 			px: 0.5,
 			boxSizing: 'border-box',
 			borderBottom: options?.isLast

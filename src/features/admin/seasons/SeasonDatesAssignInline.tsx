@@ -8,23 +8,33 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
-import { ADMIN_INLINE_WARNING_CARD_SX } from '../adminPanelStyles';
+import { ADMIN_INLINE_WARNING_CARD_SX, ADMIN_LIST_ITEM_CARD_SX } from '../adminPanelStyles';
 import { assignSeasonDates } from './seasonDatesApi';
-import { SeasonWithoutDates } from './types/Season';
 
 export default function SeasonDatesAssignInline({
-	season,
+	seasonId,
+	title,
+	status,
+	initialStartDate = '',
+	initialEndDate = '',
+	missingDates = false,
 	onAssigned,
 }: {
-	season: SeasonWithoutDates;
+	seasonId: string;
+	title: string;
+	status: string;
+	initialStartDate?: string;
+	initialEndDate?: string;
+	missingDates?: boolean;
 	onAssigned: () => void;
 }): JSX.Element {
 	const dispatch = useAppDispatch();
-	const [startDate, setStartDate] = useState('');
-	const [endDate, setEndDate] = useState('');
+	const [startDate, setStartDate] = useState(initialStartDate);
+	const [endDate, setEndDate] = useState(initialEndDate);
 	const [saving, setSaving] = useState(false);
 
-	const canSave = Boolean(startDate && endDate && !saving);
+	const isChanged = startDate !== initialStartDate || endDate !== initialEndDate;
+	const canSave = Boolean(startDate && endDate && !saving && (missingDates || isChanged));
 
 	const handleAssign = async (): Promise<void> => {
 		if (!canSave) {
@@ -32,10 +42,8 @@ export default function SeasonDatesAssignInline({
 		}
 		setSaving(true);
 		try {
-			await assignSeasonDates(season.seasonId, startDate, endDate);
+			await assignSeasonDates(seasonId, startDate, endDate);
 			dispatch(showSuccessSnackbar({ message: t('seasonDatesAssigned') }));
-			setStartDate('');
-			setEndDate('');
 			onAssigned();
 		} catch (error) {
 			dispatch(
@@ -49,17 +57,19 @@ export default function SeasonDatesAssignInline({
 	};
 
 	return (
-		<Box sx={ADMIN_INLINE_WARNING_CARD_SX}>
+		<Box sx={missingDates ? ADMIN_INLINE_WARNING_CARD_SX : ADMIN_LIST_ITEM_CARD_SX}>
 			<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
 				<Typography variant="body2" fontWeight={600} sx={{ flex: 1 }}>
-					{season.title}
+					{title}
 				</Typography>
-				<Tooltip title={t('seasonDatesRequiredTooltip')} arrow>
-					<WarningAmberIcon color="warning" fontSize="small" />
-				</Tooltip>
+				{missingDates && (
+					<Tooltip title={t('seasonDatesRequiredTooltip')} arrow>
+						<WarningAmberIcon color="warning" fontSize="small" />
+					</Tooltip>
+				)}
 			</Box>
 			<Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1.5 }}>
-				{t('actualStatus')}: {season.status}
+				{t('actualStatus')}: {status}
 			</Typography>
 			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
 				<TextField
