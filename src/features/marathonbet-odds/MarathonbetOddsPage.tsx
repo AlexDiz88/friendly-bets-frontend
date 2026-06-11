@@ -41,10 +41,14 @@ import {
 } from '../odds-demo/oddsDemoPageStyles';
 import {
 	fetchLatestMarathonbetSyncRun,
+	fetchMarathonbetRequestStats,
 	fetchMarathonbetSlotPreview,
+	fetchMarathonbetSyncRuns,
 	scrapeMarathonbetEvent,
 	syncMarathonbetSlot,
+	type MarathonbetHttpLogEntry,
 	type MarathonbetMarket,
+	type MarathonbetRequestStats,
 	type MarathonbetScrapeResult,
 	type MarathonbetSlotMatchPreview,
 	type MarathonbetSlotPreview,
@@ -67,6 +71,20 @@ function formatUtc(iso: string | null | undefined): string {
 function formatKickoffMillis(ms: number | null | undefined): string {
 	if (ms == null) return '—';
 	return formatUtc(new Date(ms).toISOString());
+}
+
+function formatDurationMs(ms: number | null | undefined): string {
+	if (ms == null || ms < 0) return '—';
+	if (ms < 1000) return `${ms} ms`;
+	const sec = Math.round(ms / 1000);
+	if (sec < 60) return `${sec}s`;
+	const min = Math.floor(sec / 60);
+	const rem = sec % 60;
+	return rem > 0 ? `${min}m ${rem}s` : `${min}m`;
+}
+
+function failedHttpLogs(logs: MarathonbetHttpLogEntry[] | undefined): MarathonbetHttpLogEntry[] {
+	return (logs ?? []).filter((e) => e.outcome !== 'SUCCESS');
 }
 
 function visibleMarkets(markets: MarathonbetMarket[], showIgnoredProd: boolean): MarathonbetMarket[] {
@@ -179,6 +197,9 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 	const [showIgnoredProd, setShowIgnoredProd] = useState(false);
 
 	const [latestRun, setLatestRun] = useState<MarathonbetSyncRun | null>(null);
+	const [syncRuns, setSyncRuns] = useState<MarathonbetSyncRun[]>([]);
+	const [requestStats, setRequestStats] = useState<MarathonbetRequestStats | null>(null);
+	const [monitoringLoading, setMonitoringLoading] = useState(false);
 
 	useEffect(() => {
 		if (!wcLeague?.id || !externalSeason) return;
@@ -234,18 +255,28 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 		}
 	}, [wcLeague?.id, matchday, loadPreview]);
 
-	const loadLatestRun = useCallback(async () => {
+	const loadSyncMonitoring = useCallback(async () => {
+		setMonitoringLoading(true);
 		try {
-			const run = await fetchLatestMarathonbetSyncRun();
-			setLatestRun(run);
+			const [runs, stats, latest] = await Promise.all([
+				fetchMarathonbetSyncRuns(30),
+				fetchMarathonbetRequestStats(24),
+				fetchLatestMarathonbetSyncRun(),
+			]);
+			setSyncRuns(runs);
+			setRequestStats(stats);
+			setLatestRun(latest);
 		} catch {
-			setLatestRun(null);
+			setSyncRuns([]);
+			setRequestStats(null);
+		} finally {
+			setMonitoringLoading(false);
 		}
 	}, []);
 
 	useEffect(() => {
-		void loadLatestRun();
-	}, [loadLatestRun]);
+		void loadSyncMonitoring();
+	}, [loadSyncMonitoring]);
 
 	const handleSyncSlot = useCallback(async () => {
 		if (!wcLeague?.id) return;
@@ -254,14 +285,14 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 			await syncMarathonbetSlot(wcLeague.id, matchday, externalSeason ?? undefined);
 			dispatch(showSuccessSnackbar({ message: 'marathonbetSyncCompleted' }));
 			await loadPreview();
-			await loadLatestRun();
+			await loadSyncMonitoring();
 		} catch (e) {
 			const message = e instanceof Error ? e.message : 'unknownError';
 			dispatch(showErrorSnackbar({ message }));
 		} finally {
 			setSyncLoading(false);
 		}
-	}, [wcLeague?.id, matchday, externalSeason, dispatch, loadPreview, loadLatestRun]);
+	}, [wcLeague?.id, matchday, externalSeason, dispatch, loadPreview, loadSyncMonitoring]);
 
 	const handleFetchEvent = useCallback(async () => {
 		const treeId = Number.parseInt(treeIdInput.trim(), 10);
@@ -323,17 +354,178 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 			</Typography>
 			<Box sx={oddsDemoHintSx}>{t('marathonbetOdds.hintWc')}</Box>
 
-			{latestRun && (
-				<Alert severity="info" sx={{ mb: 2 }}>
-					{t('marathonbetOdds.lastRun', {
-						matched: latestRun.matchesMatched ?? 0,
-						eligible: latestRun.matchesEligible ?? 0,
-						saved: latestRun.mergedSaved ?? 0,
-						sse: latestRun.sseCalls ?? 0,
-					})}
-					{latestRun.errorSummary ? ` · ${latestRun.errorSummary}` : ''}
-				</Alert>
-			)}
+			<Box sx={{ ...oddsDemoPanelSx(theme), mb: 2 }}>
+				<Box sx={{ ...oddsDemoToolbarRowSx, justifyContent: 'space-between', mb: 1.5 }}>
+					<Typography variant="subtitle1">{t('marathonbetOdds.syncStatsTitle')}</Typography>
+					<CustomButton
+						buttonText={t('marathonbetOdds.refreshStats')}
+						onClick={() => void loadSyncMonitoring()}
+						disabled={monitoringLoading}
+					/>
+				</Box>
+				{requestStats && (
+					<>
+						<Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+							{t('marathonbetOdds.statsPeriod', { hours: requestStats.periodHours })}
+						</Typography>
+						<Box
+							sx={{
+								display: 'grid',
+								gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+								gap: 1,
+								mb: 2,
+							}}
+						>
+							{[
+								[t('marathonbetOdds.statRuns'), requestStats.totalRuns],
+								[t('marathonbetOdds.statScheduledRuns'), requestStats.scheduledRuns],
+								[t('marathonbetOdds.statManualRuns'), requestStats.manualRuns],
+								[t('marathonbetOdds.statTournamentRequests'), requestStats.tournamentRequests],
+								[t('marathonbetOdds.statSseRequests'), requestStats.sseRequests],
+								[t('marathonbetOdds.statHttpFailures'), requestStats.httpFailures],
+								[t('marathonbetOdds.statRateLimited'), requestStats.rateLimitedCount],
+								[t('marathonbetOdds.statAccessDenied'), requestStats.accessDeniedCount],
+								[t('marathonbetOdds.statTimeouts'), requestStats.timeoutCount],
+								[t('marathonbetOdds.statAvgSseMs'), requestStats.avgSseDurationMs],
+								[t('marathonbetOdds.statMatchesSaved'), requestStats.matchesSaved],
+							].map(([label, value]) => (
+								<Box
+									key={String(label)}
+									sx={{
+										border: '1px solid',
+										borderColor: 'divider',
+										borderRadius: 1,
+										px: 1,
+										py: 0.75,
+									}}
+								>
+									<Typography variant="caption" color="text.secondary" display="block">
+										{label}
+									</Typography>
+									<Typography variant="body2" fontWeight={600}>
+										{value}
+									</Typography>
+								</Box>
+							))}
+						</Box>
+					</>
+				)}
+				{latestRun && (
+					<Alert severity="info" sx={{ mb: 2 }}>
+						{t('marathonbetOdds.lastRun', {
+							matched: latestRun.matchesMatched ?? 0,
+							eligible: latestRun.matchesEligible ?? 0,
+							saved: latestRun.mergedSaved ?? 0,
+							sse: latestRun.sseCalls ?? 0,
+						})}
+						{latestRun.errorSummary ? ` · ${latestRun.errorSummary}` : ''}
+					</Alert>
+				)}
+				<Typography variant="subtitle2" sx={{ mb: 1 }}>
+					{t('marathonbetOdds.syncRunsTitle')}
+				</Typography>
+				{monitoringLoading && syncRuns.length === 0 ? (
+					<Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+						<CircularProgress size={28} />
+					</Box>
+				) : syncRuns.length === 0 ? (
+					<Typography variant="body2" color="text.secondary">
+						{t('marathonbetOdds.noSyncRuns')}
+					</Typography>
+				) : (
+					<Table size="small">
+						<TableHead>
+							<TableRow>
+								<TableCell>{t('marathonbetOdds.colStarted')}</TableCell>
+								<TableCell>{t('marathonbetOdds.colDuration')}</TableCell>
+								<TableCell>{t('marathonbetOdds.colScope')}</TableCell>
+								<TableCell>{t('marathonbetOdds.colSlots')}</TableCell>
+								<TableCell align="right">{t('marathonbetOdds.colHttp')}</TableCell>
+								<TableCell align="right">{t('marathonbetOdds.colMatches')}</TableCell>
+								<TableCell align="right">{t('marathonbetOdds.colSaved')}</TableCell>
+								<TableCell>{t('marathonbetOdds.colErrors')}</TableCell>
+								<TableCell>{t('marathonbetOdds.colDetails')}</TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{syncRuns.map((run) => {
+								const failedLogs = failedHttpLogs(run.httpLogs);
+								const scopeKey = run.slotScope
+									? `marathonbetOdds.scope${run.slotScope}`
+									: run.manual
+										? 'marathonbetOdds.scopeBOTH'
+										: '—';
+								return (
+									<TableRow key={run.id}>
+										<TableCell>
+											{formatUtc(run.startedAt)}
+											{run.manual ? (
+												<Typography variant="caption" display="block" color="text.secondary">
+													manual
+												</Typography>
+											) : null}
+										</TableCell>
+										<TableCell>{formatDurationMs(run.durationMs)}</TableCell>
+										<TableCell>
+											{typeof scopeKey === 'string' && scopeKey.startsWith('marathonbetOdds.')
+												? t(scopeKey)
+												: scopeKey}
+										</TableCell>
+										<TableCell>{run.slotOrders?.join(', ') ?? '—'}</TableCell>
+										<TableCell align="right">
+											{run.httpRequestsFailed ?? 0}/{run.httpRequestsTotal ?? 0}
+										</TableCell>
+										<TableCell align="right">
+											{run.matchesMatched ?? 0}/{run.matchesEligible ?? 0}
+										</TableCell>
+										<TableCell align="right">{run.mergedSaved ?? 0}</TableCell>
+										<TableCell>
+											{run.errorSummary ? (
+												<Typography variant="caption" color="error.main">
+													{run.errorSummary}
+												</Typography>
+											) : failedLogs.length > 0 ? (
+												<Typography variant="caption" color="warning.main">
+													{failedLogs.length} HTTP
+												</Typography>
+											) : (
+												'—'
+											)}
+										</TableCell>
+										<TableCell>
+											{failedLogs.length > 0 ? (
+												<Box component="ul" sx={{ m: 0, pl: 2 }}>
+													{failedLogs.map((entry, idx) => (
+														<Box component="li" key={`${run.id}-${idx}`} sx={{ fontSize: '0.75rem' }}>
+															{t(`marathonbetOdds.requestType${entry.requestType}`, {
+																defaultValue: entry.requestType,
+															})}
+															{entry.targetId != null ? ` #${entry.targetId}` : ''}
+															{' · '}
+															{t(`marathonbetOdds.outcome${entry.outcome}`, {
+																defaultValue: entry.outcome,
+															})}
+															{entry.httpStatus != null
+																? ` · ${t('marathonbetOdds.httpStatus', { status: entry.httpStatus })}`
+																: ''}
+															{entry.retryAfterSeconds != null
+																? ` · ${t('marathonbetOdds.retryAfter', { seconds: entry.retryAfterSeconds })}`
+																: ''}
+															{` · ${entry.durationMs}ms`}
+														</Box>
+													))}
+												</Box>
+											) : (
+												'—'
+											)}
+										</TableCell>
+									</TableRow>
+								);
+							})}
+						</TableBody>
+					</Table>
+				)}
+			</Box>
 
 			<Box sx={oddsDemoPanelSx(theme)}>
 				<Typography variant="subtitle2" sx={{ mb: 1 }}>
