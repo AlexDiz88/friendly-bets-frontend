@@ -13,6 +13,8 @@ const getCroppedImage = async (image: HTMLImageElement, crop: PixelCrop): Promis
 		throw new Error('Failed to get canvas context');
 	}
 
+	ctx.imageSmoothingQuality = 'high';
+
 	ctx.drawImage(
 		image,
 		crop.x * scaleX,
@@ -27,7 +29,7 @@ const getCroppedImage = async (image: HTMLImageElement, crop: PixelCrop): Promis
 
 	const resizedCanvas = document.createElement('canvas');
 	const resizedCtx = resizedCanvas.getContext('2d');
-	const maxSize = 150;
+	const maxSize = 256;
 	let width = canvas.width;
 	let height = canvas.height;
 
@@ -45,6 +47,7 @@ const getCroppedImage = async (image: HTMLImageElement, crop: PixelCrop): Promis
 	resizedCanvas.height = height;
 
 	if (resizedCtx) {
+		resizedCtx.imageSmoothingQuality = 'high';
 		resizedCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, width, height);
 		return new Promise<File>((resolve, reject) => {
 			resizedCanvas.toBlob((blob) => {
@@ -53,7 +56,7 @@ const getCroppedImage = async (image: HTMLImageElement, crop: PixelCrop): Promis
 					return;
 				}
 				resolve(new File([blob], 'cropped_image.jpg', { type: 'image/jpeg' }));
-			}, 'image/jpeg');
+			}, 'image/jpeg', 0.88);
 		});
 	} else {
 		throw new Error('Failed to get resized canvas context');
