@@ -48,6 +48,7 @@ import {
 import { matchSideToDisplayTeam } from './externalMatchDisplay';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { parseUtcDate, utcDateMs } from '../../shared/utcDate';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
@@ -390,7 +391,8 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		if (!isMatchNotStarted(match.status)) {
 			return false;
 		}
-		if (match.utcDate && new Date(match.utcDate).getTime() <= Date.now()) {
+		const kickoffMs = utcDateMs(match.utcDate);
+		if (kickoffMs !== null && kickoffMs <= Date.now()) {
 			return false;
 		}
 		return true;
@@ -753,8 +755,8 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const sortedMatches = useMemo(() => {
 		if (!data?.matches) return [];
 		const sorted = [...data.matches].sort((a, b) => {
-			const da = a.utcDate ? new Date(a.utcDate).getTime() : 0;
-			const db = b.utcDate ? new Date(b.utcDate).getTime() : 0;
+			const da = utcDateMs(a.utcDate) ?? 0;
+			const db = utcDateMs(b.utcDate) ?? 0;
 			return da - db;
 		});
 		if (isBerlinGroupSlotActive) {
@@ -1207,14 +1209,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						const statusColor = match.finalized
 							? 'success'
 							: getMatchStatusChipColor(match.status);
-						const matchDate = match.utcDate
-							? new Date(match.utcDate).toLocaleString(undefined, {
-									day: '2-digit',
-									month: '2-digit',
-									hour: '2-digit',
-									minute: '2-digit',
-								})
-							: '';
+						const matchDate =
+							parseUtcDate(match.utcDate)?.toLocaleString(undefined, {
+								day: '2-digit',
+								month: '2-digit',
+								hour: '2-digit',
+								minute: '2-digit',
+							}) ?? '';
 						const betEnabled = canUserBetOnMatch(match);
 
 						return (

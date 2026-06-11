@@ -1,3 +1,4 @@
+import { parseUtcDate } from '../../shared/utcDate';
 import type { ExternalMatch } from '../football-data/types/ExternalMatch';
 import { WC26_SCHEDULE, type Wc26Match } from './wc26Schedule';
 import {
@@ -259,7 +260,8 @@ export function getBerlinSlotMeta(slotId: string, language: string): BerlinSlotM
 }
 
 export function utcToBerlinKickoff(utcDate: string | undefined): string {
-	if (!utcDate) {
+	const kickoff = parseUtcDate(utcDate);
+	if (!kickoff) {
 		return '—';
 	}
 	return new Intl.DateTimeFormat('de-DE', {
@@ -267,7 +269,7 @@ export function utcToBerlinKickoff(utcDate: string | undefined): string {
 		hour: '2-digit',
 		minute: '2-digit',
 		hourCycle: 'h23',
-	}).format(new Date(utcDate));
+	}).format(kickoff);
 }
 
 export function expectedBerlinMatchCount(slotId: string): number {
