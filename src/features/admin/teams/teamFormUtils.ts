@@ -1,7 +1,12 @@
 import i18n from '../../../i18n';
 import NewTeam from './types/NewTeam';
 import Team, { TeamDisplayNames, TeamExternalAlias } from './types/Team';
-import { FOOTBALL_DATA_PROVIDER, MARATHONBET_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
+import {
+	FOOTBALL_DATA_PROVIDER,
+	FOURSCORE_PROVIDER,
+	MARATHONBET_PROVIDER,
+	ODDS_API_PROVIDER,
+} from './teamProviderConstants';
 
 export type TeamFormValues = {
 	title: string;
@@ -14,6 +19,7 @@ export type TeamFormValues = {
 	oddsApiTeamId: string;
 	oddsApiExternalName: string;
 	marathonbetExternalName: string;
+	fourscoreExternalName: string;
 };
 
 export function emptyTeamFormValues(): TeamFormValues {
@@ -28,6 +34,7 @@ export function emptyTeamFormValues(): TeamFormValues {
 		oddsApiTeamId: '',
 		oddsApiExternalName: '',
 		marathonbetExternalName: '',
+		fourscoreExternalName: '',
 	};
 }
 
@@ -120,6 +127,7 @@ export function teamToFormValues(team: Team): TeamFormValues {
 	const fdAlias = team.externalAliases?.find((a) => a.provider === FOOTBALL_DATA_PROVIDER);
 	const oddsAlias = team.externalAliases?.find((a) => a.provider === ODDS_API_PROVIDER);
 	const marathonAlias = team.externalAliases?.find((a) => a.provider === MARATHONBET_PROVIDER);
+	const fourScoreAlias = team.externalAliases?.find((a) => a.provider === FOURSCORE_PROVIDER);
 	return applyI18nDisplayNamesToFormValues(
 		{
 			title: team.title ?? '',
@@ -137,6 +145,7 @@ export function teamToFormValues(team: Team): TeamFormValues {
 			oddsApiTeamId: oddsAlias?.externalId != null ? String(oddsAlias.externalId) : '',
 			oddsApiExternalName: oddsAlias?.externalName ?? '',
 			marathonbetExternalName: marathonAlias?.externalName ?? '',
+			fourscoreExternalName: fourScoreAlias?.externalName ?? '',
 		},
 		true
 	);
@@ -176,6 +185,17 @@ function buildFootballDataAlias(values: TeamFormValues): TeamExternalAlias | und
 		provider: FOOTBALL_DATA_PROVIDER,
 		externalId: parseOptionalExternalId(values.footballDataTeamId),
 		externalName: name || undefined,
+	};
+}
+
+function buildFourScoreAlias(values: TeamFormValues): TeamExternalAlias | undefined {
+	const name = values.fourscoreExternalName.trim();
+	if (!name) {
+		return undefined;
+	}
+	return {
+		provider: FOURSCORE_PROVIDER,
+		externalName: name,
 	};
 }
 
@@ -231,6 +251,12 @@ export function buildExternalAliases(
 		byProvider.set(MARATHONBET_PROVIDER, marathon);
 	} else {
 		byProvider.delete(MARATHONBET_PROVIDER);
+	}
+	const fourScore = buildFourScoreAlias(values);
+	if (fourScore) {
+		byProvider.set(FOURSCORE_PROVIDER, fourScore);
+	} else {
+		byProvider.delete(FOURSCORE_PROVIDER);
 	}
 	return [...byProvider.values()];
 }

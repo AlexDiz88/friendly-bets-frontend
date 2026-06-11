@@ -6,3 +6,6 @@ export const ODDS_API_PROVIDER = 'odds-api.io';
 
 /** {@link backend TeamTitleUtils.MARATHONBET_PROVIDER} */
 export const MARATHONBET_PROVIDER = 'marathonbet';
+
+/** {@link backend TeamTitleUtils.FOURSCORE_PROVIDER} */
+export const FOURSCORE_PROVIDER = '4score.ru';

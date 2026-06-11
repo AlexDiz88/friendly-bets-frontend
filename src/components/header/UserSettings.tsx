@@ -36,6 +36,7 @@ export default function UserSettings(): JSX.Element {
 		t('adminPanel'),
 		t('oddsDemo.menuLink'),
 		t('marathonbetOdds.menuLink'),
+		t('fourScorePreview.menuLink'),
 		t('externalSyncIssuesTitle'),
 		t('logout'),
 	];
@@ -49,6 +50,7 @@ export default function UserSettings(): JSX.Element {
 		// t('myStats'),
 		t('seasonRegister'),
 		t('marathonbetOdds.menuLink'),
+		t('fourScorePreview.menuLink'),
 		t('externalSyncIssuesTitle'),
 		t('logout'),
 	];
@@ -133,6 +135,8 @@ export default function UserSettings(): JSX.Element {
 			navigate('/odds-demo');
 		} else if (setting === t('marathonbetOdds.menuLink')) {
 			navigate('/marathonbet-odds');
+		} else if (setting === t('fourScorePreview.menuLink')) {
+			navigate('/fourscore-preview');
 		} else if (setting === t('externalSyncIssuesTitle')) {
 			navigate('/external-sync-issues');
 		} else if (setting === t('seasonRegister')) {

@@ -3,9 +3,16 @@ import { t } from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { getUnmappedExternalTeamNames, API_SYNC_ISSUES_CHANGED_EVENT } from '../external-sync-issues/api';
 import { UnmappedExternalTeamName } from '../external-sync-issues/types/UnmappedExternalTeamName';
-import { FOOTBALL_DATA_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
+import {
+	FOOTBALL_DATA_PROVIDER,
+	FOURSCORE_PROVIDER,
+	ODDS_API_PROVIDER,
+} from './teamProviderConstants';
 
-export type UnmappedHintsProvider = typeof FOOTBALL_DATA_PROVIDER | typeof ODDS_API_PROVIDER;
+export type UnmappedHintsProvider =
+	| typeof FOOTBALL_DATA_PROVIDER
+	| typeof ODDS_API_PROVIDER
+	| typeof FOURSCORE_PROVIDER;
 
 type UnmappedTeamNameHintsProps = {
 	provider: UnmappedHintsProvider;
@@ -62,7 +69,9 @@ export default function UnmappedTeamNameHints({
 	const hintLabelKey =
 		provider === ODDS_API_PROVIDER
 			? 'teamUnmappedOddsApiNamesHint'
-			: 'teamUnmappedFootballDataNamesHint';
+			: provider === FOURSCORE_PROVIDER
+				? 'teamUnmappedFourScoreNamesHint'
+				: 'teamUnmappedFootballDataNamesHint';
 
 	return (
 		<Box sx={{ mb: 1 }}>
