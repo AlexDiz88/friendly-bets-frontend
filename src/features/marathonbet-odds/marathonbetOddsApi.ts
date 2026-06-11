@@ -64,12 +64,25 @@ export type MarathonbetSlotPreview = {
 	matches: MarathonbetSlotMatchPreview[];
 };
 
+export type MarathonbetHttpLogEntry = {
+	requestType: string;
+	targetId?: number | null;
+	httpStatus?: number | null;
+	outcome: string;
+	durationMs: number;
+	detail?: string | null;
+	retryAfterSeconds?: number | null;
+	requestedAt?: string | null;
+};
+
 export type MarathonbetSyncRun = {
 	id: string;
 	startedAt?: string;
 	finishedAt?: string;
+	durationMs?: number | null;
 	leagueCode?: string;
 	season?: string;
+	slotScope?: string | null;
 	slotOrders?: number[];
 	tournamentFetched?: boolean;
 	matchesEligible?: number;
@@ -77,8 +90,27 @@ export type MarathonbetSyncRun = {
 	mergedSaved?: number;
 	sseCalls?: number;
 	mappingFailures?: number;
+	httpRequestsTotal?: number;
+	httpRequestsFailed?: number;
 	manual?: boolean;
 	errorSummary?: string | null;
+	httpLogs?: MarathonbetHttpLogEntry[];
+};
+
+export type MarathonbetRequestStats = {
+	periodHours: number;
+	totalRuns: number;
+	manualRuns: number;
+	scheduledRuns: number;
+	tournamentRequests: number;
+	sseRequests: number;
+	httpFailures: number;
+	rateLimitedCount: number;
+	accessDeniedCount: number;
+	timeoutCount: number;
+	avgSseDurationMs: number;
+	matchesSaved: number;
+	mappingFailures: number;
 };
 
 export async function scrapeMarathonbetEvent(treeId: number): Promise<MarathonbetScrapeResult> {
@@ -154,6 +186,28 @@ export async function fetchLatestMarathonbetSyncRun(): Promise<MarathonbetSyncRu
 	if (result.status === 204) {
 		return null;
 	}
+	if (result.status >= 400) {
+		const { message } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function fetchMarathonbetSyncRuns(limit = 30): Promise<MarathonbetSyncRun[]> {
+	const result = await apiFetch(apiUrl(`/api/admin/marathonbet/sync-runs?limit=${limit}`), {
+		credentials: 'include',
+	});
+	if (result.status >= 400) {
+		const { message } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function fetchMarathonbetRequestStats(hours = 24): Promise<MarathonbetRequestStats> {
+	const result = await apiFetch(apiUrl(`/api/admin/marathonbet/request-stats?hours=${hours}`), {
+		credentials: 'include',
+	});
 	if (result.status >= 400) {
 		const { message } = await result.json();
 		throw new Error(message);
