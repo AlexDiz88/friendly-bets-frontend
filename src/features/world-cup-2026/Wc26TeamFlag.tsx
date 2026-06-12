@@ -25,8 +25,8 @@ export default function Wc26TeamFlag({ teamId, side, compact = false }: Wc26Team
 			sx={{
 				fontWeight: 400,
 				fontSize: compact
-					? { xs: '0.72rem', sm: '0.8rem' }
-					: { xs: '0.8rem', sm: '0.875rem' },
+					? { xs: '0.85rem', sm: '0.9rem' }
+					: { xs: '0.9rem', sm: '0.95rem' },
 				lineHeight: compact ? 1.2 : undefined,
 				minWidth: 0,
 			}}
@@ -37,8 +37,8 @@ export default function Wc26TeamFlag({ teamId, side, compact = false }: Wc26Team
 	const flag = (
 		<Box
 			sx={{
-				width: compact ? 22 : 24,
-				height: compact ? 14 : 16,
+				width: compact ? 26 : 28,
+				height: compact ? 18 : 20,
 				flexShrink: 0,
 				borderRadius: 0.25,
 				overflow: 'hidden',
@@ -71,7 +71,7 @@ export default function Wc26TeamFlag({ teamId, side, compact = false }: Wc26Team
 			sx={{
 				display: 'flex',
 				alignItems: 'center',
-				gap: compact ? 0.5 : 0.75,
+				gap: compact ? 0.6 : 0.75,
 				minWidth: 0,
 			}}
 		>

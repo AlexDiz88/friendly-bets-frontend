@@ -632,6 +632,7 @@
 		"seasonAlreadyHasSameStatus": "Saison hat bereits diesen Status",
 		"seasonWithThisTitleAlreadyExist": "Saison mit diesem Titel existiert bereits",
 		"seasonDatesRequired": "Start- und Enddatum der Saison sind erforderlich",
+		"wc26ScheduleLoadError": "WM-2026-Spielplan konnte nicht geladen werden",
 		"seasonEndDateBeforeStartDate": "Enddatum darf nicht vor dem Startdatum liegen",
 		"betAlreadyAdded": "Wette von diesem Spieler wurde bereits hinzugefügt",
 		"betOddsLocked": "Quote und Auswahl dieser Wette können nicht geändert werden",

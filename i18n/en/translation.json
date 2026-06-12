@@ -632,6 +632,7 @@
 		"seasonAlreadyHasSameStatus": "Season already has this status",
 		"seasonWithThisTitleAlreadyExist": "Season with this title already exists",
 		"seasonDatesRequired": "Season start and end dates are required",
+		"wc26ScheduleLoadError": "Failed to load World Cup 2026 schedule",
 		"seasonEndDateBeforeStartDate": "End date cannot be before start date",
 		"betAlreadyAdded": "Bet for this match from player has already been added",
 		"betOddsLocked": "Odds and selection for this bet cannot be changed",

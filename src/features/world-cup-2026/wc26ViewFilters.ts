@@ -1,5 +1,7 @@
 import { WC26_SCHEDULE, type Wc26Match, type Wc26Stage } from './wc26Schedule';
 
+export type Wc26MatchListSource = Wc26Match[];
+
 export type Wc26ViewFilter =
 	| 'all'
 	| 'group'
@@ -46,29 +48,37 @@ const KNOCKOUT_STAGES = new Set<Wc26Stage>([
 	'final',
 ]);
 
-function groupRoundMatches(round: 1 | 2 | 3): Wc26Match[] {
+function groupRoundMatches(matches: Wc26Match[], round: 1 | 2 | 3): Wc26Match[] {
 	const start = (round - 1) * 24 + 1;
 	const end = round * 24;
-	return WC26_SCHEDULE.filter((m) => m.id >= start && m.id <= end);
+	return matches.filter((m) => m.id >= start && m.id <= end);
 }
 
-export function filterWc26Matches(filter: Wc26ViewFilter): Wc26Match[] {
+export function filterWc26Matches(
+	matches: Wc26MatchListSource,
+	filter: Wc26ViewFilter
+): Wc26Match[] {
 	switch (filter) {
 		case 'all':
-			return WC26_SCHEDULE;
+			return matches;
 		case 'group':
-			return WC26_SCHEDULE.filter((m) => m.stage === 'group');
+			return matches.filter((m) => m.stage === 'group');
 		case 'group_r1':
-			return groupRoundMatches(1);
+			return groupRoundMatches(matches, 1);
 		case 'group_r2':
-			return groupRoundMatches(2);
+			return groupRoundMatches(matches, 2);
 		case 'group_r3':
-			return groupRoundMatches(3);
+			return groupRoundMatches(matches, 3);
 		case 'playoffs':
-			return WC26_SCHEDULE.filter((m) => KNOCKOUT_STAGES.has(m.stage));
+			return matches.filter((m) => KNOCKOUT_STAGES.has(m.stage));
 		case 'finals':
-			return WC26_SCHEDULE.filter((m) => m.stage === 'third_place' || m.stage === 'final');
+			return matches.filter((m) => m.stage === 'third_place' || m.stage === 'final');
 		default:
-			return WC26_SCHEDULE.filter((m) => m.stage === filter);
+			return matches.filter((m) => m.stage === filter);
 	}
+}
+
+/** @deprecated Use filterWc26Matches(matches, filter) with API data on schedule page. */
+export function filterStaticWc26Matches(filter: Wc26ViewFilter): Wc26Match[] {
+	return filterWc26Matches(WC26_SCHEDULE, filter);
 }
