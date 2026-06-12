@@ -37,7 +37,8 @@
 	"externalMatchBettingUnavailableNoCalendar": "Wetten auf diesen Spieltag sind derzeit nicht möglich — der Spieltag wurde noch nicht zum Saisonkalender hinzugefügt.",
 	"gameResultFinalized": "Ergebnis fixiert",
 	"matchCenter": {
-		"halftime": "Halbzeit"
+		"halftime": "Halbzeit",
+		"live": "Live"
 	},
 	"gameResultEditScore": "Ergebnis korrigieren",
 	"gameResultEditScoreTitle": "Spielstand",
@@ -373,6 +374,8 @@
 	"fourScorePreviewSectionWc": "WM",
 	"fourScorePreviewSectionFriendlies": "Freundschaftsspiele",
 	"fourScorePreviewColFt": "Enderg.",
+	"fourScorePreviewColMinute": "Min.",
+	"fourScorePreviewMappedStatus": "FB-Status",
 	"fourScorePreviewCol1h": "1HZ",
 	"fourScorePreviewCol2h": "2HZ",
 	"fourScorePreviewColEt": "Verl.",

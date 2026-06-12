@@ -37,7 +37,8 @@
 	"externalMatchBettingUnavailableNoCalendar": "Betting for this matchday is currently unavailable — the matchday has not been added to the season calendar.",
 	"gameResultFinalized": "Result finalized",
 	"matchCenter": {
-		"halftime": "Half-time"
+		"halftime": "Half-time",
+		"live": "Live"
 	},
 	"gameResultEditScore": "Edit score",
 	"gameResultEditScoreTitle": "Match score",
@@ -373,6 +374,8 @@
 	"fourScorePreviewSectionWc": "WC",
 	"fourScorePreviewSectionFriendlies": "Friendlies",
 	"fourScorePreviewColFt": "FT",
+	"fourScorePreviewColMinute": "Min.",
+	"fourScorePreviewMappedStatus": "FB status",
 	"fourScorePreviewCol1h": "1H",
 	"fourScorePreviewCol2h": "2H",
 	"fourScorePreviewColEt": "ET",

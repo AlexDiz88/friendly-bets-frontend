@@ -41,6 +41,9 @@ export interface ExternalMatch {
 	finalizedAt?: string;
 	finalizedSource?: string;
 	adminCorrected?: boolean;
+	/** Текущая минута live с 4score (напр. 72'). */
+	liveMinuteLabel?: string | null;
+	fetchedAt?: string;
 }
 
 export interface ExternalMatchdayPage {

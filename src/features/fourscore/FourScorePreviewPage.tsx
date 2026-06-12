@@ -32,6 +32,7 @@ import {
 	oddsDemoToolbarRowSx,
 } from '../odds-demo/oddsDemoPageStyles';
 import { fetchFourScorePreview, type FourScorePreviewMatch } from './fourscoreApi';
+import { translateMatchStatus } from '../football-data/matchStatusI18n';
 
 const FOURSCORE_BASE = 'https://4score.ru';
 const PAGE_ROOT_SX = { ...oddsDemoPageRootSx, maxWidth: 1440 };
@@ -96,7 +97,7 @@ export default function FourScorePreviewPage(): JSX.Element {
 		() =>
 			matches.filter(
 				(m) =>
-					m.statusText.toLowerCase().includes('завершено') &&
+					(m.statusText ?? '').toLowerCase().includes('завершено') &&
 					!m.detailsLoaded &&
 					(m.firstHalfScore == null || m.secondHalfScore == null)
 			).length,
@@ -183,6 +184,10 @@ export default function FourScorePreviewPage(): JSX.Element {
 								<TableCell sx={{ minWidth: 220 }}>{t('fourScorePreviewMatch')}</TableCell>
 								<TableCell sx={{ minWidth: 100 }}>{t('fourScorePreviewStatus')}</TableCell>
 								<TableCell align="center" sx={{ minWidth: 56 }}>
+									{t('fourScorePreviewColMinute')}
+								</TableCell>
+								<TableCell sx={{ minWidth: 88 }}>{t('fourScorePreviewMappedStatus')}</TableCell>
+								<TableCell align="center" sx={{ minWidth: 56 }}>
 									{t('fourScorePreviewColFt')}
 								</TableCell>
 								<TableCell align="center" sx={{ minWidth: 56 }}>
@@ -225,7 +230,13 @@ export default function FourScorePreviewPage(): JSX.Element {
 												{m.awayTeamName}
 											</Typography>
 										</TableCell>
-										<TableCell>{m.statusText}</TableCell>
+										<TableCell>{dash(m.statusText)}</TableCell>
+										<TableCell align="center" sx={{ fontFamily: 'monospace' }}>
+											{dash(m.liveMinuteLabel)}
+										</TableCell>
+										<TableCell>
+											{m.mappedStatus ? translateMatchStatus(m.mappedStatus, t) : '—'}
+										</TableCell>
 										<TableCell align="center" sx={{ fontFamily: 'monospace' }}>
 											{dash(m.fullTimeScore)}
 										</TableCell>

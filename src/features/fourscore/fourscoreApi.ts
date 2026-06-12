@@ -12,7 +12,9 @@ export type FourScorePreviewMatch = {
 	eventPath: string;
 	homeTeamName: string;
 	awayTeamName: string;
-	statusText: string;
+	statusText: string | null;
+	mappedStatus: string | null;
+	liveMinuteLabel: string | null;
 	listHomeScore: number | null;
 	listAwayScore: number | null;
 	homeTeamTitle: string | null;

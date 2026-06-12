@@ -3,7 +3,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { COMPLETED_BET_STATUSES } from '../../constants';
 import BetStatusIcon from '../bets/BetStatusIcon';
-import Wc26MatchCenterStatus from '../world-cup-2026/Wc26MatchCenterStatus';
+import Wc26MatchCenterStatus, {
+	isWc26LiveStackedDisplay,
+} from '../world-cup-2026/Wc26MatchCenterStatus';
+import Wc26LiveBadge from '../world-cup-2026/Wc26LiveBadge';
 import Wc26TeamFlag from '../world-cup-2026/Wc26TeamFlag';
 import {
 	findWc26ScheduleMatchForExternal,
@@ -28,10 +31,15 @@ import {
 	externalMatchWcKickoffDateSx,
 	externalMatchWcKickoffTimeSx,
 	externalMatchWcLiveMinuteSx,
+	externalMatchWcLiveScoreSx,
+	externalMatchWcHalftimeBadgeSx,
 } from './externalMatchWcPageStyles';
 import { wc26MatchMetaSx } from '../world-cup-2026/wc26PageStyles';
-import { getExternalMatchScoreView } from './externalMatchScoreView';
-import { translateMatchStatus, getMatchStatusChipColor } from './matchStatusI18n';
+import {
+	getExternalMatchScoreView,
+	trustExternalLiveScore,
+} from './externalMatchScoreView';
+import { translateMatchStatus, getMatchStatusChipColor, normalizeMatchStatus } from './matchStatusI18n';
 import type { ExternalMatch } from './types/ExternalMatch';
 import GameScore from '../bets/types/GameScore';
 
@@ -81,12 +89,17 @@ export default function ExternalMatchWc26Card({
 		return parseUtcDate(match.utcDate)?.getTime() ?? 0;
 	}, [scheduled, match.utcDate]);
 	const gameScore: GameScore | null = match.gameScore ?? null;
+	const trustLiveScore = trustExternalLiveScore(gameScore, match.status, match.liveMinuteLabel);
 	const scoreView = getExternalMatchScoreView(
 		gameScore,
 		match.status,
-		Boolean(match.finalized)
+		Boolean(match.finalized),
+		trustLiveScore
 	);
 	const hasScore = Boolean(scoreView && scoreView !== '—');
+	const isLiveStacked = isWc26LiveStackedDisplay(match.status, Boolean(match.finalized));
+	const isPausedLive = normalizeMatchStatus(match.status) === 'PAUSED' && isLiveStacked;
+	const showLiveBadge = isLiveStacked && !isPausedLive;
 	const statusLabel = match.finalized
 		? t('gameResultFinalized')
 		: translateMatchStatus(match.status, t);
@@ -156,16 +169,24 @@ export default function ExternalMatchWc26Card({
 					{scheduled?.group ? ` · ${t('wc26.group', { letter: scheduled.group })}` : null}
 				</Typography>
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
-					<Chip
-						size="small"
-						label={statusLabel}
-						color={statusColor}
-						sx={{
-							height: 15,
-							fontSize: '0.52rem',
-							'& .MuiChip-label': { px: 0.45, py: 0 },
-						}}
-					/>
+					{showLiveBadge ? (
+						<Wc26LiveBadge />
+					) : isPausedLive ? (
+						<Box component="span" sx={externalMatchWcHalftimeBadgeSx}>
+							{statusLabel}
+						</Box>
+					) : (
+						<Chip
+							size="small"
+							label={statusLabel}
+							color={statusColor}
+							sx={{
+								height: 15,
+								fontSize: '0.52rem',
+								'& .MuiChip-label': { px: 0.45, py: 0 },
+							}}
+						/>
+					)}
 					{showAdminEdit ? adminEditButton : null}
 				</Box>
 			</Box>
@@ -217,8 +238,13 @@ export default function ExternalMatchWc26Card({
 								kickoffTime={kickoff}
 								kickoffUtcMs={kickoffUtcMs}
 								scoreView={scoreView}
+								liveMinuteLabel={match.liveMinuteLabel}
+								liveDataFetchedAt={match.fetchedAt}
+								matchStatus={match.status}
+								liveStacked={isLiveStacked && hasScore}
 								kickoffSx={externalMatchWcKickoffTimeSx}
 								liveMinuteSx={externalMatchWcLiveMinuteSx}
+								liveScoreSx={externalMatchWcLiveScoreSx}
 							/>
 						</Box>
 
@@ -251,8 +277,13 @@ export default function ExternalMatchWc26Card({
 							kickoffTime={kickoff}
 							kickoffUtcMs={kickoffUtcMs}
 							scoreView={scoreView}
+							liveMinuteLabel={match.liveMinuteLabel}
+							liveDataFetchedAt={match.fetchedAt}
+							matchStatus={match.status}
+							liveStacked={isLiveStacked && hasScore}
 							kickoffSx={externalMatchWcKickoffTimeSx}
 							liveMinuteSx={externalMatchWcLiveMinuteSx}
+							liveScoreSx={externalMatchWcLiveScoreSx}
 						/>
 						{scoreView === '—' ? (
 							<Typography
