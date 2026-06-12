@@ -22,6 +22,8 @@ import { toggleFormControlLabelSx } from '../../components/custom/controls/custo
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { pageHasLiveMatches } from '../../shared/livePagePolling';
+import { useLivePagePolling } from '../../shared/useLivePagePolling';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
@@ -38,7 +40,7 @@ import {
 	resolveBetSizeForBetInput,
 	resolveSeasonDefaultBetSize,
 } from '../bets/betSizeDefaults';
-import { getExternalMatchScoreView } from './externalMatchScoreView';
+import { getExternalMatchScoreView, trustExternalLiveScore } from './externalMatchScoreView';
 import GameResultScoreEditDialog from './GameResultScoreEditDialog';
 import {
 	adminCorrectGameResultScore,
@@ -469,6 +471,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		);
 		setData(page);
 	}, [competitionCode, effectiveMatchday, externalSeason, selectedLeague?.id]);
+
+	const hasLiveMatches = useMemo(
+		() => pageHasLiveMatches(data?.matches ?? []),
+		[data?.matches]
+	);
+
+	useLivePagePolling(isExternalPageReady && hasLiveMatches, reloadMatchday);
 
 	useEffect(() => {
 		if (!activeSeason) {
@@ -1282,7 +1291,8 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						const scoreView = getExternalMatchScoreView(
 							gameScore,
 							match.status,
-							Boolean(match.finalized)
+							Boolean(match.finalized),
+							trustExternalLiveScore(gameScore, match.status, match.liveMinuteLabel)
 						);
 						const statusLabel = match.finalized
 							? t('gameResultFinalized')

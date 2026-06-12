@@ -37,7 +37,8 @@
 	"externalMatchBettingUnavailableNoCalendar": "Приём ставок на этот тур недоступен — тур ещё не был добавлен в календарь сезона.",
 	"gameResultFinalized": "Итог зафиксирован",
 	"matchCenter": {
-		"halftime": "Перерыв"
+		"halftime": "Перерыв",
+		"live": "Live"
 	},
 	"gameResultEditScore": "Исправить счёт",
 	"gameResultEditScoreTitle": "Счёт матча",
@@ -373,6 +374,8 @@
 	"fourScorePreviewSectionWc": "ЧМ",
 	"fourScorePreviewSectionFriendlies": "Товарищеские",
 	"fourScorePreviewColFt": "Итог",
+	"fourScorePreviewColMinute": "Мин.",
+	"fourScorePreviewMappedStatus": "FB статус",
 	"fourScorePreviewCol1h": "1Т",
 	"fourScorePreviewCol2h": "2Т",
 	"fourScorePreviewColEt": "ОТ",

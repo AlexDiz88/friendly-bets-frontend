@@ -49,7 +49,7 @@ export function getEstimatedMatchMinute(
 		return { kind: 'halftime' };
 	}
 	const matchMinute = elapsed - SECOND_HALF_START_ELAPSED + MATCH_FIRST_HALF_MIN;
-	if (matchMinute > MATCH_FIRST_HALF_MIN) {
+	if (matchMinute > MATCH_FIRST_HALF_MIN * 2) {
 		return { kind: 'minute', label: "90+'" };
 	}
 	return { kind: 'minute', label: `${matchMinute}'` };

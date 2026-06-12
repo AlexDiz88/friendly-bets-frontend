@@ -24,6 +24,8 @@ export interface Wc26ScheduleMatchApi {
 	status?: string;
 	finalized?: boolean;
 	utcDate?: string;
+	liveMinuteLabel?: string | null;
+	fetchedAt?: string;
 }
 
 export interface Wc26SchedulePageApi {
@@ -36,6 +38,8 @@ export interface Wc26MatchWithResult extends Wc26Match {
 	status?: string;
 	finalized?: boolean;
 	utcDate?: string;
+	liveMinuteLabel?: string | null;
+	fetchedAt?: string;
 }
 
 function toMatch(entry: Wc26ScheduleMatchApi): Wc26MatchWithResult {
@@ -54,6 +58,8 @@ function toMatch(entry: Wc26ScheduleMatchApi): Wc26MatchWithResult {
 		status: entry.status,
 		finalized: entry.finalized,
 		utcDate: entry.utcDate,
+		liveMinuteLabel: entry.liveMinuteLabel ?? undefined,
+		fetchedAt: entry.fetchedAt,
 	};
 }
 
