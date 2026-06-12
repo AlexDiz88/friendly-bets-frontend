@@ -130,6 +130,13 @@ export const gameweekCardBetTitleSx: SxProps<Theme> = (theme) => ({
 
 export const gameweekStatusIconSx = betsStatusIconSx;
 
+export const gameweekBetOutcomeRowSx: SxProps<Theme> = {
+	display: 'flex',
+	justifyContent: 'center',
+	alignItems: 'center',
+	gap: 0.35,
+};
+
 export const gameweekBalanceChangeSx = betsBalanceChangeSx;
 
 export const gameweekPlayerRowSx: SxProps<Theme> = (theme) => {

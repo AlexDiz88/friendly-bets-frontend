@@ -1,6 +1,8 @@
 import { Box, Chip, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { COMPLETED_BET_STATUSES } from '../../constants';
+import BetStatusIcon from '../bets/BetStatusIcon';
 import Wc26MatchCenterStatus from '../world-cup-2026/Wc26MatchCenterStatus';
 import Wc26TeamFlag from '../world-cup-2026/Wc26TeamFlag';
 import {
@@ -18,7 +20,10 @@ import { getFullBetTitle } from '../../components/utils/stringTransform';
 import { formatPickOdds } from '../../components/odds/formatPickOdds';
 import type Bet from '../bets/types/Bet';
 import {
+	EXTERNAL_MATCH_WC_BET_CHIP_HEIGHT_PX,
+	externalMatchWcBetChipRowSx,
 	externalMatchWcBetChipSx,
+	externalMatchWcBetOutcomeIconCellSx,
 	externalMatchWcCardRowSx,
 	externalMatchWcKickoffDateSx,
 	externalMatchWcKickoffTimeSx,
@@ -95,6 +100,29 @@ export default function ExternalMatchWc26Card({
 					odds: formatPickOdds(userBet.betOdds),
 				})
 			: null;
+	const showBetOutcomeIcon =
+		hasScore &&
+		userBet != null &&
+		COMPLETED_BET_STATUSES.includes(userBet.betStatus);
+
+	const betChipRowMt = hasScore ? 0.5 : '2px';
+
+	const betChipRow =
+		betChipLabel != null ? (
+			<Box sx={externalMatchWcBetChipRowSx}>
+				<Box sx={externalMatchWcBetOutcomeIconCellSx}>
+					{showBetOutcomeIcon ? (
+						<BetStatusIcon
+							betStatus={userBet!.betStatus}
+							heightPx={EXTERNAL_MATCH_WC_BET_CHIP_HEIGHT_PX}
+							withTooltip
+						/>
+					) : null}
+				</Box>
+				<Chip size="small" label={betChipLabel} sx={externalMatchWcBetChipSx} />
+				<Box aria-hidden />
+			</Box>
+		) : null;
 
 	return (
 		<Box
@@ -199,19 +227,7 @@ export default function ExternalMatchWc26Card({
 						</Box>
 					</Box>
 
-					{betChipLabel ? (
-						<Box
-							sx={{
-								display: 'flex',
-								justifyContent: 'center',
-								width: '100%',
-								px: 0.25,
-								mt: hasScore ? 0.5 : 0,
-							}}
-						>
-							<Chip size="small" label={betChipLabel} sx={externalMatchWcBetChipSx} />
-						</Box>
-					) : null}
+					{betChipRow ? <Box sx={{ mt: betChipRowMt }}>{betChipRow}</Box> : null}
 				</Box>
 			) : scheduled?.labelKey ? (
 				<Box
@@ -254,11 +270,7 @@ export default function ExternalMatchWc26Card({
 							</Typography>
 						) : null}
 					</Box>
-					{betChipLabel ? (
-						<Box sx={{ display: 'flex', justifyContent: 'center', mt: hasScore ? 0.5 : 0 }}>
-							<Chip size="small" label={betChipLabel} sx={externalMatchWcBetChipSx} />
-						</Box>
-					) : null}
+					{betChipRow ? <Box sx={{ mt: betChipRowMt }}>{betChipRow}</Box> : null}
 				</Box>
 			) : null}
 		</Box>
