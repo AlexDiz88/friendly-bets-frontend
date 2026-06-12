@@ -87,6 +87,7 @@ import {
 	ExternalMatchdayPage as MatchdayPageData,
 } from './types/ExternalMatch';
 import ExternalMatchWc26Card from './ExternalMatchWc26Card';
+import ExternalMatchBetsDialog from './ExternalMatchBetsDialog';
 import WcExternalSlotPanel from './WcExternalSlotPanel';
 import { useWcSlotUserBets } from './useWcSlotUserBets';
 import {
@@ -298,6 +299,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [fourscoreSyncing, setFourscoreSyncing] = useState(false);
 	const [editMatch, setEditMatch] = useState<ExternalMatch | null>(null);
 	const [pickMatch, setPickMatch] = useState<ExternalMatch | null>(null);
+	const [betsMatch, setBetsMatch] = useState<ExternalMatch | null>(null);
 	const [slotBetsRefreshKey, setSlotBetsRefreshKey] = useState(0);
 	const [adminOptionsEnabled, setAdminOptionsEnabled] = useState(false);
 	const [calendarsReady, setCalendarsReady] = useState(false);
@@ -432,6 +434,34 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		]
 	);
 
+	const canViewMatchBets = useCallback(
+		(match: ExternalMatch): boolean => {
+			if (!user || !isSeasonParticipant || !selectedLeague?.id || !activeSeason?.id) {
+				return false;
+			}
+			if (!calendarMatch) {
+				return false;
+			}
+			if (!match.homeTeamId || !match.awayTeamId) {
+				return false;
+			}
+			return !isMatchOpenForBetting(match);
+		},
+		[
+			user,
+			isSeasonParticipant,
+			selectedLeague?.id,
+			activeSeason?.id,
+			calendarMatch,
+			isMatchOpenForBetting,
+		]
+	);
+
+	const isMatchCardClickable = useCallback(
+		(match: ExternalMatch): boolean => canUserBetOnMatch(match) || canViewMatchBets(match),
+		[canUserBetOnMatch, canViewMatchBets]
+	);
+
 	const handleMatchPick = useCallback(
 		(match: ExternalMatch): void => {
 			if (!calendarMatch) {
@@ -460,6 +490,19 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			isMatchOpenForBetting,
 			dispatch,
 		]
+	);
+
+	const handleMatchClick = useCallback(
+		(match: ExternalMatch): void => {
+			if (canUserBetOnMatch(match)) {
+				handleMatchPick(match);
+				return;
+			}
+			if (canViewMatchBets(match)) {
+				setBetsMatch(match);
+			}
+		},
+		[canUserBetOnMatch, canViewMatchBets, handleMatchPick]
 	);
 
 	const reloadMatchday = useCallback(async (): Promise<void> => {
@@ -1219,6 +1262,18 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				/>
 			) : null}
 
+			{betsMatch && user && activeSeason && selectedLeague ? (
+				<ExternalMatchBetsDialog
+					open
+					onClose={() => setBetsMatch(null)}
+					match={betsMatch}
+					seasonId={activeSeason.id}
+					leagueId={selectedLeague.id}
+					matchDay={betMatchDay}
+					currentUserId={user.id}
+				/>
+			) : null}
+
 			{!isExternalPageReady && (
 				<Box sx={isWcLeague ? externalMatchWcLoadingAreaSx : { display: 'flex', justifyContent: 'center', py: 3 }}>
 					<CircularProgress size={isWcLeague ? 28 : 40} />
@@ -1252,7 +1307,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						/>
 						<Box sx={externalMatchWcMatchGridSx(sortedMatches.length)}>
 							{sortedMatches.map((match: ExternalMatch, index: number) => {
-								const betEnabled = canUserBetOnMatch(match);
+								const betEnabled = isMatchCardClickable(match);
 								const matchBet =
 									match.homeTeamId && match.awayTeamId
 										? betsByMatch.get(`${match.homeTeamId}_${match.awayTeamId}`)
@@ -1265,7 +1320,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										userBet={matchBet}
 										isLast={index === sortedMatches.length - 1}
 										clickable={betEnabled}
-										onClick={betEnabled ? () => handleMatchPick(match) : undefined}
+										onClick={betEnabled ? () => handleMatchClick(match) : undefined}
 										showAdminEdit={showAdminTools && Boolean(match.id)}
 										adminEditButton={renderWcAdminEditButton(match)}
 									/>
@@ -1307,12 +1362,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 								hour: '2-digit',
 								minute: '2-digit',
 							}) ?? '';
-						const betEnabled = canUserBetOnMatch(match);
+						const betEnabled = isMatchCardClickable(match);
 
 						return (
 							<Box
 								key={match.externalMatchId}
-								onClick={betEnabled ? () => handleMatchPick(match) : undefined}
+								onClick={betEnabled ? () => handleMatchClick(match) : undefined}
 								sx={{
 									px: 1,
 									py: 0.45,

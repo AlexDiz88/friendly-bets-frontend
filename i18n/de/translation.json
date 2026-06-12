@@ -971,7 +971,12 @@
 		},
 		"externalResults": {
 			"betsQuota": "Wetten: {{used}} / {{limit}}",
-			"betsLoading": "Wetten werden geladen…"
+			"betsLoading": "Wetten werden geladen…",
+			"matchBets": {
+				"overline": "Teilnehmerwetten aufs Spiel",
+				"count": "Wetten gesamt: {{count}}",
+				"empty": "Kein Teilnehmer hat auf dieses Spiel gewettet"
+			}
 		},
 		"oddsPick": {
 			"title": "Wette wählen",

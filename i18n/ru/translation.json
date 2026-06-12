@@ -971,7 +971,12 @@
 		},
 		"externalResults": {
 			"betsQuota": "Ставки: {{used}} / {{limit}}",
-			"betsLoading": "Загрузка ваших ставок…"
+			"betsLoading": "Загрузка ваших ставок…",
+			"matchBets": {
+				"overline": "Ставки участников на матч",
+				"count": "Всего ставок: {{count}}",
+				"empty": "Никто из участников не сделал ставку на этот матч"
+			}
 		},
 		"oddsPick": {
 			"title": "Выбор ставки",

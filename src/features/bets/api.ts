@@ -120,6 +120,31 @@ export async function getUserSlotBets(
 	return result.json();
 }
 
+export async function getMatchBets(
+	seasonId: string,
+	leagueId: string,
+	matchDay: string,
+	homeTeamId: string,
+	awayTeamId: string
+): Promise<{ bets: Bet[] }> {
+	const queryParams = new URLSearchParams({
+		leagueId,
+		matchDay,
+		homeTeamId,
+		awayTeamId,
+	});
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/match/seasons/${seasonId}?${queryParams.toString()}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/bets/match/seasons/${seasonId}?${queryParams.toString()}`;
+	}
+	const result = await apiFetch(url);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 // export async function getCompletedBets(
 // 	seasonId: string,
 // 	playerId?: string,

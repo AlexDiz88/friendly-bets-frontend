@@ -971,7 +971,12 @@
 		},
 		"externalResults": {
 			"betsQuota": "Bets: {{used}} / {{limit}}",
-			"betsLoading": "Loading your bets…"
+			"betsLoading": "Loading your bets…",
+			"matchBets": {
+				"overline": "Participants' match bets",
+				"count": "Total bets: {{count}}",
+				"empty": "No participant placed a bet on this match"
+			}
 		},
 		"oddsPick": {
 			"title": "Pick a bet",
