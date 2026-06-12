@@ -45,7 +45,10 @@ function ko(
 	return { id, date, timeLocal, stage, labelKey, venueKey };
 }
 
-/** Расписание FIFA World Cup 26™ — локальное время стадиона (официальный график, март 2026). */
+/**
+ * Статическое расписание FIFA World Cup 26™ (слоты ставок, сопоставление с external).
+ * Страница ЧМ-2026 загружает расписание + счёт из {@code GET /api/wc26/schedule}.
+ */
 export const WC26_SCHEDULE: Wc26Match[] = [
 	gm(1, '2026-06-11', '13:00', 'A', 'MEX', 'RSA', 'mexicoCity'),
 	gm(2, '2026-06-11', '20:00', 'A', 'KOR', 'CZE', 'guadalajara'),

@@ -182,7 +182,7 @@ export const wc26MatchScoreSx: SxProps<Theme> = (theme) => ({
 	fontSize: { xs: '1.05rem', sm: '1.15rem' },
 	fontVariantNumeric: 'tabular-nums',
 	lineHeight: 1,
-	color: theme.palette.mode === 'dark' ? '#9de8c4' : '#034d2e',
+	color: theme.palette.mode === 'dark' ? '#9de8c4' : '#047857',
 	textShadow:
 		theme.palette.mode === 'dark'
 			? '0 0 10px rgba(157, 232, 196, 0.22)'
@@ -196,10 +196,24 @@ export const wc26KickoffTimeSx: SxProps<Theme> = (theme) => ({
 	fontVariantNumeric: 'tabular-nums',
 	lineHeight: 1,
 	px: 0.25,
-	color: theme.palette.mode === 'dark' ? '#ffe566' : '#6b5200',
+	color: theme.palette.mode === 'dark' ? '#ffe566' : '#a16207',
 	textShadow:
 		theme.palette.mode === 'dark'
 			? '0 0 12px rgba(255, 230, 102, 0.25)'
+			: 'none',
+});
+
+export const wc26MatchLiveMinuteSx: SxProps<Theme> = (theme) => ({
+	flexShrink: 0,
+	fontWeight: 800,
+	fontSize: { xs: '1.05rem', sm: '1.15rem' },
+	fontVariantNumeric: 'tabular-nums',
+	lineHeight: 1,
+	px: 0.25,
+	color: theme.palette.mode === 'dark' ? '#ff9f43' : '#c2410c',
+	textShadow:
+		theme.palette.mode === 'dark'
+			? '0 0 12px rgba(255, 159, 67, 0.35)'
 			: 'none',
 });
 

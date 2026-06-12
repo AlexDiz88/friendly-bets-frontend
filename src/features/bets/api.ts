@@ -102,6 +102,24 @@ export async function getOpenedBets(seasonId: string): Promise<{ bets: Bet[] }> 
 	return result.json();
 }
 
+export async function getUserSlotBets(
+	seasonId: string,
+	leagueId: string,
+	matchDay: string
+): Promise<{ bets: Bet[] }> {
+	const queryParams = new URLSearchParams({ leagueId, matchDay });
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/slot/seasons/${seasonId}?${queryParams.toString()}`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/bets/slot/seasons/${seasonId}?${queryParams.toString()}`;
+	}
+	const result = await apiFetch(url);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 // export async function getCompletedBets(
 // 	seasonId: string,
 // 	playerId?: string,

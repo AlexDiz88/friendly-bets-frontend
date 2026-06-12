@@ -632,6 +632,7 @@
 		"seasonAlreadyHasSameStatus": "Сезон уже имеет этот статус",
 		"seasonWithThisTitleAlreadyExist": "Сезон с таким названием уже существует",
 		"seasonDatesRequired": "Укажите даты начала и окончания сезона",
+		"wc26ScheduleLoadError": "Не удалось загрузить расписание ЧМ-2026",
 		"seasonEndDateBeforeStartDate": "Дата окончания не может быть раньше даты начала",
 		"betAlreadyAdded": "Ставка на этот матч от данного участника уже добавлена",
 		"betOddsLocked": "Кэф и исход этой ставки нельзя изменить",

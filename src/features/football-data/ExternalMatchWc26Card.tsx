@@ -22,6 +22,7 @@ import {
 	externalMatchWcCardRowSx,
 	externalMatchWcKickoffDateSx,
 	externalMatchWcKickoffTimeSx,
+	externalMatchWcLiveMinuteSx,
 } from './externalMatchWcPageStyles';
 import { wc26MatchMetaSx } from '../world-cup-2026/wc26PageStyles';
 import { getExternalMatchScoreView } from './externalMatchScoreView';
@@ -80,6 +81,7 @@ export default function ExternalMatchWc26Card({
 		match.status,
 		Boolean(match.finalized)
 	);
+	const hasScore = Boolean(scoreView && scoreView !== '—');
 	const statusLabel = match.finalized
 		? t('gameResultFinalized')
 		: translateMatchStatus(match.status, t);
@@ -178,14 +180,17 @@ export default function ExternalMatchWc26Card({
 								gap: 0.05,
 							}}
 						>
-							<Typography component="span" sx={externalMatchWcKickoffDateSx}>
-								{dateLabel}
-							</Typography>
+							{!hasScore ? (
+								<Typography component="span" sx={externalMatchWcKickoffDateSx}>
+									{dateLabel}
+								</Typography>
+							) : null}
 							<Wc26MatchCenterStatus
 								kickoffTime={kickoff}
 								kickoffUtcMs={kickoffUtcMs}
 								scoreView={scoreView}
 								kickoffSx={externalMatchWcKickoffTimeSx}
+								liveMinuteSx={externalMatchWcLiveMinuteSx}
 							/>
 						</Box>
 
@@ -195,7 +200,15 @@ export default function ExternalMatchWc26Card({
 					</Box>
 
 					{betChipLabel ? (
-						<Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', px: 0.25 }}>
+						<Box
+							sx={{
+								display: 'flex',
+								justifyContent: 'center',
+								width: '100%',
+								px: 0.25,
+								mt: hasScore ? 0.5 : 0,
+							}}
+						>
 							<Chip size="small" label={betChipLabel} sx={externalMatchWcBetChipSx} />
 						</Box>
 					) : null}
@@ -212,15 +225,18 @@ export default function ExternalMatchWc26Card({
 						minHeight: 0,
 					}}
 				>
-					<Typography component="span" sx={externalMatchWcKickoffDateSx}>
-						{dateLabel}
-					</Typography>
+					{!hasScore ? (
+						<Typography component="span" sx={externalMatchWcKickoffDateSx}>
+							{dateLabel}
+						</Typography>
+					) : null}
 					<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap', justifyContent: 'center' }}>
 						<Wc26MatchCenterStatus
 							kickoffTime={kickoff}
 							kickoffUtcMs={kickoffUtcMs}
 							scoreView={scoreView}
 							kickoffSx={externalMatchWcKickoffTimeSx}
+							liveMinuteSx={externalMatchWcLiveMinuteSx}
 						/>
 						{scoreView === '—' ? (
 							<Typography
@@ -239,7 +255,9 @@ export default function ExternalMatchWc26Card({
 						) : null}
 					</Box>
 					{betChipLabel ? (
-						<Chip size="small" label={betChipLabel} sx={externalMatchWcBetChipSx} />
+						<Box sx={{ display: 'flex', justifyContent: 'center', mt: hasScore ? 0.5 : 0 }}>
+							<Chip size="small" label={betChipLabel} sx={externalMatchWcBetChipSx} />
+						</Box>
 					) : null}
 				</Box>
 			) : null}

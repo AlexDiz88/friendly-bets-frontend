@@ -1,4 +1,4 @@
-import { Box, Chip, Container, Stack, Typography } from '@mui/material';
+import { Alert, Box, Chip, CircularProgress, Container, Stack, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Wc26PageHero from './Wc26PageHero';
@@ -23,7 +23,8 @@ import {
 	wc26StageChipBarSx,
 	wc26StickyFilterBarSx,
 } from './wc26PageStyles';
-import { useWc26ScheduleScores } from './useWc26ScheduleScores';
+import { useWc26SchedulePage } from './useWc26SchedulePage';
+import type { Wc26MatchWithResult } from './wc26ScheduleApi';
 
 function groupMatchesByGermanDate(matches: Wc26Match[]): Map<string, Wc26Match[]> {
 	const map = new Map<string, Wc26Match[]>();
@@ -47,9 +48,12 @@ export default function WorldCup26Page(): JSX.Element {
 	const { t, i18n } = useTranslation();
 	const dateLocale = wc26DateLocale(i18n.language);
 	const [viewFilter, setViewFilter] = useState<Wc26ViewFilter>('all');
-	const scheduleScores = useWc26ScheduleScores();
+	const { matches: scheduleMatches, loading, error } = useWc26SchedulePage();
 
-	const filtered = useMemo(() => filterWc26Matches(viewFilter), [viewFilter]);
+	const filtered = useMemo(
+		() => filterWc26Matches(scheduleMatches, viewFilter),
+		[scheduleMatches, viewFilter]
+	);
 	const byDate = useMemo(() => groupMatchesByGermanDate(filtered), [filtered]);
 	const sortedDates = useMemo(() => [...byDate.keys()].sort(), [byDate]);
 
@@ -112,6 +116,18 @@ export default function WorldCup26Page(): JSX.Element {
 					</Box>
 				</Box>
 
+				{error ? (
+					<Alert severity="error" sx={{ mb: 1 }}>
+						{t(`error.${error}`, { defaultValue: error })}
+					</Alert>
+				) : null}
+
+				{loading ? (
+					<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+						<CircularProgress size={28} />
+					</Box>
+				) : null}
+
 				<Typography variant="caption" sx={wc26MatchCountSx}>
 					{t('wc26.matchCount', { count: filtered.length })}
 				</Typography>
@@ -135,13 +151,17 @@ export default function WorldCup26Page(): JSX.Element {
 									spacing={0}
 									divider={<Box sx={wc26DividerSx} />}
 								>
-									{dayMatches.map((match) => (
-										<Wc26MatchCard
-											key={match.id}
-											match={match}
-											scoreView={scheduleScores.get(match.id)}
-										/>
-									))}
+									{dayMatches.map((match) => {
+										const withResult = match as Wc26MatchWithResult;
+										return (
+											<Wc26MatchCard
+												key={match.id}
+												match={match}
+												scoreView={withResult.scoreView}
+												scoresReady={!loading}
+											/>
+										);
+									})}
 								</Stack>
 							</Box>
 						);

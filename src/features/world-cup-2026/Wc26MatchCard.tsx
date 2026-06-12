@@ -12,6 +12,7 @@ import Bet from '../bets/types/Bet';
 interface Wc26MatchCardProps {
 	match: Wc26Match;
 	scoreView?: string;
+	scoresReady?: boolean;
 	onClick?: () => void;
 	clickable?: boolean;
 	userBet?: Bet;
@@ -20,6 +21,7 @@ interface Wc26MatchCardProps {
 export default function Wc26MatchCard({
 	match,
 	scoreView,
+	scoresReady = true,
 	onClick,
 	clickable = false,
 	userBet,
@@ -119,6 +121,7 @@ export default function Wc26MatchCard({
 							kickoffTime={german.time}
 							kickoffUtcMs={kickoffUtcMs}
 							scoreView={scoreView}
+							scoresReady={scoresReady}
 						/>
 					</Box>
 
@@ -139,6 +142,7 @@ export default function Wc26MatchCard({
 						kickoffTime={german.time}
 						kickoffUtcMs={kickoffUtcMs}
 						scoreView={scoreView}
+						scoresReady={scoresReady}
 					/>
 					{!scoreView ? (
 						<Typography variant="body2" sx={{ fontSize: '0.8rem', lineHeight: 1.3 }}>

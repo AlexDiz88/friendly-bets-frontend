@@ -5,6 +5,10 @@ export const MATCH_HALFTIME_BREAK_MIN = 15;
 const SECOND_HALF_START_ELAPSED =
 	MATCH_FIRST_HALF_MIN + MATCH_AVG_ADDED_TIME_MIN + MATCH_HALFTIME_BREAK_MIN;
 
+/** Верхняя граница elapsed (мин), внутри которой матч ещё может идти (~90' + добавленное). */
+export const MATCH_LIVE_WINDOW_ELAPSED_MAX =
+	SECOND_HALF_START_ELAPSED + MATCH_FIRST_HALF_MIN + MATCH_AVG_ADDED_TIME_MIN;
+
 export type EstimatedMatchMinute =
 	| { kind: 'not_started' }
 	| { kind: 'minute'; label: string }
@@ -13,6 +17,11 @@ export type EstimatedMatchMinute =
 /** Целые минуты с момента пуска (округление вниз). */
 export function elapsedMinutesSinceKickoff(kickoffUtcMs: number, nowMs: number): number {
 	return Math.floor((nowMs - kickoffUtcMs) / 60_000);
+}
+
+export function isMatchLikelyLive(kickoffUtcMs: number, nowMs: number): boolean {
+	const elapsed = elapsedMinutesSinceKickoff(kickoffUtcMs, nowMs);
+	return elapsed >= 0 && elapsed <= MATCH_LIVE_WINDOW_ELAPSED_MAX;
 }
 
 /**
@@ -24,6 +33,9 @@ export function getEstimatedMatchMinute(
 	nowMs: number
 ): EstimatedMatchMinute {
 	const elapsed = elapsedMinutesSinceKickoff(kickoffUtcMs, nowMs);
+	if (elapsed > MATCH_LIVE_WINDOW_ELAPSED_MAX) {
+		return { kind: 'not_started' };
+	}
 	if (elapsed < 0) {
 		return { kind: 'not_started' };
 	}

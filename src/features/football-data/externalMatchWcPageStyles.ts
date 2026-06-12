@@ -76,11 +76,14 @@ export const externalMatchWcTitleSx: SxProps<Theme> = (theme) => {
 	};
 };
 
+/** Доля высоты колонки страницы от `APP_MAIN_MIN_HEIGHT`. */
+export const WC_PAGE_COLUMN_HEIGHT_RATIO = 0.9;
+
 /** Колонка страницы ЧМ: вся высота main без вертикального скролла страницы */
 export const externalMatchWcPageColumnSx: SxProps<Theme> = {
 	display: 'flex',
 	flexDirection: 'column',
-	height: APP_MAIN_MIN_HEIGHT,
+	height: `calc(${APP_MAIN_MIN_HEIGHT} * ${WC_PAGE_COLUMN_HEIGHT_RATIO})`,
 	maxHeight: APP_MAIN_MIN_HEIGHT,
 	overflow: 'hidden',
 	boxSizing: 'border-box',
@@ -193,10 +196,24 @@ export const externalMatchWcKickoffTimeSx: SxProps<Theme> = (theme) => ({
 	fontVariantNumeric: 'tabular-nums',
 	lineHeight: 1,
 	px: 0.25,
-	color: theme.palette.mode === 'dark' ? '#ffe566' : '#6b5200',
+	color: theme.palette.mode === 'dark' ? '#ffe566' : '#a16207',
 	textShadow:
 		theme.palette.mode === 'dark'
 			? '0 0 12px rgba(255, 230, 102, 0.25)'
+			: 'none',
+});
+
+export const externalMatchWcLiveMinuteSx: SxProps<Theme> = (theme) => ({
+	flexShrink: 0,
+	fontWeight: 800,
+	fontSize: { xs: '0.95rem', sm: '1.05rem' },
+	fontVariantNumeric: 'tabular-nums',
+	lineHeight: 1,
+	px: 0.25,
+	color: theme.palette.mode === 'dark' ? '#ff9f43' : '#c2410c',
+	textShadow:
+		theme.palette.mode === 'dark'
+			? '0 0 12px rgba(255, 159, 67, 0.35)'
 			: 'none',
 });
 
