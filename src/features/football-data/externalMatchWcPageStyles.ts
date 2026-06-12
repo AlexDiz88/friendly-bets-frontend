@@ -227,10 +227,29 @@ export const externalMatchWcKickoffDateSx: SxProps<Theme> = (theme) => ({
 	textTransform: 'none',
 });
 
+/** Высота чипа ставки на карточке матча (иконка статуса выравнивается по ней). */
+export const EXTERNAL_MATCH_WC_BET_CHIP_HEIGHT_PX = 20;
+
+/** Чип по центру; иконка статуса — слева от чипа, не сдвигая его. */
+export const externalMatchWcBetChipRowSx: SxProps<Theme> = {
+	display: 'grid',
+	gridTemplateColumns: '1fr auto 1fr',
+	alignItems: 'center',
+	width: '100%',
+	px: 0.25,
+};
+
+export const externalMatchWcBetOutcomeIconCellSx: SxProps<Theme> = {
+	justifySelf: 'end',
+	display: 'flex',
+	alignItems: 'center',
+	lineHeight: 0,
+};
+
 export const externalMatchWcBetChipSx: SxProps<Theme> = (theme) => {
 	const isDark = theme.palette.mode === 'dark';
 	return {
-		height: 20,
+		height: EXTERNAL_MATCH_WC_BET_CHIP_HEIGHT_PX,
 		maxWidth: '100%',
 		border: '1px solid',
 		borderColor: isDark ? 'rgba(255, 214, 0, 0.38)' : 'rgba(184, 134, 11, 0.45)',

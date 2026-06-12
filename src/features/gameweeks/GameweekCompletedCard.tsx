@@ -1,14 +1,14 @@
-import { GppBad, GppGood, RestorePage } from '@mui/icons-material';
 import { Avatar, Box, type SxProps, type Theme } from '@mui/material';
 import { getGameScoreView } from '../../components/utils/gameScoreValidation';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import { BET_STATUS_RETURNED, BET_STATUS_WON } from '../../constants';
+import BetStatusIcon from '../bets/BetStatusIcon';
 import Bet from '../bets/types/Bet';
 import {
 	gameweekBalanceChangeSx,
+	gameweekBetOutcomeRowSx,
 	gameweekCardScoreSx,
 	gameweekCompactStatusCardSx,
-	gameweekStatusIconSx,
 } from './gameweekPageStyles';
 
 const GameweekCompletedCard = ({
@@ -71,24 +71,14 @@ const GameweekCompletedCard = ({
 				</Box>
 			</Box>
 
-			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-				<Box>
-					<Box sx={{ display: 'flex', alignItems: 'center', ml: -1, mt: -0.3 }}>
-						{bet.betStatus === BET_STATUS_WON ? (
-							<GppGood sx={[gameweekStatusIconSx('won'), { transform: 'scale(0.85)' }] as SxProps<Theme>} />
-						) : bet.betStatus === BET_STATUS_RETURNED ? (
-							<RestorePage sx={gameweekStatusIconSx('returned')} />
-						) : (
-							<GppBad sx={gameweekStatusIconSx('lost')} />
-						)}
-					</Box>
-				</Box>
+			<Box sx={gameweekBetOutcomeRowSx}>
+				<BetStatusIcon betStatus={bet.betStatus} />
 				{bet.balanceChange !== undefined && (
 					<Box
 						sx={
 							[
 								gameweekBalanceChangeSx(bet.balanceChange),
-								{ fontSize: '1.1rem' },
+								{ fontSize: '1.1rem', lineHeight: 1 },
 							] as SxProps<Theme>
 						}
 					>
