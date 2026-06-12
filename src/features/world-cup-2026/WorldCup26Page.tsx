@@ -158,6 +158,10 @@ export default function WorldCup26Page(): JSX.Element {
 												key={match.id}
 												match={match}
 												scoreView={withResult.scoreView}
+												status={withResult.status}
+												finalized={withResult.finalized}
+												liveMinuteLabel={withResult.liveMinuteLabel}
+												fetchedAt={withResult.fetchedAt}
 												scoresReady={!loading}
 											/>
 										);

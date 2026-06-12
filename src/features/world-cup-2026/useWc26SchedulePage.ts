@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { pageHasLiveMatches } from '../../shared/livePagePolling';
+import { useLivePagePolling } from '../../shared/useLivePagePolling';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import { resolveExternalSeasonForLeague } from '../football-data/seasonExternalYear';
@@ -26,34 +28,46 @@ export function useWc26SchedulePage(): Wc26SchedulePageState {
 		}
 	}, [activeSeason, dispatch]);
 
-	useEffect(() => {
-		let cancelled = false;
-		setLoading(true);
-		setError(null);
-
-		const load = async (): Promise<void> => {
+	const loadSchedule = useCallback(
+		async (options?: { silent?: boolean }): Promise<void> => {
+			const silent = options?.silent ?? false;
+			if (!silent) {
+				setLoading(true);
+			}
+			setError(null);
 			try {
 				const page = await fetchWc26SchedulePage(externalSeason);
-				if (!cancelled) {
-					setMatches(page);
-				}
+				setMatches(page);
 			} catch (err) {
-				if (!cancelled) {
+				if (!silent) {
 					setMatches([]);
 					setError(err instanceof Error ? err.message : 'wc26ScheduleLoadError');
 				}
 			} finally {
-				if (!cancelled) {
+				if (!silent) {
 					setLoading(false);
 				}
 			}
-		};
+		},
+		[externalSeason]
+	);
 
-		void load();
+	useEffect(() => {
+		let cancelled = false;
+		void (async () => {
+			await loadSchedule();
+			if (cancelled) {
+				return;
+			}
+		})();
 		return () => {
 			cancelled = true;
 		};
-	}, [externalSeason]);
+	}, [loadSchedule]);
+
+	const hasLiveMatches = useMemo(() => pageHasLiveMatches(matches), [matches]);
+
+	useLivePagePolling(!loading && !error && hasLiveMatches, () => loadSchedule({ silent: true }));
 
 	return { matches, loading, error };
 }

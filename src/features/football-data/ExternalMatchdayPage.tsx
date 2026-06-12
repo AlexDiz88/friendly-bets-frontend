@@ -22,6 +22,8 @@ import { toggleFormControlLabelSx } from '../../components/custom/controls/custo
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { pageHasLiveMatches } from '../../shared/livePagePolling';
+import { useLivePagePolling } from '../../shared/useLivePagePolling';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
@@ -469,6 +471,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		);
 		setData(page);
 	}, [competitionCode, effectiveMatchday, externalSeason, selectedLeague?.id]);
+
+	const hasLiveMatches = useMemo(
+		() => pageHasLiveMatches(data?.matches ?? []),
+		[data?.matches]
+	);
+
+	useLivePagePolling(isExternalPageReady && hasLiveMatches, reloadMatchday);
 
 	useEffect(() => {
 		if (!activeSeason) {
