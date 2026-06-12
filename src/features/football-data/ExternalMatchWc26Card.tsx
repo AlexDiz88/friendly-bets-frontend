@@ -33,6 +33,7 @@ import {
 	externalMatchWcLiveMinuteSx,
 	externalMatchWcLiveScoreSx,
 	externalMatchWcHalftimeBadgeSx,
+	externalMatchWcStatusChipSx,
 } from './externalMatchWcPageStyles';
 import { wc26MatchMetaSx } from '../world-cup-2026/wc26PageStyles';
 import {
@@ -180,11 +181,7 @@ export default function ExternalMatchWc26Card({
 							size="small"
 							label={statusLabel}
 							color={statusColor}
-							sx={{
-								height: 15,
-								fontSize: '0.52rem',
-								'& .MuiChip-label': { px: 0.45, py: 0 },
-							}}
+							sx={externalMatchWcStatusChipSx}
 						/>
 					)}
 					{showAdminEdit ? adminEditButton : null}

@@ -305,13 +305,19 @@ export const externalMatchWcLiveBadgeSx: SxProps<Theme> = (theme) => {
 	};
 };
 
+export const externalMatchWcStatusChipSx: SxProps<Theme> = {
+	height: 20,
+	fontSize: '0.65rem',
+	'& .MuiChip-label': { px: 0.55, py: 0 },
+};
+
 export const externalMatchWcHalftimeBadgeSx: SxProps<Theme> = (theme) => ({
 	display: 'inline-flex',
 	alignItems: 'center',
-	height: 16,
-	px: 0.55,
+	height: 18,
+	px: 0.65,
 	borderRadius: '5px',
-	fontSize: '0.5rem',
+	fontSize: '0.56rem',
 	fontWeight: 700,
 	color: theme.palette.mode === 'dark' ? '#ffd966' : '#8b6914',
 	border: '1px solid',
