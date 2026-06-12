@@ -1,7 +1,12 @@
 import { Box, FormControl, TextField, Typography } from '@mui/material';
 import { t } from 'i18next';
 import UnmappedTeamNameHints from './UnmappedTeamNameHints';
-import { FOOTBALL_DATA_PROVIDER, MARATHONBET_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
+import {
+	FOOTBALL_DATA_PROVIDER,
+	FOURSCORE_PROVIDER,
+	MARATHONBET_PROVIDER,
+	ODDS_API_PROVIDER,
+} from './teamProviderConstants';
 import {
 	hasFootballDataApiMapping,
 	hasOddsApiMapping,
@@ -77,6 +82,28 @@ export default function TeamFormFields({
 					variant="outlined"
 					value={values.nameDe}
 					onChange={(e) => onChange({ nameDe: e.target.value })}
+				/>
+			</Box>
+
+			<Typography sx={{ mt: 1.5, mb: 0.5, fontWeight: 600, textAlign: 'left' }}>
+				{t('teamFourScoreSection')}
+			</Typography>
+			{!values.fourscoreExternalName.trim() ? (
+				<UnmappedTeamNameHints
+					provider={FOURSCORE_PROVIDER}
+					refreshKey={unmappedHintsRefreshKey}
+					onApply={(externalName) => onChange({ fourscoreExternalName: externalName })}
+				/>
+			) : null}
+			<Box sx={{ my: 1 }}>
+				<TextField
+					fullWidth
+					id="fourscore-external-name"
+					label={t('teamFourScoreExternalName')}
+					variant="outlined"
+					value={values.fourscoreExternalName}
+					onChange={(e) => onChange({ fourscoreExternalName: e.target.value })}
+					helperText={t('teamFourScoreExternalNameHint')}
 				/>
 			</Box>
 

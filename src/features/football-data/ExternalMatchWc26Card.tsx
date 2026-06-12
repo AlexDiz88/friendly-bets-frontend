@@ -1,6 +1,7 @@
 import { Box, Chip, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import Wc26MatchCenterStatus from '../world-cup-2026/Wc26MatchCenterStatus';
 import Wc26TeamFlag from '../world-cup-2026/Wc26TeamFlag';
 import {
 	findWc26ScheduleMatchForExternal,
@@ -10,7 +11,9 @@ import {
 	formatBerlinDateFromIsoDate,
 	formatBerlinDateFromUtc,
 	kickoffToGerman,
+	venueLocalKickoffToUtcMs,
 } from '../world-cup-2026/wc26Time';
+import { parseUtcDate } from '../../shared/utcDate';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
 import { formatPickOdds } from '../../components/odds/formatPickOdds';
 import type Bet from '../bets/types/Bet';
@@ -65,6 +68,12 @@ export default function ExternalMatchWc26Card({
 			dateLabel: formatBerlinDateFromUtc(match.utcDate, i18n.language),
 		};
 	}, [scheduled, match.utcDate, i18n.language]);
+	const kickoffUtcMs = useMemo(() => {
+		if (scheduled) {
+			return venueLocalKickoffToUtcMs(scheduled.date, scheduled.timeLocal, scheduled.venueKey);
+		}
+		return parseUtcDate(match.utcDate)?.getTime() ?? 0;
+	}, [scheduled, match.utcDate]);
 	const gameScore: GameScore | null = match.gameScore ?? null;
 	const scoreView = getExternalMatchScoreView(
 		gameScore,
@@ -172,23 +181,12 @@ export default function ExternalMatchWc26Card({
 							<Typography component="span" sx={externalMatchWcKickoffDateSx}>
 								{dateLabel}
 							</Typography>
-							<Typography component="span" sx={externalMatchWcKickoffTimeSx}>
-								{kickoff}
-							</Typography>
-							{scoreView !== '—' ? (
-								<Typography
-									variant="caption"
-									sx={{
-										fontWeight: 800,
-										fontSize: '0.8rem',
-										lineHeight: 1.1,
-										color: (theme) =>
-											theme.palette.mode === 'dark' ? '#ffe566' : '#6b5200',
-									}}
-								>
-									{scoreView}
-								</Typography>
-							) : null}
+							<Wc26MatchCenterStatus
+								kickoffTime={kickoff}
+								kickoffUtcMs={kickoffUtcMs}
+								scoreView={scoreView}
+								kickoffSx={externalMatchWcKickoffTimeSx}
+							/>
 						</Box>
 
 						<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-start', minWidth: 0 }}>
@@ -218,33 +216,25 @@ export default function ExternalMatchWc26Card({
 						{dateLabel}
 					</Typography>
 					<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap', justifyContent: 'center' }}>
-						<Typography component="span" sx={externalMatchWcKickoffTimeSx}>
-							{kickoff}
-						</Typography>
-						<Typography
-							variant="body2"
-							sx={{
-								fontSize: '0.75rem',
-								lineHeight: 1.25,
-								color: (theme) =>
-									theme.palette.mode === 'dark' ? '#8fd4b0' : '#0a5c38',
-								fontWeight: 600,
-								textAlign: 'center',
-							}}
-						>
-							{t(scheduled.labelKey)}
-						</Typography>
-						{scoreView !== '—' ? (
+						<Wc26MatchCenterStatus
+							kickoffTime={kickoff}
+							kickoffUtcMs={kickoffUtcMs}
+							scoreView={scoreView}
+							kickoffSx={externalMatchWcKickoffTimeSx}
+						/>
+						{scoreView === '—' ? (
 							<Typography
-								variant="caption"
+								variant="body2"
 								sx={{
-									fontWeight: 700,
 									fontSize: '0.75rem',
+									lineHeight: 1.25,
 									color: (theme) =>
-										theme.palette.mode === 'dark' ? '#ffe566' : '#6b5200',
+										theme.palette.mode === 'dark' ? '#8fd4b0' : '#0a5c38',
+									fontWeight: 600,
+									textAlign: 'center',
 								}}
 							>
-								{scoreView}
+								{t(scheduled.labelKey)}
 							</Typography>
 						) : null}
 					</Box>

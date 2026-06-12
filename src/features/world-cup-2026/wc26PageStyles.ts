@@ -179,9 +179,14 @@ export const wc26MatchMetaSx: SxProps<Theme> = (theme) => ({
 export const wc26MatchScoreSx: SxProps<Theme> = (theme) => ({
 	display: 'block',
 	fontWeight: 800,
-	fontSize: '0.8rem',
-	lineHeight: 1.1,
-	color: theme.palette.mode === 'dark' ? '#ffe566' : '#6b5200',
+	fontSize: { xs: '1.05rem', sm: '1.15rem' },
+	fontVariantNumeric: 'tabular-nums',
+	lineHeight: 1,
+	color: theme.palette.mode === 'dark' ? '#9de8c4' : '#034d2e',
+	textShadow:
+		theme.palette.mode === 'dark'
+			? '0 0 10px rgba(157, 232, 196, 0.22)'
+			: 'none',
 });
 
 export const wc26KickoffTimeSx: SxProps<Theme> = (theme) => ({

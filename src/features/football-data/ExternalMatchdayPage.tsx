@@ -2,6 +2,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import PaidIcon from '@mui/icons-material/Paid';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import {
 	Avatar,
 	Alert,
@@ -69,6 +70,7 @@ import {
 } from './footballDataApi';
 import { syncOddsMatchdayFromApi } from './matchOddsApi';
 import { syncMarathonbetSlot } from '../marathonbet-odds/marathonbetOddsApi';
+import { syncFourScoreMatchday } from '../fourscore/fourscoreApi';
 import { notifyExternalSyncIssuesChanged } from '../admin/external-sync-issues/api';
 import {
 	getMatchStatusChipColor,
@@ -291,6 +293,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [syncing, setSyncing] = useState(false);
 	const [oddsSyncing, setOddsSyncing] = useState(false);
 	const [marathonbetSyncing, setMarathonbetSyncing] = useState(false);
+	const [fourscoreSyncing, setFourscoreSyncing] = useState(false);
 	const [editMatch, setEditMatch] = useState<ExternalMatch | null>(null);
 	const [pickMatch, setPickMatch] = useState<ExternalMatch | null>(null);
 	const [slotBetsRefreshKey, setSlotBetsRefreshKey] = useState(0);
@@ -628,6 +631,42 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		}
 	};
 
+	const handleFourScoreSyncFromApi = async (): Promise<void> => {
+		if (!isWcLeague) {
+			return;
+		}
+		setFourscoreSyncing(true);
+		try {
+			const updated = await syncFourScoreMatchday(
+				competitionCode,
+				effectiveMatchday,
+				externalSeason,
+				selectedLeague?.id
+			);
+			const page = await getMatchdayFromCache(
+				competitionCode,
+				effectiveMatchday,
+				externalSeason,
+				selectedLeague?.id
+			);
+			setData(page);
+			notifyExternalSyncIssuesChanged();
+			dispatch(
+				showSuccessSnackbar({
+					message: t('externalMatchFourScoreSyncSuccess', { count: updated }),
+				})
+			);
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : t('externalMatchFourScoreSyncError'),
+				})
+			);
+		} finally {
+			setFourscoreSyncing(false);
+		}
+	};
+
 	const handleMarathonbetSyncFromApi = async (): Promise<void> => {
 		if (!selectedLeague?.id || !isWcLeague) {
 			return;
@@ -891,11 +930,37 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							}}
 						>
 							{isWcLeague ? (
+								<Tooltip title={t('externalMatchFourScoreSyncFromApi')}>
+									<span>
+										<IconButton
+											size="small"
+											disabled={
+												fourscoreSyncing ||
+												marathonbetSyncing ||
+												oddsSyncing ||
+												syncing ||
+												loading
+											}
+											onClick={() => void handleFourScoreSyncFromApi()}
+											aria-label={t('externalMatchFourScoreSyncFromApi')}
+											sx={externalMatchWcRefreshSyncButtonSx}
+										>
+											{fourscoreSyncing ? (
+												<CircularProgress size={18} sx={{ color: 'common.white' }} />
+											) : (
+												<SportsScoreIcon sx={{ fontSize: 18, color: 'common.white' }} />
+											)}
+										</IconButton>
+									</span>
+								</Tooltip>
+							) : null}
+							{isWcLeague ? (
 								<Tooltip title={t('externalMatchMarathonbetSyncFromApi')}>
 									<span>
 										<IconButton
 											size="small"
 											disabled={
+												fourscoreSyncing ||
 												marathonbetSyncing ||
 												oddsSyncing ||
 												syncing ||
@@ -920,6 +985,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 									<IconButton
 										size="small"
 										disabled={
+											fourscoreSyncing ||
 											marathonbetSyncing ||
 											oddsSyncing ||
 											syncing ||
@@ -957,7 +1023,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 								<span>
 									<IconButton
 										size="small"
-										disabled={syncing || oddsSyncing || marathonbetSyncing || loading}
+										disabled={
+											syncing ||
+											oddsSyncing ||
+											marathonbetSyncing ||
+											fourscoreSyncing ||
+											loading
+										}
 										onClick={() => void handleSyncFromApi()}
 										aria-label={t('externalMatchSyncFromApi')}
 										sx={

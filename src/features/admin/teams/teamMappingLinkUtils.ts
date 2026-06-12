@@ -1,6 +1,11 @@
 import { ExternalSyncIssue } from '../external-sync-issues/types/ExternalSyncIssue';
 import Team from './types/Team';
-import { FOOTBALL_DATA_PROVIDER, MARATHONBET_PROVIDER, ODDS_API_PROVIDER } from './teamProviderConstants';
+import {
+	FOOTBALL_DATA_PROVIDER,
+	FOURSCORE_PROVIDER,
+	MARATHONBET_PROVIDER,
+	ODDS_API_PROVIDER,
+} from './teamProviderConstants';
 import { TeamFormValues } from './teamFormUtils';
 
 export type TeamMappingRef = {
@@ -132,6 +137,13 @@ export function buildExternalAliasPrefill(
 		const patch: Partial<TeamFormValues> = {};
 		if (externalName) {
 			patch.marathonbetExternalName = externalName;
+		}
+		return patch;
+	}
+	if (provider === FOURSCORE_PROVIDER) {
+		const patch: Partial<TeamFormValues> = {};
+		if (externalName) {
+			patch.fourscoreExternalName = externalName;
 		}
 		return patch;
 	}
