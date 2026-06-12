@@ -10,14 +10,19 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
-	TextField,
 	Typography,
 	useTheme,
 } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { type Dayjs } from 'dayjs';
+import 'dayjs/locale/de';
+import 'dayjs/locale/ru';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
+import CustomDatePicker from '../../components/custom/dialog/CustomDatePicker';
 import { showErrorSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import {
 	oddsDemoHintSx,
@@ -32,10 +37,6 @@ const FOURSCORE_BASE = 'https://4score.ru';
 const PAGE_ROOT_SX = { ...oddsDemoPageRootSx, maxWidth: 1440 };
 
 type SectionFilter = 'ALL' | 'WORLD_CUP' | 'FRIENDLIES';
-
-function todayIso(): string {
-	return new Date().toISOString().slice(0, 10);
-}
 
 function dash(value: string | null | undefined): string {
 	return value && value.trim() !== '' ? value : '—';
@@ -60,10 +61,11 @@ function mappingCell(mapped: boolean, externalName: string, teamTitle: string | 
 }
 
 export default function FourScorePreviewPage(): JSX.Element {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
-	const [date, setDate] = useState(todayIso);
+	const [date, setDate] = useState<Dayjs>(() => dayjs());
+	const datePickerLocale = i18n.language === 'ru' ? 'ru' : i18n.language === 'de' ? 'de' : 'en';
 	const [loading, setLoading] = useState(false);
 	const [matches, setMatches] = useState<FourScorePreviewMatch[]>([]);
 	const [sectionFilter, setSectionFilter] = useState<SectionFilter>('ALL');
@@ -71,7 +73,7 @@ export default function FourScorePreviewPage(): JSX.Element {
 	const load = useCallback(async (): Promise<void> => {
 		setLoading(true);
 		try {
-			setMatches(await fetchFourScorePreview(date));
+			setMatches(await fetchFourScorePreview(date.format('YYYY-MM-DD')));
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
@@ -115,16 +117,19 @@ export default function FourScorePreviewPage(): JSX.Element {
 			<Box sx={oddsDemoHintSx}>{t('fourScorePreviewHint')}</Box>
 
 			<Box sx={{ ...oddsDemoPanelSx(theme), mb: 2 }}>
-				<Box sx={oddsDemoToolbarRowSx}>
-					<TextField
-						type="date"
-						size="small"
-						label={t('fourScorePreviewDate')}
-						value={date}
-						onChange={(e) => setDate(e.target.value)}
-						InputLabelProps={{ shrink: true }}
-						sx={{ minWidth: 160 }}
-					/>
+				<Box sx={{ ...oddsDemoToolbarRowSx, alignItems: 'center' }}>
+					<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={datePickerLocale}>
+						<CustomDatePicker
+							compact
+							label={t('fourScorePreviewDate')}
+							value={date}
+							onChange={(next) => {
+								if (next) {
+									setDate(next);
+								}
+							}}
+						/>
+					</LocalizationProvider>
 					<CustomButton
 						onClick={() => void load()}
 						disabled={loading}

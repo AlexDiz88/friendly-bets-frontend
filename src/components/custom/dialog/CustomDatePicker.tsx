@@ -8,6 +8,8 @@ interface DatePickerProps {
 	minDate?: Dayjs;
 	maxDate?: Dayjs;
 	inputRef?: React.Ref<HTMLInputElement>;
+	/** Высота как у CustomButton (2.25rem), без вертикальных отступов */
+	compact?: boolean;
 }
 
 const CustomDatePicker = ({
@@ -17,10 +19,11 @@ const CustomDatePicker = ({
 	minDate,
 	maxDate,
 	inputRef,
+	compact = false,
 }: DatePickerProps): JSX.Element => {
 	return (
 		<MobileDatePicker
-			sx={{ my: 1 }}
+			sx={{ my: compact ? 0 : 1 }}
 			label={label}
 			inputRef={inputRef}
 			format="DD.MM.YYYY"
@@ -43,9 +46,18 @@ const CustomDatePicker = ({
 					},
 				},
 				textField: {
+					size: compact ? 'small' : 'medium',
 					sx: {
+						...(compact && {
+							'& .MuiInputBase-root': {
+								height: '2.25rem',
+							},
+							'& input': {
+								py: 0,
+							},
+						}),
 						'& input': {
-							fontSize: '1.1rem',
+							fontSize: compact ? '0.875rem' : '1.1rem',
 							fontWeight: 600,
 						},
 						'& input::placeholder': {

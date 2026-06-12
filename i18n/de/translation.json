@@ -36,6 +36,9 @@
 	"externalMatchSyncProgress": "{{finished}} / {{total}} Spiele",
 	"externalMatchBettingUnavailableNoCalendar": "Wetten auf diesen Spieltag sind derzeit nicht möglich — der Spieltag wurde noch nicht zum Saisonkalender hinzugefügt.",
 	"gameResultFinalized": "Ergebnis fixiert",
+	"matchCenter": {
+		"halftime": "Halbzeit"
+	},
 	"gameResultEditScore": "Ergebnis korrigieren",
 	"gameResultEditScoreTitle": "Spielstand",
 	"gameResultAdminOptions": "Admin-Optionen",

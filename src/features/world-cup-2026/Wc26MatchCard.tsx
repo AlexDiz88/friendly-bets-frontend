@@ -2,9 +2,10 @@ import { Box, Chip, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Wc26TeamFlag from './Wc26TeamFlag';
-import { kickoffToGerman } from './wc26Time';
+import Wc26MatchCenterStatus from './Wc26MatchCenterStatus';
+import { kickoffToGerman, venueLocalKickoffToUtcMs } from './wc26Time';
 import type { Wc26Match } from './wc26Schedule';
-import { wc26KickoffTimeSx, wc26MatchMetaSx, wc26MatchScoreSx } from './wc26PageStyles';
+import { wc26MatchMetaSx } from './wc26PageStyles';
 import { formatPickOdds } from '../../components/odds/formatPickOdds';
 import Bet from '../bets/types/Bet';
 
@@ -26,6 +27,10 @@ export default function Wc26MatchCard({
 	const { t } = useTranslation();
 	const german = useMemo(
 		() => kickoffToGerman(match.date, match.timeLocal, match.venueKey),
+		[match.date, match.timeLocal, match.venueKey]
+	);
+	const kickoffUtcMs = useMemo(
+		() => venueLocalKickoffToUtcMs(match.date, match.timeLocal, match.venueKey),
 		[match.date, match.timeLocal, match.venueKey]
 	);
 	const hasTeams = Boolean(match.home && match.away);
@@ -110,14 +115,11 @@ export default function Wc26MatchCard({
 							gap: 0.1,
 						}}
 					>
-						<Typography component="span" sx={wc26KickoffTimeSx}>
-							{german.time}
-						</Typography>
-						{scoreView ? (
-							<Typography component="span" sx={wc26MatchScoreSx}>
-								{scoreView}
-							</Typography>
-						) : null}
+						<Wc26MatchCenterStatus
+							kickoffTime={german.time}
+							kickoffUtcMs={kickoffUtcMs}
+							scoreView={scoreView}
+						/>
 					</Box>
 
 					<Box
@@ -133,12 +135,16 @@ export default function Wc26MatchCard({
 				</Box>
 			) : (
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-					<Typography component="span" sx={wc26KickoffTimeSx}>
-						{german.time}
-					</Typography>
-					<Typography variant="body2" sx={{ fontSize: '0.8rem', lineHeight: 1.3 }}>
-						{t(match.labelKey ?? '')}
-					</Typography>
+					<Wc26MatchCenterStatus
+						kickoffTime={german.time}
+						kickoffUtcMs={kickoffUtcMs}
+						scoreView={scoreView}
+					/>
+					{!scoreView ? (
+						<Typography variant="body2" sx={{ fontSize: '0.8rem', lineHeight: 1.3 }}>
+							{t(match.labelKey ?? '')}
+						</Typography>
+					) : null}
 				</Box>
 			)}
 		</Box>

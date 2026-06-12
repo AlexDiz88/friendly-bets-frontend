@@ -36,6 +36,9 @@
 	"externalMatchSyncProgress": "{{finished}} / {{total}} матчей",
 	"externalMatchBettingUnavailableNoCalendar": "Приём ставок на этот тур недоступен — тур ещё не был добавлен в календарь сезона.",
 	"gameResultFinalized": "Итог зафиксирован",
+	"matchCenter": {
+		"halftime": "Перерыв"
+	},
 	"gameResultEditScore": "Исправить счёт",
 	"gameResultEditScoreTitle": "Счёт матча",
 	"gameResultAdminOptions": "Админ опции",

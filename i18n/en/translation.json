@@ -36,6 +36,9 @@
 	"externalMatchSyncProgress": "{{finished}} / {{total}} matches",
 	"externalMatchBettingUnavailableNoCalendar": "Betting for this matchday is currently unavailable — the matchday has not been added to the season calendar.",
 	"gameResultFinalized": "Result finalized",
+	"matchCenter": {
+		"halftime": "Half-time"
+	},
 	"gameResultEditScore": "Edit score",
 	"gameResultEditScoreTitle": "Match score",
 	"gameResultAdminOptions": "Admin options",
