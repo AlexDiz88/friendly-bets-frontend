@@ -1,15 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getCompletedBets, getOpenedBets } from '../bets/api';
+import { getUserSlotBets } from '../bets/api';
 import type Bet from '../bets/types/Bet';
 import type { ExternalMatch } from './types/ExternalMatch';
-
-function dedupeBets(bets: Bet[]): Bet[] {
-	const byId = new Map<string, Bet>();
-	for (const bet of bets) {
-		byId.set(bet.id, bet);
-	}
-	return [...byId.values()];
-}
 
 export function betMatchesExternalMatch(bet: Bet, match: ExternalMatch): boolean {
 	if (!bet.homeTeam?.id || !bet.awayTeam?.id || !match.homeTeamId || !match.awayTeamId) {
@@ -20,16 +12,16 @@ export function betMatchesExternalMatch(bet: Bet, match: ExternalMatch): boolean
 
 export function useWcSlotUserBets({
 	enabled,
+	contextReady,
 	seasonId,
 	leagueId,
-	userId,
 	matchDay,
 	refreshKey,
 }: {
 	enabled: boolean;
+	contextReady: boolean;
 	seasonId: string | undefined;
 	leagueId: string | undefined;
-	userId: string | undefined;
 	matchDay: string;
 	refreshKey?: unknown;
 }): { bets: Bet[]; betsByMatch: Map<string, Bet>; loading: boolean } {
@@ -37,8 +29,9 @@ export function useWcSlotUserBets({
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		if (!enabled || !seasonId || !leagueId || !userId) {
+		if (!enabled || !contextReady || !seasonId || !leagueId) {
 			setBets([]);
+			setLoading(false);
 			return;
 		}
 
@@ -47,20 +40,11 @@ export function useWcSlotUserBets({
 
 		const load = async (): Promise<void> => {
 			try {
-				const [opened, completed] = await Promise.all([
-					getOpenedBets(seasonId),
-					getCompletedBets(seasonId, userId, leagueId, '200', 0),
-				]);
+				const { bets: slotBets } = await getUserSlotBets(seasonId, leagueId, matchDay);
 				if (cancelled) {
 					return;
 				}
-				const merged = dedupeBets([...opened.bets, ...completed.bets]).filter(
-					(b) =>
-						b.player.id === userId &&
-						b.leagueId === leagueId &&
-						b.matchDay === matchDay
-				);
-				setBets(merged);
+				setBets(slotBets);
 			} catch {
 				if (!cancelled) {
 					setBets([]);
@@ -76,7 +60,7 @@ export function useWcSlotUserBets({
 		return () => {
 			cancelled = true;
 		};
-	}, [enabled, seasonId, leagueId, userId, matchDay, refreshKey]);
+	}, [enabled, contextReady, seasonId, leagueId, matchDay, refreshKey]);
 
 	const betsByMatch = useMemo(() => {
 		const map = new Map<string, Bet>();

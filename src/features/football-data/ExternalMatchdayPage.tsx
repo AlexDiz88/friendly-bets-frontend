@@ -288,8 +288,8 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [matchday, matchdaySlots]);
 
 	const [data, setData] = useState<MatchdayPageData | null>(null);
-	const [loading, setLoading] = useState(false);
-	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(true);
 	const [syncing, setSyncing] = useState(false);
 	const [oddsSyncing, setOddsSyncing] = useState(false);
 	const [marathonbetSyncing, setMarathonbetSyncing] = useState(false);
@@ -331,18 +331,15 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		[matchdaySlots, effectiveMatchday]
 	);
 
-	const slotBetsRefreshDep = useMemo(
-		() => ({ data, slotBetsRefreshKey }),
-		[data, slotBetsRefreshKey]
-	);
+	const slotBetsContextReady = !competitionInfoLoading;
 
 	const { bets: userSlotBets, betsByMatch, loading: slotBetsLoading } = useWcSlotUserBets({
 		enabled: isWcLeague && Boolean(user?.id),
+		contextReady: slotBetsContextReady,
 		seasonId: activeSeason?.id,
 		leagueId: selectedLeague?.id,
-		userId: user?.id,
 		matchDay: betMatchDay,
-		refreshKey: slotBetsRefreshDep,
+		refreshKey: slotBetsRefreshKey,
 	});
 
 	const calendarMatch = useMemo(() => {
@@ -379,11 +376,23 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		competitionInfo,
 	]);
 
+	const needsUserSlotBets = isWcLeague && Boolean(user?.id);
+	const slotBetsPending =
+		needsUserSlotBets && (!slotBetsContextReady || slotBetsLoading);
+	const matchdayDataPending =
+		Boolean(selectedLeague) &&
+		isMatchdayAligned &&
+		!competitionInfoLoading &&
+		data === null &&
+		!loading;
+
 	const isExternalPageReady =
 		calendarsReady &&
 		!matchesLoading &&
 		Boolean(selectedLeague) &&
-		isMatchdayAligned;
+		isMatchdayAligned &&
+		!slotBetsPending &&
+		!matchdayDataPending;
 
 	const isBettingCalendarMissing = isExternalPageReady && !calendarMatch;
 
@@ -1207,7 +1216,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				</Box>
 			)}
 
-			{isExternalPageReady && sortedMatches.length === 0 && (
+			{isExternalPageReady && data !== null && sortedMatches.length === 0 && (
 				<Typography
 					textAlign="center"
 					color={isWcLeague ? undefined : 'text.secondary'}
