@@ -975,7 +975,9 @@
 			"matchBets": {
 				"overline": "Participants' match bets",
 				"count": "Total bets: {{count}}",
-				"empty": "No participant placed a bet on this match"
+				"empty": "No participant placed a bet on this match",
+				"viewTooltip": "Participants' bets ({{count}})",
+				"viewAria": "View participants' bets on this match, {{count}} total"
 			}
 		},
 		"oddsPick": {

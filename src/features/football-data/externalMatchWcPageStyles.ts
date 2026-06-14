@@ -485,3 +485,20 @@ export function externalMatchWcCardRowSx(
 		};
 	};
 }
+
+export const externalMatchViewBetsIconSx: SxProps<Theme> = (theme) => ({
+	color: theme.palette.mode === 'dark' ? '#9de8c4' : '#0a5c38',
+});
+
+export const externalMatchViewBetsBadgeSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		'& .MuiBadge-badge': {
+			background: isDark
+				? 'linear-gradient(135deg, #ffd700 0%, #c9a000 100%)'
+				: 'linear-gradient(135deg, #8b6914 0%, #a16207 100%)',
+			color: isDark ? '#0b1424' : '#fff',
+			border: `1px solid ${isDark ? 'rgba(255, 214, 0, 0.45)' : 'rgba(255, 255, 255, 0.65)'}`,
+		},
+	};
+};

@@ -88,8 +88,10 @@ import {
 } from './types/ExternalMatch';
 import ExternalMatchWc26Card from './ExternalMatchWc26Card';
 import ExternalMatchBetsDialog from './ExternalMatchBetsDialog';
+import ExternalMatchViewBetsButton from './ExternalMatchViewBetsButton';
 import WcExternalSlotPanel from './WcExternalSlotPanel';
 import { useWcSlotUserBets } from './useWcSlotUserBets';
+import { matchBetCountKey, useSlotMatchBetCounts } from './useSlotMatchBetCounts';
 import {
 	betsRequiredForSlot,
 	expectedBerlinMatchCount,
@@ -113,6 +115,8 @@ import {
 	externalMatchWcRefreshSyncButtonSx,
 	externalMatchWcSyncCaptionSx,
 	externalMatchWcTitleSx,
+	externalMatchViewBetsBadgeSx,
+	externalMatchViewBetsIconSx,
 } from './externalMatchWcPageStyles';
 
 const MATCH_ROW_AVATAR = 26;
@@ -359,6 +363,18 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		);
 	}, [calendarNodes, selectedLeague, betMatchDay]);
 
+	const needsMatchBetCounts =
+		Boolean(user?.id) && isSeasonParticipant && Boolean(selectedLeague?.id) && Boolean(activeSeason?.id);
+
+	const { countsByMatch } = useSlotMatchBetCounts({
+		enabled: needsMatchBetCounts,
+		contextReady: slotBetsContextReady && Boolean(calendarMatch),
+		seasonId: activeSeason?.id,
+		leagueId: selectedLeague?.id,
+		matchDay: betMatchDay,
+		refreshKey: slotBetsRefreshKey,
+	});
+
 	const matchesLoading = competitionInfoLoading || loading;
 
 	const isMatchdayAligned = useMemo(() => {
@@ -455,6 +471,27 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			calendarMatch,
 			isMatchOpenForBetting,
 		]
+	);
+
+	const canOpenMatchBetsDialog = useCallback(
+		(match: ExternalMatch): boolean => {
+			if (!user || !isSeasonParticipant || !selectedLeague?.id || !activeSeason?.id) {
+				return false;
+			}
+			if (!calendarMatch) {
+				return false;
+			}
+			if (!match.homeTeamId || !match.awayTeamId) {
+				return false;
+			}
+			return true;
+		},
+		[user, isSeasonParticipant, selectedLeague?.id, activeSeason?.id, calendarMatch]
+	);
+
+	const showViewMatchBetsButton = useCallback(
+		(match: ExternalMatch): boolean => canOpenMatchBetsDialog(match) && isMatchOpenForBetting(match),
+		[canOpenMatchBetsDialog, isMatchOpenForBetting]
 	);
 
 	const isMatchCardClickable = useCallback(
@@ -914,6 +951,27 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			</Tooltip>
 		) : null;
 
+	const renderViewMatchBetsButton = (
+		match: ExternalMatch,
+		wcStyled = false
+	): JSX.Element | null => {
+		if (!showViewMatchBetsButton(match)) {
+			return null;
+		}
+		const count =
+			countsByMatch.get(matchBetCountKey(match.homeTeamId!, match.awayTeamId!)) ?? 0;
+		return (
+			<ExternalMatchViewBetsButton
+				count={count}
+				tooltip={t('wc26.externalResults.matchBets.viewTooltip', { count })}
+				ariaLabel={t('wc26.externalResults.matchBets.viewAria', { count })}
+				onClick={() => setBetsMatch(match)}
+				iconSx={wcStyled ? externalMatchViewBetsIconSx : undefined}
+				badgeSx={wcStyled ? externalMatchViewBetsBadgeSx : undefined}
+			/>
+		);
+	};
+
 	return (
 		<Box
 			sx={
@@ -1330,6 +1388,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										onClick={betEnabled ? () => handleMatchClick(match) : undefined}
 										showAdminEdit={showAdminTools && Boolean(match.id)}
 										adminEditButton={renderWcAdminEditButton(match)}
+										viewBetsButton={renderViewMatchBetsButton(match, true)}
 									/>
 								);
 							})}
@@ -1411,6 +1470,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 												'& .MuiChip-label': { px: 0.5, py: 0 },
 											}}
 										/>
+										{renderViewMatchBetsButton(match)}
 										{showAdminTools && match.id ? (
 											<Tooltip title={t('gameResultEditScore')}>
 												<span>
