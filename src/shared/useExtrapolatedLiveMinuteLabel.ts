@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { normalizeMatchStatus } from '../features/football-data/matchStatusI18n';
+import { utcDateMs } from './utcDate';
 import { extrapolateLiveMinuteLabel } from './liveMinuteLabel';
 
 const LIVE_MINUTE_TICK_MS = 30_000;
@@ -25,6 +26,6 @@ export function useExtrapolatedLiveMinuteLabel(
 		return liveMinuteLabel ?? null;
 	}
 
-	const fetchedAtMs = fetchedAt ? Date.parse(fetchedAt) : null;
+	const fetchedAtMs = utcDateMs(fetchedAt);
 	return extrapolateLiveMinuteLabel(liveMinuteLabel, fetchedAtMs, now);
 }
