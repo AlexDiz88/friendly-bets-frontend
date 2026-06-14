@@ -77,6 +77,7 @@ import { notifyExternalSyncIssuesChanged } from '../admin/external-sync-issues/a
 import {
 	getMatchStatusChipColor,
 	isMatchNotStarted,
+	isMatchStartedOrFinished,
 	isMatchdayNotStarted,
 	translateMatchStatus,
 } from './matchStatusI18n';
@@ -909,28 +910,40 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return data?.sync?.expectedMatchCount ?? 0;
 	}, [isBerlinGroupSlotActive, betMatchDay, data?.sync?.expectedMatchCount]);
 
-	const syncProgressFinished = useMemo(
+	const syncProgressStarted = useMemo(
+		() =>
+			sortedMatches.filter((m) => {
+				if (isMatchStartedOrFinished(m.status)) {
+					return true;
+				}
+				const kickoffMs = utcDateMs(m.utcDate);
+				return kickoffMs !== null && kickoffMs <= Date.now();
+			}).length,
+		[sortedMatches]
+	);
+
+	const syncProgressFinalized = useMemo(
 		() => sortedMatches.filter((m) => m.finalized).length,
 		[sortedMatches]
 	);
 
 	const matchdayNotStarted = useMemo(
-		() => isMatchdayNotStarted(sortedMatches, syncProgressFinished),
-		[sortedMatches, syncProgressFinished]
+		() => isMatchdayNotStarted(sortedMatches, syncProgressStarted),
+		[sortedMatches, syncProgressStarted]
 	);
 
 	const syncChip = useMemo(() => {
 		if (!data?.sync) return null;
 		const total = syncProgressTotal;
-		const finished = syncProgressFinished;
-		if (total > 0 && finished >= total) {
+		const finalized = syncProgressFinalized;
+		if (total > 0 && finalized >= total) {
 			return { label: t('externalMatchSyncCompleted'), color: 'success' as const };
 		}
 		if (matchdayNotStarted) {
 			return { label: t('externalMatchSyncNotStarted'), color: 'default' as const };
 		}
 		return { label: t('externalMatchSyncPolling'), color: 'warning' as const };
-	}, [data?.sync, matchdayNotStarted, syncProgressFinished, syncProgressTotal, t]);
+	}, [data?.sync, matchdayNotStarted, syncProgressFinalized, syncProgressTotal, t]);
 
 	const renderWcAdminEditButton = (match: ExternalMatch): JSX.Element | null =>
 		showAdminTools && match.id ? (
@@ -1261,7 +1274,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							}
 						>
 							{t('externalMatchSyncProgress', {
-								finished: syncProgressFinished,
+								finished: syncProgressStarted,
 								total: syncProgressTotal,
 							})}
 						</Typography>
