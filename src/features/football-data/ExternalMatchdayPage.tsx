@@ -872,21 +872,28 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return data?.sync?.expectedMatchCount ?? 0;
 	}, [isBerlinGroupSlotActive, betMatchDay, data?.sync?.expectedMatchCount]);
 
+	const syncProgressFinished = useMemo(
+		() => sortedMatches.filter((m) => m.finalized).length,
+		[sortedMatches]
+	);
+
 	const matchdayNotStarted = useMemo(
-		() => isMatchdayNotStarted(sortedMatches, data?.sync?.finishedMatchCount ?? 0),
-		[sortedMatches, data?.sync?.finishedMatchCount]
+		() => isMatchdayNotStarted(sortedMatches, syncProgressFinished),
+		[sortedMatches, syncProgressFinished]
 	);
 
 	const syncChip = useMemo(() => {
 		if (!data?.sync) return null;
-		if (data.sync.syncStatus === 'COMPLETED') {
+		const total = syncProgressTotal;
+		const finished = syncProgressFinished;
+		if (total > 0 && finished >= total) {
 			return { label: t('externalMatchSyncCompleted'), color: 'success' as const };
 		}
 		if (matchdayNotStarted) {
 			return { label: t('externalMatchSyncNotStarted'), color: 'default' as const };
 		}
 		return { label: t('externalMatchSyncPolling'), color: 'warning' as const };
-	}, [data?.sync, matchdayNotStarted]);
+	}, [data?.sync, matchdayNotStarted, syncProgressFinished, syncProgressTotal, t]);
 
 	const renderWcAdminEditButton = (match: ExternalMatch): JSX.Element | null =>
 		showAdminTools && match.id ? (
@@ -1196,7 +1203,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							}
 						>
 							{t('externalMatchSyncProgress', {
-								finished: data.sync.finishedMatchCount,
+								finished: syncProgressFinished,
 								total: syncProgressTotal,
 							})}
 						</Typography>
