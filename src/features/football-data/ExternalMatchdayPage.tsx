@@ -1035,7 +1035,14 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					}}
 				>
 					{isWcLeague ? (
-						<Box sx={{ width: '100%', px: canSync ? (isWcLeague ? 9.5 : 6.5) : 0, pt: 1 }}>
+						<Box
+							sx={{
+								width: '100%',
+								pl: canSync ? 5.5 : 0,
+								pr: canSync ? 5.5 : 0,
+								pt: 1,
+							}}
+						>
 							<Box sx={externalMatchWcOverlineSx}>
 								<Typography component="span" sx={externalMatchWcOverlineTextSx}>
 									FIFA World Cup 26™
@@ -1050,51 +1057,64 @@ export default function ExternalMatchdayPage(): JSX.Element {
 								textAlign: 'center',
 								fontSize: '1rem',
 								lineHeight: 1.2,
-								px: canSync ? (isWcLeague ? 9.5 : 6.5) : 0,
+								pl: canSync ? 6.5 : 0,
 							}}
 						>
 							{t('externalMatchResults')}
 						</Typography>
 					)}
 					{canSync ? (
-						<Box
-							sx={{
-								position: 'absolute',
-								right: 0,
-								top: '50%',
-								transform: 'translateY(-50%)',
-								display: 'flex',
-								alignItems: 'center',
-								gap: 0.25,
-							}}
-						>
-							{isWcLeague ? (
-								<Tooltip title={t('externalMatchFourScoreSyncFromApi')}>
+						<>
+							<Box
+								sx={{
+									position: 'absolute',
+									left: 0,
+									top: '50%',
+									transform: 'translateY(-50%)',
+									display: 'flex',
+									alignItems: 'center',
+									gap: 0.25,
+								}}
+							>
+								<Tooltip title={t('externalMatchSyncFromApi')}>
 									<span>
 										<IconButton
 											size="small"
 											disabled={
-												fourscoreSyncing ||
-												marathonbetSyncing ||
-												oddsSyncing ||
 												syncing ||
+												oddsSyncing ||
+												marathonbetSyncing ||
+												fourscoreSyncing ||
 												loading
 											}
-											onClick={() => void handleFourScoreSyncFromApi()}
-											aria-label={t('externalMatchFourScoreSyncFromApi')}
-											sx={externalMatchWcRefreshSyncButtonSx}
+											onClick={() => void handleSyncFromApi()}
+											aria-label={t('externalMatchSyncFromApi')}
+											sx={
+												isWcLeague
+													? externalMatchWcRefreshSyncButtonSx
+													: {
+															width: 26,
+															height: 26,
+															p: 0,
+															bgcolor: 'secondary.main',
+															color: 'common.white',
+															'&:hover': { bgcolor: 'secondary.dark' },
+															'&.Mui-disabled': {
+																bgcolor: 'action.disabledBackground',
+																color: 'action.disabled',
+															},
+														}
+											}
 										>
-											{fourscoreSyncing ? (
+											{syncing ? (
 												<CircularProgress size={18} sx={{ color: 'common.white' }} />
 											) : (
-												<SportsScoreIcon sx={{ fontSize: 18, color: 'common.white' }} />
+												<RefreshIcon sx={{ fontSize: 20, color: 'common.white' }} />
 											)}
 										</IconButton>
 									</span>
 								</Tooltip>
-							) : null}
-							{isWcLeague ? (
-								<Tooltip title={t('externalMatchMarathonbetSyncFromApi')}>
+								<Tooltip title={t('externalMatchOddsSyncFromApi')}>
 									<span>
 										<IconButton
 											size="small"
@@ -1106,97 +1126,96 @@ export default function ExternalMatchdayPage(): JSX.Element {
 												loading ||
 												!selectedLeague?.id
 											}
-											onClick={() => void handleMarathonbetSyncFromApi()}
-											aria-label={t('externalMatchMarathonbetSyncFromApi')}
-											sx={externalMatchWcMarathonbetSyncButtonSx}
+											onClick={() => void handleOddsSyncFromApi()}
+											aria-label={t('externalMatchOddsSyncFromApi')}
+											sx={
+												isWcLeague
+													? externalMatchWcOddsSyncButtonSx
+													: {
+															width: 26,
+															height: 26,
+															p: 0,
+															bgcolor: 'primary.main',
+															color: 'common.white',
+															'&:hover': { bgcolor: 'primary.dark' },
+															'&.Mui-disabled': {
+																bgcolor: 'action.disabledBackground',
+																color: 'action.disabled',
+															},
+														}
+											}
 										>
-											{marathonbetSyncing ? (
+											{oddsSyncing ? (
 												<CircularProgress size={18} sx={{ color: 'common.white' }} />
 											) : (
-												<PriceChangeIcon sx={{ fontSize: 18, color: 'common.white' }} />
+												<PaidIcon sx={{ fontSize: 18, color: 'common.white' }} />
 											)}
 										</IconButton>
 									</span>
 								</Tooltip>
+							</Box>
+							{isWcLeague ? (
+								<Box
+									sx={{
+										position: 'absolute',
+										right: 0,
+										top: '50%',
+										transform: 'translateY(-50%)',
+										display: 'flex',
+										alignItems: 'center',
+										gap: 0.25,
+									}}
+								>
+									<Tooltip title={t('externalMatchFourScoreSyncFromApi')}>
+										<span>
+											<IconButton
+												size="small"
+												disabled={
+													fourscoreSyncing ||
+													marathonbetSyncing ||
+													oddsSyncing ||
+													syncing ||
+													loading
+												}
+												onClick={() => void handleFourScoreSyncFromApi()}
+												aria-label={t('externalMatchFourScoreSyncFromApi')}
+												sx={externalMatchWcRefreshSyncButtonSx}
+											>
+												{fourscoreSyncing ? (
+													<CircularProgress size={18} sx={{ color: 'common.white' }} />
+												) : (
+													<SportsScoreIcon sx={{ fontSize: 18, color: 'common.white' }} />
+												)}
+											</IconButton>
+										</span>
+									</Tooltip>
+									<Tooltip title={t('externalMatchMarathonbetSyncFromApi')}>
+										<span>
+											<IconButton
+												size="small"
+												disabled={
+													fourscoreSyncing ||
+													marathonbetSyncing ||
+													oddsSyncing ||
+													syncing ||
+													loading ||
+													!selectedLeague?.id
+												}
+												onClick={() => void handleMarathonbetSyncFromApi()}
+												aria-label={t('externalMatchMarathonbetSyncFromApi')}
+												sx={externalMatchWcMarathonbetSyncButtonSx}
+											>
+												{marathonbetSyncing ? (
+													<CircularProgress size={18} sx={{ color: 'common.white' }} />
+												) : (
+													<PriceChangeIcon sx={{ fontSize: 18, color: 'common.white' }} />
+												)}
+											</IconButton>
+										</span>
+									</Tooltip>
+								</Box>
 							) : null}
-							<Tooltip title={t('externalMatchOddsSyncFromApi')}>
-								<span>
-									<IconButton
-										size="small"
-										disabled={
-											fourscoreSyncing ||
-											marathonbetSyncing ||
-											oddsSyncing ||
-											syncing ||
-											loading ||
-											!selectedLeague?.id
-										}
-										onClick={() => void handleOddsSyncFromApi()}
-										aria-label={t('externalMatchOddsSyncFromApi')}
-										sx={
-											isWcLeague
-												? externalMatchWcOddsSyncButtonSx
-												: {
-														width: 26,
-														height: 26,
-														p: 0,
-														bgcolor: 'primary.main',
-														color: 'common.white',
-														'&:hover': { bgcolor: 'primary.dark' },
-														'&.Mui-disabled': {
-															bgcolor: 'action.disabledBackground',
-															color: 'action.disabled',
-														},
-													}
-										}
-									>
-										{oddsSyncing ? (
-											<CircularProgress size={18} sx={{ color: 'common.white' }} />
-										) : (
-											<PaidIcon sx={{ fontSize: 18, color: 'common.white' }} />
-										)}
-									</IconButton>
-								</span>
-							</Tooltip>
-							<Tooltip title={t('externalMatchSyncFromApi')}>
-								<span>
-									<IconButton
-										size="small"
-										disabled={
-											syncing ||
-											oddsSyncing ||
-											marathonbetSyncing ||
-											fourscoreSyncing ||
-											loading
-										}
-										onClick={() => void handleSyncFromApi()}
-										aria-label={t('externalMatchSyncFromApi')}
-										sx={
-											isWcLeague
-												? externalMatchWcRefreshSyncButtonSx
-												: {
-														width: 26,
-														height: 26,
-														p: 0,
-														bgcolor: 'secondary.main',
-														color: 'common.white',
-														'&:hover': { bgcolor: 'secondary.dark' },
-														'&.Mui-disabled': {
-															bgcolor: 'action.disabledBackground',
-															color: 'action.disabled',
-														},
-													}
-										}
-									>
-										{syncing ? (
-											<CircularProgress size={18} sx={{ color: 'common.white' }} />
-										) : (
-											<RefreshIcon sx={{ fontSize: 20, color: 'common.white' }} />
-										)}
-									</IconButton>
-								</span>
-							</Tooltip>
-						</Box>
+						</>
 					) : null}
 				</Box>
 
