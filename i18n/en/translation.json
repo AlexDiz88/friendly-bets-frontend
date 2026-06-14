@@ -978,8 +978,7 @@
 			"tiebreaker6": "highest fair play score (fewer yellow and red cards);",
 			"tiebreaker7": "FIFA/Coca-Cola Men’s World Ranking (most recent published edition).",
 			"tiebreakerThird": "Among best third-placed teams: points → goal difference → goals scored → fair play → FIFA ranking.",
-			"tiebreakerPositions": "Standings order follows official FIFA.com data.",
-			"tiebreakerSource": "FIFA World Cup 2026™ regulations"
+			"tiebreakerPositions": "Standings order follows official FIFA.com data."
 		},
 		"bracket": {
 			"allStages": "All stages",

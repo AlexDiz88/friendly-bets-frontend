@@ -978,8 +978,7 @@
 			"tiebreaker6": "besserer Fair-Play-Wert (weniger Gelb- und Rote Karten);",
 			"tiebreaker7": "FIFA/Coca-Cola-Weltrangliste (zuletzt veröffentlichte Ausgabe).",
 			"tiebreakerThird": "Unter den besten Drittplatzierten: Punkte → Tordifferenz → Tore → Fair Play → FIFA-Rangliste.",
-			"tiebreakerPositions": "Die Tabellenplätze entsprechen den offiziellen Daten von FIFA.com.",
-			"tiebreakerSource": "Regeln der FIFA WM 2026™"
+			"tiebreakerPositions": "Die Tabellenplätze entsprechen den offiziellen Daten von FIFA.com."
 		},
 		"bracket": {
 			"allStages": "Alle Phasen",
