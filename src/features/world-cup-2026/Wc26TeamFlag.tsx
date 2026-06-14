@@ -11,10 +11,17 @@ interface Wc26TeamFlagProps {
 	side: Wc26TeamSide;
 	/** Уменьшенные флаг и подпись (страница результатов ЧМ, плотная сетка слота). */
 	compact?: boolean;
+	/** Обрезать длинное название многоточием (по умолчанию да). */
+	truncate?: boolean;
 }
 
 /** Сторона матча: слева «название + флаг», справа «флаг + название» (как на FIFA). */
-export default function Wc26TeamFlag({ teamId, side, compact = false }: Wc26TeamFlagProps): JSX.Element {
+export default function Wc26TeamFlag({
+	teamId,
+	side,
+	compact = false,
+	truncate = true,
+}: Wc26TeamFlagProps): JSX.Element {
 	const { t } = useTranslation();
 	const team = WC26_TEAMS[teamId];
 	const [imgFailed, setImgFailed] = useState(false);
@@ -29,6 +36,9 @@ export default function Wc26TeamFlag({ teamId, side, compact = false }: Wc26Team
 					: { xs: '0.9rem', sm: '0.95rem' },
 				lineHeight: compact ? 1.2 : undefined,
 				minWidth: 0,
+				flexShrink: truncate ? 1 : 0,
+				overflow: truncate ? 'hidden' : 'visible',
+				textOverflow: truncate ? 'ellipsis' : 'clip',
 			}}
 		>
 			{t(team.nameKey)}
@@ -73,6 +83,8 @@ export default function Wc26TeamFlag({ teamId, side, compact = false }: Wc26Team
 				alignItems: 'center',
 				gap: compact ? 0.6 : 0.75,
 				minWidth: 0,
+				flexShrink: truncate ? 1 : 0,
+				flexWrap: 'nowrap',
 			}}
 		>
 			{side === 'home' ? (
