@@ -975,7 +975,9 @@
 			"matchBets": {
 				"overline": "Teilnehmerwetten aufs Spiel",
 				"count": "Wetten gesamt: {{count}}",
-				"empty": "Kein Teilnehmer hat auf dieses Spiel gewettet"
+				"empty": "Kein Teilnehmer hat auf dieses Spiel gewettet",
+				"viewTooltip": "Teilnehmerwetten ({{count}})",
+				"viewAria": "Teilnehmerwetten auf dieses Spiel ansehen, {{count}} insgesamt"
 			}
 		},
 		"oddsPick": {

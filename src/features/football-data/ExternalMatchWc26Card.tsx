@@ -53,6 +53,7 @@ interface ExternalMatchWc26CardProps {
 	onClick?: () => void;
 	showAdminEdit?: boolean;
 	adminEditButton?: React.ReactNode;
+	viewBetsButton?: React.ReactNode;
 }
 
 export default function ExternalMatchWc26Card({
@@ -64,6 +65,7 @@ export default function ExternalMatchWc26Card({
 	onClick,
 	showAdminEdit = false,
 	adminEditButton,
+	viewBetsButton,
 }: ExternalMatchWc26CardProps): JSX.Element {
 	const { t, i18n } = useTranslation();
 	const scheduled = useMemo(
@@ -185,6 +187,7 @@ export default function ExternalMatchWc26Card({
 						/>
 					)}
 					{showAdminEdit ? adminEditButton : null}
+					{viewBetsButton}
 				</Box>
 			</Box>
 
