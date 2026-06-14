@@ -978,8 +978,7 @@
 			"tiebreaker6": "лучший fair play (меньше жёлтых и красных карточек);",
 			"tiebreaker7": "рейтинг FIFA/Coca-Cola Men’s World Ranking (последняя опубликованная версия).",
 			"tiebreakerThird": "Среди лучших третьих мест: очки → разница мячей → голы → fair play → рейтинг FIFA.",
-			"tiebreakerPositions": "Позиции в таблице — по официальным данным FIFA.com.",
-			"tiebreakerSource": "Правила FIFA World Cup 2026™"
+			"tiebreakerPositions": "Позиции в таблице — по официальным данным FIFA.com."
 		},
 		"bracket": {
 			"allStages": "Все стадии",

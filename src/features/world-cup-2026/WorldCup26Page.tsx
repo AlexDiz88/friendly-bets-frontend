@@ -6,7 +6,7 @@ import Wc26BracketView from './Wc26BracketView';
 import Wc26PageHero from './Wc26PageHero';
 import Wc26PageViewTabs from './Wc26PageViewTabs';
 import Wc26MatchCard from './Wc26MatchCard';
-import Wc26StandingsView, { type Wc26StandingsGroupFilter } from './Wc26StandingsView';
+import Wc26StandingsView from './Wc26StandingsView';
 import type { Wc26Match } from './wc26Schedule';
 import {
 	WC26_VIEW_FILTER_MOBILE_ROW1,
@@ -31,7 +31,6 @@ import { useWc26SchedulePage } from './useWc26SchedulePage';
 import type { Wc26MatchWithResult } from './wc26ScheduleApi';
 import {
 	WC26_BRACKET_STAGE_ORDER,
-	WC26_GROUP_LETTERS,
 	type Wc26BracketStageFilter,
 	type Wc26PageView,
 } from './wc26PageViews';
@@ -61,19 +60,6 @@ function parsePageView(raw: string | null): Wc26PageView {
 	return 'schedule';
 }
 
-function parseGroupFilter(raw: string | null): Wc26StandingsGroupFilter {
-	if (!raw || raw === 'all') {
-		return 'all';
-	}
-	if (raw === 'best_third') {
-		return 'best_third';
-	}
-	const upper = raw.toUpperCase();
-	return WC26_GROUP_LETTERS.includes(upper as (typeof WC26_GROUP_LETTERS)[number])
-		? (upper as Wc26StandingsGroupFilter)
-		: 'all';
-}
-
 function parseBracketStage(raw: string | null): Wc26BracketStageFilter {
 	if (!raw) {
 		return 'round_of_32';
@@ -88,7 +74,6 @@ export default function WorldCup26Page(): JSX.Element {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const dateLocale = wc26DateLocale(i18n.language);
 	const pageView = parsePageView(searchParams.get('view'));
-	const groupFilter = parseGroupFilter(searchParams.get('group'));
 	const bracketStage = parseBracketStage(searchParams.get('stage'));
 	const [viewFilter, setViewFilter] = useState<Wc26ViewFilter>('all');
 	const { matches: scheduleMatches, loading, error } = useWc26SchedulePage();
@@ -120,13 +105,6 @@ export default function WorldCup26Page(): JSX.Element {
 				return;
 			}
 			updateSearch({ view });
-		},
-		[updateSearch]
-	);
-
-	const handleGroupFilterChange = useCallback(
-		(group: Wc26StandingsGroupFilter): void => {
-			updateSearch({ view: 'standings', group: group === 'all' ? null : group });
 		},
 		[updateSearch]
 	);
@@ -265,12 +243,7 @@ export default function WorldCup26Page(): JSX.Element {
 						</>
 					) : null}
 
-					{pageView === 'standings' ? (
-						<Wc26StandingsView
-							groupFilter={groupFilter}
-							onGroupFilterChange={handleGroupFilterChange}
-						/>
-					) : null}
+					{pageView === 'standings' ? <Wc26StandingsView /> : null}
 
 					{pageView === 'bracket' ? (
 						<Wc26BracketView

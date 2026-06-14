@@ -6,7 +6,7 @@ import {
 	type Wc26FifaStandingsPage,
 } from './wc26FifaApi';
 
-export function useWc26FifaStandings(groupFilter: string): {
+export function useWc26FifaStandings(): {
 	data: Wc26FifaStandingsPage | null;
 	loading: boolean;
 	error: string | null;
@@ -20,9 +20,7 @@ export function useWc26FifaStandings(groupFilter: string): {
 		setLoading(true);
 		setError(null);
 		try {
-			const fetchGroup =
-				groupFilter === 'all' || groupFilter === 'best_third' ? undefined : groupFilter;
-			const page = await fetchWc26FifaStandings(fetchGroup);
+			const page = await fetchWc26FifaStandings();
 			setData(page);
 		} catch (err) {
 			setData(null);
@@ -30,7 +28,7 @@ export function useWc26FifaStandings(groupFilter: string): {
 		} finally {
 			setLoading(false);
 		}
-	}, [groupFilter]);
+	}, []);
 
 	useEffect(() => {
 		let cancelled = false;

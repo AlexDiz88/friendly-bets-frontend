@@ -57,7 +57,6 @@ function rankCellStyle(status: Wc26QualificationStatus, rank: number): { backgro
 interface Wc26GroupStandingsCardProps {
 	table: Wc26FifaGroupTable;
 	title?: string;
-	showSourceGroup?: boolean;
 	/** Карточка в сетке «все группы» на экране ≥800px — уже колонка, шире место под название. */
 	twoColumnGrid?: boolean;
 }
@@ -65,7 +64,6 @@ interface Wc26GroupStandingsCardProps {
 export default function Wc26GroupStandingsCard({
 	table,
 	title,
-	showSourceGroup = false,
 	twoColumnGrid = false,
 }: Wc26GroupStandingsCardProps): JSX.Element {
 	const { t } = useTranslation();
@@ -196,11 +194,6 @@ export default function Wc26GroupStandingsCard({
 												/>
 											) : null}
 										</Box>
-										{showSourceGroup && row.sourceGroup ? (
-											<Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-												{t('wc26.group', { letter: row.sourceGroup })}
-											</Typography>
-										) : null}
 									</Box>
 								</td>
 								<td style={{ textAlign: 'center' }}>{row.wins}</td>
