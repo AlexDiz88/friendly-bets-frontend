@@ -106,6 +106,92 @@ export function wc26StageChipSx(selected: boolean): SxProps<Theme> {
 	};
 }
 
+/** Вкладки «Расписание / Таблицы / Сетка» — без отдельного glass-фона. */
+export const wc26PageViewBarSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'row',
+	flexWrap: 'nowrap',
+	gap: 0.75,
+	mb: 1.25,
+	width: '100%',
+};
+
+export const wc26PageViewChipExtraSx = {
+	flex: '1 1 0',
+	minWidth: 0,
+	height: 40,
+	fontSize: '0.78rem',
+	justifyContent: 'center',
+	'& .MuiChip-label': { px: 0.75 },
+};
+
+/** Буква группы — широкая тач-цель. */
+export const wc26GroupLetterChipExtraSx = {
+	minWidth: 44,
+	width: 44,
+	height: 40,
+	justifyContent: 'center',
+	'& .MuiChip-label': { px: 0.5 },
+};
+
+/** Панель фильтра групп в таблицах — два ряда без переноса на узком экране. */
+export const wc26StandingsGroupChipBarSx: SxProps<Theme> = {
+	...wc26StageChipBarMobileSx,
+	gap: { xs: 0.5, sm: 0.75 },
+};
+
+export const wc26StandingsGroupChipRowSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'row',
+	flexWrap: { xs: 'nowrap', sm: 'wrap' },
+	justifyContent: 'center',
+	alignItems: 'center',
+	gap: { xs: 0.35, sm: 0.75 },
+	width: '100%',
+};
+
+export const wc26StandingsGroupLetterChipExtraSx = {
+	minWidth: { xs: 40, sm: 46 },
+	width: { xs: 45, sm: 46 },
+	height: { xs: 40, sm: 42 },
+	justifyContent: 'center',
+	'& .MuiChip-label': { px: { xs: 0.25, sm: 0.5 } },
+};
+
+export const wc26StandingsWideChipExtraSx = {
+	height: { xs: 36, sm: 40 },
+	fontSize: { xs: '0.65rem', sm: '0.75rem' },
+	flexShrink: { xs: 1, sm: 0 },
+	minWidth: 0,
+	'& .MuiChip-label': { px: { xs: 0.5, sm: 1 } },
+};
+
+/** Заголовок таблицы группы внутри карточки — слева, с отступом. */
+export const wc26GroupTableHeaderSx: SxProps<Theme> = (theme) => ({
+	mb: 0,
+	px: 1.25,
+	py: 0.55,
+	borderRadius: '8px 8px 0 0',
+	textTransform: 'none',
+	display: 'block',
+	fontWeight: 800,
+	fontSize: '0.7rem',
+	letterSpacing: 0.2,
+	textAlign: 'left',
+	border: '1px solid',
+	borderColor:
+		theme.palette.mode === 'dark' ? 'rgba(255, 214, 0, 0.22)' : 'rgba(184, 134, 11, 0.32)',
+	background:
+		theme.palette.mode === 'dark'
+			? 'linear-gradient(90deg, rgba(0,75,48,0.92) 0%, rgba(100,75,0,0.82) 50%, rgba(0,75,48,0.92) 100%)'
+			: 'linear-gradient(90deg, #dceee4 0%, #f0e8c8 50%, #dceee4 100%)',
+	color: theme.palette.mode === 'dark' ? '#fff4d6' : '#034d2e',
+	boxShadow:
+		theme.palette.mode === 'dark'
+			? 'inset 0 1px 0 rgba(255, 214, 0, 0.08)'
+			: 'inset 0 1px 0 rgba(255, 255, 255, 0.65)',
+});
+
 export const wc26SectionHeaderSx: SxProps<Theme> = (theme) => ({
 	mb: 0.5,
 	px: 1,
