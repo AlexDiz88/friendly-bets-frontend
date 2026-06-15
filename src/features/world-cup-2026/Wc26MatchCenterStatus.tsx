@@ -1,9 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { pickDisplayedLiveMinute } from '../../shared/liveMinuteLabel';
 import { useEstimatedMatchMinute } from '../../shared/useEstimatedMatchMinute';
-import { useExtrapolatedLiveMinuteLabel } from '../../shared/useExtrapolatedLiveMinuteLabel';
+import { useSyncedLiveMinuteLabel } from '../../shared/useSyncedLiveMinuteLabel';
 import { isLiveMatchStatus } from '../match-results/externalMatchScoreView';
 import { normalizeMatchStatus } from '../match-results/matchStatusI18n';
 import {
@@ -20,6 +19,7 @@ interface Wc26MatchCenterStatusProps {
 	kickoffTime: string;
 	kickoffUtcMs: number;
 	scoreView?: string | null;
+	/** Якорь минуты с sync 4score/24score (БД); между sync тикает +1/мин на клиенте. */
 	liveMinuteLabel?: string | null;
 	liveDataFetchedAt?: string | null;
 	matchStatus?: string;
@@ -49,28 +49,27 @@ export default function Wc26MatchCenterStatus({
 	const { t } = useTranslation();
 	const normalizedStatus = normalizeMatchStatus(matchStatus);
 	const isPaused = normalizedStatus === 'PAUSED';
-	const extrapolatedMinute = useExtrapolatedLiveMinuteLabel(
+	const normalizedInPlay = normalizedStatus === 'IN_PLAY';
+	const syncedMinuteLabel = useSyncedLiveMinuteLabel(
 		liveMinuteLabel,
 		liveDataFetchedAt,
 		matchStatus
 	);
-	const normalizedInPlay = normalizedStatus === 'IN_PLAY';
 	const shouldEstimateKickoff =
 		kickoffUtcMs > 0 &&
+		!syncedMinuteLabel &&
 		(normalizedInPlay ||
 			(scoresReady &&
 				(!hasDisplayableScore(scoreView) || liveStacked) &&
-				!extrapolatedMinute &&
 				!isPaused));
 	const estimated = useEstimatedMatchMinute(shouldEstimateKickoff ? kickoffUtcMs : null);
-	const estimatedMinuteLabel = estimated?.kind === 'minute' ? estimated.label : null;
 
 	const minuteLabel = ((): string | null => {
 		if (isPaused) {
 			return t('matchCenter.halftime');
 		}
-		if (extrapolatedMinute) {
-			return pickDisplayedLiveMinute(extrapolatedMinute, estimatedMinuteLabel);
+		if (syncedMinuteLabel) {
+			return syncedMinuteLabel;
 		}
 		if (estimated?.kind === 'halftime') {
 			return t('matchCenter.halftime');

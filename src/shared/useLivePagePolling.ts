@@ -3,7 +3,7 @@ import { LIVE_PAGE_POLL_INTERVAL_MS } from './livePagePolling';
 
 /**
  * Периодический опрос нашего API, пока enabled (напр. есть live-матчи).
- * По умолчанию — раз в минуту (счёт/статус из БД); минута на карточке между poll — локально.
+ * По умолчанию — раз в минуту (счёт, статус, liveMinuteLabel из БД).
  * Не запускается в скрытой вкладке; при возврате — один немедленный poll.
  */
 export function useLivePagePolling(
