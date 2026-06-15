@@ -13,10 +13,10 @@ const BERLIN_GROUP_SLOT = /^([123]) \[(\d+)\]$/;
 
 /** odds-api / 4score names per FIFA code — mirrors backend Wc26TeamCatalog. */
 const API_NAMES_BY_FIFA: Record<Wc26TeamId, string[]> = {
-	MEX: ['Mexico'],
-	RSA: ['South Africa', 'SouthAfrica'],
-	KOR: ['Korea Republic', 'South Korea', 'KoreaRepublic', 'SouthKorea'],
-	CZE: ['Czechia', 'Czech Republic', 'CzechRepublic'],
+	MEX: ['Mexico', 'Мексика'],
+	RSA: ['South Africa', 'SouthAfrica', 'ЮАР', 'Южная Африка'],
+	KOR: ['Korea Republic', 'South Korea', 'KoreaRepublic', 'SouthKorea', 'Корея', 'Южная Корея'],
+	CZE: ['Czechia', 'Czech Republic', 'CzechRepublic', 'Чехия'],
 	CAN: ['Canada'],
 	SUI: ['Switzerland'],
 	QAT: ['Qatar'],
