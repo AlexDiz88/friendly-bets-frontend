@@ -23,10 +23,10 @@ import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
 } from '../custom/snackbar/snackbarSlice';
-import { getOddsEventMarkets } from '../../features/football-data/matchOddsApi';
+import { getOddsEventMarkets } from '../../features/match-results/matchOddsApi';
 import { addOpenedBet } from '../../features/bets/betsSlice';
-import { ExternalMatch } from '../../features/football-data/types/ExternalMatch';
-import { matchSideToDisplayTeam } from '../../features/football-data/externalMatchDisplay';
+import { ExternalMatch } from '../../features/match-results/types/ExternalMatch';
+import { matchSideToDisplayTeam } from '../../features/match-results/externalMatchDisplay';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../utils/teamDisplay';
 import ThemeModeToggle from '../../theme/ThemeModeToggle';
 import {

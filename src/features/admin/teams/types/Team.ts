@@ -17,5 +17,4 @@ export default interface Team {
 	logoKey?: string;
 	displayNames?: TeamDisplayNames;
 	externalAliases?: TeamExternalAlias[];
-	footballDataTeamId?: number;
 }

@@ -2,7 +2,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import PaidIcon from '@mui/icons-material/Paid';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import SportsScoreIcon from '@mui/icons-material/SportsScore';
 import {
 	Avatar,
 	Alert,
@@ -40,7 +39,7 @@ import {
 	resolveBetSizeForBetInput,
 	resolveSeasonDefaultBetSize,
 } from '../bets/betSizeDefaults';
-import { getExternalMatchScoreView, trustExternalLiveScore } from './externalMatchScoreView';
+import { resolveExternalMatchScoreView } from './externalMatchScoreView';
 import GameResultScoreEditDialog from './GameResultScoreEditDialog';
 import {
 	adminCorrectGameResultScore,
@@ -59,7 +58,7 @@ import { selectUser } from '../auth/selectors';
 import GameScore from '../bets/types/GameScore';
 import {
 	buildMatchdaySlotsForLeague,
-	FOOTBALL_DATA_COMPETITIONS,
+	LEAGUE_COMPETITION_OPTIONS,
 	externalSlotsToMatchdaySlots,
 	MatchdaySlot,
 } from './competitionOptions';
@@ -69,10 +68,9 @@ import {
 	getLeagueExternalCompetitionInfo,
 	getMatchdayFromCache,
 	syncMatchdayFromApi,
-} from './footballDataApi';
+} from './matchResultsApi';
 import { syncOddsMatchdayFromApi } from './matchOddsApi';
 import { syncMarathonbetSlot } from '../marathonbet-odds/marathonbetOddsApi';
-import { syncFourScoreMatchday } from '../fourscore/fourscoreApi';
 import { notifyExternalSyncIssuesChanged } from '../admin/external-sync-issues/api';
 import {
 	getMatchStatusChipColor,
@@ -223,11 +221,11 @@ function CompactMatchRow({
 	);
 }
 
-const SUPPORTED_LEAGUE_CODES = new Set(FOOTBALL_DATA_COMPETITIONS.map((c) => c.leagueCode));
+const SUPPORTED_LEAGUE_CODES = new Set(LEAGUE_COMPETITION_OPTIONS.map((c) => c.leagueCode));
 
 function leagueCodeToCompetition(leagueCode: string): string {
 	return (
-		FOOTBALL_DATA_COMPETITIONS.find((c) => c.leagueCode === leagueCode)?.competitionCode ?? 'PL'
+		LEAGUE_COMPETITION_OPTIONS.find((c) => c.leagueCode === leagueCode)?.competitionCode ?? 'PL'
 	);
 }
 
@@ -241,18 +239,18 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	useFetchActiveSeason(activeSeason?.id);
 
-	const footballDataLeagues = useMemo(
+	const matchResultLeagues = useMemo(
 		() => activeSeason?.leagues.filter((l) => SUPPORTED_LEAGUE_CODES.has(l.leagueCode)) ?? [],
 		[activeSeason?.leagues]
 	);
 
 	const [selectedLeagueCode, setSelectedLeagueCode] = useState(
-		footballDataLeagues[0]?.leagueCode ?? FOOTBALL_DATA_COMPETITIONS[0].leagueCode
+		matchResultLeagues[0]?.leagueCode ?? LEAGUE_COMPETITION_OPTIONS[0].leagueCode
 	);
 
 	const selectedLeague: League | undefined = useMemo(
-		() => footballDataLeagues.find((l) => l.leagueCode === selectedLeagueCode),
-		[footballDataLeagues, selectedLeagueCode]
+		() => matchResultLeagues.find((l) => l.leagueCode === selectedLeagueCode),
+		[matchResultLeagues, selectedLeagueCode]
 	);
 	const [matchday, setMatchday] = useState(1);
 	const [matchdayTouched, setMatchdayTouched] = useState(false);
@@ -270,14 +268,14 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [competitionInfo?.matchdaySlots, selectedLeagueCode]);
 
 	const effectiveLeagueCode = useMemo(() => {
-		if (footballDataLeagues.length === 0) {
+		if (matchResultLeagues.length === 0) {
 			return '';
 		}
-		if (footballDataLeagues.some((l) => l.leagueCode === selectedLeagueCode)) {
+		if (matchResultLeagues.some((l) => l.leagueCode === selectedLeagueCode)) {
 			return selectedLeagueCode;
 		}
-		return footballDataLeagues[0].leagueCode;
-	}, [footballDataLeagues, selectedLeagueCode]);
+		return matchResultLeagues[0].leagueCode;
+	}, [matchResultLeagues, selectedLeagueCode]);
 
 	const externalSeason = useMemo(
 		() => resolveExternalSeasonForLeague(activeSeason, effectiveLeagueCode),
@@ -301,7 +299,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [syncing, setSyncing] = useState(false);
 	const [oddsSyncing, setOddsSyncing] = useState(false);
 	const [marathonbetSyncing, setMarathonbetSyncing] = useState(false);
-	const [fourscoreSyncing, setFourscoreSyncing] = useState(false);
 	const [editMatch, setEditMatch] = useState<ExternalMatch | null>(null);
 	const [pickMatch, setPickMatch] = useState<ExternalMatch | null>(null);
 	const [betsMatch, setBetsMatch] = useState<ExternalMatch | null>(null);
@@ -584,14 +581,14 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [activeSeason?.id, dispatch]);
 
 	useEffect(() => {
-		if (footballDataLeagues.length > 0) {
+		if (matchResultLeagues.length > 0) {
 			setSelectedLeagueCode((prev) =>
-				footballDataLeagues.some((l) => l.leagueCode === prev)
+				matchResultLeagues.some((l) => l.leagueCode === prev)
 					? prev
-					: footballDataLeagues[0].leagueCode
+					: matchResultLeagues[0].leagueCode
 			);
 		}
-	}, [footballDataLeagues]);
+	}, [matchResultLeagues]);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -727,42 +724,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			);
 		} finally {
 			setSyncing(false);
-		}
-	};
-
-	const handleFourScoreSyncFromApi = async (): Promise<void> => {
-		if (!isWcLeague) {
-			return;
-		}
-		setFourscoreSyncing(true);
-		try {
-			const updated = await syncFourScoreMatchday(
-				competitionCode,
-				effectiveMatchday,
-				externalSeason,
-				selectedLeague?.id
-			);
-			const page = await getMatchdayFromCache(
-				competitionCode,
-				effectiveMatchday,
-				externalSeason,
-				selectedLeague?.id
-			);
-			setData(page);
-			notifyExternalSyncIssuesChanged();
-			dispatch(
-				showSuccessSnackbar({
-					message: t('externalMatchFourScoreSyncSuccess', { count: updated }),
-				})
-			);
-		} catch (error) {
-			dispatch(
-				showErrorSnackbar({
-					message: error instanceof Error ? error.message : t('externalMatchFourScoreSyncError'),
-				})
-			);
-		} finally {
-			setFourscoreSyncing(false);
 		}
 	};
 
@@ -1084,7 +1045,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 												syncing ||
 												oddsSyncing ||
 												marathonbetSyncing ||
-												fourscoreSyncing ||
 												loading
 											}
 											onClick={() => void handleSyncFromApi()}
@@ -1119,7 +1079,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										<IconButton
 											size="small"
 											disabled={
-												fourscoreSyncing ||
 												marathonbetSyncing ||
 												oddsSyncing ||
 												syncing ||
@@ -1166,35 +1125,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										gap: 0.25,
 									}}
 								>
-									<Tooltip title={t('externalMatchFourScoreSyncFromApi')}>
-										<span>
-											<IconButton
-												size="small"
-												disabled={
-													fourscoreSyncing ||
-													marathonbetSyncing ||
-													oddsSyncing ||
-													syncing ||
-													loading
-												}
-												onClick={() => void handleFourScoreSyncFromApi()}
-												aria-label={t('externalMatchFourScoreSyncFromApi')}
-												sx={externalMatchWcRefreshSyncButtonSx}
-											>
-												{fourscoreSyncing ? (
-													<CircularProgress size={18} sx={{ color: 'common.white' }} />
-												) : (
-													<SportsScoreIcon sx={{ fontSize: 18, color: 'common.white' }} />
-												)}
-											</IconButton>
-										</span>
-									</Tooltip>
 									<Tooltip title={t('externalMatchMarathonbetSyncFromApi')}>
 										<span>
 											<IconButton
 												size="small"
 												disabled={
-													fourscoreSyncing ||
 													marathonbetSyncing ||
 													oddsSyncing ||
 													syncing ||
@@ -1234,7 +1169,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						<LeagueSelect
 							value={effectiveLeagueCode}
 							onChange={handleLeagueChange}
-							leagues={footballDataLeagues}
+							leagues={matchResultLeagues}
 							withoutAll
 							compact
 						/>
@@ -1441,12 +1376,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						const homeTeam = matchSideToDisplayTeam(match, 'home');
 						const awayTeam = matchSideToDisplayTeam(match, 'away');
 						const gameScore: GameScore | null = match.gameScore ?? null;
-						const scoreView = getExternalMatchScoreView(
+						const scoreView = resolveExternalMatchScoreView({
 							gameScore,
-							match.status,
-							Boolean(match.finalized),
-							trustExternalLiveScore(gameScore, match.status, match.liveMinuteLabel)
-						);
+							matchStatus: match.status,
+							finalized: Boolean(match.finalized),
+							liveMinuteLabel: match.liveMinuteLabel,
+							kickoffUtcMs: parseUtcDate(match.utcDate)?.getTime() ?? 0,
+						});
 						const statusLabel = match.finalized
 							? t('gameResultFinalized')
 							: translateMatchStatus(match.status, t);

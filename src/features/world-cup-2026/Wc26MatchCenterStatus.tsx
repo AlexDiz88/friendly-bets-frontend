@@ -2,9 +2,9 @@ import { Box, Typography } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEstimatedMatchMinute } from '../../shared/useEstimatedMatchMinute';
-import { useExtrapolatedLiveMinuteLabel } from '../../shared/useExtrapolatedLiveMinuteLabel';
-import { isLiveMatchStatus } from '../football-data/externalMatchScoreView';
-import { normalizeMatchStatus } from '../football-data/matchStatusI18n';
+import { useSyncedLiveMinuteLabel } from '../../shared/useSyncedLiveMinuteLabel';
+import { isLiveMatchStatus } from '../match-results/externalMatchScoreView';
+import { normalizeMatchStatus } from '../match-results/matchStatusI18n';
 import {
 	wc26KickoffTimeSx,
 	wc26MatchLiveMinuteSx,
@@ -19,6 +19,7 @@ interface Wc26MatchCenterStatusProps {
 	kickoffTime: string;
 	kickoffUtcMs: number;
 	scoreView?: string | null;
+	/** Якорь минуты с sync 4score/24score (БД); между sync тикает +1/мин на клиенте. */
 	liveMinuteLabel?: string | null;
 	liveDataFetchedAt?: string | null;
 	matchStatus?: string;
@@ -48,27 +49,33 @@ export default function Wc26MatchCenterStatus({
 	const { t } = useTranslation();
 	const normalizedStatus = normalizeMatchStatus(matchStatus);
 	const isPaused = normalizedStatus === 'PAUSED';
-	const extrapolatedMinute = useExtrapolatedLiveMinuteLabel(
+	const normalizedInPlay = normalizedStatus === 'IN_PLAY';
+	const syncedMinuteLabel = useSyncedLiveMinuteLabel(
 		liveMinuteLabel,
 		liveDataFetchedAt,
 		matchStatus
 	);
-	const canEstimateMinute =
-		scoresReady &&
-		(!hasDisplayableScore(scoreView) || liveStacked) &&
-		!extrapolatedMinute &&
-		!isPaused;
-	const estimated = useEstimatedMatchMinute(canEstimateMinute ? kickoffUtcMs : null);
+	const shouldEstimateKickoff =
+		kickoffUtcMs > 0 &&
+		!syncedMinuteLabel &&
+		(normalizedInPlay ||
+			(scoresReady &&
+				(!hasDisplayableScore(scoreView) || liveStacked) &&
+				!isPaused));
+	const estimated = useEstimatedMatchMinute(shouldEstimateKickoff ? kickoffUtcMs : null);
 
 	const minuteLabel = ((): string | null => {
 		if (isPaused) {
 			return t('matchCenter.halftime');
 		}
-		if (extrapolatedMinute) {
-			return extrapolatedMinute;
+		if (syncedMinuteLabel) {
+			return syncedMinuteLabel;
 		}
-		if (estimated && estimated.kind !== 'not_started') {
-			return estimated.kind === 'halftime' ? t('matchCenter.halftime') : estimated.label;
+		if (estimated?.kind === 'halftime') {
+			return t('matchCenter.halftime');
+		}
+		if (estimated?.kind === 'minute') {
+			return estimated.label;
 		}
 		return null;
 	})();
@@ -119,6 +126,10 @@ export default function Wc26MatchCenterStatus({
 	);
 }
 
-export function isWc26LiveStackedDisplay(matchStatus: string, finalized: boolean): boolean {
-	return isLiveMatchStatus(matchStatus) && !finalized;
+export function isWc26LiveStackedDisplay(
+	matchStatus: string,
+	finalized: boolean,
+	liveMinuteLabel?: string | null
+): boolean {
+	return !finalized && (isLiveMatchStatus(matchStatus) || Boolean(liveMinuteLabel?.trim()));
 }

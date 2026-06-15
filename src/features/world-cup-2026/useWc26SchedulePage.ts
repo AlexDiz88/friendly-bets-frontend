@@ -4,7 +4,7 @@ import { pageHasLiveMatches } from '../../shared/livePagePolling';
 import { useLivePagePolling } from '../../shared/useLivePagePolling';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
-import { resolveExternalSeasonForLeague } from '../football-data/seasonExternalYear';
+import { resolveExternalSeasonForLeague } from '../match-results/seasonExternalYear';
 import { fetchWc26SchedulePage, type Wc26MatchWithResult } from './wc26ScheduleApi';
 
 export interface Wc26SchedulePageState {

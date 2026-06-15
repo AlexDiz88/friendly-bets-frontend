@@ -1,6 +1,6 @@
 export type UnmappedExternalTeamName = {
 	externalName: string;
 	externalId?: number;
-	/** football-data | odds-api.io */
+	/** 4score.ru | 24score.pro | odds-api.io */
 	provider?: string;
 };

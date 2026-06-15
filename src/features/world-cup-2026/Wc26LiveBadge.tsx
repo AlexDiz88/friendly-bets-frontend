@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { externalMatchWcLiveBadgeSx } from '../football-data/externalMatchWcPageStyles';
+import { externalMatchWcLiveBadgeSx } from '../match-results/externalMatchWcPageStyles';
 
 export default function Wc26LiveBadge(): JSX.Element {
 	const { t } = useTranslation();

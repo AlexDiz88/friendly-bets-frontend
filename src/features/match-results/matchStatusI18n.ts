@@ -1,6 +1,6 @@
 import { TFunction } from 'i18next';
 
-/** football-data.org v4; PAUSE/HALFTIME — устаревшие алиасы */
+/** Канонические статусы матча; PAUSE/HALFTIME — устаревшие алиасы */
 const LEGACY_STATUS_MAP: Record<string, string> = {
 	PAUSE: 'PAUSED',
 	HALFTIME: 'PAUSED',
@@ -41,7 +41,7 @@ export function isMatchdayNotStarted(
 	return !matches.some((m) => isMatchStartedOrFinished(m.status));
 }
 
-/** Статусы матча football-data.org → ключ i18n `matchStatus.*` */
+/** Статусы матча → ключ i18n `matchStatus.*` */
 export function translateMatchStatus(status: string, t: TFunction): string {
 	const normalized = normalizeMatchStatus(status);
 	const key = `matchStatus.${normalized}`;

@@ -1,18 +1,17 @@
-import { Box, Chip, Typography } from '@mui/material';
-import { t } from 'i18next';
+import { Box, Chip } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { getUnmappedExternalTeamNames, API_SYNC_ISSUES_CHANGED_EVENT } from '../external-sync-issues/api';
 import { UnmappedExternalTeamName } from '../external-sync-issues/types/UnmappedExternalTeamName';
 import {
-	FOOTBALL_DATA_PROVIDER,
 	FOURSCORE_PROVIDER,
 	ODDS_API_PROVIDER,
+	TWENTYFOUR_SCORE_PROVIDER,
 } from './teamProviderConstants';
 
 export type UnmappedHintsProvider =
-	| typeof FOOTBALL_DATA_PROVIDER
 	| typeof ODDS_API_PROVIDER
-	| typeof FOURSCORE_PROVIDER;
+	| typeof FOURSCORE_PROVIDER
+	| typeof TWENTYFOUR_SCORE_PROVIDER;
 
 type UnmappedTeamNameHintsProps = {
 	provider: UnmappedHintsProvider;
@@ -55,7 +54,7 @@ export default function UnmappedTeamNameHints({
 	const filtered = useMemo(
 		() =>
 			[...hints]
-				.filter((hint) => (hint.provider ?? FOOTBALL_DATA_PROVIDER) === provider)
+				.filter((hint) => (hint.provider ?? FOURSCORE_PROVIDER) === provider)
 				.sort((a, b) =>
 					a.externalName.localeCompare(b.externalName, 'en', { sensitivity: 'base' })
 				),
@@ -66,19 +65,8 @@ export default function UnmappedTeamNameHints({
 		return null;
 	}
 
-	const hintLabelKey =
-		provider === ODDS_API_PROVIDER
-			? 'teamUnmappedOddsApiNamesHint'
-			: provider === FOURSCORE_PROVIDER
-				? 'teamUnmappedFourScoreNamesHint'
-				: 'teamUnmappedFootballDataNamesHint';
-
 	return (
-		<Box sx={{ mb: 1 }}>
-			<Typography variant="body2" sx={{ opacity: 0.85, mb: 0.75, textAlign: 'left' }}>
-				{t(hintLabelKey)}
-			</Typography>
-			<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+		<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
 				{filtered.map((hint) => {
 					const label =
 						hint.externalId != null
@@ -95,7 +83,6 @@ export default function UnmappedTeamNameHints({
 						/>
 					);
 				})}
-			</Box>
 		</Box>
 	);
 }

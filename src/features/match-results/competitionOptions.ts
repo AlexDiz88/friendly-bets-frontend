@@ -1,12 +1,12 @@
 import { externalSlotsToMatchdaySlots } from '../../components/matchday/slotMappers';
 import type { MatchdaySlot } from '../../components/matchday/types';
-import { FootballDataCompetitionOption } from './types/ExternalMatch';
+import { LeagueCompetitionOption } from './types/ExternalMatch';
 
 export type { MatchdaySlot };
 export { externalSlotsToMatchdaySlots };
 
-/** football-data.org competition code ↔ наш LeagueCode */
-export const FOOTBALL_DATA_COMPETITIONS: FootballDataCompetitionOption[] = [
+/** Код соревнования ↔ наш LeagueCode */
+export const LEAGUE_COMPETITION_OPTIONS: LeagueCompetitionOption[] = [
 	{ competitionCode: 'PL', leagueCode: 'EPL', matchdayCount: 38 },
 	{ competitionCode: 'BL1', leagueCode: 'BL', matchdayCount: 34 },
 	{ competitionCode: 'CL', leagueCode: 'CL', matchdayCount: 14 },
@@ -31,13 +31,13 @@ const CL_KNOCKOUT_SLOTS: MatchdaySlot[] = [
 	{ value: 14, slotId: 'final', label: 'final', kind: 'KNOCKOUT' },
 ];
 
-export const DEFAULT_FOOTBALL_DATA_SEASON = '2025';
+export const DEFAULT_MATCH_RESULTS_SEASON = '2025';
 
 const DEFAULT_MATCHDAY_COUNT = 38;
 
 export function getMatchdayCountForLeague(leagueCode: string): number {
 	return (
-		FOOTBALL_DATA_COMPETITIONS.find((c) => c.leagueCode === leagueCode)?.matchdayCount ??
+		LEAGUE_COMPETITION_OPTIONS.find((c) => c.leagueCode === leagueCode)?.matchdayCount ??
 		DEFAULT_MATCHDAY_COUNT
 	);
 }

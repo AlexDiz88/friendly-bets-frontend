@@ -26,7 +26,8 @@ import Bet from '../bets/types/Bet';
 import Wc26TeamFlag from '../world-cup-2026/Wc26TeamFlag';
 import { findWc26ScheduleMatchForExternal } from '../world-cup-2026/wc26BetSlots';
 import { matchSideToDisplayTeam } from './externalMatchDisplay';
-import { getExternalMatchScoreView, trustExternalLiveScore } from './externalMatchScoreView';
+import { resolveExternalMatchScoreView } from './externalMatchScoreView';
+import { parseUtcDate } from '../../shared/utcDate';
 import type { ExternalMatch } from './types/ExternalMatch';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import {
@@ -104,12 +105,13 @@ export default function ExternalMatchBetsDialog({
 	const homeTeam = matchSideToDisplayTeam(match, 'home');
 	const awayTeam = matchSideToDisplayTeam(match, 'away');
 	const matchFinalized = Boolean(match.finalized);
-	const scoreView = getExternalMatchScoreView(
-		match.gameScore ?? null,
-		match.status,
-		matchFinalized,
-		trustExternalLiveScore(match.gameScore ?? null, match.status, match.liveMinuteLabel)
-	);
+	const scoreView = resolveExternalMatchScoreView({
+		gameScore: match.gameScore ?? null,
+		matchStatus: match.status,
+		finalized: matchFinalized,
+		liveMinuteLabel: match.liveMinuteLabel,
+		kickoffUtcMs: parseUtcDate(match.utcDate)?.getTime() ?? 0,
+	});
 
 	const sortedBets = useMemo(() => {
 		if (!currentUserId) {

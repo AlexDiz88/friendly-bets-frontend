@@ -2,7 +2,8 @@ import { useEffect, useRef } from 'react';
 import { LIVE_PAGE_POLL_INTERVAL_MS } from './livePagePolling';
 
 /**
- * Периодический опрос API, пока enabled (напр. есть live-матчи).
+ * Периодический опрос нашего API, пока enabled (напр. есть live-матчи).
+ * По умолчанию — раз в минуту (счёт, статус, liveMinuteLabel из БД).
  * Не запускается в скрытой вкладке; при возврате — один немедленный poll.
  */
 export function useLivePagePolling(

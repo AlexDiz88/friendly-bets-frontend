@@ -9,14 +9,14 @@ function apiUrl(path: string): string {
 	return `${import.meta.env.VITE_PRODUCT_SERVER}${path}`;
 }
 
-/** Метаданные турнира с football-data.org (текущий тур, число туров). */
+/** Метаданные турнира (текущий тур, число туров). */
 export async function getCompetitionInfo(
 	competitionCode: string,
 	season: string
 ): Promise<ExternalCompetitionInfo> {
 	const params = new URLSearchParams({ season });
 	const result = await apiFetch(
-		apiUrl(`/api/football-data/competitions/${competitionCode}?${params}`)
+		apiUrl(`/api/match-results/competitions/${competitionCode}?${params}`)
 	);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
@@ -25,7 +25,7 @@ export async function getCompetitionInfo(
 	return result.json();
 }
 
-/** Только чтение из MongoDB (без запроса к football-data.org). */
+/** Только чтение из MongoDB (без запроса к внешним API). */
 export async function getMatchdayFromCache(
 	competitionCode: string,
 	matchday: number,
@@ -37,7 +37,7 @@ export async function getMatchdayFromCache(
 		params.set('leagueId', leagueId);
 	}
 	const result = await apiFetch(
-		apiUrl(`/api/football-data/competitions/${competitionCode}/matchdays/${matchday}?${params}`)
+		apiUrl(`/api/match-results/competitions/${competitionCode}/matchdays/${matchday}?${params}`)
 	);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
@@ -61,7 +61,7 @@ export async function getLeagueExternalCompetitionInfo(
 	return result.json();
 }
 
-/** Принудительная загрузка тура с football-data.org и сохранение в БД. */
+/** Принудительная синхронизация тура (4score + 24score) и сохранение в БД. */
 export async function syncMatchdayFromApi(
 	competitionCode: string,
 	matchday: number,
@@ -73,7 +73,7 @@ export async function syncMatchdayFromApi(
 		params.set('leagueId', leagueId);
 	}
 	const syncResult = await apiFetch(
-		apiUrl(`/api/football-data/competitions/${competitionCode}/matchdays/${matchday}/sync?${params}`),
+		apiUrl(`/api/match-results/competitions/${competitionCode}/matchdays/${matchday}/sync?${params}`),
 		{ method: 'POST' }
 	);
 	if (syncResult.status >= 400) {
