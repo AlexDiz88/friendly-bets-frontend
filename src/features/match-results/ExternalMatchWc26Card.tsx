@@ -37,8 +37,8 @@ import {
 } from './externalMatchWcPageStyles';
 import { wc26MatchMetaSx } from '../world-cup-2026/wc26PageStyles';
 import {
-	getExternalMatchScoreView,
-	trustExternalLiveScore,
+	resolveExternalMatchScoreView,
+	hasExternalMatchScore,
 } from './externalMatchScoreView';
 import { translateMatchStatus, getMatchStatusChipColor, normalizeMatchStatus } from './matchStatusI18n';
 import type { ExternalMatch } from './types/ExternalMatch';
@@ -92,15 +92,19 @@ export default function ExternalMatchWc26Card({
 		return parseUtcDate(match.utcDate)?.getTime() ?? 0;
 	}, [scheduled, match.utcDate]);
 	const gameScore: GameScore | null = match.gameScore ?? null;
-	const trustLiveScore = trustExternalLiveScore(gameScore, match.status, match.liveMinuteLabel);
-	const scoreView = getExternalMatchScoreView(
+	const scoreView = resolveExternalMatchScoreView({
 		gameScore,
+		matchStatus: match.status,
+		finalized: Boolean(match.finalized),
+		liveMinuteLabel: match.liveMinuteLabel,
+		kickoffUtcMs,
+	});
+	const hasScore = hasExternalMatchScore(scoreView);
+	const isLiveStacked = isWc26LiveStackedDisplay(
 		match.status,
 		Boolean(match.finalized),
-		trustLiveScore
+		match.liveMinuteLabel
 	);
-	const hasScore = Boolean(scoreView && scoreView !== '—');
-	const isLiveStacked = isWc26LiveStackedDisplay(match.status, Boolean(match.finalized));
 	const isPausedLive = normalizeMatchStatus(match.status) === 'PAUSED' && isLiveStacked;
 	const showLiveBadge = isLiveStacked && !isPausedLive;
 	const statusLabel = match.finalized

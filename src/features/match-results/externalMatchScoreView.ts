@@ -1,13 +1,22 @@
 import { getGameScoreView } from '../../components/utils/gameScoreValidation';
 import GameScore from '../bets/types/GameScore';
-import { normalizeMatchStatus } from './matchStatusI18n';
+import { isMatchNotStarted, normalizeMatchStatus } from './matchStatusI18n';
 
 const SCORE_UNAVAILABLE = '—';
+export const DEFAULT_LIVE_SCORE = '0:0';
 
 const LIVE_STATUSES = new Set(['IN_PLAY', 'PAUSED', 'EXTRA_TIME', 'PENALTY_SHOOTOUT']);
 
 export function isLiveMatchStatus(matchStatus: string): boolean {
 	return LIVE_STATUSES.has(normalizeMatchStatus(matchStatus));
+}
+
+function hasLiveMinuteLabel(liveMinuteLabel?: string | null): boolean {
+	return Boolean(liveMinuteLabel?.trim());
+}
+
+function isEffectivelyLiveMatch(matchStatus: string, liveMinuteLabel?: string | null): boolean {
+	return isLiveMatchStatus(matchStatus) || hasLiveMinuteLabel(liveMinuteLabel);
 }
 
 /** Показывать live-счёт с primary-провайдера (4score), а не прочерк. */
@@ -17,8 +26,8 @@ export function trustExternalLiveScore(
 	liveMinuteLabel?: string | null
 ): boolean {
 	return (
-		isLiveMatchStatus(matchStatus) &&
-		Boolean(gameScore?.fullTime || liveMinuteLabel)
+		isEffectivelyLiveMatch(matchStatus, liveMinuteLabel) &&
+		Boolean(gameScore?.fullTime || hasLiveMinuteLabel(liveMinuteLabel))
 	);
 }
 
@@ -33,12 +42,15 @@ export function getExternalMatchScoreView(
 		return SCORE_UNAVAILABLE;
 	}
 
-	if (!gameScore?.fullTime) {
-		return SCORE_UNAVAILABLE;
+	if (trustLiveScore && !finalized) {
+		if (gameScore?.fullTime) {
+			return gameScore.fullTime;
+		}
+		return DEFAULT_LIVE_SCORE;
 	}
 
-	if (trustLiveScore && isLiveMatchStatus(matchStatus) && !finalized) {
-		return gameScore.fullTime;
+	if (!gameScore?.fullTime) {
+		return SCORE_UNAVAILABLE;
 	}
 
 	if (gameScore.firstTime) {
@@ -46,4 +58,42 @@ export function getExternalMatchScoreView(
 	}
 
 	return gameScore.fullTime;
+}
+
+export function hasExternalMatchScore(scoreView?: string | null): boolean {
+	return Boolean(scoreView && scoreView !== SCORE_UNAVAILABLE);
+}
+
+/** Единая точка: trust + live 0:0 + kickoff прошёл, а sync ещё не обновил статус. */
+export function resolveExternalMatchScoreView(params: {
+	gameScore: GameScore | null | undefined;
+	matchStatus: string;
+	finalized?: boolean;
+	liveMinuteLabel?: string | null;
+	kickoffUtcMs?: number;
+}): string {
+	const finalized = params.finalized ?? false;
+	const trustLiveScore = trustExternalLiveScore(
+		params.gameScore,
+		params.matchStatus,
+		params.liveMinuteLabel
+	);
+	const view = getExternalMatchScoreView(
+		params.gameScore,
+		params.matchStatus,
+		finalized,
+		trustLiveScore
+	);
+	if (hasExternalMatchScore(view) || finalized) {
+		return view;
+	}
+	const kickoffUtcMs = params.kickoffUtcMs ?? 0;
+	if (
+		kickoffUtcMs > 0 &&
+		Date.now() >= kickoffUtcMs &&
+		isMatchNotStarted(params.matchStatus)
+	) {
+		return DEFAULT_LIVE_SCORE;
+	}
+	return view;
 }

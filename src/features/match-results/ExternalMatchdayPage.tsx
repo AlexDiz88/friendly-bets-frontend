@@ -39,7 +39,7 @@ import {
 	resolveBetSizeForBetInput,
 	resolveSeasonDefaultBetSize,
 } from '../bets/betSizeDefaults';
-import { getExternalMatchScoreView, trustExternalLiveScore } from './externalMatchScoreView';
+import { resolveExternalMatchScoreView } from './externalMatchScoreView';
 import GameResultScoreEditDialog from './GameResultScoreEditDialog';
 import {
 	adminCorrectGameResultScore,
@@ -1376,12 +1376,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						const homeTeam = matchSideToDisplayTeam(match, 'home');
 						const awayTeam = matchSideToDisplayTeam(match, 'away');
 						const gameScore: GameScore | null = match.gameScore ?? null;
-						const scoreView = getExternalMatchScoreView(
+						const scoreView = resolveExternalMatchScoreView({
 							gameScore,
-							match.status,
-							Boolean(match.finalized),
-							trustExternalLiveScore(gameScore, match.status, match.liveMinuteLabel)
-						);
+							matchStatus: match.status,
+							finalized: Boolean(match.finalized),
+							liveMinuteLabel: match.liveMinuteLabel,
+							kickoffUtcMs: parseUtcDate(match.utcDate)?.getTime() ?? 0,
+						});
 						const statusLabel = match.finalized
 							? t('gameResultFinalized')
 							: translateMatchStatus(match.status, t);

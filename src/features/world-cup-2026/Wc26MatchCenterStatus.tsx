@@ -126,6 +126,10 @@ export default function Wc26MatchCenterStatus({
 	);
 }
 
-export function isWc26LiveStackedDisplay(matchStatus: string, finalized: boolean): boolean {
-	return isLiveMatchStatus(matchStatus) && !finalized;
+export function isWc26LiveStackedDisplay(
+	matchStatus: string,
+	finalized: boolean,
+	liveMinuteLabel?: string | null
+): boolean {
+	return !finalized && (isLiveMatchStatus(matchStatus) || Boolean(liveMinuteLabel?.trim()));
 }
