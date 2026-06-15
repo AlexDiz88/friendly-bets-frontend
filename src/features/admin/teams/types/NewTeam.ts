@@ -5,5 +5,4 @@ export default interface NewTeam {
 	country: string;
 	displayNames?: TeamDisplayNames;
 	externalAliases?: TeamExternalAlias[];
-	footballDataTeamId?: number;
 }

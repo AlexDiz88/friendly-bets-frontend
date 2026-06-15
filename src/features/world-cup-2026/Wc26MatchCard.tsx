@@ -1,7 +1,7 @@
 import { Box, Chip, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { translateMatchStatus, normalizeMatchStatus } from '../football-data/matchStatusI18n';
+import { translateMatchStatus, normalizeMatchStatus } from '../match-results/matchStatusI18n';
 import Wc26TeamFlag from './Wc26TeamFlag';
 import Wc26MatchCenterStatus, { isWc26LiveStackedDisplay } from './Wc26MatchCenterStatus';
 import Wc26LiveBadge from './Wc26LiveBadge';

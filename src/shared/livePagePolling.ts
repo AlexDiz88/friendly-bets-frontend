@@ -1,4 +1,4 @@
-import { isLiveMatchStatus } from '../features/football-data/externalMatchScoreView';
+import { isLiveMatchStatus } from '../features/match-results/externalMatchScoreView';
 
 export const LIVE_PAGE_POLL_INTERVAL_MS = 45_000;
 

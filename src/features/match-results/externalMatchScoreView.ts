@@ -22,7 +22,7 @@ export function trustExternalLiveScore(
 	);
 }
 
-/** Счёт для football-data.org; при trustLiveScore — показываем live-счёт 4score. */
+/** Отображаемый счёт; при trustLiveScore — live-счёт 4score. */
 export function getExternalMatchScoreView(
 	gameScore: GameScore | null | undefined,
 	matchStatus: string,

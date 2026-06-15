@@ -26,7 +26,7 @@ import {
 	patchMatchResultSyncSettings,
 } from './matchResultSyncSettingsApi';
 
-const PROVIDERS = ['4score.ru', 'football-data', 'api-football'] as const;
+const PROVIDERS = ['4score.ru', '24score.pro'] as const;
 
 function cloneSettings(data: MatchResultSyncSettings): MatchResultSyncSettings {
 	return { ...data };

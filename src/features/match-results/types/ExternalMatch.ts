@@ -51,10 +51,10 @@ export interface ExternalMatchdayPage {
 	matches: ExternalMatch[];
 }
 
-export interface FootballDataCompetitionOption {
+export interface LeagueCompetitionOption {
 	competitionCode: string;
 	leagueCode: string;
-	/** Запасное число туров, если API недоступен. */
+	/** Запасное число туров, если метаданные недоступны. */
 	matchdayCount: number;
 }
 

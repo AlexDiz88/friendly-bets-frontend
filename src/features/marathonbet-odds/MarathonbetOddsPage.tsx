@@ -28,9 +28,9 @@ import { toggleFormControlLabelSx } from '../../components/custom/controls/custo
 import MatchdayGridSelect from '../../components/matchday/MatchdayGridSelect';
 import { selectUser } from '../auth/selectors';
 import { selectActiveSeason } from '../admin/seasons/selectors';
-import { externalSlotsToMatchdaySlots } from '../football-data/competitionOptions';
-import { getCompetitionInfo } from '../football-data/footballDataApi';
-import { resolveExternalSeasonForLeague } from '../football-data/seasonExternalYear';
+import { externalSlotsToMatchdaySlots } from '../match-results/competitionOptions';
+import { getCompetitionInfo } from '../match-results/matchResultsApi';
+import { resolveExternalSeasonForLeague } from '../match-results/seasonExternalYear';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import {
 	oddsDemoHintSx,

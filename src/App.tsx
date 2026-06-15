@@ -32,12 +32,11 @@ import BetsCheck from './features/bets/BetsCheck';
 import BetsList from './features/bets/BetsList';
 import CompletedBetsList from './features/bets/CompletedBetsList';
 import OpenedBetsList from './features/bets/OpenedBetsList';
-import ExternalMatchdayPage from './features/football-data/ExternalMatchdayPage';
+import ExternalMatchdayPage from './features/match-results/ExternalMatchdayPage';
 import FourScorePreviewPage from './features/fourscore/FourScorePreviewPage';
 import MarathonbetOddsPage from './features/marathonbet-odds/MarathonbetOddsPage';
 import OddsDemoPage from './features/odds-demo/OddsDemoPage';
 import WorldCup26Page from './features/world-cup-2026/WorldCup26Page';
-import GameList from './features/football-data/gameResults/GameList';
 import Gameweek from './features/gameweeks/Gameweek';
 import BetTitlesStatsPage from './features/stats/BetTitlesStatsPage';
 import LeaguesStatsPage from './features/stats/LeaguesStatsPage';
@@ -134,8 +133,7 @@ function App(): JSX.Element {
 				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
 				<Route path="/stats/bet-titles" element={<BetTitlesStatsPage />} />
-				<Route path="/stats/football-data" element={<GameList />} />
-				<Route path="/football-data/matchday" element={<ExternalMatchdayPage />} />
+				<Route path="/match-results/matchday" element={<ExternalMatchdayPage />} />
 				<Route path="/odds-demo" element={<OddsDemoPage />} />
 				<Route path="/gameweeks" element={<Gameweek />} />
 				<Route path="/news" element={<News />} />

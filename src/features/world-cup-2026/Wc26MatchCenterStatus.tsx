@@ -3,8 +3,8 @@ import type { SxProps, Theme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEstimatedMatchMinute } from '../../shared/useEstimatedMatchMinute';
 import { useExtrapolatedLiveMinuteLabel } from '../../shared/useExtrapolatedLiveMinuteLabel';
-import { isLiveMatchStatus } from '../football-data/externalMatchScoreView';
-import { normalizeMatchStatus } from '../football-data/matchStatusI18n';
+import { isLiveMatchStatus } from '../match-results/externalMatchScoreView';
+import { normalizeMatchStatus } from '../match-results/matchStatusI18n';
 import {
 	wc26KickoffTimeSx,
 	wc26MatchLiveMinuteSx,

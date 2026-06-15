@@ -9,6 +9,7 @@ import {
 	showSuccessSnackbar,
 } from '../../../components/custom/snackbar/snackbarSlice';
 import TeamFormFields from './TeamFormFields';
+import TeamFormStatusIcon from './TeamFormStatusIcon';
 import { notifyExternalSyncIssuesChanged } from '../external-sync-issues/api';
 import { emptyTeamFormValues, formValuesToCreatePayload, mergeTeamFormPatch } from './teamFormUtils';
 import { createTeam } from './teamsSlice';
@@ -45,6 +46,9 @@ export default function CreateNewTeam({
 
 	return (
 		<Box sx={{ textAlign: 'left' }}>
+			<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', mb: 0.5 }}>
+				<TeamFormStatusIcon values={values} />
+			</Box>
 			<TeamFormFields
 				values={values}
 				onChange={handleChange}

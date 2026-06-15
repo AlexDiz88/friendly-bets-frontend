@@ -1,5 +1,5 @@
 import { parseUtcDate } from '../../shared/utcDate';
-import type { ExternalMatch } from '../football-data/types/ExternalMatch';
+import type { ExternalMatch } from '../match-results/types/ExternalMatch';
 import { WC26_SCHEDULE, type Wc26Match } from './wc26Schedule';
 import {
 	formatBerlinDateFromIsoDate,
@@ -11,7 +11,7 @@ import type { Wc26TeamId } from './wc26Teams';
 
 const BERLIN_GROUP_SLOT = /^([123]) \[(\d+)\]$/;
 
-/** odds-api / football-data names per FIFA code — mirrors backend Wc26TeamCatalog. */
+/** odds-api / 4score names per FIFA code — mirrors backend Wc26TeamCatalog. */
 const API_NAMES_BY_FIFA: Record<Wc26TeamId, string[]> = {
 	MEX: ['Mexico'],
 	RSA: ['South Africa', 'SouthAfrica'],

@@ -2,10 +2,10 @@ import i18n from '../../../i18n';
 import NewTeam from './types/NewTeam';
 import Team, { TeamDisplayNames, TeamExternalAlias } from './types/Team';
 import {
-	FOOTBALL_DATA_PROVIDER,
 	FOURSCORE_PROVIDER,
 	MARATHONBET_PROVIDER,
 	ODDS_API_PROVIDER,
+	TWENTYFOUR_SCORE_PROVIDER,
 } from './teamProviderConstants';
 
 export type TeamFormValues = {
@@ -14,12 +14,11 @@ export type TeamFormValues = {
 	nameEn: string;
 	nameRu: string;
 	nameDe: string;
-	footballDataTeamId: string;
-	footballDataExternalName: string;
 	oddsApiTeamId: string;
 	oddsApiExternalName: string;
 	marathonbetExternalName: string;
 	fourscoreExternalName: string;
+	twentyFourScoreExternalName: string;
 };
 
 export function emptyTeamFormValues(): TeamFormValues {
@@ -29,17 +28,20 @@ export function emptyTeamFormValues(): TeamFormValues {
 		nameEn: '',
 		nameRu: '',
 		nameDe: '',
-		footballDataTeamId: '',
-		footballDataExternalName: '',
 		oddsApiTeamId: '',
 		oddsApiExternalName: '',
 		marathonbetExternalName: '',
 		fourscoreExternalName: '',
+		twentyFourScoreExternalName: '',
 	};
 }
 
-export function hasFootballDataApiMapping(values: TeamFormValues): boolean {
-	return values.footballDataTeamId.trim() !== '' && values.footballDataExternalName.trim() !== '';
+export function hasFourScoreApiMapping(values: TeamFormValues): boolean {
+	return values.fourscoreExternalName.trim() !== '';
+}
+
+export function hasTwentyFourScoreApiMapping(values: TeamFormValues): boolean {
+	return values.twentyFourScoreExternalName.trim() !== '';
 }
 
 export function hasOddsApiMapping(values: TeamFormValues): boolean {
@@ -50,7 +52,7 @@ function formFieldFilled(value: string): boolean {
 	return value.trim() !== '';
 }
 
-/** All editable team fields (country, i18n names, football-data id + API name). */
+/** All editable team fields (country, i18n names, provider aliases). */
 const TEAM_I18N_LANGS: { lng: string; field: keyof Pick<TeamFormValues, 'nameEn' | 'nameRu' | 'nameDe'> }[] =
 	[
 		{ lng: 'en', field: 'nameEn' },
@@ -112,22 +114,34 @@ export function mergeTeamFormPatch(
 	return next;
 }
 
+export function hasMarathonbetApiMapping(values: TeamFormValues): boolean {
+	return values.marathonbetExternalName.trim() !== '';
+}
+
 export function isTeamFormComplete(values: TeamFormValues): boolean {
 	return (
 		formFieldFilled(values.country) &&
 		formFieldFilled(values.nameEn) &&
 		formFieldFilled(values.nameRu) &&
 		formFieldFilled(values.nameDe) &&
-		hasFootballDataApiMapping(values) &&
+		hasFourScoreApiMapping(values) &&
+		hasTwentyFourScoreApiMapping(values) &&
+		hasMarathonbetApiMapping(values) &&
 		hasOddsApiMapping(values)
 	);
 }
 
+export function isTeamComplete(team: Team): boolean {
+	return isTeamFormComplete(teamToFormValues(team));
+}
+
 export function teamToFormValues(team: Team): TeamFormValues {
-	const fdAlias = team.externalAliases?.find((a) => a.provider === FOOTBALL_DATA_PROVIDER);
 	const oddsAlias = team.externalAliases?.find((a) => a.provider === ODDS_API_PROVIDER);
 	const marathonAlias = team.externalAliases?.find((a) => a.provider === MARATHONBET_PROVIDER);
 	const fourScoreAlias = team.externalAliases?.find((a) => a.provider === FOURSCORE_PROVIDER);
+	const twentyFourScoreAlias = team.externalAliases?.find(
+		(a) => a.provider === TWENTYFOUR_SCORE_PROVIDER
+	);
 	return applyI18nDisplayNamesToFormValues(
 		{
 			title: team.title ?? '',
@@ -135,17 +149,11 @@ export function teamToFormValues(team: Team): TeamFormValues {
 			nameEn: team.displayNames?.en ?? '',
 			nameRu: team.displayNames?.ru ?? '',
 			nameDe: team.displayNames?.de ?? '',
-			footballDataTeamId:
-				team.footballDataTeamId != null
-					? String(team.footballDataTeamId)
-					: fdAlias?.externalId != null
-						? String(fdAlias.externalId)
-						: '',
-			footballDataExternalName: fdAlias?.externalName ?? '',
 			oddsApiTeamId: oddsAlias?.externalId != null ? String(oddsAlias.externalId) : '',
 			oddsApiExternalName: oddsAlias?.externalName ?? '',
 			marathonbetExternalName: marathonAlias?.externalName ?? '',
 			fourscoreExternalName: fourScoreAlias?.externalName ?? '',
+			twentyFourScoreExternalName: twentyFourScoreAlias?.externalName ?? '',
 		},
 		true
 	);
@@ -175,19 +183,6 @@ function parseOptionalExternalId(raw: string): number | undefined {
 	return Number.isFinite(externalId) ? externalId : undefined;
 }
 
-function buildFootballDataAlias(values: TeamFormValues): TeamExternalAlias | undefined {
-	const name = values.footballDataExternalName.trim();
-	const idRaw = values.footballDataTeamId.trim();
-	if (!name && !idRaw) {
-		return undefined;
-	}
-	return {
-		provider: FOOTBALL_DATA_PROVIDER,
-		externalId: parseOptionalExternalId(values.footballDataTeamId),
-		externalName: name || undefined,
-	};
-}
-
 function buildFourScoreAlias(values: TeamFormValues): TeamExternalAlias | undefined {
 	const name = values.fourscoreExternalName.trim();
 	if (!name) {
@@ -195,6 +190,17 @@ function buildFourScoreAlias(values: TeamFormValues): TeamExternalAlias | undefi
 	}
 	return {
 		provider: FOURSCORE_PROVIDER,
+		externalName: name,
+	};
+}
+
+function buildTwentyFourScoreAlias(values: TeamFormValues): TeamExternalAlias | undefined {
+	const name = values.twentyFourScoreExternalName.trim();
+	if (!name) {
+		return undefined;
+	}
+	return {
+		provider: TWENTYFOUR_SCORE_PROVIDER,
 		externalName: name,
 	};
 }
@@ -230,15 +236,9 @@ export function buildExternalAliases(
 ): TeamExternalAlias[] {
 	const byProvider = new Map<string, TeamExternalAlias>();
 	for (const alias of existing ?? []) {
-		if (alias.provider && alias.provider !== 'wc26') {
+		if (alias.provider && alias.provider !== 'wc26' && alias.provider !== 'football-data' && alias.provider !== 'api-football') {
 			byProvider.set(alias.provider, alias);
 		}
-	}
-	const fd = buildFootballDataAlias(values);
-	if (fd) {
-		byProvider.set(FOOTBALL_DATA_PROVIDER, fd);
-	} else {
-		byProvider.delete(FOOTBALL_DATA_PROVIDER);
 	}
 	const odds = buildOddsApiAlias(values);
 	if (odds) {
@@ -258,17 +258,21 @@ export function buildExternalAliases(
 	} else {
 		byProvider.delete(FOURSCORE_PROVIDER);
 	}
+	const twentyFourScore = buildTwentyFourScoreAlias(values);
+	if (twentyFourScore) {
+		byProvider.set(TWENTYFOUR_SCORE_PROVIDER, twentyFourScore);
+	} else {
+		byProvider.delete(TWENTYFOUR_SCORE_PROVIDER);
+	}
 	return [...byProvider.values()];
 }
 
 export function formValuesToCreatePayload(values: TeamFormValues): NewTeam {
-	const fdId = parseOptionalExternalId(values.footballDataTeamId);
 	return {
 		title: values.title.trim(),
 		country: values.country.trim(),
 		displayNames: buildDisplayNames(values.nameEn, values.nameRu, values.nameDe),
 		externalAliases: buildExternalAliases(values),
-		footballDataTeamId: fdId,
 	};
 }
 
@@ -276,18 +280,15 @@ export interface UpdateTeamPayload {
 	country?: string;
 	displayNames?: TeamDisplayNames;
 	externalAliases?: TeamExternalAlias[];
-	footballDataTeamId?: number;
 }
 
 export function formValuesToUpdatePayload(
 	values: TeamFormValues,
 	existingExternalAliases?: TeamExternalAlias[]
 ): UpdateTeamPayload {
-	const fdId = parseOptionalExternalId(values.footballDataTeamId);
 	return {
 		country: values.country.trim() || undefined,
 		displayNames: buildDisplayNames(values.nameEn, values.nameRu, values.nameDe),
 		externalAliases: buildExternalAliases(values, existingExternalAliases),
-		footballDataTeamId: fdId,
 	};
 }

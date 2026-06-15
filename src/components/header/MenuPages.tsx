@@ -68,7 +68,7 @@ export function isHeaderNavPageActive(
 		[t('news')]: '/news',
 		[t('byGameweeks')]: '/gameweeks',
 		[t('byBetTitles')]: '/stats/bet-titles',
-		[t('matchResults')]: '/football-data/matchday',
+		[t('matchResults')]: '/match-results/matchday',
 		[t('byLeagues')]: '/stats/leagues',
 		[t('byTeams')]: '/stats/teams',
 		[t('archive')]: '/archive',
@@ -128,11 +128,8 @@ export function useHeaderMenu(): HeaderMenuState {
 			case t('byBetTitles'):
 				navigate('/stats/bet-titles');
 				break;
-			case t('footballData'):
-				navigate('/stats/football-data');
-				break;
 			case t('matchResults'):
-				navigate('/football-data/matchday');
+				navigate('/match-results/matchday');
 				break;
 			case t('byLeagues'):
 				navigate('/stats/leagues');
@@ -333,7 +330,7 @@ export function HeaderNavCenter({ menu }: { menu: HeaderMenuState }): JSX.Elemen
 				/>
 				<CustomMenuPageText
 					onClick={menu.scrollToTop}
-					href="#/football-data/matchday"
+					href="#/match-results/matchday"
 					title={menu.t('matchResults')}
 					active={menu.isNavPageActive(menu.t('matchResults'))}
 					sx={menu.isNavPageActive(menu.t('matchResults')) ? headerNavLinkActiveSx : undefined}

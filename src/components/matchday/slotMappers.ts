@@ -1,5 +1,5 @@
 import type { ExpandedMatchdaySlot } from '../../features/admin/tournament-formats/types/TournamentFormat';
-import { buildMatchdaySlotsForLeague } from '../../features/football-data/competitionOptions';
+import { buildMatchdaySlotsForLeague } from '../../features/match-results/competitionOptions';
 import type { MatchdaySlot } from './types';
 
 export function externalSlotsToMatchdaySlots(

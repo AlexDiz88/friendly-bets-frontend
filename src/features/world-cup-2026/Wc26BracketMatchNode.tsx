@@ -13,7 +13,7 @@ import {
 } from './wc26FifaDisplay';
 import { parseUtcDate } from '../../shared/utcDate';
 import { wc26MatchMetaSx, wc26MatchLiveMinuteSx, wc26LiveScoreSx, wc26KickoffTimeSx } from './wc26PageStyles';
-import { normalizeMatchStatus } from '../football-data/matchStatusI18n';
+import { normalizeMatchStatus } from '../match-results/matchStatusI18n';
 
 function translatePlaceholder(code: string, t: TFunction): string {
 	const trimmed = code.trim();

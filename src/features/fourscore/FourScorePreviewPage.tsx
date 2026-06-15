@@ -32,7 +32,7 @@ import {
 	oddsDemoToolbarRowSx,
 } from '../odds-demo/oddsDemoPageStyles';
 import { fetchFourScorePreview, type FourScorePreviewMatch } from './fourscoreApi';
-import { translateMatchStatus } from '../football-data/matchStatusI18n';
+import { translateMatchStatus } from '../match-results/matchStatusI18n';
 
 const FOURSCORE_BASE = 'https://4score.ru';
 const PAGE_ROOT_SX = { ...oddsDemoPageRootSx, maxWidth: 1440 };

@@ -1,10 +1,10 @@
 import { ExternalSyncIssue } from '../external-sync-issues/types/ExternalSyncIssue';
 import Team from './types/Team';
 import {
-	FOOTBALL_DATA_PROVIDER,
 	FOURSCORE_PROVIDER,
 	MARATHONBET_PROVIDER,
 	ODDS_API_PROVIDER,
+	TWENTYFOUR_SCORE_PROVIDER,
 } from './teamProviderConstants';
 import { TeamFormValues } from './teamFormUtils';
 
@@ -18,7 +18,7 @@ export function extractTeamMappingFromIssue(issue: ExternalSyncIssue): TeamMappi
 	if (issue.issueType !== 'TEAM_MAPPING_MISSING') {
 		return null;
 	}
-	const provider = issue.provider ?? FOOTBALL_DATA_PROVIDER;
+	const provider = issue.provider ?? FOURSCORE_PROVIDER;
 	if (issue.homeTeamName || issue.homeTeamExternalId) {
 		return {
 			provider,
@@ -123,16 +123,6 @@ export function buildExternalAliasPrefill(
 		}
 		return patch;
 	}
-	if (provider === FOOTBALL_DATA_PROVIDER) {
-		const patch: Partial<TeamFormValues> = {};
-		if (externalName) {
-			patch.footballDataExternalName = externalName;
-		}
-		if (externalId) {
-			patch.footballDataTeamId = externalId;
-		}
-		return patch;
-	}
 	if (provider === MARATHONBET_PROVIDER) {
 		const patch: Partial<TeamFormValues> = {};
 		if (externalName) {
@@ -144,6 +134,13 @@ export function buildExternalAliasPrefill(
 		const patch: Partial<TeamFormValues> = {};
 		if (externalName) {
 			patch.fourscoreExternalName = externalName;
+		}
+		return patch;
+	}
+	if (provider === TWENTYFOUR_SCORE_PROVIDER) {
+		const patch: Partial<TeamFormValues> = {};
+		if (externalName) {
+			patch.twentyFourScoreExternalName = externalName;
 		}
 		return patch;
 	}

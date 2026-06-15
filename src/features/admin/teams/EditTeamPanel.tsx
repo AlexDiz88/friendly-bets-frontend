@@ -215,7 +215,10 @@ export default function EditTeamPanel(): JSX.Element {
 					isOptionEqualToValue={(a, b) => a.id === b.id}
 					renderOption={(props, team) => (
 						<li {...props} key={team.id}>
-							<TeamAvatar team={team} height={22} />
+							<Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+								<TeamAvatar team={team} height={22} />
+								<TeamFormStatusIcon values={teamToFormValues(team)} />
+							</Box>
 						</li>
 					)}
 					renderInput={(params) => (

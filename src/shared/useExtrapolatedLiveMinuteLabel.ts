@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { normalizeMatchStatus } from '../features/football-data/matchStatusI18n';
+import { normalizeMatchStatus } from '../features/match-results/matchStatusI18n';
 import { utcDateMs } from './utcDate';
 import { extrapolateLiveMinuteLabel } from './liveMinuteLabel';
 
