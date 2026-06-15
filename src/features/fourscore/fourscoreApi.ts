@@ -6,7 +6,7 @@ function apiUrl(path: string): string {
 	return isLocalhost ? path : `${import.meta.env.VITE_PRODUCT_SERVER}${path}`;
 }
 
-export type FourScorePreviewMatch = {
+export type ApiPreviewMatch = {
 	section: string;
 	eventSlug: string;
 	eventPath: string;
@@ -31,8 +31,21 @@ export type FourScorePreviewMatch = {
 	fetchedAt: string;
 };
 
-export async function fetchFourScorePreview(date: string): Promise<FourScorePreviewMatch[]> {
+export type FourScorePreviewMatch = ApiPreviewMatch;
+
+export async function fetchFourScorePreview(date: string): Promise<ApiPreviewMatch[]> {
 	const result = await apiFetch(apiUrl(`/api/admin/fourscore/preview?date=${encodeURIComponent(date)}`));
+	if (result.status >= 400) {
+		const { message } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function fetchTwentyFourScorePreview(date: string): Promise<ApiPreviewMatch[]> {
+	const result = await apiFetch(
+		apiUrl(`/api/admin/twentyfourscore/preview?date=${encodeURIComponent(date)}`)
+	);
 	if (result.status >= 400) {
 		const { message } = await result.json();
 		throw new Error(message);

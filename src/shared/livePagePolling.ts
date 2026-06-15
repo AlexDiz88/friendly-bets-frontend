@@ -1,6 +1,11 @@
 import { isLiveMatchStatus } from '../features/match-results/externalMatchScoreView';
 
-export const LIVE_PAGE_POLL_INTERVAL_MS = 45_000;
+/**
+ * Интервал опроса нашего API (MongoDB) на страницах с live-матчами.
+ * Нужен, чтобы при открытой вкладке подтягивались счёт и статус после завершения игр.
+ * Sync с 4score/24score на бэкенде — реже (~5 мин); минута на UI между poll тикает локально.
+ */
+export const LIVE_PAGE_POLL_INTERVAL_MS = 60_000;
 
 export type LivePollMatch = {
 	status?: string | null;

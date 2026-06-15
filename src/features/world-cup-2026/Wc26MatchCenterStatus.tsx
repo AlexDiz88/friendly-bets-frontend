@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { pickDisplayedLiveMinute } from '../../shared/liveMinuteLabel';
 import { useEstimatedMatchMinute } from '../../shared/useEstimatedMatchMinute';
 import { useExtrapolatedLiveMinuteLabel } from '../../shared/useExtrapolatedLiveMinuteLabel';
 import { isLiveMatchStatus } from '../match-results/externalMatchScoreView';
@@ -53,22 +54,29 @@ export default function Wc26MatchCenterStatus({
 		liveDataFetchedAt,
 		matchStatus
 	);
-	const canEstimateMinute =
-		scoresReady &&
-		(!hasDisplayableScore(scoreView) || liveStacked) &&
-		!extrapolatedMinute &&
-		!isPaused;
-	const estimated = useEstimatedMatchMinute(canEstimateMinute ? kickoffUtcMs : null);
+	const normalizedInPlay = normalizedStatus === 'IN_PLAY';
+	const shouldEstimateKickoff =
+		kickoffUtcMs > 0 &&
+		(normalizedInPlay ||
+			(scoresReady &&
+				(!hasDisplayableScore(scoreView) || liveStacked) &&
+				!extrapolatedMinute &&
+				!isPaused));
+	const estimated = useEstimatedMatchMinute(shouldEstimateKickoff ? kickoffUtcMs : null);
+	const estimatedMinuteLabel = estimated?.kind === 'minute' ? estimated.label : null;
 
 	const minuteLabel = ((): string | null => {
 		if (isPaused) {
 			return t('matchCenter.halftime');
 		}
 		if (extrapolatedMinute) {
-			return extrapolatedMinute;
+			return pickDisplayedLiveMinute(extrapolatedMinute, estimatedMinuteLabel);
 		}
-		if (estimated && estimated.kind !== 'not_started') {
-			return estimated.kind === 'halftime' ? t('matchCenter.halftime') : estimated.label;
+		if (estimated?.kind === 'halftime') {
+			return t('matchCenter.halftime');
+		}
+		if (estimated?.kind === 'minute') {
+			return estimated.label;
 		}
 		return null;
 	})();

@@ -3,7 +3,8 @@ import { normalizeMatchStatus } from '../features/match-results/matchStatusI18n'
 import { utcDateMs } from './utcDate';
 import { extrapolateLiveMinuteLabel } from './liveMinuteLabel';
 
-const LIVE_MINUTE_TICK_MS = 30_000;
+/** Локальный тик UI-минуты между poll (без сетевых запросов). */
+const LIVE_MINUTE_TICK_MS = 60_000;
 
 export function useExtrapolatedLiveMinuteLabel(
 	liveMinuteLabel: string | null | undefined,
