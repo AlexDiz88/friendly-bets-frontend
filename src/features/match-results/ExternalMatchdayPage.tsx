@@ -248,25 +248,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		matchResultLeagues[0]?.leagueCode ?? LEAGUE_COMPETITION_OPTIONS[0].leagueCode
 	);
 
-	const selectedLeague: League | undefined = useMemo(
-		() => matchResultLeagues.find((l) => l.leagueCode === selectedLeagueCode),
-		[matchResultLeagues, selectedLeagueCode]
-	);
-	const [matchday, setMatchday] = useState(1);
-	const [matchdayTouched, setMatchdayTouched] = useState(false);
-
-	const competitionCode = useMemo(
-		() => leagueCodeToCompetition(selectedLeagueCode),
-		[selectedLeagueCode]
-	);
-	const [competitionInfo, setCompetitionInfo] = useState<ExternalCompetitionInfo | null>(null);
-	const matchdaySlots = useMemo((): MatchdaySlot[] => {
-		if (competitionInfo?.matchdaySlots && competitionInfo.matchdaySlots.length > 0) {
-			return externalSlotsToMatchdaySlots(competitionInfo.matchdaySlots);
-		}
-		return buildMatchdaySlotsForLeague(selectedLeagueCode);
-	}, [competitionInfo?.matchdaySlots, selectedLeagueCode]);
-
 	const effectiveLeagueCode = useMemo(() => {
 		if (matchResultLeagues.length === 0) {
 			return '';
@@ -276,6 +257,25 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		}
 		return matchResultLeagues[0].leagueCode;
 	}, [matchResultLeagues, selectedLeagueCode]);
+
+	const selectedLeague: League | undefined = useMemo(
+		() => matchResultLeagues.find((l) => l.leagueCode === effectiveLeagueCode),
+		[matchResultLeagues, effectiveLeagueCode]
+	);
+	const [matchday, setMatchday] = useState(1);
+	const [matchdayTouched, setMatchdayTouched] = useState(false);
+
+	const competitionCode = useMemo(
+		() => leagueCodeToCompetition(effectiveLeagueCode),
+		[effectiveLeagueCode]
+	);
+	const [competitionInfo, setCompetitionInfo] = useState<ExternalCompetitionInfo | null>(null);
+	const matchdaySlots = useMemo((): MatchdaySlot[] => {
+		if (competitionInfo?.matchdaySlots && competitionInfo.matchdaySlots.length > 0) {
+			return externalSlotsToMatchdaySlots(competitionInfo.matchdaySlots);
+		}
+		return buildMatchdaySlotsForLeague(effectiveLeagueCode);
+	}, [competitionInfo?.matchdaySlots, effectiveLeagueCode]);
 
 	const externalSeason = useMemo(
 		() => resolveExternalSeasonForLeague(activeSeason, effectiveLeagueCode),
@@ -591,13 +591,19 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [matchResultLeagues]);
 
 	useEffect(() => {
+		if (!effectiveLeagueCode) {
+			setCompetitionInfoLoading(false);
+			setCompetitionInfo(null);
+			return;
+		}
+
 		let cancelled = false;
 		setCompetitionInfoLoading(true);
 		setCompetitionInfo(null);
 
 		const loadInfo = async (): Promise<void> => {
 			try {
-				if (selectedLeague?.id && selectedLeague.tournamentFormatId) {
+				if (selectedLeague?.id) {
 					const info = await getLeagueExternalCompetitionInfo(selectedLeague.id, externalSeason);
 					if (!cancelled) setCompetitionInfo(info);
 					return;
@@ -614,7 +620,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return () => {
 			cancelled = true;
 		};
-	}, [competitionCode, externalSeason, selectedLeague?.id, selectedLeague?.tournamentFormatId]);
+	}, [competitionCode, effectiveLeagueCode, externalSeason, selectedLeague?.id]);
 
 	useEffect(() => {
 		if (competitionInfoLoading) {
@@ -679,15 +685,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			setSelectedLeagueCode(effectiveLeagueCode);
 		}
 	}, [effectiveLeagueCode, selectedLeagueCode]);
-
-	useEffect(() => {
-		if (matchdayTouched || competitionInfoLoading || !competitionInfo) {
-			return;
-		}
-		if (effectiveMatchday !== matchday) {
-			setMatchday(effectiveMatchday);
-		}
-	}, [effectiveMatchday, matchday, matchdayTouched, competitionInfoLoading, competitionInfo]);
 
 	const handleLeagueChange = (e: SelectChangeEvent): void => {
 		setMatchdayTouched(false);
