@@ -282,17 +282,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		[activeSeason, effectiveLeagueCode]
 	);
 
-	const effectiveMatchday = useMemo(() => {
-		if (matchdaySlots.length === 0) {
-			return 1;
-		}
-		const values = matchdaySlots.map((s) => s.value);
-		if (values.includes(matchday)) {
-			return matchday;
-		}
-		return values[values.length - 1];
-	}, [matchday, matchdaySlots]);
-
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(true);
@@ -305,6 +294,21 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [slotBetsRefreshKey, setSlotBetsRefreshKey] = useState(0);
 	const [adminOptionsEnabled, setAdminOptionsEnabled] = useState(false);
 	const [calendarsReady, setCalendarsReady] = useState(false);
+
+	const effectiveMatchday = useMemo(() => {
+		const baseMatchday =
+			!matchdayTouched && competitionInfo && !competitionInfoLoading
+				? competitionInfo.currentMatchday
+				: matchday;
+		if (matchdaySlots.length === 0) {
+			return baseMatchday;
+		}
+		const values = matchdaySlots.map((s) => s.value);
+		if (values.includes(baseMatchday)) {
+			return baseMatchday;
+		}
+		return values[values.length - 1];
+	}, [matchday, matchdayTouched, competitionInfo, competitionInfoLoading, matchdaySlots]);
 
 	const showAdminTools = isAdmin && adminOptionsEnabled;
 
@@ -376,23 +380,14 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const matchesLoading = competitionInfoLoading || loading;
 
 	const isMatchdayAligned = useMemo(() => {
-		if (effectiveMatchday !== matchday) {
-			return false;
-		}
 		if (matchdayTouched) {
 			return true;
 		}
 		if (competitionInfoLoading || !competitionInfo) {
 			return false;
 		}
-		return matchday === competitionInfo.currentMatchday;
-	}, [
-		effectiveMatchday,
-		matchday,
-		matchdayTouched,
-		competitionInfoLoading,
-		competitionInfo,
-	]);
+		return effectiveMatchday === competitionInfo.currentMatchday;
+	}, [effectiveMatchday, matchdayTouched, competitionInfoLoading, competitionInfo]);
 
 	const needsUserSlotBets = isWcLeague && Boolean(user?.id);
 	const slotBetsPending =
@@ -630,14 +625,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			return;
 		}
 
-		const targetMatchday = matchdayTouched
-			? effectiveMatchday
-			: competitionInfo!.currentMatchday;
-
-		if (!matchdayTouched && matchday !== targetMatchday) {
-			setMatchday(targetMatchday);
-			return;
-		}
+		const targetMatchday = effectiveMatchday;
 
 		let cancelled = false;
 		const loadMatches = async (): Promise<void> => {
@@ -673,7 +661,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		competitionInfo,
 		matchdayTouched,
 		effectiveMatchday,
-		matchday,
 		competitionCode,
 		externalSeason,
 		selectedLeague?.id,
