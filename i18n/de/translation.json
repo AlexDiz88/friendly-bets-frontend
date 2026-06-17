@@ -199,8 +199,6 @@
 	"matchResultSyncAllowWithoutSecondary": "Ohne Secondary finalisieren",
 	"matchResultSyncStablePolls": "Stabile Polls hintereinander",
 	"matchResultSyncMinMinutesKickoff": "Min. Minuten nach Anpfiff",
-	"matchResultSyncMinMinutesKnockout": "Min. Minuten (K.o.)",
-	"matchResultSyncMinMinutesApiUpdated": "Min. Minuten seit API lastUpdated",
 	"matchResultSyncAutoSettleMatchdayOnly": "Auto-Settle nur bei abgeschlossenem Spieltag",
 	"matchResultSyncEnvAutoSettle": "Env Auto-Settle",
 	"matchResultSyncEnabled": "aktiv",

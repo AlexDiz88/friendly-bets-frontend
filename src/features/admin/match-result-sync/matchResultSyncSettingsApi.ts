@@ -14,8 +14,6 @@ export interface MatchResultSyncSettings {
 	allowFinalizeWithoutSecondary: boolean;
 	requireStablePolls: number;
 	minMinutesAfterKickoff: number;
-	minMinutesAfterKickoffKnockout: number;
-	minMinutesSinceApiLastUpdated: number;
 	autoSettleEnabled: boolean;
 	autoSettleOnlyWhenMatchdayCompleted: boolean;
 	envDefaults?: MatchResultSyncSettings;
@@ -30,8 +28,6 @@ export type PatchMatchResultSyncSettings = Partial<
 		| 'allowFinalizeWithoutSecondary'
 		| 'requireStablePolls'
 		| 'minMinutesAfterKickoff'
-		| 'minMinutesAfterKickoffKnockout'
-		| 'minMinutesSinceApiLastUpdated'
 		| 'autoSettleOnlyWhenMatchdayCompleted'
 	>
 >;

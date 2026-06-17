@@ -81,8 +81,6 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 				allowFinalizeWithoutSecondary: draft.allowFinalizeWithoutSecondary,
 				requireStablePolls: draft.requireStablePolls,
 				minMinutesAfterKickoff: draft.minMinutesAfterKickoff,
-				minMinutesAfterKickoffKnockout: draft.minMinutesAfterKickoffKnockout,
-				minMinutesSinceApiLastUpdated: draft.minMinutesSinceApiLastUpdated,
 				autoSettleOnlyWhenMatchdayCompleted: draft.autoSettleOnlyWhenMatchdayCompleted,
 			});
 			setSavedSettings(updated);
@@ -215,34 +213,6 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 						value={draft.minMinutesAfterKickoff}
 						onChange={(e) =>
 							setDraft({ ...draft, minMinutesAfterKickoff: Number(e.target.value) || 90 })
-						}
-						sx={{ mb: 1 }}
-					/>
-					<TextField
-						type="number"
-						size="small"
-						fullWidth
-						label={t('matchResultSyncMinMinutesKnockout')}
-						value={draft.minMinutesAfterKickoffKnockout}
-						onChange={(e) =>
-							setDraft({
-								...draft,
-								minMinutesAfterKickoffKnockout: Number(e.target.value) || 120,
-							})
-						}
-						sx={{ mb: 1 }}
-					/>
-					<TextField
-						type="number"
-						size="small"
-						fullWidth
-						label={t('matchResultSyncMinMinutesApiUpdated')}
-						value={draft.minMinutesSinceApiLastUpdated}
-						onChange={(e) =>
-							setDraft({
-								...draft,
-								minMinutesSinceApiLastUpdated: Number(e.target.value) || 0,
-							})
 						}
 						sx={{ mb: 1 }}
 					/>

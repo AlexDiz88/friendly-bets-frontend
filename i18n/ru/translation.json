@@ -199,8 +199,6 @@
 	"matchResultSyncAllowWithoutSecondary": "Финализировать без secondary",
 	"matchResultSyncStablePolls": "Стабильных poll подряд",
 	"matchResultSyncMinMinutesKickoff": "Мин. минут после начала матча",
-	"matchResultSyncMinMinutesKnockout": "Мин. минут (плей-офф)",
-	"matchResultSyncMinMinutesApiUpdated": "Мин. минут после api lastUpdated",
 	"matchResultSyncAutoSettleMatchdayOnly": "Auto-settle только при завершённом туре",
 	"matchResultSyncEnvAutoSettle": "Auto-settle в env",
 	"matchResultSyncEnabled": "включён",
