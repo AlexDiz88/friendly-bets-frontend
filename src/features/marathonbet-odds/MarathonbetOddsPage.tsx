@@ -436,15 +436,15 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 					<Table size="small">
 						<TableHead>
 							<TableRow>
-								<TableCell>{t('marathonbetOdds.colStarted')}</TableCell>
-								<TableCell>{t('marathonbetOdds.colDuration')}</TableCell>
-								<TableCell>{t('marathonbetOdds.colScope')}</TableCell>
-								<TableCell>{t('marathonbetOdds.colSlots')}</TableCell>
-								<TableCell align="right">{t('marathonbetOdds.colHttp')}</TableCell>
-								<TableCell align="right">{t('marathonbetOdds.colMatches')}</TableCell>
-								<TableCell align="right">{t('marathonbetOdds.colSaved')}</TableCell>
-								<TableCell>{t('marathonbetOdds.colErrors')}</TableCell>
-								<TableCell>{t('marathonbetOdds.colDetails')}</TableCell>
+								<TableCell align="center">{t('marathonbetOdds.colStarted')}</TableCell>
+								<TableCell align="center">{t('marathonbetOdds.colDuration')}</TableCell>
+								<TableCell align="center">{t('marathonbetOdds.colScope')}</TableCell>
+								<TableCell align="center">{t('marathonbetOdds.colSlots')}</TableCell>
+								<TableCell align="center">{t('marathonbetOdds.colHttp')}</TableCell>
+								<TableCell align="center">{t('marathonbetOdds.colMatches')}</TableCell>
+								<TableCell align="center">{t('marathonbetOdds.colSaved')}</TableCell>
+								<TableCell align="center">{t('marathonbetOdds.colErrors')}</TableCell>
+								<TableCell align="center">{t('marathonbetOdds.colDetails')}</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -457,7 +457,7 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 										: '—';
 								return (
 									<TableRow key={run.id}>
-										<TableCell>
+										<TableCell align="center">
 											{formatUtc(run.startedAt)}
 											{run.manual ? (
 												<Typography variant="caption" display="block" color="text.secondary">
@@ -465,21 +465,21 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 												</Typography>
 											) : null}
 										</TableCell>
-										<TableCell>{formatDurationMs(run.durationMs)}</TableCell>
-										<TableCell>
+										<TableCell align="center">{formatDurationMs(run.durationMs)}</TableCell>
+										<TableCell align="center">
 											{typeof scopeKey === 'string' && scopeKey.startsWith('marathonbetOdds.')
 												? t(scopeKey)
 												: scopeKey}
 										</TableCell>
-										<TableCell>{run.slotOrders?.join(', ') ?? '—'}</TableCell>
-										<TableCell align="right">
+										<TableCell align="center">{run.slotOrders?.join(', ') ?? '—'}</TableCell>
+										<TableCell align="center">
 											{run.httpRequestsFailed ?? 0}/{run.httpRequestsTotal ?? 0}
 										</TableCell>
-										<TableCell align="right">
+										<TableCell align="center">
 											{run.matchesMatched ?? 0}/{run.matchesEligible ?? 0}
 										</TableCell>
-										<TableCell align="right">{run.mergedSaved ?? 0}</TableCell>
-										<TableCell>
+										<TableCell align="center">{run.mergedSaved ?? 0}</TableCell>
+										<TableCell align="center">
 											{run.errorSummary ? (
 												<Typography variant="caption" color="error.main">
 													{run.errorSummary}
@@ -492,7 +492,7 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 												'—'
 											)}
 										</TableCell>
-										<TableCell>
+										<TableCell align="center">
 											{failedLogs.length > 0 ? (
 												<Box component="ul" sx={{ m: 0, pl: 2 }}>
 													{failedLogs.map((entry, idx) => (
