@@ -28,6 +28,18 @@ import {
 
 const PROVIDERS = ['4score.ru', '24score.pro'] as const;
 
+const syncToggleLabelBaseSx = {
+	display: 'flex',
+	justifyContent: 'space-between',
+	alignItems: 'center',
+	width: '100%',
+	mx: 0,
+	'& .MuiFormControlLabel-label': {
+		flex: 1,
+		pr: 1,
+	},
+} as const;
+
 function cloneSettings(data: MatchResultSyncSettings): MatchResultSyncSettings {
 	return { ...data };
 }
@@ -78,10 +90,9 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 				primaryProvider: draft.primaryProvider,
 				secondaryProvider: draft.secondaryProvider,
 				dualVerificationEnabled: draft.dualVerificationEnabled,
-				allowFinalizeWithoutSecondary: draft.allowFinalizeWithoutSecondary,
 				requireStablePolls: draft.requireStablePolls,
 				minMinutesAfterKickoff: draft.minMinutesAfterKickoff,
-				autoSettleOnlyWhenMatchdayCompleted: draft.autoSettleOnlyWhenMatchdayCompleted,
+				autoSettleEnabled: draft.autoSettleEnabled,
 			});
 			setSavedSettings(updated);
 			setDraft(cloneSettings(updated));
@@ -139,12 +150,18 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 						</Select>
 					</FormControl>
 
-					<FormControl fullWidth size="small" sx={{ mb: 1.5 }}>
+					<FormControl
+						fullWidth
+						size="small"
+						sx={{ mb: 1.5 }}
+						disabled={!draft.dualVerificationEnabled}
+					>
 						<InputLabel id="secondary-provider-label">{t('matchResultSyncSecondaryProvider')}</InputLabel>
 						<Select
 							labelId="secondary-provider-label"
 							label={t('matchResultSyncSecondaryProvider')}
 							value={draft.secondaryProvider}
+							disabled={!draft.dualVerificationEnabled}
 							onChange={(e: SelectChangeEvent) =>
 								setDraft({ ...draft, secondaryProvider: e.target.value })
 							}
@@ -158,6 +175,7 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 					</FormControl>
 
 					<FormControlLabel
+						labelPlacement="start"
 						control={
 							<CustomSwitch
 								checked={draft.dualVerificationEnabled}
@@ -170,25 +188,8 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 						sx={
 							[
 								toggleFormControlLabelSx,
-								{ justifyContent: 'space-between', mb: 0.5, width: '100%' },
-							] as SxProps<Theme>
-						}
-					/>
-
-					<FormControlLabel
-						control={
-							<CustomSwitch
-								checked={draft.allowFinalizeWithoutSecondary}
-								onChange={(e) =>
-									setDraft({ ...draft, allowFinalizeWithoutSecondary: e.target.checked })
-								}
-							/>
-						}
-						label={t('matchResultSyncAllowWithoutSecondary')}
-						sx={
-							[
-								toggleFormControlLabelSx,
-								{ justifyContent: 'space-between', mb: 1, width: '100%' },
+								syncToggleLabelBaseSx,
+								{ mb: 2 },
 							] as SxProps<Theme>
 						}
 					/>
@@ -218,46 +219,24 @@ export default function MatchResultSyncSettingsManagement(): JSX.Element {
 					/>
 
 					<FormControlLabel
+						labelPlacement="start"
 						control={
 							<CustomSwitch
-								checked={draft.autoSettleOnlyWhenMatchdayCompleted}
+								checked={draft.autoSettleEnabled}
 								onChange={(e) =>
-									setDraft({
-										...draft,
-										autoSettleOnlyWhenMatchdayCompleted: e.target.checked,
-									})
+									setDraft({ ...draft, autoSettleEnabled: e.target.checked })
 								}
 							/>
 						}
-						label={t('matchResultSyncAutoSettleMatchdayOnly')}
+						label={t('matchResultSyncAutoSettle')}
 						sx={
 							[
 								toggleFormControlLabelSx,
-								{ justifyContent: 'space-between', mb: 1, width: '100%' },
+								syncToggleLabelBaseSx,
+								{ mb: 1 },
 							] as SxProps<Theme>
 						}
 					/>
-
-					{draft.envDefaults ? (
-						<Box
-							component="span"
-							sx={{
-								display: 'block',
-								typography: 'caption',
-								color: 'text.secondary',
-								mb: 1.5,
-								px: 1,
-								py: 0.75,
-								borderRadius: 1,
-								bgcolor: 'action.hover',
-							}}
-						>
-							{t('matchResultSyncEnvAutoSettle')}:{' '}
-							{draft.envDefaults.autoSettleEnabled
-								? t('matchResultSyncEnabled')
-								: t('matchResultSyncDisabled')}
-						</Box>
-					) : null}
 
 					<Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
 						<CustomCancelButton onClick={handleCancel} disabled={saving} />
