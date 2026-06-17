@@ -1,4 +1,5 @@
 import { isLiveMatchStatus } from '../features/match-results/externalMatchScoreView';
+import { isExternalMatchAwaitingLiveSync } from '../features/match-results/externalMatchKickoff';
 
 /**
  * Интервал опроса нашего API (MongoDB) на страницах с live-матчами.
@@ -11,17 +12,25 @@ export type LivePollMatch = {
 	status?: string | null;
 	finalized?: boolean;
 	liveMinuteLabel?: string | null;
+	/** Kickoff UTC (ms); для ЧМ26 — из расписания venue-local. */
+	kickoffUtcMs?: number;
 };
+
+/** Нужен фоновый опрос для одного матча. */
+export function matchNeedsLivePoll(match: LivePollMatch): boolean {
+	if (match.finalized) {
+		return false;
+	}
+	if (isLiveMatchStatus(match.status ?? '')) {
+		return true;
+	}
+	if (match.liveMinuteLabel?.trim()) {
+		return true;
+	}
+	return isExternalMatchAwaitingLiveSync(match.status ?? '', match.kickoffUtcMs ?? 0);
+}
 
 /** Нужен фоновый опрос, пока на странице есть не финализированные live-матчи. */
 export function pageHasLiveMatches(matches: LivePollMatch[]): boolean {
-	return matches.some((m) => {
-		if (m.finalized) {
-			return false;
-		}
-		if (isLiveMatchStatus(m.status ?? '')) {
-			return true;
-		}
-		return Boolean(m.liveMinuteLabel);
-	});
+	return matches.some(matchNeedsLivePoll);
 }

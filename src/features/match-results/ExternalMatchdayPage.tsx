@@ -41,6 +41,7 @@ import {
 	resolveSeasonDefaultBetSize,
 } from '../bets/betSizeDefaults';
 import { resolveExternalMatchScoreView } from './externalMatchScoreView';
+import { resolveExternalMatchKickoffUtcMs } from './externalMatchKickoff';
 import GameResultScoreEditDialog from './GameResultScoreEditDialog';
 import {
 	adminCorrectGameResultScore,
@@ -410,19 +411,22 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const isBettingCalendarMissing = isExternalPageReady && !calendarMatch;
 
-	const isMatchOpenForBetting = useCallback((match: ExternalMatch): boolean => {
-		if (!match.id || !match.homeTeamId || !match.awayTeamId) {
-			return false;
-		}
-		if (!isMatchNotStarted(match.status)) {
-			return false;
-		}
-		const kickoffMs = utcDateMs(match.utcDate);
-		if (kickoffMs !== null && kickoffMs <= Date.now()) {
-			return false;
-		}
-		return true;
-	}, []);
+	const isMatchOpenForBetting = useCallback(
+		(match: ExternalMatch): boolean => {
+			if (!match.id || !match.homeTeamId || !match.awayTeamId) {
+				return false;
+			}
+			if (!isMatchNotStarted(match.status)) {
+				return false;
+			}
+			const kickoffMs = resolveExternalMatchKickoffUtcMs(match, betMatchDay);
+			if (kickoffMs > 0 && kickoffMs <= Date.now()) {
+				return false;
+			}
+			return true;
+		},
+		[betMatchDay]
+	);
 
 	const canUserBetOnMatch = useCallback(
 		(match: ExternalMatch): boolean => {
@@ -551,8 +555,16 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	}, [competitionCode, effectiveMatchday, externalSeason, selectedLeague?.id]);
 
 	const hasLiveMatches = useMemo(
-		() => pageHasLiveMatches(data?.matches ?? []),
-		[data?.matches]
+		() =>
+			pageHasLiveMatches(
+				(data?.matches ?? []).map((match) => ({
+					status: match.status,
+					finalized: match.finalized,
+					liveMinuteLabel: match.liveMinuteLabel,
+					kickoffUtcMs: resolveExternalMatchKickoffUtcMs(match, betMatchDay),
+				}))
+			),
+		[data?.matches, betMatchDay]
 	);
 
 	useVisibilityPageRefresh(isExternalPageReady, reloadMatchday);
@@ -867,10 +879,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				if (isMatchStartedOrFinished(m.status)) {
 					return true;
 				}
-				const kickoffMs = utcDateMs(m.utcDate);
-				return kickoffMs !== null && kickoffMs <= Date.now();
+				const kickoffMs = resolveExternalMatchKickoffUtcMs(m, betMatchDay);
+				return kickoffMs > 0 && kickoffMs <= Date.now();
 			}).length,
-		[sortedMatches]
+		[sortedMatches, betMatchDay]
 	);
 
 	const syncProgressFinalized = useMemo(
