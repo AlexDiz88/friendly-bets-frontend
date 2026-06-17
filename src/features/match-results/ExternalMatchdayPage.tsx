@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { pageHasLiveMatches } from '../../shared/livePagePolling';
 import { useLivePagePolling } from '../../shared/useLivePagePolling';
+import { useVisibilityPageRefresh } from '../../shared/useVisibilityPageRefresh';
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
@@ -536,13 +537,17 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	);
 
 	const reloadMatchday = useCallback(async (): Promise<void> => {
-		const page = await getMatchdayFromCache(
-			competitionCode,
-			effectiveMatchday,
-			externalSeason,
-			selectedLeague?.id
-		);
-		setData(page);
+		try {
+			const page = await getMatchdayFromCache(
+				competitionCode,
+				effectiveMatchday,
+				externalSeason,
+				selectedLeague?.id
+			);
+			setData(page);
+		} catch {
+			// тихий refresh: оставляем текущие данные на экране
+		}
 	}, [competitionCode, effectiveMatchday, externalSeason, selectedLeague?.id]);
 
 	const hasLiveMatches = useMemo(
@@ -550,6 +555,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		[data?.matches]
 	);
 
+	useVisibilityPageRefresh(isExternalPageReady, reloadMatchday);
 	useLivePagePolling(isExternalPageReady && hasLiveMatches, reloadMatchday);
 
 	useEffect(() => {

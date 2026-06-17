@@ -11,14 +11,9 @@ export interface MatchResultSyncSettings {
 	primaryProvider: string;
 	secondaryProvider: string;
 	dualVerificationEnabled: boolean;
-	allowFinalizeWithoutSecondary: boolean;
 	requireStablePolls: number;
 	minMinutesAfterKickoff: number;
-	minMinutesAfterKickoffKnockout: number;
-	minMinutesSinceApiLastUpdated: number;
 	autoSettleEnabled: boolean;
-	autoSettleOnlyWhenMatchdayCompleted: boolean;
-	envDefaults?: MatchResultSyncSettings;
 }
 
 export type PatchMatchResultSyncSettings = Partial<
@@ -27,12 +22,9 @@ export type PatchMatchResultSyncSettings = Partial<
 		| 'primaryProvider'
 		| 'secondaryProvider'
 		| 'dualVerificationEnabled'
-		| 'allowFinalizeWithoutSecondary'
 		| 'requireStablePolls'
 		| 'minMinutesAfterKickoff'
-		| 'minMinutesAfterKickoffKnockout'
-		| 'minMinutesSinceApiLastUpdated'
-		| 'autoSettleOnlyWhenMatchdayCompleted'
+		| 'autoSettleEnabled'
 	>
 >;
 

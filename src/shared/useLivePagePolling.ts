@@ -4,7 +4,7 @@ import { LIVE_PAGE_POLL_INTERVAL_MS } from './livePagePolling';
 /**
  * Периодический опрос нашего API, пока enabled (напр. есть live-матчи).
  * По умолчанию — раз в минуту (счёт, статус, liveMinuteLabel из БД).
- * Не запускается в скрытой вкладке; при возврате — один немедленный poll.
+ * Не запускается в скрытой вкладке. Возврат на вкладку — useVisibilityPageRefresh.
  */
 export function useLivePagePolling(
 	enabled: boolean,
@@ -26,18 +26,10 @@ export function useLivePagePolling(
 			void onPollRef.current();
 		};
 
-		const onVisibility = (): void => {
-			if (document.visibilityState === 'visible') {
-				tick();
-			}
-		};
-
 		const intervalId = window.setInterval(tick, intervalMs);
-		document.addEventListener('visibilitychange', onVisibility);
 
 		return () => {
 			window.clearInterval(intervalId);
-			document.removeEventListener('visibilitychange', onVisibility);
 		};
 	}, [enabled, intervalMs]);
 }
