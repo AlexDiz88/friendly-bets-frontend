@@ -65,7 +65,18 @@ export function useWc26SchedulePage(): Wc26SchedulePageState {
 		};
 	}, [loadSchedule]);
 
-	const hasLiveMatches = useMemo(() => pageHasLiveMatches(matches), [matches]);
+	const hasLiveMatches = useMemo(
+		() =>
+			pageHasLiveMatches(
+				matches.map((m) => ({
+					status: m.status,
+					finalized: m.finalized,
+					liveMinuteLabel: m.liveMinuteLabel,
+					kickoffUtcMs: m.kickoffUtc ? Date.parse(m.kickoffUtc) : undefined,
+				}))
+			),
+		[matches]
+	);
 
 	useLivePagePolling(!loading && !error && hasLiveMatches, () => loadSchedule({ silent: true }));
 
