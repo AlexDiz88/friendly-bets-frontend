@@ -315,6 +315,11 @@ export const externalMatchWcKickoffDateSx: SxProps<Theme> = (theme) => ({
 /** Высота чипа ставки на карточке матча (иконка статуса выравнивается по ней). */
 export const EXTERNAL_MATCH_WC_BET_CHIP_HEIGHT_PX = 20;
 
+/** Обёртка чипа ставки под строкой команд (страница «Результаты» ЧМ). */
+export const externalMatchWcBetChipRowWrapSx: SxProps<Theme> = {
+	mt: 0.125,
+};
+
 /** Чип по центру; иконка статуса — слева от чипа, не сдвигая его. */
 export const externalMatchWcBetChipRowSx: SxProps<Theme> = {
 	display: 'grid',
