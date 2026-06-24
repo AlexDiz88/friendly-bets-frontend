@@ -1,6 +1,7 @@
-import { Box, Chip, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import Wc26TeamFlag from './Wc26TeamFlag';
+import Wc26LiveScoreChip from './Wc26LiveScoreChip';
 import { formatGoalDifference, formatGoalsLine, resolveWc26TeamId } from './wc26FifaDisplay';
 import type { Wc26FifaGroupTable, Wc26QualificationStatus } from './wc26FifaApi';
 import { wc26GroupTableHeaderSx } from './wc26PageStyles';
@@ -15,16 +16,6 @@ const WC26_STANDINGS_POINTS_COL_WIDTH = 24;
 const WC26_STANDINGS_POINTS_COL_WIDTH_COMPACT = 16;
 const WC26_STANDINGS_RANK_COL_WIDTH = 26;
 const WC26_STANDINGS_RANK_COL_WIDTH_COMPACT = 22;
-
-const wc26StandingsLiveChipSx = {
-	height: 16,
-	fontSize: '0.55rem',
-	fontWeight: 800,
-	bgcolor: '#e53935',
-	color: '#fff',
-	flexShrink: 0,
-	'& .MuiChip-label': { px: 0.5 },
-} as const;
 
 function resolveRankQualificationStatus(
 	status: Wc26QualificationStatus,
@@ -189,11 +180,7 @@ export default function Wc26GroupStandingsCard({
 												</Typography>
 											)}
 											{row.liveNow ? (
-												<Chip
-													size="small"
-													label={row.liveMatchGoals ?? 0}
-													sx={wc26StandingsLiveChipSx}
-												/>
+												<Wc26LiveScoreChip score={row.liveMatchScore ?? '0:0'} />
 											) : null}
 										</Box>
 									</Box>

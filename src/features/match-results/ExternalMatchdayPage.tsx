@@ -104,10 +104,9 @@ import {
 	externalMatchWcHeaderCompactSx,
 	externalMatchWcHeaderPanelSx,
 	externalMatchWcLoadingAreaSx,
-	externalMatchWcMatchGridSx,
+	externalMatchWcMatchStackSx,
 	externalMatchWcMatchListSx,
 	externalMatchWcMatchPanelSx,
-	EXTERNAL_MATCH_WC_DENSE_MATCH_THRESHOLD,
 	externalMatchWcMarathonbetSyncButtonSx,
 	externalMatchWcOddsSyncButtonSx,
 	externalMatchWcOverlineSx,
@@ -1321,7 +1320,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					color={isWcLeague ? undefined : 'text.secondary'}
 					sx={
 						isWcLeague
-							? ([externalMatchWcEmptyHintSx, { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }] as SxProps<Theme>)
+							? externalMatchWcEmptyHintSx
 							: { py: 3, px: 1 }
 					}
 				>
@@ -1330,7 +1329,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			)}
 
 			{isExternalPageReady && sortedMatches.length > 0 && isWcLeague && (
-				<Box sx={[externalMatchWcMatchListSx, { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }] as SxProps<Theme>}>
+				<Box sx={externalMatchWcMatchListSx}>
 					<Box sx={externalMatchWcMatchPanelSx}>
 						<WcExternalSlotPanel
 							slotId={betMatchDay}
@@ -1340,10 +1339,9 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							matchCount={sortedMatches.length}
 							betsLoading={slotBetsLoading}
 						/>
-						<Box sx={externalMatchWcMatchGridSx(sortedMatches.length)}>
+						<Box sx={externalMatchWcMatchStackSx}>
 							{sortedMatches.map((match: ExternalMatch, index: number) => {
 								const betEnabled = isMatchCardClickable(match);
-								const denseSlot = sortedMatches.length >= EXTERNAL_MATCH_WC_DENSE_MATCH_THRESHOLD;
 								const matchBet =
 									match.homeTeamId && match.awayTeamId
 										? betsByMatch.get(`${match.homeTeamId}_${match.awayTeamId}`)
@@ -1355,7 +1353,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										slotId={betMatchDay}
 										userBet={matchBet}
 										isLast={index === sortedMatches.length - 1}
-										dense={denseSlot}
 										clickable={betEnabled}
 										onClick={betEnabled ? () => handleMatchClick(match) : undefined}
 										showAdminEdit={showAdminTools && Boolean(match.id)}

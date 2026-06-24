@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLivePagePolling } from '../../shared/useLivePagePolling';
 import {
 	fetchWc26FifaBracket,
 	fetchWc26FifaStandings,
@@ -16,8 +17,11 @@ export function useWc26FifaStandings(): {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	const reload = useCallback(async (): Promise<void> => {
-		setLoading(true);
+	const reload = useCallback(async (options?: { silent?: boolean }): Promise<void> => {
+		const silent = options?.silent ?? false;
+		if (!silent) {
+			setLoading(true);
+		}
 		setError(null);
 		try {
 			const page = await fetchWc26FifaStandings();
@@ -26,9 +30,18 @@ export function useWc26FifaStandings(): {
 			setData(null);
 			setError(err instanceof Error ? err.message : 'wc26FifaStandingsLoadError');
 		} finally {
-			setLoading(false);
+			if (!silent) {
+				setLoading(false);
+			}
 		}
 	}, []);
+
+	const hasLiveStandings = useMemo(
+		() => data?.groups.some((group) => group.rows.some((row) => row.liveNow)) ?? false,
+		[data]
+	);
+
+	useLivePagePolling(!loading && !error && hasLiveStandings, () => reload({ silent: true }));
 
 	useEffect(() => {
 		let cancelled = false;

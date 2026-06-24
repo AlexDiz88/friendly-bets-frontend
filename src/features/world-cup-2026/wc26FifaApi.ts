@@ -26,6 +26,7 @@ export interface Wc26FifaStandingRow {
 	qualificationStatus: Wc26QualificationStatus;
 	liveNow: boolean;
 	liveMatchGoals?: number | null;
+	liveMatchScore?: string | null;
 }
 
 export interface Wc26FifaGroupTable {
