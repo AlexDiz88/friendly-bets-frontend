@@ -43,6 +43,8 @@ export default function Wc26StandingsView(): JSX.Element {
 	const { t } = useTranslation();
 	const { data, loading, error } = useWc26FifaStandings();
 
+	const visibleGroups = data?.groups ?? [];
+
 	const legend = useMemo(
 		() => [
 			{ key: 'direct', color: '#00a86b', label: t('wc26.standings.legendDirect') },
@@ -50,8 +52,6 @@ export default function Wc26StandingsView(): JSX.Element {
 		],
 		[t]
 	);
-
-	const visibleGroups = data?.groups ?? [];
 	const bestThirdTable = data?.bestThirdPlaces?.length
 		? bestThirdToTable(data.bestThirdPlaces)
 		: null;

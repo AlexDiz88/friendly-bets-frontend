@@ -33,7 +33,6 @@ import {
 	externalMatchWcLiveMinuteSx,
 	externalMatchWcLiveScoreSx,
 	externalMatchWcHalftimeBadgeSx,
-	externalMatchWcStatusChipDenseSx,
 	externalMatchWcStatusChipSx,
 } from './externalMatchWcPageStyles';
 import { wc26MatchMetaSx } from '../world-cup-2026/wc26PageStyles';
@@ -51,7 +50,6 @@ interface ExternalMatchWc26CardProps {
 	userBet?: Bet | null;
 	clickable?: boolean;
 	isLast?: boolean;
-	dense?: boolean;
 	onClick?: () => void;
 	showAdminEdit?: boolean;
 	adminEditButton?: React.ReactNode;
@@ -64,7 +62,6 @@ export default function ExternalMatchWc26Card({
 	userBet,
 	clickable = false,
 	isLast = false,
-	dense = false,
 	onClick,
 	showAdminEdit = false,
 	adminEditButton,
@@ -162,23 +159,23 @@ export default function ExternalMatchWc26Card({
 						}
 					: undefined
 			}
-			sx={externalMatchWcCardRowSx(interactive, { isLast, dense })}
+			sx={externalMatchWcCardRowSx(interactive, { isLast })}
 		>
 			<Box
 				sx={{
 					display: 'flex',
 					justifyContent: 'space-between',
-					alignItems: 'flex-start',
-					mb: dense ? 0.15 : 0.1,
+					alignItems: 'center',
+					mb: 0.1,
 					gap: 0.5,
 					flexShrink: 0,
 				}}
 			>
-				<Typography variant="caption" sx={{ ...wc26MatchMetaSx, minWidth: 0, flexShrink: 1 }}>
+				<Typography variant="caption" sx={wc26MatchMetaSx}>
 					{scheduled?.id ? `#${scheduled.id}` : null}
 					{scheduled?.group ? ` · ${t('wc26.group', { letter: scheduled.group })}` : null}
 				</Typography>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0, maxWidth: '58%' }}>
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
 					{showLiveBadge ? (
 						<Wc26LiveBadge />
 					) : isPausedLive ? (
@@ -190,7 +187,7 @@ export default function ExternalMatchWc26Card({
 							size="small"
 							label={statusLabel}
 							color={statusColor}
-							sx={dense ? externalMatchWcStatusChipDenseSx : externalMatchWcStatusChipSx}
+							sx={externalMatchWcStatusChipSx}
 						/>
 					)}
 					{showAdminEdit ? adminEditButton : null}
@@ -204,10 +201,10 @@ export default function ExternalMatchWc26Card({
 						display: 'flex',
 						flexDirection: 'column',
 						alignItems: 'center',
-						justifyContent: 'flex-start',
-						gap: dense ? 0.05 : 0.1,
+						justifyContent: 'center',
+						gap: 0.5,
 						width: '100%',
-						flex: dense ? '0 0 auto' : 1,
+						flex: 1,
 						minHeight: 0,
 					}}
 				>
@@ -228,12 +225,12 @@ export default function ExternalMatchWc26Card({
 								textAlign: 'center',
 								flexShrink: 0,
 								px: 0.2,
-								minWidth: '3.25rem',
+								py: 1,								minWidth: '3.25rem',
 								display: 'flex',
 								flexDirection: 'column',
 								alignItems: 'center',
 								justifyContent: 'center',
-								gap: 0.05,
+								gap: 0.1,
 							}}
 						>
 							{!hasScore ? (
@@ -268,9 +265,9 @@ export default function ExternalMatchWc26Card({
 						display: 'flex',
 						flexDirection: 'column',
 						alignItems: 'center',
-						justifyContent: 'flex-start',
-						gap: dense ? 0.05 : 0.1,
-						flex: dense ? '0 0 auto' : 1,
+						justifyContent: 'center',
+						gap: 0.1,
+						flex: 1,
 						minHeight: 0,
 					}}
 				>

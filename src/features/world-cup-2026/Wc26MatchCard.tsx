@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { translateMatchStatus, normalizeMatchStatus } from '../match-results/matchStatusI18n';
 import Wc26TeamFlag from './Wc26TeamFlag';
 import Wc26MatchCenterStatus, { isWc26LiveStackedDisplay } from './Wc26MatchCenterStatus';
-import Wc26LiveBadge from './Wc26LiveBadge';
+import Wc26LiveScoreChip from './Wc26LiveScoreChip';
+import { compactLiveScore } from './wc26LiveScore';
 import { kickoffToGerman, venueLocalKickoffToUtcMs } from './wc26Time';
 import type { Wc26Match } from './wc26Schedule';
 import {
@@ -105,7 +106,7 @@ export default function Wc26MatchCard({
 						)}
 					</Box>
 					{showLiveBadge ? (
-						<Wc26LiveBadge />
+						<Wc26LiveScoreChip score={compactLiveScore(scoreView)} />
 					) : isPausedLive ? (
 						<Box component="span" sx={wc26HalftimeBadgeSx}>
 							{statusLabel}

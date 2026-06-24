@@ -223,6 +223,7 @@ export const wc26MatchMetaSx: SxProps<Theme> = (theme) => ({
 
 export const wc26MatchScoreSx: SxProps<Theme> = (theme) => ({
 	display: 'block',
+	py: 1,
 	fontWeight: 800,
 	fontSize: { xs: '1.05rem', sm: '1.15rem' },
 	fontVariantNumeric: 'tabular-nums',
@@ -266,6 +267,7 @@ export const wc26LiveScoreSx: SxProps<Theme> = (theme) => {
 	const isDark = theme.palette.mode === 'dark';
 	return {
 		flexShrink: 0,
+		display: 'inline-block',
 		fontWeight: 900,
 		fontSize: { xs: '1.02rem', sm: '1.1rem' },
 		fontVariantNumeric: 'tabular-nums',
@@ -277,18 +279,8 @@ export const wc26LiveScoreSx: SxProps<Theme> = (theme) => {
 			: '0 0 8px rgba(220, 38, 38, 0.35)',
 		animation: 'wc26LiveScorePulse 2.2s ease-in-out infinite',
 		'@keyframes wc26LiveScorePulse': {
-			'0%, 100%': {
-				opacity: 1,
-				textShadow: isDark
-					? '0 0 12px rgba(255, 70, 70, 0.45), 0 1px 0 rgba(0,0,0,0.2)'
-					: '0 0 6px rgba(220, 38, 38, 0.3)',
-			},
-			'50%': {
-				opacity: 0.72,
-				textShadow: isDark
-					? '0 0 20px rgba(255, 90, 90, 0.7), 0 1px 0 rgba(0,0,0,0.2)'
-					: '0 0 14px rgba(220, 38, 38, 0.5)',
-			},
+			'0%, 100%': { opacity: 1 },
+			'50%': { opacity: 0.82 },
 		},
 	};
 };

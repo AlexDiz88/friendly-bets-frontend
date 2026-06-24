@@ -1,5 +1,4 @@
 import type { SxProps, Theme } from '@mui/material';
-import { APP_MAIN_MIN_HEIGHT } from '../../components/header/headerLayout';
 
 /** Фон страницы «Результаты матчей» при выбранной лиге ЧМ (green+gold, как wc26). */
 export const externalMatchWcPageRootSx: SxProps<Theme> = (theme) => {
@@ -76,16 +75,10 @@ export const externalMatchWcTitleSx: SxProps<Theme> = (theme) => {
 	};
 };
 
-/** Доля высоты колонки страницы от `APP_MAIN_MIN_HEIGHT`. */
-export const WC_PAGE_COLUMN_HEIGHT_RATIO = 0.9;
-
-/** Колонка страницы ЧМ: вся высота main без вертикального скролла страницы */
+/** Колонка страницы ЧМ: растёт по контенту, без фиксированной высоты */
 export const externalMatchWcPageColumnSx: SxProps<Theme> = {
 	display: 'flex',
 	flexDirection: 'column',
-	height: `calc(${APP_MAIN_MIN_HEIGHT} * ${WC_PAGE_COLUMN_HEIGHT_RATIO})`,
-	maxHeight: APP_MAIN_MIN_HEIGHT,
-	overflow: 'hidden',
 	boxSizing: 'border-box',
 };
 
@@ -111,43 +104,18 @@ export const externalMatchWcMatchListSx: SxProps<Theme> = (theme) => {
 	};
 };
 
-/** Панель матчей: растягивается на оставшуюся высоту */
+/** Панель матчей: вертикальный список без внутренней прокрутки */
 export const externalMatchWcMatchPanelSx: SxProps<Theme> = {
-	flex: 1,
-	minHeight: 0,
 	display: 'flex',
 	flexDirection: 'column',
 	px: 0.5,
 	py: 0.5,
 };
 
-/** Слоты с 5+ матчами не помещаются в равные доли viewport — авто-высота строк и скролл списка. */
-export const EXTERNAL_MATCH_WC_DENSE_MATCH_THRESHOLD = 5;
-
-export function externalMatchWcMatchGridSx(matchCount: number): SxProps<Theme> {
-	const dense = matchCount >= EXTERNAL_MATCH_WC_DENSE_MATCH_THRESHOLD;
-	if (dense) {
-		return {
-			flex: 1,
-			minHeight: 0,
-			display: 'grid',
-			gridAutoRows: 'auto',
-			alignContent: 'start',
-			overflowY: 'auto',
-			overflowX: 'hidden',
-			WebkitOverflowScrolling: 'touch',
-		};
-	}
-	const rows = Math.max(matchCount, 1);
-	return {
-		flex: 1,
-		minHeight: 0,
-		display: 'grid',
-		gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
-		alignContent: 'stretch',
-		overflow: 'hidden',
-	};
-}
+export const externalMatchWcMatchStackSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'column',
+};
 
 export const externalMatchWcSlotHeaderWrapSx: SxProps<Theme> = {
 	flexShrink: 0,
@@ -237,6 +205,7 @@ export const externalMatchWcLiveScoreSx: SxProps<Theme> = (theme) => {
 	const isDark = theme.palette.mode === 'dark';
 	return {
 		flexShrink: 0,
+		display: 'inline-block',
 		fontWeight: 900,
 		fontSize: { xs: '1rem', sm: '1.12rem' },
 		fontVariantNumeric: 'tabular-nums',
@@ -248,18 +217,8 @@ export const externalMatchWcLiveScoreSx: SxProps<Theme> = (theme) => {
 			: '0 0 8px rgba(220, 38, 38, 0.35)',
 		animation: 'externalMatchWcLiveScorePulse 2.2s ease-in-out infinite',
 		'@keyframes externalMatchWcLiveScorePulse': {
-			'0%, 100%': {
-				opacity: 1,
-				textShadow: isDark
-					? '0 0 12px rgba(255, 70, 70, 0.45), 0 1px 0 rgba(0,0,0,0.2)'
-					: '0 0 6px rgba(220, 38, 38, 0.3)',
-			},
-			'50%': {
-				opacity: 0.72,
-				textShadow: isDark
-					? '0 0 20px rgba(255, 90, 90, 0.7), 0 1px 0 rgba(0,0,0,0.2)'
-					: '0 0 14px rgba(220, 38, 38, 0.5)',
-			},
+			'0%, 100%': { opacity: 1 },
+			'50%': { opacity: 0.82 },
 		},
 	};
 };
@@ -323,33 +282,8 @@ export const externalMatchWcLiveBadgeSx: SxProps<Theme> = (theme) => {
 
 export const externalMatchWcStatusChipSx: SxProps<Theme> = {
 	height: 20,
-	maxWidth: { xs: '58%', sm: 'none' },
 	fontSize: '0.65rem',
-	flexShrink: 1,
-	'& .MuiChip-label': {
-		px: 0.55,
-		py: 0,
-		overflow: 'hidden',
-		textOverflow: 'ellipsis',
-		whiteSpace: 'nowrap',
-		display: 'block',
-	},
-};
-
-export const externalMatchWcStatusChipDenseSx: SxProps<Theme> = {
-	height: 18,
-	maxWidth: { xs: '62%', sm: 'none' },
-	fontSize: '0.58rem',
-	flexShrink: 1,
-	'& .MuiChip-label': {
-		px: 0.45,
-		py: 0,
-		lineHeight: 1.1,
-		overflow: 'hidden',
-		textOverflow: 'ellipsis',
-		whiteSpace: 'nowrap',
-		display: 'block',
-	},
+	'& .MuiChip-label': { px: 0.55, py: 0 },
 };
 
 export const externalMatchWcHalftimeBadgeSx: SxProps<Theme> = (theme) => ({
@@ -419,11 +353,10 @@ export const externalMatchWcBetChipSx: SxProps<Theme> = (theme) => {
 };
 
 export const externalMatchWcLoadingAreaSx: SxProps<Theme> = {
-	flex: 1,
-	minHeight: 0,
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'center',
+	py: 3,
 };
 
 export const externalMatchWcEmptyHintSx: SxProps<Theme> = (theme) => ({
@@ -500,21 +433,17 @@ export const externalMatchWcRefreshSyncButtonSx = wc26ToolbarIconButton('green')
 
 export function externalMatchWcCardRowSx(
 	interactive: boolean,
-	options?: { isLast?: boolean; dense?: boolean }
+	options?: { isLast?: boolean }
 ): SxProps<Theme> {
 	return (theme) => {
 		const isDark = theme.palette.mode === 'dark';
-		const dense = options?.dense ?? false;
 		return {
 			display: 'flex',
 			flexDirection: 'column',
 			justifyContent: 'flex-start',
-			minHeight: 0,
-			height: dense ? 'auto' : '100%',
-			py: dense ? { xs: 0.28, sm: 0.4 } : { xs: 0.45, sm: 0.55 },
+			py: { xs: 0.5, sm: 1 },
 			px: 0.5,
 			boxSizing: 'border-box',
-			overflow: dense ? 'visible' : 'hidden',
 			borderBottom: options?.isLast
 				? 'none'
 				: `1px solid ${isDark ? 'rgba(0, 200, 120, 0.14)' : 'rgba(4, 90, 55, 0.1)'}`,
