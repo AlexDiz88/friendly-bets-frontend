@@ -16,6 +16,16 @@ const WC26_STANDINGS_POINTS_COL_WIDTH_COMPACT = 16;
 const WC26_STANDINGS_RANK_COL_WIDTH = 26;
 const WC26_STANDINGS_RANK_COL_WIDTH_COMPACT = 22;
 
+const wc26StandingsLiveChipSx = {
+	height: 16,
+	fontSize: '0.55rem',
+	fontWeight: 800,
+	bgcolor: '#e53935',
+	color: '#fff',
+	flexShrink: 0,
+	'& .MuiChip-label': { px: 0.5 },
+} as const;
+
 function resolveRankQualificationStatus(
 	status: Wc26QualificationStatus,
 	rank: number
@@ -181,16 +191,8 @@ export default function Wc26GroupStandingsCard({
 											{row.liveNow ? (
 												<Chip
 													size="small"
-													label="LIVE"
-													sx={{
-														height: 16,
-														fontSize: '0.55rem',
-														fontWeight: 800,
-														bgcolor: '#e53935',
-														color: '#fff',
-														flexShrink: 0,
-														'& .MuiChip-label': { px: 0.5 },
-													}}
+													label={row.liveMatchGoals ?? 0}
+													sx={wc26StandingsLiveChipSx}
 												/>
 											) : null}
 										</Box>
