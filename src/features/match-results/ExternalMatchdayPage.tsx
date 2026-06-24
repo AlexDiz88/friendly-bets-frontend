@@ -107,6 +107,7 @@ import {
 	externalMatchWcMatchGridSx,
 	externalMatchWcMatchListSx,
 	externalMatchWcMatchPanelSx,
+	EXTERNAL_MATCH_WC_DENSE_MATCH_THRESHOLD,
 	externalMatchWcMarathonbetSyncButtonSx,
 	externalMatchWcOddsSyncButtonSx,
 	externalMatchWcOverlineSx,
@@ -1342,6 +1343,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						<Box sx={externalMatchWcMatchGridSx(sortedMatches.length)}>
 							{sortedMatches.map((match: ExternalMatch, index: number) => {
 								const betEnabled = isMatchCardClickable(match);
+								const denseSlot = sortedMatches.length >= EXTERNAL_MATCH_WC_DENSE_MATCH_THRESHOLD;
 								const matchBet =
 									match.homeTeamId && match.awayTeamId
 										? betsByMatch.get(`${match.homeTeamId}_${match.awayTeamId}`)
@@ -1353,6 +1355,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										slotId={betMatchDay}
 										userBet={matchBet}
 										isLast={index === sortedMatches.length - 1}
+										dense={denseSlot}
 										clickable={betEnabled}
 										onClick={betEnabled ? () => handleMatchClick(match) : undefined}
 										showAdminEdit={showAdminTools && Boolean(match.id)}

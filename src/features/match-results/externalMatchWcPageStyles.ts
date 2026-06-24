@@ -121,7 +121,23 @@ export const externalMatchWcMatchPanelSx: SxProps<Theme> = {
 	py: 0.5,
 };
 
+/** Слоты с 5+ матчами не помещаются в равные доли viewport — авто-высота строк и скролл списка. */
+export const EXTERNAL_MATCH_WC_DENSE_MATCH_THRESHOLD = 5;
+
 export function externalMatchWcMatchGridSx(matchCount: number): SxProps<Theme> {
+	const dense = matchCount >= EXTERNAL_MATCH_WC_DENSE_MATCH_THRESHOLD;
+	if (dense) {
+		return {
+			flex: 1,
+			minHeight: 0,
+			display: 'grid',
+			gridAutoRows: 'auto',
+			alignContent: 'start',
+			overflowY: 'auto',
+			overflowX: 'hidden',
+			WebkitOverflowScrolling: 'touch',
+		};
+	}
 	const rows = Math.max(matchCount, 1);
 	return {
 		flex: 1,
@@ -307,8 +323,33 @@ export const externalMatchWcLiveBadgeSx: SxProps<Theme> = (theme) => {
 
 export const externalMatchWcStatusChipSx: SxProps<Theme> = {
 	height: 20,
+	maxWidth: { xs: '58%', sm: 'none' },
 	fontSize: '0.65rem',
-	'& .MuiChip-label': { px: 0.55, py: 0 },
+	flexShrink: 1,
+	'& .MuiChip-label': {
+		px: 0.55,
+		py: 0,
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		display: 'block',
+	},
+};
+
+export const externalMatchWcStatusChipDenseSx: SxProps<Theme> = {
+	height: 18,
+	maxWidth: { xs: '62%', sm: 'none' },
+	fontSize: '0.58rem',
+	flexShrink: 1,
+	'& .MuiChip-label': {
+		px: 0.45,
+		py: 0,
+		lineHeight: 1.1,
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		display: 'block',
+	},
 };
 
 export const externalMatchWcHalftimeBadgeSx: SxProps<Theme> = (theme) => ({
@@ -459,19 +500,21 @@ export const externalMatchWcRefreshSyncButtonSx = wc26ToolbarIconButton('green')
 
 export function externalMatchWcCardRowSx(
 	interactive: boolean,
-	options?: { isLast?: boolean }
+	options?: { isLast?: boolean; dense?: boolean }
 ): SxProps<Theme> {
 	return (theme) => {
 		const isDark = theme.palette.mode === 'dark';
+		const dense = options?.dense ?? false;
 		return {
 			display: 'flex',
 			flexDirection: 'column',
 			justifyContent: 'flex-start',
 			minHeight: 0,
-			height: '100%',
-			py: { xs: 0.45, sm: 0.55 },
+			height: dense ? 'auto' : '100%',
+			py: dense ? { xs: 0.28, sm: 0.4 } : { xs: 0.45, sm: 0.55 },
 			px: 0.5,
 			boxSizing: 'border-box',
+			overflow: dense ? 'visible' : 'hidden',
 			borderBottom: options?.isLast
 				? 'none'
 				: `1px solid ${isDark ? 'rgba(0, 200, 120, 0.14)' : 'rgba(4, 90, 55, 0.1)'}`,
