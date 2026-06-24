@@ -202,7 +202,7 @@ export default function ExternalMatchWc26Card({
 						flexDirection: 'column',
 						alignItems: 'center',
 						justifyContent: 'center',
-						gap: 0.5,
+						gap: 0.05,
 						width: '100%',
 						flex: 1,
 						minHeight: 0,
