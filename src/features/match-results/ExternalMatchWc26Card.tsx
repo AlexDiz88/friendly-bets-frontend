@@ -25,6 +25,7 @@ import type Bet from '../bets/types/Bet';
 import {
 	EXTERNAL_MATCH_WC_BET_CHIP_HEIGHT_PX,
 	externalMatchWcBetChipRowSx,
+	externalMatchWcBetChipRowWrapSx,
 	externalMatchWcBetChipSx,
 	externalMatchWcBetOutcomeIconCellSx,
 	externalMatchWcCardRowSx,
@@ -125,8 +126,6 @@ export default function ExternalMatchWc26Card({
 		userBet != null &&
 		COMPLETED_BET_STATUSES.includes(userBet.betStatus);
 
-	const betChipRowMt = hasScore ? 0.5 : '2px';
-
 	const betChipRow =
 		betChipLabel != null ? (
 			<Box sx={externalMatchWcBetChipRowSx}>
@@ -202,7 +201,6 @@ export default function ExternalMatchWc26Card({
 						flexDirection: 'column',
 						alignItems: 'center',
 						justifyContent: 'center',
-						gap: 0.05,
 						width: '100%',
 						flex: 1,
 						minHeight: 0,
@@ -257,7 +255,7 @@ export default function ExternalMatchWc26Card({
 						</Box>
 					</Box>
 
-					{betChipRow ? <Box sx={{ mt: betChipRowMt }}>{betChipRow}</Box> : null}
+					{betChipRow ? <Box sx={externalMatchWcBetChipRowWrapSx}>{betChipRow}</Box> : null}
 				</Box>
 			) : scheduled?.labelKey ? (
 				<Box
@@ -266,7 +264,6 @@ export default function ExternalMatchWc26Card({
 						flexDirection: 'column',
 						alignItems: 'center',
 						justifyContent: 'center',
-						gap: 0.1,
 						flex: 1,
 						minHeight: 0,
 					}}
@@ -305,7 +302,7 @@ export default function ExternalMatchWc26Card({
 							</Typography>
 						) : null}
 					</Box>
-					{betChipRow ? <Box sx={{ mt: betChipRowMt }}>{betChipRow}</Box> : null}
+					{betChipRow ? <Box sx={externalMatchWcBetChipRowWrapSx}>{betChipRow}</Box> : null}
 				</Box>
 			) : null}
 		</Box>
