@@ -315,9 +315,31 @@ export const externalMatchWcKickoffDateSx: SxProps<Theme> = (theme) => ({
 /** Высота чипа ставки на карточке матча (иконка статуса выравнивается по ней). */
 export const EXTERNAL_MATCH_WC_BET_CHIP_HEIGHT_PX = 20;
 
+/** Строка команд + счёт/время (без нижнего отступа — чип ставки сразу под ней). */
+export const externalMatchWcTeamsRowSx: SxProps<Theme> = {
+	display: 'flex',
+	alignItems: 'center',
+	gap: { xs: 0.35, sm: 0.6 },
+	width: '100%',
+	pb: 0,
+};
+
+/** Центр строки: дата / счёт / время кикофа. */
+export const externalMatchWcTeamsCenterSx: SxProps<Theme> = {
+	textAlign: 'center',
+	flexShrink: 0,
+	px: 0.2,
+	minWidth: '3.25rem',
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+	justifyContent: 'center',
+	gap: 0.1,
+};
+
 /** Обёртка чипа ставки под строкой команд (страница «Результаты» ЧМ). */
 export const externalMatchWcBetChipRowWrapSx: SxProps<Theme> = {
-	mt: 0.125,
+	mt: 0,
 };
 
 /** Чип по центру; иконка статуса — слева от чипа, не сдвигая его. */
@@ -446,7 +468,8 @@ export function externalMatchWcCardRowSx(
 			display: 'flex',
 			flexDirection: 'column',
 			justifyContent: 'flex-start',
-			py: { xs: 0.5, sm: 1 },
+			pt: { xs: 0.5, sm: 1 },
+			pb: 1,
 			px: 0.5,
 			boxSizing: 'border-box',
 			borderBottom: options?.isLast
