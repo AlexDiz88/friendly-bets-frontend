@@ -211,6 +211,7 @@ export const externalMatchWcLiveScoreSx: SxProps<Theme> = (theme) => {
 		fontVariantNumeric: 'tabular-nums',
 		lineHeight: 1,
 		px: 0.25,
+		py: 0.15,
 		color: isDark ? '#ff5555' : '#dc2626',
 		textShadow: isDark
 			? '0 0 14px rgba(255, 70, 70, 0.55), 0 1px 0 rgba(0,0,0,0.2)'
@@ -222,6 +223,21 @@ export const externalMatchWcLiveScoreSx: SxProps<Theme> = (theme) => {
 		},
 	};
 };
+
+/** Итоговый счёт на странице «Результаты» (без py — иначе зазор над чипом ставки). */
+export const externalMatchWcMatchScoreSx: SxProps<Theme> = (theme) => ({
+	display: 'inline-block',
+	fontWeight: 800,
+	fontSize: { xs: '1.05rem', sm: '1.15rem' },
+	fontVariantNumeric: 'tabular-nums',
+	py: 0.15,
+	px: 0.25,
+	color: theme.palette.mode === 'dark' ? '#9de8c4' : '#047857',
+	textShadow:
+		theme.palette.mode === 'dark'
+			? '0 0 10px rgba(157, 232, 196, 0.22)'
+			: 'none',
+});
 
 export const externalMatchWcLiveBadgeSx: SxProps<Theme> = (theme) => {
 	const isDark = theme.palette.mode === 'dark';
@@ -281,7 +297,7 @@ export const externalMatchWcLiveBadgeSx: SxProps<Theme> = (theme) => {
 };
 
 export const externalMatchWcStatusChipSx: SxProps<Theme> = {
-	height: 20,
+	height: 16,
 	fontSize: '0.65rem',
 	'& .MuiChip-label': { px: 0.55, py: 0 },
 };
@@ -315,9 +331,41 @@ export const externalMatchWcKickoffDateSx: SxProps<Theme> = (theme) => ({
 /** Высота чипа ставки на карточке матча (иконка статуса выравнивается по ней). */
 export const EXTERNAL_MATCH_WC_BET_CHIP_HEIGHT_PX = 20;
 
+/** Тело карточки: команды + чип ставки без лишнего вертикального зазора. */
+export const externalMatchWcMatchBodySx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+	justifyContent: 'flex-start',
+	width: '100%',
+};
+
+/** Строка команд + счёт/время (без нижнего отступа — чип ставки сразу под ней). */
+export const externalMatchWcTeamsRowSx: SxProps<Theme> = {
+	display: 'flex',
+	alignItems: 'center',
+	gap: { xs: 0.35, sm: 0.6 },
+	width: '100%',
+	pb: 0,
+	mb: 0,
+};
+
+/** Центр строки: дата / счёт / время кикофа. */
+export const externalMatchWcTeamsCenterSx: SxProps<Theme> = {
+	textAlign: 'center',
+	flexShrink: 0,
+	px: 0.2,
+	minWidth: '3.25rem',
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+	justifyContent: 'center',
+	gap: 0.1,
+};
+
 /** Обёртка чипа ставки под строкой команд (страница «Результаты» ЧМ). */
 export const externalMatchWcBetChipRowWrapSx: SxProps<Theme> = {
-	mt: 0.125,
+	mt: 0,
 };
 
 /** Чип по центру; иконка статуса — слева от чипа, не сдвигая его. */
@@ -446,7 +494,8 @@ export function externalMatchWcCardRowSx(
 			display: 'flex',
 			flexDirection: 'column',
 			justifyContent: 'flex-start',
-			py: { xs: 0.5, sm: 1 },
+			pt: { xs: 0.5, sm: 1 },
+			pb: 1,
 			px: 0.5,
 			boxSizing: 'border-box',
 			borderBottom: options?.isLast
