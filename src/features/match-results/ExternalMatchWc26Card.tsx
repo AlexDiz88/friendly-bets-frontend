@@ -33,6 +33,8 @@ import {
 	externalMatchWcKickoffTimeSx,
 	externalMatchWcLiveMinuteSx,
 	externalMatchWcLiveScoreSx,
+	externalMatchWcMatchBodySx,
+	externalMatchWcMatchScoreSx,
 	externalMatchWcHalftimeBadgeSx,
 	externalMatchWcStatusChipSx,
 	externalMatchWcTeamsCenterSx,
@@ -197,17 +199,7 @@ export default function ExternalMatchWc26Card({
 			</Box>
 
 			{hasTeams ? (
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
-						justifyContent: 'center',
-						width: '100%',
-						flex: 1,
-						minHeight: 0,
-					}}
-				>
+				<Box sx={externalMatchWcMatchBodySx}>
 					<Box sx={externalMatchWcTeamsRowSx}>
 						<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', minWidth: 0 }}>
 							<Wc26TeamFlag teamId={scheduled!.home!} side="home" compact />
@@ -230,6 +222,7 @@ export default function ExternalMatchWc26Card({
 								kickoffSx={externalMatchWcKickoffTimeSx}
 								liveMinuteSx={externalMatchWcLiveMinuteSx}
 								liveScoreSx={externalMatchWcLiveScoreSx}
+								scoreSx={externalMatchWcMatchScoreSx}
 							/>
 						</Box>
 
@@ -241,16 +234,7 @@ export default function ExternalMatchWc26Card({
 					{betChipRow ? <Box sx={externalMatchWcBetChipRowWrapSx}>{betChipRow}</Box> : null}
 				</Box>
 			) : scheduled?.labelKey ? (
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
-						justifyContent: 'center',
-						flex: 1,
-						minHeight: 0,
-					}}
-				>
+				<Box sx={externalMatchWcMatchBodySx}>
 					{!hasScore ? (
 						<Typography component="span" sx={externalMatchWcKickoffDateSx}>
 							{dateLabel}
@@ -268,6 +252,7 @@ export default function ExternalMatchWc26Card({
 							kickoffSx={externalMatchWcKickoffTimeSx}
 							liveMinuteSx={externalMatchWcLiveMinuteSx}
 							liveScoreSx={externalMatchWcLiveScoreSx}
+							scoreSx={externalMatchWcMatchScoreSx}
 						/>
 						{scoreView === '—' ? (
 							<Typography
