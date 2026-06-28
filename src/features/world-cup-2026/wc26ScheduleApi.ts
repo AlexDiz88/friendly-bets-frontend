@@ -13,7 +13,7 @@ export interface Wc26ScheduleMatchApi {
 	id: number;
 	date: string;
 	timeLocal: string;
-	venueKey: string;
+	venueKey?: string;
 	stage: Wc26Stage;
 	group?: string;
 	home?: string;
@@ -47,7 +47,6 @@ function toMatch(entry: Wc26ScheduleMatchApi): Wc26MatchWithResult {
 		id: entry.id,
 		date: entry.date,
 		timeLocal: entry.timeLocal,
-		venueKey: entry.venueKey,
 		stage: entry.stage,
 		group: entry.group,
 		home: entry.home as Wc26TeamId | undefined,

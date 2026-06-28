@@ -338,7 +338,7 @@ function ExternalSyncIssueCard({
 						}}
 					>
 						<Typography sx={{ fontSize: '0.8125rem', lineHeight: 1.45, color: 'text.secondary' }}>
-							{issue.message}
+							{t(`error.${issue.message}`, { defaultValue: issue.message })}
 						</Typography>
 					</Box>
 				) : null}

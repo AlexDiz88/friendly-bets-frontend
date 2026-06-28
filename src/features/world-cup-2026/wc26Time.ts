@@ -3,6 +3,23 @@ import { WC26_VENUE_TIMEZONE } from './wc26Venues';
 
 const BERLIN = 'Europe/Berlin';
 
+export function berlinKickoffToUtcMs(date: string, timeBerlin: string): number {
+	const [y, m, d] = date.split('-').map(Number);
+	const [hour, minute] = timeBerlin.split(':').map(Number);
+	return localPartsToUtcMs(y, m, d, hour, minute, BERLIN);
+}
+
+export function isPlayoffStage(stage: string): boolean {
+	return (
+		stage === 'round_of_32' ||
+		stage === 'round_of_16' ||
+		stage === 'quarter_final' ||
+		stage === 'semi_final' ||
+		stage === 'third_place' ||
+		stage === 'final'
+	);
+}
+
 export function wc26DateLocale(language: string): string {
 	if (language === 'de') return 'de-DE';
 	if (language === 'en') return 'en-US';

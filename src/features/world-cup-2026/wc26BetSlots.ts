@@ -1,15 +1,31 @@
 import { parseUtcDate } from '../../shared/utcDate';
 import type { ExternalMatch } from '../match-results/types/ExternalMatch';
 import { WC26_SCHEDULE, type Wc26Match } from './wc26Schedule';
+import { WC26_TEAMS, type Wc26TeamId } from './wc26Teams';
 import {
+	berlinKickoffToUtcMs,
 	formatBerlinDateFromIsoDate,
 	getBerlinUtcOffsetLabel,
-	kickoffToGerman,
-	venueLocalKickoffToUtcMs,
 } from './wc26Time';
-import type { Wc26TeamId } from './wc26Teams';
 
 const BERLIN_GROUP_SLOT = /^([123]) \[(\d+)\]$/;
+
+/** Playoff betting slots → wc26 schedule ids (mirrors backend WcTournamentSlots). */
+const PLAYOFF_SLOT_SCHEDULE_IDS: Record<string, number[]> = {
+	'1/16 [1]': [73, 74, 75, 76],
+	'1/16 [2]': [77, 78, 79],
+	'1/16 [3]': [80, 81, 82],
+	'1/16 [4]': [83, 84, 85],
+	'1/16 [5]': [86, 87, 88],
+	'1/8 [1]': [89, 90, 91, 92],
+	'1/8 [2]': [93, 94, 95, 96],
+	'1/4': [97, 98, 99, 100],
+	'1/2': [101, 102],
+	third_place: [103],
+	final: [104],
+};
+
+const KICKOFF_MATCH_WINDOW_MS = 180 * 60 * 1000;
 
 /** odds-api / 4score names per FIFA code — mirrors backend Wc26TeamCatalog. */
 const API_NAMES_BY_FIFA: Record<Wc26TeamId, string[]> = {
@@ -71,6 +87,63 @@ export function isBerlinGroupSlot(slotId: string): boolean {
 	return BERLIN_GROUP_SLOT.test(slotId);
 }
 
+export function isWcBettingSlot(slotId: string): boolean {
+	return isBerlinGroupSlot(slotId) || slotId in PLAYOFF_SLOT_SCHEDULE_IDS;
+}
+
+export function isPlayoffSlot(slotId: string): boolean {
+	return isWcBettingSlot(slotId) && !isBerlinGroupSlot(slotId);
+}
+
+function belongsToAnotherPlayoffSlot(slotId: string, scheduleId: number): boolean {
+	for (const [otherSlotId, ids] of Object.entries(PLAYOFF_SLOT_SCHEDULE_IDS)) {
+		if (otherSlotId === slotId) {
+			continue;
+		}
+		if (ids.includes(scheduleId)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+export function externalMatchBelongsToWcSlot(match: ExternalMatch, slotId: string): boolean {
+	if (!isWcBettingSlot(slotId)) {
+		return true;
+	}
+	const slotIds = scheduleIdsForSlot(slotId);
+	const slotIdSet = new Set(slotIds);
+	const scheduleId = match.wc26ScheduleId;
+	if (isPlayoffSlot(slotId)) {
+		return scheduleId != null && slotIdSet.has(scheduleId);
+	}
+	if (scheduleId != null) {
+		if (slotIdSet.has(scheduleId)) {
+			return true;
+		}
+		if (belongsToAnotherPlayoffSlot(slotId, scheduleId)) {
+			return false;
+		}
+	}
+	const expected = getWc26MatchesForSlot(slotId).filter((m) => m.home && m.away);
+	if (expected.length > 0) {
+		if (
+			expected.some(
+				(scheduled) =>
+					scheduled.home &&
+					scheduled.away &&
+					externalMatchesPair(match, scheduled.home, scheduled.away)
+			)
+		) {
+			return true;
+		}
+	}
+	if (kickoffMatchesSlotSchedule(match, slotId)) {
+		return true;
+	}
+	return false;
+}
+
 export function parseBerlinSlotId(slotId: string): { round: number; index: number } | null {
 	const match = BERLIN_GROUP_SLOT.exec(slotId);
 	if (!match) {
@@ -80,6 +153,10 @@ export function parseBerlinSlotId(slotId: string): { round: number; index: numbe
 }
 
 export function scheduleIdsForSlot(slotId: string): number[] {
+	const playoff = PLAYOFF_SLOT_SCHEDULE_IDS[slotId.trim()];
+	if (playoff) {
+		return [...playoff];
+	}
 	const parsed = parseBerlinSlotId(slotId);
 	if (!parsed) {
 		return [];
@@ -110,6 +187,13 @@ export function matchesPerSlot(slotId: string): number {
 export function getWc26MatchesForSlot(slotId: string): Wc26Match[] {
 	const ids = new Set(scheduleIdsForSlot(slotId));
 	return WC26_SCHEDULE.filter((m) => ids.has(m.id));
+}
+
+export function getWc26ScheduleById(scheduleId: number | null | undefined): Wc26Match | undefined {
+	if (scheduleId == null) {
+		return undefined;
+	}
+	return WC26_SCHEDULE.find((m) => m.id === scheduleId);
 }
 
 function nameMatchesFifa(name: string | null | undefined, fifa: Wc26TeamId): boolean {
@@ -162,18 +246,43 @@ export function filterExternalMatchesForBerlinSlot(
 	matches: ExternalMatch[],
 	slotId: string
 ): ExternalMatch[] {
-	if (!isBerlinGroupSlot(slotId)) {
+	return filterExternalMatchesForWcSlot(matches, slotId);
+}
+
+function scheduleKickoffToUtcMs(scheduled: Wc26Match): number {
+	return berlinKickoffToUtcMs(scheduled.date, scheduled.timeLocal);
+}
+
+function kickoffMatchesSlotSchedule(match: ExternalMatch, slotId: string): boolean {
+	const slotIds = scheduleIdsForSlot(slotId);
+	if (slotIds.length === 0) {
+		return false;
+	}
+	const kickoffMs = parseUtcDate(match.utcDate)?.getTime();
+	if (kickoffMs == null || Number.isNaN(kickoffMs)) {
+		return false;
+	}
+	for (const scheduleId of slotIds) {
+		const scheduled = WC26_SCHEDULE.find((m) => m.id === scheduleId);
+		if (!scheduled) {
+			continue;
+		}
+		const slotKickoffMs = scheduleKickoffToUtcMs(scheduled);
+		if (Math.abs(kickoffMs - slotKickoffMs) <= KICKOFF_MATCH_WINDOW_MS) {
+			return true;
+		}
+	}
+	return false;
+}
+
+export function filterExternalMatchesForWcSlot(
+	matches: ExternalMatch[],
+	slotId: string
+): ExternalMatch[] {
+	if (!isWcBettingSlot(slotId)) {
 		return matches;
 	}
-	const expected = getWc26MatchesForSlot(slotId).filter((m) => m.home && m.away);
-	return matches.filter((ext) =>
-		expected.some(
-			(scheduled) =>
-				scheduled.home &&
-				scheduled.away &&
-				externalMatchesPair(ext, scheduled.home, scheduled.away)
-		)
-	);
+	return matches.filter((match) => externalMatchBelongsToWcSlot(match, slotId));
 }
 
 function findInScheduleByTeams(match: ExternalMatch, candidates: Wc26Match[]): Wc26Match | undefined {
@@ -183,6 +292,37 @@ function findInScheduleByTeams(match: ExternalMatch, candidates: Wc26Match[]): W
 			scheduled.away &&
 			externalMatchesPair(match, scheduled.home, scheduled.away)
 	);
+}
+
+function findWc26ScheduleMatchByKickoff(
+	match: ExternalMatch,
+	candidates: Wc26Match[]
+): Wc26Match | undefined {
+	const kickoffMs = parseUtcDate(match.utcDate)?.getTime();
+	if (kickoffMs == null || Number.isNaN(kickoffMs)) {
+		return undefined;
+	}
+	let best: Wc26Match | undefined;
+	let bestDelta = KICKOFF_MATCH_WINDOW_MS + 1;
+	for (const scheduled of candidates) {
+		const slotKickoffMs = scheduleKickoffToUtcMs(scheduled);
+		const delta = Math.abs(kickoffMs - slotKickoffMs);
+		if (delta <= KICKOFF_MATCH_WINDOW_MS && delta < bestDelta) {
+			bestDelta = delta;
+			best = scheduled;
+		}
+	}
+	return best;
+}
+
+export function resolveWc26TeamIdFromCountry(
+	country: string | null | undefined
+): Wc26TeamId | undefined {
+	if (!country?.trim()) {
+		return undefined;
+	}
+	const code = country.trim().toUpperCase();
+	return Object.prototype.hasOwnProperty.call(WC26_TEAMS, code) ? (code as Wc26TeamId) : undefined;
 }
 
 export function findExternalMatchForWc26Schedule(
@@ -201,13 +341,27 @@ export function findWc26ScheduleMatchForExternal(
 	match: ExternalMatch,
 	slotId?: string
 ): Wc26Match | undefined {
-	if (slotId) {
-		const fromSlot = findInScheduleByTeams(match, getWc26MatchesForSlot(slotId));
-		if (fromSlot) {
-			return fromSlot;
+	if (match.wc26ScheduleId != null) {
+		const byId = getWc26ScheduleById(match.wc26ScheduleId);
+		if (byId) {
+			return byId;
 		}
 	}
-	return findInScheduleByTeams(match, WC26_SCHEDULE);
+	if (slotId) {
+		const fromSlotTeams = findInScheduleByTeams(match, getWc26MatchesForSlot(slotId));
+		if (fromSlotTeams) {
+			return fromSlotTeams;
+		}
+		const fromSlotKickoff = findWc26ScheduleMatchByKickoff(match, getWc26MatchesForSlot(slotId));
+		if (fromSlotKickoff) {
+			return fromSlotKickoff;
+		}
+	}
+	const fromTeams = findInScheduleByTeams(match, WC26_SCHEDULE);
+	if (fromTeams) {
+		return fromTeams;
+	}
+	return findWc26ScheduleMatchByKickoff(match, WC26_SCHEDULE);
 }
 
 export interface BerlinSlotMeta {
@@ -227,13 +381,8 @@ export function getBerlinSlotMeta(slotId: string, language: string): BerlinSlotM
 	}
 	const slotMatches = getWc26MatchesForSlot(slotId);
 	const berlinTimes = slotMatches
-		.map((m) => ({
-			match: m,
-			german: kickoffToGerman(m.date, m.timeLocal, m.venueKey),
-		}))
-		.sort((a, b) =>
-			`${a.german.date}T${a.german.time}`.localeCompare(`${b.german.date}T${b.german.time}`)
-		);
+		.map((m) => ({ match: m, date: m.date, time: m.timeLocal }))
+		.sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
 
 	const formatBerlin = (date: string, time: string): string => {
 		const dateLabel = formatBerlinDateFromIsoDate(date, language);
@@ -243,9 +392,7 @@ export function getBerlinSlotMeta(slotId: string, language: string): BerlinSlotM
 	const first = berlinTimes[0];
 	const last = berlinTimes[berlinTimes.length - 1];
 	const utcOffset = first
-		? getBerlinUtcOffsetLabel(
-				venueLocalKickoffToUtcMs(first.match.date, first.match.timeLocal, first.match.venueKey)
-			)
+		? getBerlinUtcOffsetLabel(berlinKickoffToUtcMs(first.match.date, first.match.timeLocal))
 		: '';
 
 	return {
@@ -253,8 +400,8 @@ export function getBerlinSlotMeta(slotId: string, language: string): BerlinSlotM
 		index: parsed.index,
 		betsRequired: betsRequiredForSlot(slotId),
 		matchCount: slotMatches.length,
-		rangeFrom: first ? formatBerlin(first.german.date, first.german.time) : '',
-		rangeTo: last ? formatBerlin(last.german.date, last.german.time) : '',
+		rangeFrom: first ? formatBerlin(first.date, first.time) : '',
+		rangeTo: last ? formatBerlin(last.date, last.time) : '',
 		utcOffset,
 	};
 }

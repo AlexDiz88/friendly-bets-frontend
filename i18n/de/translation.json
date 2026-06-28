@@ -578,6 +578,7 @@
 		"noFinalizedGameResultsForMatchday": "Keine fixierten Ergebnisse für diesen Spieltag",
 		"invalidMatchResultProvider": "Ungültiger Ergebnis-Provider",
 		"noPrimaryApiScoreSnapshot": "Kein Primary-API-Spielstand-Snapshot",
+		"fourScorePlayoffPlaceholderSide": "4score: Platzhalter statt Team (z. B. „3rd Group …“) — Spiel übersprungen; Bootstrap über 24score",
 		"noData": "Keine Daten",
 		"fieldMustNotBeNull": "Daten fehlen! Überprüfen Sie die Vollständigkeit der Felder",
 		"seasonIdIsNull": "Das Feld seasonId fehlt",

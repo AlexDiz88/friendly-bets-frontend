@@ -6,7 +6,7 @@ import Wc26TeamFlag from './Wc26TeamFlag';
 import Wc26MatchCenterStatus, { isWc26LiveStackedDisplay } from './Wc26MatchCenterStatus';
 import Wc26LiveScoreChip from './Wc26LiveScoreChip';
 import { compactLiveScore } from './wc26LiveScore';
-import { kickoffToGerman, venueLocalKickoffToUtcMs } from './wc26Time';
+import { berlinKickoffToUtcMs } from './wc26Time';
 import type { Wc26Match } from './wc26Schedule';
 import {
 	wc26MatchMetaSx,
@@ -46,13 +46,9 @@ export default function Wc26MatchCard({
 	userBet,
 }: Wc26MatchCardProps): JSX.Element {
 	const { t } = useTranslation();
-	const german = useMemo(
-		() => kickoffToGerman(match.date, match.timeLocal, match.venueKey),
-		[match.date, match.timeLocal, match.venueKey]
-	);
 	const kickoffUtcMs = useMemo(
-		() => venueLocalKickoffToUtcMs(match.date, match.timeLocal, match.venueKey),
-		[match.date, match.timeLocal, match.venueKey]
+		() => berlinKickoffToUtcMs(match.date, match.timeLocal),
+		[match.date, match.timeLocal]
 	);
 	const hasTeams = Boolean(match.home && match.away);
 	const interactive = clickable && Boolean(onClick);
@@ -149,7 +145,7 @@ export default function Wc26MatchCard({
 						}}
 					>
 						<Wc26MatchCenterStatus
-							kickoffTime={german.time}
+							kickoffTime={match.timeLocal}
 							kickoffUtcMs={kickoffUtcMs}
 							scoreView={scoreView}
 							liveMinuteLabel={liveMinuteLabel}
@@ -178,7 +174,7 @@ export default function Wc26MatchCard({
 			) : (
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 					<Wc26MatchCenterStatus
-						kickoffTime={german.time}
+						kickoffTime={match.timeLocal}
 						kickoffUtcMs={kickoffUtcMs}
 						scoreView={scoreView}
 						liveMinuteLabel={liveMinuteLabel}

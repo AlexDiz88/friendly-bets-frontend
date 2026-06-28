@@ -15,7 +15,7 @@ import {
 	filterWc26Matches,
 	type Wc26ViewFilter,
 } from './wc26ViewFilters';
-import { kickoffToGerman, wc26DateLocale } from './wc26Time';
+import { wc26DateLocale } from './wc26Time';
 import {
 	wc26DividerSx,
 	wc26MatchCountSx,
@@ -35,20 +35,15 @@ import {
 	type Wc26PageView,
 } from './wc26PageViews';
 
-function groupMatchesByGermanDate(matches: Wc26Match[]): Map<string, Wc26Match[]> {
+function groupMatchesByDate(matches: Wc26Match[]): Map<string, Wc26Match[]> {
 	const map = new Map<string, Wc26Match[]>();
 	for (const m of matches) {
-		const { date } = kickoffToGerman(m.date, m.timeLocal, m.venueKey);
-		const list = map.get(date) ?? [];
+		const list = map.get(m.date) ?? [];
 		list.push(m);
-		map.set(date, list);
+		map.set(m.date, list);
 	}
 	for (const list of map.values()) {
-		list.sort((a, b) => {
-			const ta = kickoffToGerman(a.date, a.timeLocal, a.venueKey).time;
-			const tb = kickoffToGerman(b.date, b.timeLocal, b.venueKey).time;
-			return ta.localeCompare(tb);
-		});
+		list.sort((a, b) => a.timeLocal.localeCompare(b.timeLocal));
 	}
 	return map;
 }
@@ -120,7 +115,7 @@ export default function WorldCup26Page(): JSX.Element {
 		() => filterWc26Matches(scheduleMatches, viewFilter),
 		[scheduleMatches, viewFilter]
 	);
-	const byDate = useMemo(() => groupMatchesByGermanDate(filtered), [filtered]);
+	const byDate = useMemo(() => groupMatchesByDate(filtered), [filtered]);
 	const sortedDates = useMemo(() => [...byDate.keys()].sort(), [byDate]);
 
 	const stageChips = useMemo(
