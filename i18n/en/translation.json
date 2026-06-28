@@ -578,6 +578,7 @@
 		"noFinalizedGameResultsForMatchday": "No finalized results for this matchday",
 		"invalidMatchResultProvider": "Invalid match result provider",
 		"noPrimaryApiScoreSnapshot": "No primary API score snapshot",
+		"fourScorePlayoffPlaceholderSide": "4score: placeholder side instead of a team (e.g. “3rd Group …”) — match skipped; 24score used for bootstrap",
 		"noData": "No data",
 		"fieldMustNotBeNull": "Data is missing! Check the completeness of the fields",
 		"seasonIdIsNull": "The seasonId field is null",
@@ -888,6 +889,7 @@
 			"secondHalfCorrectScore": "2nd half",
 			"cleanWin": "Win to nil",
 			"winGoalDifference": "Win by exact margin",
+			"playoffExtraTime": "Extra time / Penalty shootout",
 			"other": "Other"
 		}
 	},

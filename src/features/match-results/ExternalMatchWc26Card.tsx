@@ -10,15 +10,12 @@ import Wc26LiveBadge from '../world-cup-2026/Wc26LiveBadge';
 import Wc26TeamFlag from '../world-cup-2026/Wc26TeamFlag';
 import {
 	findWc26ScheduleMatchForExternal,
-	utcToBerlinKickoff,
+	resolveWc26TeamIdFromCountry,
 } from '../world-cup-2026/wc26BetSlots';
-import {
-	formatBerlinDateFromIsoDate,
-	formatBerlinDateFromUtc,
-	kickoffToGerman,
-	venueLocalKickoffToUtcMs,
-} from '../world-cup-2026/wc26Time';
-import { parseUtcDate } from '../../shared/utcDate';
+import type { Wc26TeamId } from '../world-cup-2026/wc26Teams';
+import { matchSideToDisplayTeam } from './externalMatchDisplay';
+import { resolveTeamDisplayName } from '../../components/utils/teamDisplay';
+import { resolveExternalMatchBerlinKickoff } from './externalMatchKickoff';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
 import { formatPickOdds } from '../../components/odds/formatPickOdds';
 import type Bet from '../bets/types/Bet';
@@ -77,25 +74,11 @@ export default function ExternalMatchWc26Card({
 		() => findWc26ScheduleMatchForExternal(match, slotId),
 		[match, slotId]
 	);
-	const { kickoff, dateLabel } = useMemo(() => {
-		if (scheduled) {
-			const german = kickoffToGerman(scheduled.date, scheduled.timeLocal, scheduled.venueKey);
-			return {
-				kickoff: german.time,
-				dateLabel: formatBerlinDateFromIsoDate(german.date, i18n.language),
-			};
-		}
-		return {
-			kickoff: utcToBerlinKickoff(match.utcDate),
-			dateLabel: formatBerlinDateFromUtc(match.utcDate, i18n.language),
-		};
-	}, [scheduled, match.utcDate, i18n.language]);
-	const kickoffUtcMs = useMemo(() => {
-		if (scheduled) {
-			return venueLocalKickoffToUtcMs(scheduled.date, scheduled.timeLocal, scheduled.venueKey);
-		}
-		return parseUtcDate(match.utcDate)?.getTime() ?? 0;
-	}, [scheduled, match.utcDate]);
+	const groupScheduled = scheduled?.home && scheduled?.away ? scheduled : undefined;
+	const { kickoff, dateLabel, kickoffUtcMs } = useMemo(
+		() => resolveExternalMatchBerlinKickoff(match, slotId, i18n.language),
+		[match, slotId, i18n.language]
+	);
 	const gameScore: GameScore | null = match.gameScore ?? null;
 	const scoreView = resolveExternalMatchScoreView({
 		gameScore,
@@ -116,7 +99,16 @@ export default function ExternalMatchWc26Card({
 		? t('gameResultFinalized')
 		: translateMatchStatus(match.status, t);
 	const statusColor = match.finalized ? 'success' : getMatchStatusChipColor(match.status);
-	const hasTeams = Boolean(scheduled?.home && scheduled?.away);
+	const homeWcTeam: Wc26TeamId | undefined =
+		groupScheduled?.home ?? resolveWc26TeamIdFromCountry(match.homeTeamCountry);
+	const awayWcTeam: Wc26TeamId | undefined =
+		groupScheduled?.away ?? resolveWc26TeamIdFromCountry(match.awayTeamCountry);
+	const hasWcTeamFlags = Boolean(homeWcTeam && awayWcTeam);
+	const homeDisplayTeam = useMemo(() => matchSideToDisplayTeam(match, 'home'), [match]);
+	const awayDisplayTeam = useMemo(() => matchSideToDisplayTeam(match, 'away'), [match]);
+	const homeDisplayName = resolveTeamDisplayName(homeDisplayTeam, t, i18n.language);
+	const awayDisplayName = resolveTeamDisplayName(awayDisplayTeam, t, i18n.language);
+	const hasApiTeamNames = Boolean(homeDisplayName?.trim() && awayDisplayName?.trim());
 	const interactive = clickable && Boolean(onClick);
 	const betChipLabel =
 		userBet?.betTitle != null && userBet.betOdds != null
@@ -175,8 +167,14 @@ export default function ExternalMatchWc26Card({
 				}}
 			>
 				<Typography variant="caption" sx={wc26MatchMetaSx}>
-					{scheduled?.id ? `#${scheduled.id}` : null}
-					{scheduled?.group ? ` · ${t('wc26.group', { letter: scheduled.group })}` : null}
+					{match.wc26ScheduleId
+						? `#${match.wc26ScheduleId}`
+						: groupScheduled?.id
+							? `#${groupScheduled.id}`
+							: null}
+					{groupScheduled?.group
+						? ` · ${t('wc26.group', { letter: groupScheduled.group })}`
+						: null}
 				</Typography>
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
 					{showLiveBadge ? (
@@ -198,11 +196,11 @@ export default function ExternalMatchWc26Card({
 				</Box>
 			</Box>
 
-			{hasTeams ? (
+			{hasWcTeamFlags ? (
 				<Box sx={externalMatchWcMatchBodySx}>
 					<Box sx={externalMatchWcTeamsRowSx}>
 						<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', minWidth: 0 }}>
-							<Wc26TeamFlag teamId={scheduled!.home!} side="home" compact />
+							<Wc26TeamFlag teamId={homeWcTeam!} side="home" compact />
 						</Box>
 
 						<Box sx={externalMatchWcTeamsCenterSx}>
@@ -227,10 +225,46 @@ export default function ExternalMatchWc26Card({
 						</Box>
 
 						<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-start', minWidth: 0 }}>
-							<Wc26TeamFlag teamId={scheduled!.away!} side="away" compact />
+							<Wc26TeamFlag teamId={awayWcTeam!} side="away" compact />
 						</Box>
 					</Box>
 
+					{betChipRow ? <Box sx={externalMatchWcBetChipRowWrapSx}>{betChipRow}</Box> : null}
+				</Box>
+			) : hasApiTeamNames ? (
+				<Box sx={externalMatchWcMatchBodySx}>
+					<Box sx={externalMatchWcTeamsRowSx}>
+						<Box sx={{ flex: 1, textAlign: 'right', minWidth: 0, px: 0.5 }}>
+							<Typography variant="body2" noWrap sx={{ fontSize: '0.85rem', fontWeight: 500 }}>
+								{homeDisplayName}
+							</Typography>
+						</Box>
+						<Box sx={externalMatchWcTeamsCenterSx}>
+							{!hasScore ? (
+								<Typography component="span" sx={externalMatchWcKickoffDateSx}>
+									{dateLabel}
+								</Typography>
+							) : null}
+							<Wc26MatchCenterStatus
+								kickoffTime={kickoff}
+								kickoffUtcMs={kickoffUtcMs}
+								scoreView={scoreView}
+								liveMinuteLabel={match.liveMinuteLabel}
+								liveDataFetchedAt={match.fetchedAt}
+								matchStatus={match.status}
+								liveStacked={isLiveStacked && hasScore}
+								kickoffSx={externalMatchWcKickoffTimeSx}
+								liveMinuteSx={externalMatchWcLiveMinuteSx}
+								liveScoreSx={externalMatchWcLiveScoreSx}
+								scoreSx={externalMatchWcMatchScoreSx}
+							/>
+						</Box>
+						<Box sx={{ flex: 1, textAlign: 'left', minWidth: 0, px: 0.5 }}>
+							<Typography variant="body2" noWrap sx={{ fontSize: '0.85rem', fontWeight: 500 }}>
+								{awayDisplayName}
+							</Typography>
+						</Box>
+					</Box>
 					{betChipRow ? <Box sx={externalMatchWcBetChipRowWrapSx}>{betChipRow}</Box> : null}
 				</Box>
 			) : scheduled?.labelKey ? (

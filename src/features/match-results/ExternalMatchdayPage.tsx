@@ -94,10 +94,9 @@ import WcExternalSlotPanel from './WcExternalSlotPanel';
 import { useWcSlotUserBets } from './useWcSlotUserBets';
 import { matchBetCountKey, useSlotMatchBetCounts } from './useSlotMatchBetCounts';
 import {
-	betsRequiredForSlot,
 	expectedBerlinMatchCount,
-	filterExternalMatchesForBerlinSlot,
-	isBerlinGroupSlot,
+	filterExternalMatchesForWcSlot,
+	isWcBettingSlot,
 } from '../world-cup-2026/wc26BetSlots';
 import {
 	externalMatchWcEmptyHintSx,
@@ -326,17 +325,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return slot?.slotId ?? String(effectiveMatchday);
 	}, [matchdaySlots, effectiveMatchday]);
 
-	const isBerlinGroupSlotActive = useMemo(
-		() => isBerlinGroupSlot(betMatchDay),
+	const isWcBettingSlotActive = useMemo(
+		() => isWcBettingSlot(betMatchDay),
 		[betMatchDay]
 	);
 
 	const isWcLeague = effectiveLeagueCode === 'WC';
-
-	const slotBetLimit = useMemo(
-		() => (isWcLeague ? betsRequiredForSlot(betMatchDay) : 0),
-		[isWcLeague, betMatchDay]
-	);
 
 	const currentSlotLabel = useMemo(
 		() => matchdaySlots.find((s) => s.value === effectiveMatchday)?.label,
@@ -366,6 +360,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			selectedLeague.id
 		);
 	}, [calendarNodes, selectedLeague, betMatchDay]);
+
+	const slotBetLimit = useMemo(
+		() => calendarMatch?.node.betCountLimit ?? 0,
+		[calendarMatch]
+	);
 
 	const needsMatchBetCounts =
 		Boolean(user?.id) && isSeasonParticipant && Boolean(selectedLeague?.id) && Boolean(activeSeason?.id);
@@ -419,13 +418,16 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			if (!isMatchNotStarted(match.status)) {
 				return false;
 			}
-			const kickoffMs = resolveExternalMatchKickoffUtcMs(match, betMatchDay);
+			const kickoffMs = resolveExternalMatchKickoffUtcMs(
+				match,
+				isWcLeague ? betMatchDay : undefined
+			);
 			if (kickoffMs > 0 && kickoffMs <= Date.now()) {
 				return false;
 			}
 			return true;
 		},
-		[betMatchDay]
+		[isWcLeague, betMatchDay]
 	);
 
 	const canUserBetOnMatch = useCallback(
@@ -561,10 +563,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					status: match.status,
 					finalized: match.finalized,
 					liveMinuteLabel: match.liveMinuteLabel,
-					kickoffUtcMs: resolveExternalMatchKickoffUtcMs(match, betMatchDay),
+					kickoffUtcMs: resolveExternalMatchKickoffUtcMs(
+						match,
+						isWcLeague ? betMatchDay : undefined
+					),
 				}))
 			),
-		[data?.matches, betMatchDay]
+		[data?.matches, betMatchDay, isWcLeague]
 	);
 
 	useVisibilityPageRefresh(isExternalPageReady, reloadMatchday);
@@ -707,6 +712,23 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		setLoading(true);
 	};
 
+	const reloadCompetitionInfo = useCallback(async (): Promise<void> => {
+		if (!effectiveLeagueCode) {
+			return;
+		}
+		try {
+			if (selectedLeague?.id) {
+				const info = await getLeagueExternalCompetitionInfo(selectedLeague.id, externalSeason);
+				setCompetitionInfo(info);
+				return;
+			}
+			const info = await getCompetitionInfo(competitionCode, externalSeason);
+			setCompetitionInfo(info);
+		} catch {
+			// оставляем текущие метаданные слота
+		}
+	}, [competitionCode, effectiveLeagueCode, externalSeason, selectedLeague?.id]);
+
 	const handleSyncFromApi = async (): Promise<void> => {
 		setSyncing(true);
 		try {
@@ -717,6 +739,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				selectedLeague?.id
 			);
 			setData(page);
+			await reloadCompetitionInfo();
 			dispatch(showSuccessSnackbar({ message: t('externalMatchSyncSuccess') }));
 		} catch (error) {
 			dispatch(
@@ -856,22 +879,26 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const sortedMatches = useMemo(() => {
 		if (!data?.matches) return [];
 		const sorted = [...data.matches].sort((a, b) => {
-			const da = utcDateMs(a.utcDate) ?? 0;
-			const db = utcDateMs(b.utcDate) ?? 0;
+			const da = isWcLeague
+				? resolveExternalMatchKickoffUtcMs(a, betMatchDay)
+				: (utcDateMs(a.utcDate) ?? 0);
+			const db = isWcLeague
+				? resolveExternalMatchKickoffUtcMs(b, betMatchDay)
+				: (utcDateMs(b.utcDate) ?? 0);
 			return da - db;
 		});
-		if (isBerlinGroupSlotActive) {
-			return filterExternalMatchesForBerlinSlot(sorted, betMatchDay);
+		if (isWcBettingSlotActive) {
+			return filterExternalMatchesForWcSlot(sorted, betMatchDay);
 		}
 		return sorted;
-	}, [data?.matches, isBerlinGroupSlotActive, betMatchDay]);
+	}, [data?.matches, isWcBettingSlotActive, betMatchDay, isWcLeague]);
 
 	const syncProgressTotal = useMemo(() => {
-		if (isBerlinGroupSlotActive) {
+		if (isWcBettingSlotActive) {
 			return expectedBerlinMatchCount(betMatchDay);
 		}
 		return data?.sync?.expectedMatchCount ?? 0;
-	}, [isBerlinGroupSlotActive, betMatchDay, data?.sync?.expectedMatchCount]);
+	}, [isWcBettingSlotActive, betMatchDay, data?.sync?.expectedMatchCount]);
 
 	const syncProgressStarted = useMemo(
 		() =>
@@ -879,10 +906,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				if (isMatchStartedOrFinished(m.status)) {
 					return true;
 				}
-				const kickoffMs = resolveExternalMatchKickoffUtcMs(m, betMatchDay);
+				const kickoffMs = resolveExternalMatchKickoffUtcMs(
+					m,
+					isWcLeague ? betMatchDay : undefined
+				);
 				return kickoffMs > 0 && kickoffMs <= Date.now();
 			}).length,
-		[sortedMatches, betMatchDay]
+		[sortedMatches, isWcLeague, betMatchDay]
 	);
 
 	const syncProgressFinalized = useMemo(

@@ -578,6 +578,7 @@
 		"noFinalizedGameResultsForMatchday": "Нет финализированных результатов для этого тура",
 		"invalidMatchResultProvider": "Недопустимый провайдер результатов",
 		"noPrimaryApiScoreSnapshot": "Нет снимка счёта primary API",
+		"fourScorePlayoffPlaceholderSide": "4score: вместо команды placeholder (напр. «3rd Group …») — матч пропущен; используйте 24score для bootstrap",
 		"noData": "Нет данных",
 		"fieldMustNotBeNull": "Данные отсутствуют! Проверьте заполненность полей",
 		"seasonIdIsNull": "Поле seasonId отсутствует",
@@ -888,6 +889,7 @@
 			"secondHalfCorrectScore": "2й тайм",
 			"cleanWin": "Победа всухую",
 			"winGoalDifference": "Победа с точной разницей голов",
+			"playoffExtraTime": "Доп.время / Послематчевые пенальти",
 			"other": "Прочее"
 		}
 	},
