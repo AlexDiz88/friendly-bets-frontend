@@ -5,6 +5,7 @@ const FALLBACK_BY_KEY: Record<string, string> = {
 	periodHandicap: 'Форы (по таймам)',
 	firstHalfCorrectScore: '1й тайм',
 	secondHalfCorrectScore: '2й тайм',
+	playoffExtraTime: 'Доп.время / Послематчевые пенальти',
 };
 
 export function oddsGroupTitle(t: TFunction, groupKey: string): string {

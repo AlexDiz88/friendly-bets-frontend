@@ -889,6 +889,7 @@
 			"secondHalfCorrectScore": "2nd half",
 			"cleanWin": "Win to nil",
 			"winGoalDifference": "Win by exact margin",
+			"playoffExtraTime": "Extra time / Penalty shootout",
 			"other": "Other"
 		}
 	},
