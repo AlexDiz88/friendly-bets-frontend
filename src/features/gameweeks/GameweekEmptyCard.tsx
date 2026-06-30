@@ -6,37 +6,28 @@ import { leagueLogoAvatarSx } from '../../components/custom/avatar/LeagueAvatar'
 import Bet from '../bets/types/Bet';
 import {
 	gameweekBalanceChangeSx,
+	gameweekBetOutcomeRowSx,
 	gameweekCompactStatusCardSx,
+	gameweekEmptyCardTextSx,
 	gameweekStatusIconSx,
 } from './gameweekPageStyles';
+
+const SIDE_SLOT_SIZE = 30;
 
 const GameweekEmptyCard = ({ bet, onClick }: { bet: Bet; onClick: () => void }): JSX.Element => {
 	return (
 		<Box sx={gameweekCompactStatusCardSx('empty')} onClick={onClick}>
-			<Box
-				sx={{
-					fontSize: '0.85rem',
-					fontWeight: 600,
-					pl: 0.5,
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-				}}
-			>
-				<GppMaybe sx={gameweekStatusIconSx('empty')} />
-				{t('betNotPlacedShort')}
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center',
-						alignItems: 'center',
-					}}
-				>
+			<Box sx={{ width: '100%' }}>
+				<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+					<Box sx={{ width: SIDE_SLOT_SIZE, height: SIDE_SLOT_SIZE, flexShrink: 0 }} />
+					<Box sx={gameweekEmptyCardTextSx}>
+						<Box>{t('betNotPlacedShortLine1')}</Box>
+						<Box>{t('betNotPlacedShortLine2')}</Box>
+					</Box>
 					<Avatar
 						sx={
 							[
-								{ mr: 0.5, width: 30, height: 30 },
+								{ width: SIDE_SLOT_SIZE, height: SIDE_SLOT_SIZE, flexShrink: 0 },
 								leagueLogoAvatarSx,
 							] as SxProps<Theme>
 						}
@@ -44,12 +35,23 @@ const GameweekEmptyCard = ({ bet, onClick }: { bet: Bet; onClick: () => void }):
 						alt="league_logo"
 						src={pathToLogoImage(bet.leagueCode)}
 					/>
-					{bet.balanceChange !== undefined && (
-						<Box sx={[gameweekBalanceChangeSx(bet.balanceChange), { fontSize: '1rem' }] as SxProps<Theme>}>
-							{bet.balanceChange}€
-						</Box>
-					)}
 				</Box>
+			</Box>
+
+			<Box sx={gameweekBetOutcomeRowSx}>
+				<GppMaybe sx={gameweekStatusIconSx('empty')} />
+				{bet.balanceChange !== undefined && (
+					<Box
+						sx={
+							[
+								gameweekBalanceChangeSx(bet.balanceChange),
+								{ fontSize: '1.1rem', lineHeight: 1 },
+							] as SxProps<Theme>
+						}
+					>
+						{Number.isInteger(bet.balanceChange) ? bet.balanceChange : bet.balanceChange.toFixed(2)}€
+					</Box>
+				)}
 			</Box>
 		</Box>
 	);

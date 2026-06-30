@@ -461,6 +461,8 @@
 	"betLost": "Bet lost",
 	"betNotPlaced": "Bet not placed",
 	"betNotPlacedShort": "Bet not placed",
+	"betNotPlacedShortLine1": "Bet",
+	"betNotPlacedShortLine2": "not placed",
 	"registerOnTournament": "Tournament Registration",
 	"listOfPlayers": "Participant List",
 	"congratulations": "Congratulations!",

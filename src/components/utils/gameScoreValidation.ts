@@ -148,14 +148,10 @@ export const getGameScoreView = (gameScore: GameScore | undefined, isFullView = 
 	if (gameScore.overTime || gameScore.penalty) {
 		const parts: string[] = [];
 		if (gameScore.overTime) {
-			parts.push(
-				isFullView ? `${t('ot')}${gameScore.overTime}` : `${t('otShort')} ${gameScore.overTime}`
-			);
+			parts.push(isFullView ? `${t('ot')}${gameScore.overTime}` : gameScore.overTime);
 		}
 		if (gameScore.penalty) {
-			parts.push(
-				isFullView ? `${t('pen')}${gameScore.penalty}` : `${t('pen')} ${gameScore.penalty}`
-			);
+			parts.push(isFullView ? `${t('pen')}${gameScore.penalty}` : gameScore.penalty);
 		}
 		if (isFullView) {
 			result += gameScore.penalty ? ` [${parts.join(' ')}]` : ` [${parts[0]}]`;
