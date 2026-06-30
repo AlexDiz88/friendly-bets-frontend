@@ -461,6 +461,8 @@
 	"betLost": "Wette verloren",
 	"betNotPlaced": "Wette nicht gesetzt",
 	"betNotPlacedShort": "Wette nicht gesetzt",
+	"betNotPlacedShortLine1": "Wette",
+	"betNotPlacedShortLine2": "nicht gesetzt",
 	"registerOnTournament": "Turnieranmeldung",
 	"listOfPlayers": "Teilnehmerliste",
 	"congratulations": "Herzlichen Glückwunsch!",

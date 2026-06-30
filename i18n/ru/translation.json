@@ -461,6 +461,8 @@
 	"betLost": "Ставка не сыграла",
 	"betNotPlaced": "Ставка на тур не сделана",
 	"betNotPlacedShort": "Ставка не сделана",
+	"betNotPlacedShortLine1": "Ставка",
+	"betNotPlacedShortLine2": "не сделана",
 	"registerOnTournament": "Регистрация на турнир",
 	"listOfPlayers": "Список участников",
 	"congratulations": "Поздравляем!",

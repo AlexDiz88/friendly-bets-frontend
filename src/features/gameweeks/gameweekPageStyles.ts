@@ -128,6 +128,18 @@ export const gameweekCardBetTitleSx: SxProps<Theme> = (theme) => ({
 	color: statsThemePalette(theme).name,
 });
 
+export const gameweekEmptyCardTextSx: SxProps<Theme> = (theme) => ({
+	flex: 1,
+	minWidth: 0,
+	px: 0.25,
+	textAlign: 'center',
+	fontWeight: 600,
+	color: statsThemePalette(theme).name,
+	fontSize: '0.78rem',
+	lineHeight: 1.08,
+	whiteSpace: 'nowrap',
+});
+
 export const gameweekStatusIconSx = betsStatusIconSx;
 
 export const gameweekBetOutcomeRowSx: SxProps<Theme> = {
