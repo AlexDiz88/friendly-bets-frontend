@@ -96,7 +96,7 @@ export default function Wc26MatchCenterStatus({
 						{minuteLabel}
 					</Typography>
 				) : null}
-				<Typography component="span" sx={liveScoreSx ?? scoreSx}>
+				<Typography component="span" sx={{ ...(liveScoreSx ?? scoreSx), whiteSpace: 'pre-line' }}>
 					{scoreView}
 				</Typography>
 			</Box>
@@ -105,7 +105,7 @@ export default function Wc26MatchCenterStatus({
 
 	if (hasDisplayableScore(scoreView)) {
 		return (
-			<Typography component="span" sx={scoreSx}>
+			<Typography component="span" sx={{ ...scoreSx, whiteSpace: 'pre-line' }}>
 				{scoreView}
 			</Typography>
 		);

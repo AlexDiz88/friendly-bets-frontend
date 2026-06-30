@@ -917,6 +917,7 @@
 	"updateInProgress": "Das Datenbank-Update läuft. Dies kann einige Minuten dauern...",
 	"noGameScore": "Spielergebnis fehlt!",
 	"ot": "ot.",
+	"otShort": "VZ",
 	"pen": "p.",
 	"fullTime": "Endstand",
 	"halfTime": "Halbzeitstand",

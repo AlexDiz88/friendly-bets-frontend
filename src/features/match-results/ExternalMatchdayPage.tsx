@@ -179,9 +179,9 @@ function CompactMatchRow({
 					px: 0.5,
 					fontWeight: 700,
 					fontSize: '0.85rem',
-					lineHeight: 1.2,
+					lineHeight: 1.15,
 					textAlign: 'center',
-					whiteSpace: 'nowrap',
+					whiteSpace: 'pre-line',
 				}}
 			>
 				{scoreView}

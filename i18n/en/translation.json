@@ -917,6 +917,7 @@
 	"updateInProgress": "The database update is in progress. This may take a few minutes...",
 	"noGameScore": "Match result is missing!",
 	"ot": "ot.",
+	"otShort": "et",
 	"pen": "p.",
 	"fullTime": "Full time",
 	"halfTime": "1st half",
