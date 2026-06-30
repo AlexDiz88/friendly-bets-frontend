@@ -230,6 +230,7 @@ export const externalMatchWcMatchScoreSx: SxProps<Theme> = (theme) => ({
 	fontWeight: 800,
 	fontSize: { xs: '1.05rem', sm: '1.15rem' },
 	fontVariantNumeric: 'tabular-nums',
+	whiteSpace: 'pre-line',
 	py: 0.15,
 	px: 0.25,
 	color: theme.palette.mode === 'dark' ? '#9de8c4' : '#047857',

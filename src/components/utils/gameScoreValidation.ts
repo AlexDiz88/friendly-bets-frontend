@@ -146,18 +146,22 @@ export const getGameScoreView = (gameScore: GameScore | undefined, isFullView = 
 	let result = `${gameScore.fullTime} (${gameScore.firstTime})`;
 
 	if (gameScore.overTime || gameScore.penalty) {
-		const otPart = gameScore.overTime
-			? isFullView
-				? `${t('ot')}${gameScore.overTime}`
-				: gameScore.overTime
-			: '';
-		const penaltyPart = gameScore.penalty
-			? isFullView
-				? `${t('pen')}${gameScore.penalty}`
-				: gameScore.penalty
-			: '';
-
-		result += gameScore.penalty ? ` [${otPart} ${penaltyPart}]` : ` [${otPart}]`;
+		const parts: string[] = [];
+		if (gameScore.overTime) {
+			parts.push(
+				isFullView ? `${t('ot')}${gameScore.overTime}` : `${t('otShort')} ${gameScore.overTime}`
+			);
+		}
+		if (gameScore.penalty) {
+			parts.push(
+				isFullView ? `${t('pen')}${gameScore.penalty}` : `${t('pen')} ${gameScore.penalty}`
+			);
+		}
+		if (isFullView) {
+			result += gameScore.penalty ? ` [${parts.join(' ')}]` : ` [${parts[0]}]`;
+		} else {
+			result += `\n[${parts.join(', ')}]`;
+		}
 	}
 
 	return result;

@@ -49,7 +49,7 @@ function groupMatchesByDate(matches: Wc26Match[]): Map<string, Wc26Match[]> {
 }
 
 function parsePageView(raw: string | null): Wc26PageView {
-	if (raw === 'standings' || raw === 'bracket') {
+	if (raw === 'standings' || raw === 'bracket' || raw === 'schedule') {
 		return raw;
 	}
 	return 'schedule';
@@ -70,7 +70,7 @@ export default function WorldCup26Page(): JSX.Element {
 	const dateLocale = wc26DateLocale(i18n.language);
 	const pageView = parsePageView(searchParams.get('view'));
 	const bracketStage = parseBracketStage(searchParams.get('stage'));
-	const [viewFilter, setViewFilter] = useState<Wc26ViewFilter>('all');
+	const [viewFilter, setViewFilter] = useState<Wc26ViewFilter>('playoffs');
 	const { matches: scheduleMatches, loading, error } = useWc26SchedulePage();
 
 	const updateSearch = useCallback(
@@ -96,10 +96,11 @@ export default function WorldCup26Page(): JSX.Element {
 	const handlePageViewChange = useCallback(
 		(view: Wc26PageView): void => {
 			if (view === 'schedule') {
-				updateSearch({ view: null });
+				setViewFilter('playoffs');
+				updateSearch({ view: 'schedule', stage: null });
 				return;
 			}
-			updateSearch({ view });
+			updateSearch({ view, stage: null });
 		},
 		[updateSearch]
 	);
