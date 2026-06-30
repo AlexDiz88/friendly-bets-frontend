@@ -179,7 +179,7 @@ function CompactMatchRow({
 					px: 0.5,
 					fontWeight: 700,
 					fontSize: '0.85rem',
-					lineHeight: 1.15,
+					lineHeight: 1.2,
 					textAlign: 'center',
 					whiteSpace: 'pre-line',
 				}}
