@@ -422,3 +422,69 @@ export function utcToBerlinKickoff(utcDate: string | undefined): string {
 export function expectedBerlinMatchCount(slotId: string): number {
 	return matchesPerSlot(slotId);
 }
+
+export interface WcScheduleExternalMatchContext {
+	leagueCode: string;
+	season: string;
+	matchday: number;
+	leagueId?: string;
+}
+
+function resolveScheduleIdForExternalMatch(
+	match: ExternalMatch,
+	slotId: string
+): number | undefined {
+	if (match.wc26ScheduleId != null) {
+		return match.wc26ScheduleId;
+	}
+	return findWc26ScheduleMatchForExternal(match, slotId)?.id;
+}
+
+function syntheticExternalMatchFromSchedule(
+	scheduled: Wc26Match,
+	ctx: WcScheduleExternalMatchContext
+): ExternalMatch {
+	return {
+		externalMatchId: -scheduled.id,
+		leagueCode: ctx.leagueCode,
+		matchday: ctx.matchday,
+		season: ctx.season,
+		status: 'SCHEDULED',
+		homeTeamName: scheduled.home ?? '',
+		awayTeamName: scheduled.away ?? '',
+		homeTeamCountry: scheduled.home ?? null,
+		awayTeamCountry: scheduled.away ?? null,
+		wc26ScheduleId: scheduled.id,
+	};
+}
+
+/** Дополняет API-матчи слота запланированными парами из wc26_schedule (если sync ещё не подтянул). */
+export function mergeExternalMatchesWithWcSchedule(
+	externalMatches: ExternalMatch[],
+	slotId: string,
+	ctx: WcScheduleExternalMatchContext
+): ExternalMatch[] {
+	if (!isWcBettingSlot(slotId)) {
+		return externalMatches;
+	}
+	const byScheduleId = new Map<number, ExternalMatch>();
+	for (const match of externalMatches) {
+		const scheduleId = resolveScheduleIdForExternalMatch(match, slotId);
+		if (scheduleId != null) {
+			byScheduleId.set(scheduleId, match);
+		}
+	}
+	const merged: ExternalMatch[] = [];
+	for (const scheduleId of scheduleIdsForSlot(slotId)) {
+		const existing = byScheduleId.get(scheduleId);
+		if (existing) {
+			merged.push(existing);
+			continue;
+		}
+		const scheduled = getWc26ScheduleById(scheduleId);
+		if (scheduled?.home && scheduled?.away) {
+			merged.push(syntheticExternalMatchFromSchedule(scheduled, ctx));
+		}
+	}
+	return merged;
+}
