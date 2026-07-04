@@ -97,6 +97,7 @@ import {
 	expectedBerlinMatchCount,
 	filterExternalMatchesForWcSlot,
 	isWcBettingSlot,
+	mergeExternalMatchesWithWcSchedule,
 } from '../world-cup-2026/wc26BetSlots';
 import {
 	externalMatchWcEmptyHintSx,
@@ -888,10 +889,30 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			return da - db;
 		});
 		if (isWcBettingSlotActive) {
-			return filterExternalMatchesForWcSlot(sorted, betMatchDay);
+			const filtered = filterExternalMatchesForWcSlot(sorted, betMatchDay);
+			const merged = mergeExternalMatchesWithWcSchedule(filtered, betMatchDay, {
+				leagueCode: effectiveLeagueCode,
+				season: externalSeason,
+				matchday: effectiveMatchday,
+				leagueId: selectedLeague?.id,
+			});
+			return merged.sort((a, b) => {
+				const da = resolveExternalMatchKickoffUtcMs(a, betMatchDay);
+				const db = resolveExternalMatchKickoffUtcMs(b, betMatchDay);
+				return da - db;
+			});
 		}
 		return sorted;
-	}, [data?.matches, isWcBettingSlotActive, betMatchDay, isWcLeague]);
+	}, [
+		data?.matches,
+		isWcBettingSlotActive,
+		betMatchDay,
+		isWcLeague,
+		effectiveLeagueCode,
+		externalSeason,
+		effectiveMatchday,
+		selectedLeague?.id,
+	]);
 
 	const syncProgressTotal = useMemo(() => {
 		if (isWcBettingSlotActive) {
@@ -1378,7 +1399,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 										: undefined;
 								return (
 									<ExternalMatchWc26Card
-										key={match.externalMatchId}
+										key={match.wc26ScheduleId ?? match.id ?? match.externalMatchId}
 										match={match}
 										slotId={betMatchDay}
 										userBet={matchBet}

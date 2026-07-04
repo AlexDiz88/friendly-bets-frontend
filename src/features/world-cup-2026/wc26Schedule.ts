@@ -38,7 +38,7 @@ function playoffKo(
 	id: number,
 	date: string,
 	timeLocal: string,
-	stage: Exclude<Wc26Stage, 'group' | 'round_of_32'>,
+	stage: Exclude<Wc26Stage, 'group' | 'round_of_32' | 'round_of_16'>,
 	labelKey: string
 ): Wc26Match {
 	return { id, date, timeLocal, stage, labelKey };
@@ -53,6 +53,17 @@ function roundOf32(
 	labelKey: string
 ): Wc26Match {
 	return { id, date, timeLocal, stage: 'round_of_32', home, away, labelKey };
+}
+
+function roundOf16(
+	id: number,
+	date: string,
+	timeLocal: string,
+	home: Wc26TeamId,
+	away: Wc26TeamId,
+	labelKey: string
+): Wc26Match {
+	return { id, date, timeLocal, stage: 'round_of_16', home, away, labelKey };
 }
 
 /**
@@ -148,14 +159,14 @@ export const WC26_SCHEDULE: Wc26Match[] = [
 	roundOf32(86, '2026-07-04', '00:00', 'ARG', 'CPV', 'wc26.matches.m86'),
 	roundOf32(87, '2026-07-04', '03:30', 'COL', 'GHA', 'wc26.matches.m87'),
 	roundOf32(88, '2026-07-03', '20:00', 'AUS', 'EGY', 'wc26.matches.m88'),
-	playoffKo(89, '2026-07-04', '23:00', 'round_of_16', 'wc26.matches.m89'),
-	playoffKo(90, '2026-07-04', '19:00', 'round_of_16', 'wc26.matches.m90'),
-	playoffKo(91, '2026-07-05', '22:00', 'round_of_16', 'wc26.matches.m91'),
-	playoffKo(92, '2026-07-06', '02:00', 'round_of_16', 'wc26.matches.m92'),
-	playoffKo(93, '2026-07-06', '21:00', 'round_of_16', 'wc26.matches.m93'),
-	playoffKo(94, '2026-07-07', '02:00', 'round_of_16', 'wc26.matches.m94'),
-	playoffKo(95, '2026-07-07', '18:00', 'round_of_16', 'wc26.matches.m95'),
-	playoffKo(96, '2026-07-07', '22:00', 'round_of_16', 'wc26.matches.m96'),
+	roundOf16(89, '2026-07-04', '23:00', 'PAR', 'FRA', 'wc26.matches.m89'),
+	roundOf16(90, '2026-07-04', '19:00', 'CAN', 'MAR', 'wc26.matches.m90'),
+	roundOf16(91, '2026-07-05', '22:00', 'BRA', 'NOR', 'wc26.matches.m91'),
+	roundOf16(92, '2026-07-06', '02:00', 'MEX', 'ENG', 'wc26.matches.m92'),
+	roundOf16(93, '2026-07-06', '21:00', 'POR', 'ESP', 'wc26.matches.m93'),
+	roundOf16(94, '2026-07-07', '02:00', 'USA', 'BEL', 'wc26.matches.m94'),
+	roundOf16(95, '2026-07-07', '18:00', 'ARG', 'EGY', 'wc26.matches.m95'),
+	roundOf16(96, '2026-07-07', '22:00', 'SUI', 'COL', 'wc26.matches.m96'),
 	playoffKo(97, '2026-07-09', '22:00', 'quarter_final', 'wc26.matches.m97'),
 	playoffKo(98, '2026-07-10', '21:00', 'quarter_final', 'wc26.matches.m98'),
 	playoffKo(99, '2026-07-11', '23:00', 'quarter_final', 'wc26.matches.m99'),
