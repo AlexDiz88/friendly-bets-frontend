@@ -66,6 +66,17 @@ function roundOf16(
 	return { id, date, timeLocal, stage: 'round_of_16', home, away, labelKey };
 }
 
+function quarterFinal(
+	id: number,
+	date: string,
+	timeLocal: string,
+	home: Wc26TeamId,
+	away: Wc26TeamId,
+	labelKey: string
+): Wc26Match {
+	return { id, date, timeLocal, stage: 'quarter_final', home, away, labelKey };
+}
+
 /**
  * Расписание FIFA World Cup 26™ — дата/время Europe/Berlin (как fifa.com?country=DE).
  * Генерация: {@code node scripts/gen-wc26-schedule.mjs} (источник: api.fifa.com UTC → Berlin).
@@ -167,10 +178,10 @@ export const WC26_SCHEDULE: Wc26Match[] = [
 	roundOf16(94, '2026-07-07', '02:00', 'USA', 'BEL', 'wc26.matches.m94'),
 	roundOf16(95, '2026-07-07', '18:00', 'ARG', 'EGY', 'wc26.matches.m95'),
 	roundOf16(96, '2026-07-07', '22:00', 'SUI', 'COL', 'wc26.matches.m96'),
-	playoffKo(97, '2026-07-09', '22:00', 'quarter_final', 'wc26.matches.m97'),
-	playoffKo(98, '2026-07-10', '21:00', 'quarter_final', 'wc26.matches.m98'),
-	playoffKo(99, '2026-07-11', '23:00', 'quarter_final', 'wc26.matches.m99'),
-	playoffKo(100, '2026-07-12', '03:00', 'quarter_final', 'wc26.matches.m100'),
+	quarterFinal(97, '2026-07-09', '22:00', 'FRA', 'MAR', 'wc26.matches.m97'),
+	quarterFinal(98, '2026-07-10', '21:00', 'ESP', 'BEL', 'wc26.matches.m98'),
+	quarterFinal(99, '2026-07-11', '23:00', 'NOR', 'ENG', 'wc26.matches.m99'),
+	quarterFinal(100, '2026-07-12', '03:00', 'ARG', 'SUI', 'wc26.matches.m100'),
 	playoffKo(101, '2026-07-14', '21:00', 'semi_final', 'wc26.matches.m101'),
 	playoffKo(102, '2026-07-15', '21:00', 'semi_final', 'wc26.matches.m102'),
 	playoffKo(103, '2026-07-18', '23:00', 'third_place', 'wc26.matches.m103'),
