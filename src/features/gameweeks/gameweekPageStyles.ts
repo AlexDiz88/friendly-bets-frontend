@@ -122,6 +122,23 @@ export const gameweekOddsBadgeSx: SxProps<Theme> = (theme) => {
 	};
 };
 
+/** Центральный badge «ставка скрыта» — геометрия как у gameweekOddsBadgeSx. */
+export const gameweekHiddenBetBadgeSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	const p = statsThemePalette(theme);
+	return {
+		px: 0.35,
+		py: 0.15,
+		mx: 0.3,
+		minWidth: 28,
+		textAlign: 'center',
+		bgcolor: isDark ? 'rgba(250, 204, 21, 0.22)' : '#EAF5CD',
+		border: '1px solid',
+		borderColor: isDark ? 'rgba(250, 204, 21, 0.35)' : 'rgba(0, 0, 0, 0.2)',
+		color: p.name,
+	};
+};
+
 export const gameweekCardBetTitleSx: SxProps<Theme> = (theme) => ({
 	textAlign: 'center',
 	fontWeight: 600,

@@ -11,6 +11,8 @@ import Season from '../admin/seasons/types/Season';
 import CompleteBetCard from '../bets/CompleteBetCard';
 import EmptyBetCard from '../bets/EmptyBetCard';
 import OpenedBetCard from '../bets/OpenedBetCard';
+import OpenedBetHiddenCard from '../bets/OpenedBetHiddenCard';
+import { isBetDetailsHidden } from '../bets/knockoutBetPrivacy';
 import Bet from '../bets/types/Bet';
 import {
 	gameweekBalanceChangeSx,
@@ -22,6 +24,7 @@ import {
 import { sortGameweekBetsByLeagueCode } from './gameweekCalendarUtils';
 import GameweekCompletedCard from './GameweekCompletedCard';
 import GameweekEmptyCard from './GameweekEmptyCard';
+import GameweekHiddenBetCard from './GameweekHiddenBetCard';
 import GameweekNoCard from './GameweekNoCard';
 import GameweekOpenedCard from './GameweekOpenedCard';
 
@@ -131,9 +134,15 @@ const GameweekPlayersContainer = ({
 												{COMPLETED_BET_STATUSES.includes(bet.betStatus) && (
 													<GameweekCompletedCard bet={bet} onClick={() => handleCardClick(bet.id)} />
 												)}
-												{BET_STATUS_OPENED === bet.betStatus && (
-													<GameweekOpenedCard bet={bet} onClick={() => handleCardClick(bet.id)} />
-												)}
+												{BET_STATUS_OPENED === bet.betStatus &&
+													(isBetDetailsHidden(bet) ? (
+														<GameweekHiddenBetCard
+															bet={bet}
+															onClick={() => handleCardClick(bet.id)}
+														/>
+													) : (
+														<GameweekOpenedCard bet={bet} onClick={() => handleCardClick(bet.id)} />
+													))}
 												{BET_STATUS_EMPTY === bet.betStatus && (
 													<GameweekEmptyCard bet={bet} onClick={() => handleCardClick(bet.id)} />
 												)}
@@ -161,7 +170,12 @@ const GameweekPlayersContainer = ({
 								}}
 							>
 								{COMPLETED_BET_STATUSES.includes(bet.betStatus) && <CompleteBetCard bet={bet} />}
-								{BET_STATUS_OPENED === bet.betStatus && <OpenedBetCard bet={bet} />}
+								{BET_STATUS_OPENED === bet.betStatus &&
+									(isBetDetailsHidden(bet) ? (
+										<OpenedBetHiddenCard bet={bet} />
+									) : (
+										<OpenedBetCard bet={bet} />
+									))}
 								{BET_STATUS_EMPTY === bet.betStatus && <EmptyBetCard bet={bet} />}
 							</Box>
 						) : null

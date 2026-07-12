@@ -13,6 +13,7 @@ import { getSeasonCalendarHasBetsNodes } from '../admin/calendars/calendarsSlice
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import BetEditForm from './BetEditForm';
 import { deleteBet } from './betsSlice';
+import { isBetDetailsHidden } from './knockoutBetPrivacy';
 import Bet from './types/Bet';
 
 export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
@@ -61,11 +62,13 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 	return (
 		<Box>
 			<Box sx={{ mb: 1, display: 'flex', justifyContent: 'center' }}>
-				<CustomButton
-					sx={{ height: '2rem', mr: 1 }}
-					onClick={handleEditBet}
-					buttonText={t('btnText.edit')}
-				/>
+				{!isBetDetailsHidden(bet) && (
+					<CustomButton
+						sx={{ height: '2rem', mr: 1 }}
+						onClick={handleEditBet}
+						buttonText={t('btnText.edit')}
+					/>
+				)}
 				<CustomButton
 					sx={{ height: '2rem' }}
 					onClick={handleDeleteBetOpenDialog}
@@ -73,7 +76,7 @@ export default function BetEditButtons({ bet }: { bet: Bet }): JSX.Element {
 					buttonText={t('btnText.delete')}
 				/>
 			</Box>
-			{showEditForm && bet.betStatus !== 'EMPTY' && (
+			{showEditForm && !isBetDetailsHidden(bet) && bet.betStatus !== 'EMPTY' && (
 				<BetEditForm
 					bet={bet}
 					gameScoreAsString={transformedGameScore}

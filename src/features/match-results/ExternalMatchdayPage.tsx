@@ -58,6 +58,7 @@ import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import { selectUser } from '../auth/selectors';
 import GameScore from '../bets/types/GameScore';
+import { isSensitiveKnockoutSlot } from '../bets/knockoutBetPrivacy';
 import {
 	buildMatchdaySlotsForLeague,
 	LEAGUE_COMPETITION_OPTIONS,
@@ -491,8 +492,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	);
 
 	const showViewMatchBetsButton = useCallback(
-		(match: ExternalMatch): boolean => canOpenMatchBetsDialog(match) && isMatchOpenForBetting(match),
-		[canOpenMatchBetsDialog, isMatchOpenForBetting]
+		(match: ExternalMatch): boolean =>
+			canOpenMatchBetsDialog(match) &&
+			isMatchOpenForBetting(match) &&
+			!isSensitiveKnockoutSlot(selectedLeague?.leagueCode, betMatchDay),
+		[canOpenMatchBetsDialog, isMatchOpenForBetting, selectedLeague?.leagueCode, betMatchDay]
 	);
 
 	const isMatchCardClickable = useCallback(

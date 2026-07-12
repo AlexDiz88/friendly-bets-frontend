@@ -15,6 +15,8 @@ import { getAllBets } from './betsSlice';
 import CompleteBetCard from './CompleteBetCard';
 import EmptyBetCard from './EmptyBetCard';
 import OpenedBetCard from './OpenedBetCard';
+import OpenedBetHiddenCard from './OpenedBetHiddenCard';
+import { isBetDetailsHidden } from './knockoutBetPrivacy';
 import { selectAllBets, selectTotalPages } from './selectors';
 
 export default function BetEditList(): JSX.Element {
@@ -89,9 +91,11 @@ export default function BetEditList(): JSX.Element {
 											return (
 												<Box key={bet.id}>
 													{bet.betStatus === 'OPENED' ? (
-														<>
+														isBetDetailsHidden(bet) ? (
+															<OpenedBetHiddenCard bet={bet} />
+														) : (
 															<OpenedBetCard bet={bet} />
-														</>
+														)
 													) : (
 														<Box>
 															{bet.betStatus === 'EMPTY' ? (
