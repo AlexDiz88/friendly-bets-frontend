@@ -10,6 +10,8 @@ import PlayerSelect from '../../components/selectors/PlayerSelect';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import { betsFilterBarSx, betsListSx } from './betsPageStyles';
 import OpenedBetCard from './OpenedBetCard';
+import OpenedBetHiddenCard from './OpenedBetHiddenCard';
+import { isBetDetailsHidden } from './knockoutBetPrivacy';
 import { getOpenedBets } from './betsSlice';
 import { selectOpenedBets } from './selectors';
 
@@ -97,7 +99,11 @@ const OpenedBetsList = (): JSX.Element => {
 								{filteredBets &&
 									filteredBets.map((bet) => (
 										<Box key={bet.id}>
-											<OpenedBetCard bet={bet} />
+											{isBetDetailsHidden(bet) ? (
+												<OpenedBetHiddenCard bet={bet} />
+											) : (
+												<OpenedBetCard bet={bet} />
+											)}
 										</Box>
 									))}
 							</Box>
