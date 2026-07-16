@@ -581,6 +581,7 @@
 		"apiSyncIssueNotFound": "Logeintrag nicht gefunden",
 		"apiSyncIssueDeleted": "Logeintrag gelöscht",
 		"invalidGameScore": "Ungültiger Spielstand",
+		"invalidClientBuildId": "Ungültige Client-Versions-ID",
 		"noFinalizedGameResultsForMatchday": "Keine fixierten Ergebnisse für diesen Spieltag",
 		"invalidMatchResultProvider": "Ungültiger Ergebnis-Provider",
 		"noPrimaryApiScoreSnapshot": "Kein Primary-API-Spielstand-Snapshot",
