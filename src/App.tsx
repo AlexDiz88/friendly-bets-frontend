@@ -41,6 +41,7 @@ import Gameweek from './features/gameweeks/Gameweek';
 import BetTitlesStatsPage from './features/stats/BetTitlesStatsPage';
 import LeaguesStatsPage from './features/stats/LeaguesStatsPage';
 import TeamsStatsPage from './features/stats/TeamsStatsPage';
+import { useAppVersionCheck } from './shared/useAppVersionCheck';
 
 function App(): JSX.Element {
 	useAppSelector((state) => state.language);
@@ -48,6 +49,8 @@ function App(): JSX.Element {
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const user = useAppSelector(selectUser);
+
+	useAppVersionCheck();
 
 	useEffect(() => {
 		dispatch(getProfile());
