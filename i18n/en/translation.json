@@ -345,7 +345,7 @@
 	"teamTwentyFourScoreExternalName": "Name on 24score.pro",
 	"teamTwentyFourScoreExternalNameHint": "Exact label from the site when it differs from 4score.ru",
 	"teamUnmappedFourScoreNamesHint": "Unmapped 4score.ru names — click to fill:",
-	"fourScorePreviewTitle": "API data preview — reload OK",
+	"fourScorePreviewTitle": "API data preview",
 	"fourScorePreviewHint": "WC and friendlies for a date from 4score.ru and 24score.pro: half-time scores and team mapping status (read-only).",
 	"fourScorePreviewDate": "Date",
 	"fourScorePreviewLoad": "Load",

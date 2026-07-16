@@ -1,6 +1,7 @@
+import { Box, CircularProgress } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { selectUser } from './selectors';
+import { selectAuthChecked, selectUser } from './selectors';
 
 interface PrivateRouteProps {
 	roles?: string[];
@@ -8,16 +9,24 @@ interface PrivateRouteProps {
 
 const PrivateRoute = ({ roles }: PrivateRouteProps): JSX.Element => {
 	const user = useSelector(selectUser);
+	const authChecked = useSelector(selectAuthChecked);
 	const location = useLocation();
 
+	// До ответа getProfile не редиректим: после reload user ещё undefined, сессия уже есть
+	if (!authChecked) {
+		return (
+			<Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+				<CircularProgress size={32} />
+			</Box>
+		);
+	}
+
 	if (!user) {
-		// Если пользователь не авторизован, перенаправить на страницу входа
-		return <Navigate to="/auth/login" state={{ from: location }} />;
+		return <Navigate to="/auth/login" state={{ from: location }} replace />;
 	}
 
 	if (roles && !roles.includes(user.role)) {
-		// Если роль пользователя не соответствует требуемым ролям, перенаправить на главную страницу
-		return <Navigate to="/gameweeks" />;
+		return <Navigate to="/" replace />;
 	}
 
 	return <Outlet />;

@@ -345,7 +345,7 @@
 	"teamTwentyFourScoreExternalName": "Название на 24score.pro",
 	"teamTwentyFourScoreExternalNameHint": "Точная строка с сайта, если отличается от 4score.ru",
 	"teamUnmappedFourScoreNamesHint": "Непривязанные названия 4score.ru — нажмите, чтобы подставить:",
-	"fourScorePreviewTitle": "Превью API данных — reload OK",
+	"fourScorePreviewTitle": "Превью API данных",
 	"fourScorePreviewHint": "ЧМ и товарищеские матчи за дату с 4score.ru и 24score.pro: счёт по таймам и статус маппинга команд (без записи в БД).",
 	"fourScorePreviewDate": "Дата",
 	"fourScorePreviewLoad": "Загрузить",
