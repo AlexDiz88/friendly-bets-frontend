@@ -581,6 +581,7 @@
 		"apiSyncIssueNotFound": "Запись лога не найдена",
 		"apiSyncIssueDeleted": "Запись лога удалена",
 		"invalidGameScore": "Некорректный счёт матча",
+		"invalidClientBuildId": "Некорректный идентификатор версии клиента",
 		"noFinalizedGameResultsForMatchday": "Нет финализированных результатов для этого тура",
 		"invalidMatchResultProvider": "Недопустимый провайдер результатов",
 		"noPrimaryApiScoreSnapshot": "Нет снимка счёта primary API",

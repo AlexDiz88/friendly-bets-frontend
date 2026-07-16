@@ -581,6 +581,7 @@
 		"apiSyncIssueNotFound": "Log entry not found",
 		"apiSyncIssueDeleted": "Log entry deleted",
 		"invalidGameScore": "Invalid match score",
+		"invalidClientBuildId": "Invalid client version id",
 		"noFinalizedGameResultsForMatchday": "No finalized results for this matchday",
 		"invalidMatchResultProvider": "Invalid match result provider",
 		"noPrimaryApiScoreSnapshot": "No primary API score snapshot",
