@@ -18,7 +18,7 @@ import {
 import type { SxProps, Theme } from '@mui/material';
 import CustomSwitch from '../../components/custom/controls/CustomSwitch';
 import { toggleFormControlLabelSx } from '../../components/custom/controls/customToggleStyles';
-import { t } from 'i18next';
+import i18n, { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { pageHasLiveMatches } from '../../shared/livePagePolling';
@@ -31,6 +31,7 @@ import {
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
+import { formatSlotLabel } from '../../components/matchday/formatSlotLabel';
 import MatchdayNavigator from '../../components/matchday/MatchdayNavigator';
 import OddsPickDialog from '../../components/odds/OddsPickDialog';
 import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
@@ -334,9 +335,14 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const isWcLeague = effectiveLeagueCode === 'WC';
 
-	const currentSlotLabel = useMemo(
-		() => matchdaySlots.find((s) => s.value === effectiveMatchday)?.label,
+	const currentSlot = useMemo(
+		() => matchdaySlots.find((s) => s.value === effectiveMatchday),
 		[matchdaySlots, effectiveMatchday]
+	);
+
+	const currentSlotLabel = useMemo(
+		() => (currentSlot ? formatSlotLabel(currentSlot) : undefined),
+		[currentSlot, i18n.language]
 	);
 
 	const slotBetsContextReady = !competitionInfoLoading;
@@ -950,8 +956,17 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		[sortedMatches, syncProgressStarted]
 	);
 
+	const syncProgressAvailable = useMemo(() => {
+		if (data?.sync) {
+			return true;
+		}
+		return isWcLeague && isWcBettingSlotActive && syncProgressTotal > 0;
+	}, [data?.sync, isWcLeague, isWcBettingSlotActive, syncProgressTotal]);
+
 	const syncChip = useMemo(() => {
-		if (!data?.sync) return null;
+		if (!syncProgressAvailable) {
+			return null;
+		}
 		const total = syncProgressTotal;
 		const finalized = syncProgressFinalized;
 		if (total > 0 && finalized >= total) {
@@ -961,7 +976,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			return { label: t('externalMatchSyncNotStarted'), color: 'default' as const };
 		}
 		return { label: t('externalMatchSyncPolling'), color: 'warning' as const };
-	}, [data?.sync, matchdayNotStarted, syncProgressFinalized, syncProgressTotal, t]);
+	}, [syncProgressAvailable, matchdayNotStarted, syncProgressFinalized, syncProgressTotal, t]);
 
 	const renderWcAdminEditButton = (match: ExternalMatch): JSX.Element | null =>
 		showAdminTools && match.id ? (
@@ -1250,7 +1265,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					</Box>
 				</Box>
 
-				{isExternalPageReady && data?.sync && syncChip && (
+				{isExternalPageReady && syncChip && (
 					<Box
 						sx={{
 							display: 'flex',

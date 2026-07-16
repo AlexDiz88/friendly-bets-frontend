@@ -34,16 +34,6 @@ function gm(
 	return { id, date, timeLocal, stage: 'group', group, home, away };
 }
 
-function playoffKo(
-	id: number,
-	date: string,
-	timeLocal: string,
-	stage: Exclude<Wc26Stage, 'group' | 'round_of_32' | 'round_of_16'>,
-	labelKey: string
-): Wc26Match {
-	return { id, date, timeLocal, stage, labelKey };
-}
-
 function roundOf32(
 	id: number,
 	date: string,
@@ -86,6 +76,28 @@ function semiFinal(
 	labelKey: string
 ): Wc26Match {
 	return { id, date, timeLocal, stage: 'semi_final', home, away, labelKey };
+}
+
+function thirdPlace(
+	id: number,
+	date: string,
+	timeLocal: string,
+	home: Wc26TeamId,
+	away: Wc26TeamId,
+	labelKey: string
+): Wc26Match {
+	return { id, date, timeLocal, stage: 'third_place', home, away, labelKey };
+}
+
+function finalMatch(
+	id: number,
+	date: string,
+	timeLocal: string,
+	home: Wc26TeamId,
+	away: Wc26TeamId,
+	labelKey: string
+): Wc26Match {
+	return { id, date, timeLocal, stage: 'final', home, away, labelKey };
 }
 
 /**
@@ -195,8 +207,8 @@ export const WC26_SCHEDULE: Wc26Match[] = [
 	quarterFinal(100, '2026-07-12', '03:00', 'ARG', 'SUI', 'wc26.matches.m100'),
 	semiFinal(101, '2026-07-14', '21:00', 'FRA', 'ESP', 'wc26.matches.m101'),
 	semiFinal(102, '2026-07-15', '21:00', 'ENG', 'ARG', 'wc26.matches.m102'),
-	playoffKo(103, '2026-07-18', '23:00', 'third_place', 'wc26.matches.m103'),
-	playoffKo(104, '2026-07-19', '21:00', 'final', 'wc26.matches.m104'),
+	thirdPlace(103, '2026-07-18', '23:00', 'FRA', 'ENG', 'wc26.matches.m103'),
+	finalMatch(104, '2026-07-19', '21:00', 'ESP', 'ARG', 'wc26.matches.m104'),
 ];
 
 export const WC26_STAGE_ORDER: Wc26Stage[] = [
