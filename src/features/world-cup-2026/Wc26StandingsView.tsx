@@ -2,8 +2,8 @@ import { Box, Typography, useMediaQuery } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Wc26GroupStandingsCard from './Wc26GroupStandingsCard';
-import { useWc26FifaStandings } from './useWc26FifaData';
-import type { Wc26FifaBestThirdRow, Wc26FifaGroupTable, Wc26FifaStandingRow } from './wc26FifaApi';
+import { useWc26Standings } from './useWc26ArchiveData';
+import type { Wc26BestThirdRow, Wc26GroupTable, Wc26StandingRow } from './wc26ArchiveApi';
 
 const TIEBREAKER_KEYS = [
 	'tiebreaker1',
@@ -15,8 +15,8 @@ const TIEBREAKER_KEYS = [
 	'tiebreaker7',
 ] as const;
 
-function bestThirdToTable(rows: Wc26FifaBestThirdRow[]): Wc26FifaGroupTable {
-	const standingRows: Wc26FifaStandingRow[] = rows.map((row) => ({
+function bestThirdToTable(rows: Wc26BestThirdRow[]): Wc26GroupTable {
+	const standingRows: Wc26StandingRow[] = rows.map((row) => ({
 		rank: row.rank,
 		fifaCode: row.fifaCode,
 		sourceGroup: row.group,
@@ -30,7 +30,6 @@ function bestThirdToTable(rows: Wc26FifaBestThirdRow[]): Wc26FifaGroupTable {
 		points: row.points,
 		form: [],
 		qualificationStatus: row.qualifies ? 'best_third' : 'eliminated',
-		liveNow: false,
 	}));
 
 	return {
@@ -41,7 +40,7 @@ function bestThirdToTable(rows: Wc26FifaBestThirdRow[]): Wc26FifaGroupTable {
 
 export default function Wc26StandingsView(): JSX.Element {
 	const { t } = useTranslation();
-	const { data, loading, error } = useWc26FifaStandings();
+	const { data, loading, error } = useWc26Standings();
 
 	const visibleGroups = data?.groups ?? [];
 
@@ -56,6 +55,7 @@ export default function Wc26StandingsView(): JSX.Element {
 		? bestThirdToTable(data.bestThirdPlaces)
 		: null;
 	const showTwoColumnGroups = useMediaQuery('(min-width:800px)');
+	const noData = !loading && !error && visibleGroups.length === 0;
 
 	return (
 		<Box>
@@ -79,14 +79,20 @@ export default function Wc26StandingsView(): JSX.Element {
 			</Box>
 
 			{error ? (
-				<Typography variant="body2" color="error" sx={{ textAlign: 'center', py: 2 }}>
-					{t(`error.${error}`, { defaultValue: error })}
+				<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+					{t('wc26.noData')}
 				</Typography>
 			) : null}
 
 			{loading && !data ? (
 				<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
 					{t('wc26.standings.loading')}
+				</Typography>
+			) : null}
+
+			{noData ? (
+				<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
+					{t('wc26.noData')}
 				</Typography>
 			) : null}
 
@@ -118,7 +124,7 @@ export default function Wc26StandingsView(): JSX.Element {
 				</Box>
 			) : null}
 
-			{!error && (!loading || data) ? (
+			{!error && !noData && (!loading || data) ? (
 				<Box
 					component="footer"
 					sx={{
@@ -157,7 +163,6 @@ export default function Wc26StandingsView(): JSX.Element {
 					</Typography>
 				</Box>
 			) : null}
-
 		</Box>
 	);
 }

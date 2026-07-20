@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { flagImageUrl } from './fifaAssets';
+import { flagImageUrl } from './wc26FlagAssets';
 import { WC26_TEAMS, type Wc26TeamId } from './wc26Teams';
 
 export type Wc26TeamSide = 'home' | 'away';
@@ -15,7 +15,7 @@ interface Wc26TeamFlagProps {
 	truncate?: boolean;
 }
 
-/** Сторона матча: слева «название + флаг», справа «флаг + название» (как на FIFA). */
+/** Сторона матча: слева «название + флаг», справа «флаг + название». */
 export default function Wc26TeamFlag({
 	teamId,
 	side,

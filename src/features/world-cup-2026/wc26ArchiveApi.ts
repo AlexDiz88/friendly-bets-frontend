@@ -10,7 +10,7 @@ function apiUrl(path: string): string {
 
 export type Wc26QualificationStatus = 'direct' | 'best_third' | 'eliminated' | 'pending';
 
-export interface Wc26FifaStandingRow {
+export interface Wc26StandingRow {
 	rank: number;
 	fifaCode: string;
 	sourceGroup?: string;
@@ -24,17 +24,14 @@ export interface Wc26FifaStandingRow {
 	points: number;
 	form: string[];
 	qualificationStatus: Wc26QualificationStatus;
-	liveNow: boolean;
-	liveMatchGoals?: number | null;
-	liveMatchScore?: string | null;
 }
 
-export interface Wc26FifaGroupTable {
+export interface Wc26GroupTable {
 	group: string;
-	rows: Wc26FifaStandingRow[];
+	rows: Wc26StandingRow[];
 }
 
-export interface Wc26FifaBestThirdRow {
+export interface Wc26BestThirdRow {
 	rank: number;
 	group: string;
 	fifaCode: string;
@@ -49,14 +46,13 @@ export interface Wc26FifaBestThirdRow {
 	qualifies: boolean;
 }
 
-export interface Wc26FifaStandingsPage {
-	groups: Wc26FifaGroupTable[];
-	bestThirdPlaces: Wc26FifaBestThirdRow[];
+export interface Wc26StandingsPage {
+	groups: Wc26GroupTable[];
+	bestThirdPlaces: Wc26BestThirdRow[];
 	fetchedAt?: string;
-	sourceUrl?: string;
 }
 
-export interface Wc26FifaBracketMatch {
+export interface Wc26BracketMatch {
 	matchNumber: number;
 	stage: Wc26Stage;
 	homeFifaCode?: string | null;
@@ -69,40 +65,38 @@ export interface Wc26FifaBracketMatch {
 	awayPenaltyScore?: number | null;
 	winnerFifaCode?: string | null;
 	status?: string;
-	liveMinuteLabel?: string | null;
 	utcDate?: string;
 }
 
-export interface Wc26FifaBracketPage {
-	matches: Wc26FifaBracketMatch[];
+export interface Wc26BracketPage {
+	matches: Wc26BracketMatch[];
 	fetchedAt?: string;
-	sourceUrl?: string;
 }
 
-export async function fetchWc26FifaStandings(group?: string): Promise<Wc26FifaStandingsPage> {
+export async function fetchWc26Standings(group?: string): Promise<Wc26StandingsPage> {
 	const params = new URLSearchParams();
 	if (group && group !== 'all') {
 		params.set('group', group);
 	}
 	const query = params.toString();
-	const result = await apiFetch(apiUrl(`/api/wc26/fifa/standings${query ? `?${query}` : ''}`));
+	const result = await apiFetch(apiUrl(`/api/wc26/standings${query ? `?${query}` : ''}`));
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
 	}
-	return (await result.json()) as Wc26FifaStandingsPage;
+	return (await result.json()) as Wc26StandingsPage;
 }
 
-export async function fetchWc26FifaBracket(stage?: string): Promise<Wc26FifaBracketPage> {
+export async function fetchWc26Bracket(stage?: string): Promise<Wc26BracketPage> {
 	const params = new URLSearchParams();
 	if (stage && stage !== 'all') {
 		params.set('stage', stage);
 	}
 	const query = params.toString();
-	const result = await apiFetch(apiUrl(`/api/wc26/fifa/bracket${query ? `?${query}` : ''}`));
+	const result = await apiFetch(apiUrl(`/api/wc26/bracket${query ? `?${query}` : ''}`));
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
 	}
-	return (await result.json()) as Wc26FifaBracketPage;
+	return (await result.json()) as Wc26BracketPage;
 }

@@ -1,4 +1,4 @@
-import { Alert, Box, Chip, CircularProgress, Container, Stack, Typography } from '@mui/material';
+import { Box, Chip, CircularProgress, Container, Stack, Typography } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
@@ -185,9 +185,9 @@ export default function WorldCup26Page(): JSX.Element {
 					{pageView === 'schedule' ? (
 						<>
 							{error ? (
-								<Alert severity="error" sx={{ mb: 1 }}>
-									{t(`error.${error}`, { defaultValue: error })}
-								</Alert>
+								<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+									{t('wc26.noData')}
+								</Typography>
 							) : null}
 
 							{loading ? (
@@ -196,46 +196,53 @@ export default function WorldCup26Page(): JSX.Element {
 								</Box>
 							) : null}
 
-							<Typography variant="caption" sx={wc26MatchCountSx}>
-								{t('wc26.matchCount', { count: filtered.length })}
-							</Typography>
+							{!loading && !error && filtered.length === 0 ? (
+								<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+									{t('wc26.noData')}
+								</Typography>
+							) : null}
 
-							<Stack spacing={1.5}>
-								{sortedDates.map((date) => {
-									const dayMatches = byDate.get(date) ?? [];
-									const headerDate = new Date(`${date}T12:00:00`).toLocaleDateString(dateLocale, {
-										weekday: 'long',
-										day: 'numeric',
-										month: 'long',
-										year: 'numeric',
-									});
+							{!loading && !error && filtered.length > 0 ? (
+								<>
+									<Typography variant="caption" sx={wc26MatchCountSx}>
+										{t('wc26.matchCount', { count: filtered.length })}
+									</Typography>
 
-									return (
-										<Box key={date}>
-											<Typography variant="caption" sx={wc26SectionHeaderSx}>
-												{headerDate}
-											</Typography>
-											<Stack spacing={0} divider={<Box sx={wc26DividerSx} />}>
-												{dayMatches.map((match) => {
-													const withResult = match as Wc26MatchWithResult;
-													return (
-														<Wc26MatchCard
-															key={match.id}
-															match={match}
-															scoreView={withResult.scoreView}
-															status={withResult.status}
-															finalized={withResult.finalized}
-															liveMinuteLabel={withResult.liveMinuteLabel}
-															fetchedAt={withResult.fetchedAt}
-															scoresReady={!loading}
-														/>
-													);
-												})}
-											</Stack>
-										</Box>
-									);
-								})}
-							</Stack>
+									<Stack spacing={1.5}>
+										{sortedDates.map((date) => {
+											const dayMatches = byDate.get(date) ?? [];
+											const headerDate = new Date(`${date}T12:00:00`).toLocaleDateString(dateLocale, {
+												weekday: 'long',
+												day: 'numeric',
+												month: 'long',
+												year: 'numeric',
+											});
+
+											return (
+												<Box key={date}>
+													<Typography variant="caption" sx={wc26SectionHeaderSx}>
+														{headerDate}
+													</Typography>
+													<Stack spacing={0} divider={<Box sx={wc26DividerSx} />}>
+														{dayMatches.map((match) => {
+															const withResult = match as Wc26MatchWithResult;
+															return (
+																<Wc26MatchCard
+																	key={match.id}
+																	match={match}
+																	scoreView={withResult.scoreView}
+																	status={withResult.status}
+																	finalized={withResult.finalized}
+																/>
+															);
+														})}
+													</Stack>
+												</Box>
+											);
+										})}
+									</Stack>
+								</>
+							) : null}
 						</>
 					) : null}
 

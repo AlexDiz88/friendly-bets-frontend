@@ -24,8 +24,6 @@ export interface Wc26ScheduleMatchApi {
 	status?: string;
 	finalized?: boolean;
 	utcDate?: string;
-	liveMinuteLabel?: string | null;
-	fetchedAt?: string;
 }
 
 export interface Wc26SchedulePageApi {
@@ -38,8 +36,6 @@ export interface Wc26MatchWithResult extends Wc26Match {
 	status?: string;
 	finalized?: boolean;
 	utcDate?: string;
-	liveMinuteLabel?: string | null;
-	fetchedAt?: string;
 }
 
 function toMatch(entry: Wc26ScheduleMatchApi): Wc26MatchWithResult {
@@ -57,18 +53,11 @@ function toMatch(entry: Wc26ScheduleMatchApi): Wc26MatchWithResult {
 		status: entry.status,
 		finalized: entry.finalized,
 		utcDate: entry.utcDate,
-		liveMinuteLabel: entry.liveMinuteLabel ?? undefined,
-		fetchedAt: entry.fetchedAt,
 	};
 }
 
-export async function fetchWc26SchedulePage(season?: string): Promise<Wc26MatchWithResult[]> {
-	const params = new URLSearchParams();
-	if (season) {
-		params.set('season', season);
-	}
-	const query = params.toString();
-	const result = await apiFetch(apiUrl(`/api/wc26/schedule${query ? `?${query}` : ''}`));
+export async function fetchWc26SchedulePage(): Promise<Wc26MatchWithResult[]> {
+	const result = await apiFetch(apiUrl('/api/wc26/schedule'));
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
