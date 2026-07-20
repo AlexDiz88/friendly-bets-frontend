@@ -18,6 +18,7 @@ import MatchResultSyncSettingsManagement from './match-result-sync/MatchResultSy
 import SeasonDateAssignment from './seasons/SeasonDateAssignment';
 import SeasonsManagement from './seasons/SeasonsManagement';
 import TeamsManagement from './teams/TeamsManagement';
+import TournamentArchiveImportPanel from './tournament-archive/TournamentArchiveImportPanel';
 import TournamentFormatsManagement from './tournament-formats/TournamentFormatsManagement';
 
 export default function AdminCabinet(): JSX.Element {
@@ -51,6 +52,7 @@ export default function AdminCabinet(): JSX.Element {
 
 					<AdminGroupHeading label={t('adminPanelGroupSync')} />
 					<MatchResultSyncSettingsManagement />
+					<TournamentArchiveImportPanel />
 
 					<AdminGroupHeading label={t('adminPanelGroupTeams')} />
 					<TeamsManagement />

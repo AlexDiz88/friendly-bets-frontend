@@ -49,6 +49,11 @@ const KNOCKOUT_STAGES = new Set<Wc26Stage>([
 ]);
 
 function groupRoundMatches(matches: Wc26Match[], round: 1 | 2 | 3): Wc26Match[] {
+	const stageKey = `group_${round}` as const;
+	const byStage = matches.filter((m) => m.stage === stageKey);
+	if (byStage.length > 0) {
+		return byStage;
+	}
 	const start = (round - 1) * 24 + 1;
 	const end = round * 24;
 	return matches.filter((m) => m.id >= start && m.id <= end);
@@ -62,7 +67,9 @@ export function filterWc26Matches(
 		case 'all':
 			return matches;
 		case 'group':
-			return matches.filter((m) => m.stage === 'group');
+			return matches.filter(
+				(m) => m.stage === 'group' || m.stage === 'group_1' || m.stage === 'group_2' || m.stage === 'group_3'
+			);
 		case 'group_r1':
 			return groupRoundMatches(matches, 1);
 		case 'group_r2':
