@@ -24,7 +24,7 @@ import BetStatusIcon from '../bets/BetStatusIcon';
 import { getMatchBets } from '../bets/api';
 import Bet from '../bets/types/Bet';
 import Wc26TeamFlag from '../world-cup-2026/Wc26TeamFlag';
-import { findWc26ScheduleMatchForExternal, resolveWc26TeamIdFromCountry } from '../world-cup-2026/wc26BetSlots';
+import { resolveWc26TeamIdFromCountry } from '../world-cup-2026/wc26BetSlots';
 import { matchSideToDisplayTeam } from './externalMatchDisplay';
 import { resolveExternalMatchScoreView } from './externalMatchScoreView';
 import { parseUtcDate } from '../../shared/utcDate';
@@ -98,16 +98,8 @@ export default function ExternalMatchBetsDialog({
 	const [loading, setLoading] = useState(false);
 	const [bets, setBets] = useState<Bet[]>([]);
 
-	const scheduled = useMemo(
-		() => findWc26ScheduleMatchForExternal(match, matchDay),
-		[match, matchDay]
-	);
-	const groupScheduled =
-		scheduled?.home && scheduled?.away ? scheduled : undefined;
-	const homeWcTeam =
-		groupScheduled?.home ?? resolveWc26TeamIdFromCountry(match.homeTeamCountry);
-	const awayWcTeam =
-		groupScheduled?.away ?? resolveWc26TeamIdFromCountry(match.awayTeamCountry);
+	const homeWcTeam = resolveWc26TeamIdFromCountry(match.homeTeamCountry);
+	const awayWcTeam = resolveWc26TeamIdFromCountry(match.awayTeamCountry);
 	const homeTeam = matchSideToDisplayTeam(match, 'home');
 	const awayTeam = matchSideToDisplayTeam(match, 'away');
 	const matchFinalized = Boolean(match.finalized);

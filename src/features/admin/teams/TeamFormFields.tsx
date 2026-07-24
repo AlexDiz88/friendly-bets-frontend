@@ -1,31 +1,17 @@
-import { Box, FormControl, TextField, Typography } from '@mui/material';
+import { FormControl, TextField, Typography, Box } from '@mui/material';
 import { t } from 'i18next';
-import UnmappedTeamNameHints from './UnmappedTeamNameHints';
-import {
-	FOURSCORE_PROVIDER,
-	MARATHONBET_PROVIDER,
-	ODDS_API_PROVIDER,
-	TWENTYFOUR_SCORE_PROVIDER,
-} from './teamProviderConstants';
-import {
-	hasFourScoreApiMapping,
-	hasOddsApiMapping,
-	hasTwentyFourScoreApiMapping,
-	TeamFormValues,
-} from './teamFormUtils';
+import { TeamFormValues } from './teamFormUtils';
 
 type TeamFormFieldsProps = {
 	values: TeamFormValues;
 	onChange: (patch: Partial<TeamFormValues>) => void;
 	titleReadOnly?: boolean;
-	unmappedHintsRefreshKey?: number;
 };
 
 export default function TeamFormFields({
 	values,
 	onChange,
 	titleReadOnly = false,
-	unmappedHintsRefreshKey = 0,
 }: TeamFormFieldsProps): JSX.Element {
 	const fieldSx = { mb: 0.75 };
 	const sectionSx = { mt: 1, fontWeight: 600, fontSize: '0.875rem', textAlign: 'left' };
@@ -90,13 +76,6 @@ export default function TeamFormFields({
 
 			<Typography sx={sectionSx}>{t('teamFourScoreSection')}</Typography>
 			<Box sx={sectionContentSx}>
-				{!hasFourScoreApiMapping(values) ? (
-					<UnmappedTeamNameHints
-						provider={FOURSCORE_PROVIDER}
-						refreshKey={unmappedHintsRefreshKey}
-						onApply={(externalName) => onChange({ fourscoreExternalName: externalName })}
-					/>
-				) : null}
 				<TextField
 					fullWidth
 					size="small"
@@ -111,13 +90,6 @@ export default function TeamFormFields({
 
 			<Typography sx={sectionSx}>{t('teamTwentyFourScoreSection')}</Typography>
 			<Box sx={sectionContentSx}>
-				{!hasTwentyFourScoreApiMapping(values) ? (
-					<UnmappedTeamNameHints
-						provider={TWENTYFOUR_SCORE_PROVIDER}
-						refreshKey={unmappedHintsRefreshKey}
-						onApply={(externalName) => onChange({ twentyFourScoreExternalName: externalName })}
-					/>
-				) : null}
 				<TextField
 					fullWidth
 					size="small"
@@ -146,21 +118,6 @@ export default function TeamFormFields({
 
 			<Typography sx={sectionSx}>{t('teamOddsApiSection')}</Typography>
 			<Box sx={sectionContentSx}>
-				{!hasOddsApiMapping(values) ? (
-					<UnmappedTeamNameHints
-						provider={ODDS_API_PROVIDER}
-						refreshKey={unmappedHintsRefreshKey}
-						onApply={(externalName, externalId) => {
-							const patch: Partial<TeamFormValues> = {
-								oddsApiExternalName: externalName,
-							};
-							if (externalId != null) {
-								patch.oddsApiTeamId = String(externalId);
-							}
-							onChange(patch);
-						}}
-					/>
-				) : null}
 				<TextField
 					fullWidth
 					size="small"

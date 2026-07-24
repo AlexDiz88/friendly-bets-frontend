@@ -1,4 +1,3 @@
-import { ExternalSyncIssue } from '../external-sync-issues/types/ExternalSyncIssue';
 import Team from './types/Team';
 import {
 	FOURSCORE_PROVIDER,
@@ -13,30 +12,6 @@ export type TeamMappingRef = {
 	externalId?: string;
 	externalName?: string;
 };
-
-export function extractTeamMappingFromIssue(issue: ExternalSyncIssue): TeamMappingRef | null {
-	if (issue.issueType !== 'TEAM_MAPPING_MISSING') {
-		return null;
-	}
-	const provider = issue.provider ?? FOURSCORE_PROVIDER;
-	if (issue.homeTeamName || issue.homeTeamExternalId) {
-		return {
-			provider,
-			externalName: issue.homeTeamName,
-			externalId:
-				issue.homeTeamExternalId != null ? String(issue.homeTeamExternalId) : undefined,
-		};
-	}
-	if (issue.awayTeamName || issue.awayTeamExternalId) {
-		return {
-			provider,
-			externalName: issue.awayTeamName,
-			externalId:
-				issue.awayTeamExternalId != null ? String(issue.awayTeamExternalId) : undefined,
-		};
-	}
-	return null;
-}
 
 export const TEAM_MAPPING_SEARCH_PARAM_KEYS = [
 	'provider',
@@ -76,17 +51,6 @@ export function clearTeamMappingSearchParams(
 		},
 		{ replace: true }
 	);
-}
-
-export function buildTeamMappingAdminLink(mapping: TeamMappingRef): string {
-	const params = new URLSearchParams({ openTeamEdit: '1', provider: mapping.provider });
-	if (mapping.externalId) {
-		params.set('externalId', mapping.externalId);
-	}
-	if (mapping.externalName) {
-		params.set('externalName', mapping.externalName);
-	}
-	return `/admin/cabinet?${params.toString()}`;
 }
 
 export function findTeamByExternalAlias(

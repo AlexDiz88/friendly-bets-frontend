@@ -10,7 +10,6 @@ import {
 } from '../../../components/custom/snackbar/snackbarSlice';
 import TeamFormFields from './TeamFormFields';
 import TeamFormStatusIcon from './TeamFormStatusIcon';
-import { notifyExternalSyncIssuesChanged } from '../external-sync-issues/api';
 import { emptyTeamFormValues, formValuesToCreatePayload, mergeTeamFormPatch } from './teamFormUtils';
 import { createTeam } from './teamsSlice';
 
@@ -21,7 +20,6 @@ export default function CreateNewTeam({
 }): JSX.Element {
 	const dispatch = useAppDispatch();
 	const [values, setValues] = useState(emptyTeamFormValues);
-	const [unmappedHintsRefreshKey, setUnmappedHintsRefreshKey] = useState(0);
 
 	const handleChange = (patch: Partial<ReturnType<typeof emptyTeamFormValues>>): void => {
 		setValues((prev) => mergeTeamFormPatch(prev, patch));
@@ -31,9 +29,7 @@ export default function CreateNewTeam({
 		const dispatchResult = await dispatch(createTeam(formValuesToCreatePayload(values)));
 		if (createTeam.fulfilled.match(dispatchResult)) {
 			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyCreated') }));
-			notifyExternalSyncIssuesChanged();
 			setValues(emptyTeamFormValues());
-			setUnmappedHintsRefreshKey((k) => k + 1);
 		}
 		if (createTeam.rejected.match(dispatchResult)) {
 			dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
@@ -49,11 +45,7 @@ export default function CreateNewTeam({
 			<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', mb: 0.5 }}>
 				<TeamFormStatusIcon values={values} />
 			</Box>
-			<TeamFormFields
-				values={values}
-				onChange={handleChange}
-				unmappedHintsRefreshKey={unmappedHintsRefreshKey}
-			/>
+			<TeamFormFields values={values} onChange={handleChange} />
 			<Box sx={{ textAlign: 'center' }}>
 				<CustomCancelButton onClick={handleCancelClick} sx={{ mb: 0.75 }} />
 				<CustomSuccessButton onClick={handleSaveClick} buttonText={t('btnText.create')} />

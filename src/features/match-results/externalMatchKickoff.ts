@@ -1,14 +1,5 @@
 import { parseUtcDate } from '../../shared/utcDate';
-import {
-	findWc26ScheduleMatchForExternal,
-	getWc26ScheduleById,
-	utcToBerlinKickoff,
-} from '../world-cup-2026/wc26BetSlots';
-import {
-	berlinKickoffToUtcMs,
-	formatBerlinDateFromIsoDate,
-	formatBerlinDateFromUtc,
-} from '../world-cup-2026/wc26Time';
+import { wc26DateLocale } from '../world-cup-2026/wc26Time';
 import { isMatchNotStarted } from './matchStatusI18n';
 import type { ExternalMatch } from './types/ExternalMatch';
 
@@ -18,49 +9,42 @@ export interface ExternalMatchBerlinKickoff {
 	kickoffUtcMs: number;
 }
 
-function resolveFromWc26Schedule(
-	match: ExternalMatch,
-	slotId?: string,
-	language?: string
-): ExternalMatchBerlinKickoff | null {
-	const scheduled =
-		(match.wc26ScheduleId != null ? getWc26ScheduleById(match.wc26ScheduleId) : undefined) ??
-		findWc26ScheduleMatchForExternal(match, slotId);
-	if (!scheduled) {
-		return null;
+function formatUtcTime(utcDate: string | null | undefined): string {
+	const d = parseUtcDate(utcDate);
+	if (!d) {
+		return '';
 	}
-	return {
-		kickoff: scheduled.timeLocal,
-		dateLabel: formatBerlinDateFromIsoDate(scheduled.date, language ?? 'ru'),
-		kickoffUtcMs: berlinKickoffToUtcMs(scheduled.date, scheduled.timeLocal),
-	};
+	const hh = String(d.getUTCHours()).padStart(2, '0');
+	const mm = String(d.getUTCMinutes()).padStart(2, '0');
+	return `${hh}:${mm}`;
 }
 
-/** Kickoff UTC (ms): для ЧМ — из wc26_schedule (Berlin для плей-офф), иначе utcDate API. */
-export function resolveExternalMatchKickoffUtcMs(
-	match: ExternalMatch,
-	slotId?: string
-): number {
-	const fromSchedule = resolveFromWc26Schedule(match, slotId);
-	if (fromSchedule) {
-		return fromSchedule.kickoffUtcMs;
+function formatUtcDateLabel(utcDate: string | null | undefined, language: string): string {
+	const date = parseUtcDate(utcDate);
+	if (!date) {
+		return '—';
 	}
+	return new Intl.DateTimeFormat(wc26DateLocale(language), {
+		timeZone: 'UTC',
+		day: 'numeric',
+		month: 'short',
+	}).format(date);
+}
+
+/** Kickoff UTC (ms) from stored utcDate only. */
+export function resolveExternalMatchKickoffUtcMs(match: ExternalMatch): number {
 	return parseUtcDate(match.utcDate)?.getTime() ?? 0;
 }
 
-/** Время/дата по Berlin для карточки результатов. */
+/** Display time/date from stored utcDate (UTC+0). */
 export function resolveExternalMatchBerlinKickoff(
 	match: ExternalMatch,
-	slotId?: string,
+	_slotId?: string,
 	language?: string
 ): ExternalMatchBerlinKickoff {
-	const fromSchedule = resolveFromWc26Schedule(match, slotId, language);
-	if (fromSchedule) {
-		return fromSchedule;
-	}
 	return {
-		kickoff: utcToBerlinKickoff(match.utcDate),
-		dateLabel: formatBerlinDateFromUtc(match.utcDate, language ?? 'ru'),
+		kickoff: formatUtcTime(match.utcDate),
+		dateLabel: formatUtcDateLabel(match.utcDate, language ?? 'ru'),
 		kickoffUtcMs: parseUtcDate(match.utcDate)?.getTime() ?? 0,
 	};
 }

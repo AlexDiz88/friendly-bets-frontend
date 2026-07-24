@@ -1,4 +1,4 @@
-import { WC26_SCHEDULE, type Wc26Match, type Wc26Stage } from './wc26Schedule';
+import { type Wc26Match, type Wc26Stage } from './wc26Schedule';
 
 export type Wc26MatchListSource = Wc26Match[];
 
@@ -9,11 +9,9 @@ export type Wc26ViewFilter =
 	| 'group_r2'
 	| 'group_r3'
 	| 'playoffs'
-	/** Матч за 3-е место + финал */
 	| 'finals'
 	| Wc26Stage;
 
-/** Порядок вкладок в UI (десктоп — одна панель с переносом). */
 export const WC26_VIEW_FILTER_ORDER: Wc26ViewFilter[] = [
 	'all',
 	'group_r1',
@@ -27,7 +25,6 @@ export const WC26_VIEW_FILTER_ORDER: Wc26ViewFilter[] = [
 	'finals',
 ];
 
-/** Мобильная раскладка: 1-й ряд — групповой этап, 2-й — плей-офф. */
 export const WC26_VIEW_FILTER_MOBILE_ROW1: Wc26ViewFilter[] = ['all', 'group_r1', 'group_r2', 'group_r3'];
 
 export const WC26_VIEW_FILTER_MOBILE_ROW2: Wc26ViewFilter[] = [
@@ -83,9 +80,4 @@ export function filterWc26Matches(
 		default:
 			return matches.filter((m) => m.stage === filter);
 	}
-}
-
-/** @deprecated Use filterWc26Matches(matches, filter) with API data on schedule page. */
-export function filterStaticWc26Matches(filter: Wc26ViewFilter): Wc26Match[] {
-	return filterWc26Matches(WC26_SCHEDULE, filter);
 }

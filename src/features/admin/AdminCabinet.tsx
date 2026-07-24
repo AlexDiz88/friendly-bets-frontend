@@ -14,7 +14,6 @@ import {
 	ADMIN_PAGE_TITLE_SX,
 } from './adminPanelStyles';
 import LeagueFormatAssignment from './leagues/LeagueFormatAssignment';
-import MatchResultSyncSettingsManagement from './match-result-sync/MatchResultSyncSettingsManagement';
 import SeasonDateAssignment from './seasons/SeasonDateAssignment';
 import SeasonsManagement from './seasons/SeasonsManagement';
 import TeamsManagement from './teams/TeamsManagement';
@@ -51,7 +50,6 @@ export default function AdminCabinet(): JSX.Element {
 					<LeagueFormatAssignment />
 
 					<AdminGroupHeading label={t('adminPanelGroupSync')} />
-					<MatchResultSyncSettingsManagement />
 					<TournamentArchiveImportPanel />
 
 					<AdminGroupHeading label={t('adminPanelGroupTeams')} />

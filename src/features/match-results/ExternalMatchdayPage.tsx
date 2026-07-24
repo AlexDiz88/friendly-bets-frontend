@@ -1,7 +1,4 @@
 import EditIcon from '@mui/icons-material/Edit';
-import PaidIcon from '@mui/icons-material/Paid';
-import PriceChangeIcon from '@mui/icons-material/PriceChange';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import {
 	Avatar,
 	Alert,
@@ -11,7 +8,6 @@ import {
 	FormControlLabel,
 	IconButton,
 	SelectChangeEvent,
-	Stack,
 	Tooltip,
 	Typography,
 } from '@mui/material';
@@ -27,7 +23,6 @@ import { useVisibilityPageRefresh } from '../../shared/useVisibilityPageRefresh'
 import {
 	showErrorSnackbar,
 	showSuccessSnackbar,
-	showWarningSnackbar,
 } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
@@ -53,7 +48,6 @@ import {
 import { matchSideToDisplayTeam } from './externalMatchDisplay';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { utcDateMs } from '../../shared/utcDate';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
@@ -71,11 +65,7 @@ import {
 	getCompetitionInfo,
 	getLeagueExternalCompetitionInfo,
 	getMatchdayFromCache,
-	syncMatchdayFromApi,
 } from './matchResultsApi';
-import { syncOddsMatchdayFromApi } from './matchOddsApi';
-import { syncMarathonbetSlot } from '../marathonbet-odds/marathonbetOddsApi';
-import { notifyExternalSyncIssuesChanged } from '../admin/external-sync-issues/api';
 import {
 	getMatchStatusChipColor,
 	isMatchNotStarted,
@@ -94,12 +84,6 @@ import ExternalMatchViewBetsButton from './ExternalMatchViewBetsButton';
 import WcExternalSlotPanel from './WcExternalSlotPanel';
 import { useWcSlotUserBets } from './useWcSlotUserBets';
 import { matchBetCountKey, useSlotMatchBetCounts } from './useSlotMatchBetCounts';
-import {
-	expectedBerlinMatchCount,
-	filterExternalMatchesForWcSlot,
-	isWcBettingSlot,
-	mergeExternalMatchesWithWcSchedule,
-} from '../world-cup-2026/wc26BetSlots';
 
 const MATCH_ROW_AVATAR = 26;
 
@@ -217,7 +201,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const user = useAppSelector(selectUser);
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const calendarNodes = useAppSelector(selectAllCalendarNodes);
-	const canSync = user?.role === 'ADMIN' || user?.role === 'MODERATOR';
 	const isAdmin = user?.role === 'ADMIN';
 
 	useFetchActiveSeason(activeSeason?.id);
@@ -268,9 +251,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(true);
-	const [syncing, setSyncing] = useState(false);
-	const [oddsSyncing, setOddsSyncing] = useState(false);
-	const [marathonbetSyncing, setMarathonbetSyncing] = useState(false);
 	const [editMatch, setEditMatch] = useState<ExternalMatch | null>(null);
 	const [pickMatch, setPickMatch] = useState<ExternalMatch | null>(null);
 	const [betsMatch, setBetsMatch] = useState<ExternalMatch | null>(null);
@@ -306,11 +286,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		const slot = matchdaySlots.find((s) => s.value === effectiveMatchday);
 		return slot?.slotId ?? String(effectiveMatchday);
 	}, [matchdaySlots, effectiveMatchday]);
-
-	const isWcBettingSlotActive = useMemo(
-		() => isWcBettingSlot(betMatchDay),
-		[betMatchDay]
-	);
 
 	const isWcLeague = effectiveLeagueCode === 'WC';
 
@@ -405,16 +380,13 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			if (!isMatchNotStarted(match.status)) {
 				return false;
 			}
-			const kickoffMs = resolveExternalMatchKickoffUtcMs(
-				match,
-				isWcLeague ? betMatchDay : undefined
-			);
+			const kickoffMs = resolveExternalMatchKickoffUtcMs(match);
 			if (kickoffMs > 0 && kickoffMs <= Date.now()) {
 				return false;
 			}
 			return true;
 		},
-		[isWcLeague, betMatchDay]
+		[]
 	);
 
 	const canUserBetOnMatch = useCallback(
@@ -553,13 +525,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					status: match.status,
 					finalized: match.finalized,
 					liveMinuteLabel: match.liveMinuteLabel,
-					kickoffUtcMs: resolveExternalMatchKickoffUtcMs(
-						match,
-						isWcLeague ? betMatchDay : undefined
-					),
+					kickoffUtcMs: resolveExternalMatchKickoffUtcMs(match),
 				}))
 			),
-		[data?.matches, betMatchDay, isWcLeague]
+		[data?.matches]
 	);
 
 	useVisibilityPageRefresh(isExternalPageReady, reloadMatchday);
@@ -702,126 +671,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		setLoading(true);
 	};
 
-	const reloadCompetitionInfo = useCallback(async (): Promise<void> => {
-		if (!effectiveLeagueCode) {
-			return;
-		}
-		try {
-			if (selectedLeague?.id) {
-				const info = await getLeagueExternalCompetitionInfo(selectedLeague.id, externalSeason);
-				setCompetitionInfo(info);
-				return;
-			}
-			const info = await getCompetitionInfo(competitionCode, externalSeason);
-			setCompetitionInfo(info);
-		} catch {
-			// оставляем текущие метаданные слота
-		}
-	}, [competitionCode, effectiveLeagueCode, externalSeason, selectedLeague?.id]);
-
-	const handleSyncFromApi = async (): Promise<void> => {
-		setSyncing(true);
-		try {
-			const page = await syncMatchdayFromApi(
-				competitionCode,
-				effectiveMatchday,
-				externalSeason,
-				selectedLeague?.id
-			);
-			setData(page);
-			await reloadCompetitionInfo();
-			dispatch(showSuccessSnackbar({ message: t('externalMatchSyncSuccess') }));
-		} catch (error) {
-			dispatch(
-				showErrorSnackbar({
-					message: error instanceof Error ? error.message : t('externalMatchSyncError'),
-				})
-			);
-		} finally {
-			setSyncing(false);
-		}
-	};
-
-	const handleMarathonbetSyncFromApi = async (): Promise<void> => {
-		if (!selectedLeague?.id || !isWcLeague) {
-			return;
-		}
-		const gameResultIds = data?.matches
-			?.map((m) => m.id)
-			.filter((id): id is string => Boolean(id));
-		setMarathonbetSyncing(true);
-		try {
-			const result = await syncMarathonbetSlot(
-				selectedLeague.id,
-				effectiveMatchday,
-				externalSeason,
-				gameResultIds
-			);
-			notifyExternalSyncIssuesChanged();
-			const toastPayload = {
-				message: t('externalMatchMarathonbetSyncSuccess', {
-					matched: result.matchesMatched,
-					eligible: result.matchesEligible,
-					saved: result.mergedSaved,
-					sse: result.sseCalls,
-					failures: result.mappingFailures,
-				}),
-			};
-			if (result.mappingFailures > 0) {
-				dispatch(showWarningSnackbar(toastPayload));
-			} else {
-				dispatch(showSuccessSnackbar(toastPayload));
-			}
-		} catch (error) {
-			dispatch(
-				showErrorSnackbar({
-					message: error instanceof Error ? error.message : 'unknownError',
-				})
-			);
-		} finally {
-			setMarathonbetSyncing(false);
-		}
-	};
-
-	const handleOddsSyncFromApi = async (): Promise<void> => {
-		if (!selectedLeague?.id) {
-			return;
-		}
-		const gameResultIds = data?.matches
-			?.map((m) => m.id)
-			.filter((id): id is string => Boolean(id));
-		setOddsSyncing(true);
-		try {
-			const result = await syncOddsMatchdayFromApi(
-				selectedLeague.id,
-				effectiveMatchday,
-				externalSeason,
-				gameResultIds
-			);
-			notifyExternalSyncIssuesChanged();
-			const toastPayload = {
-				message: t('externalMatchOddsSyncSuccess', {
-					matches: result.matchesEligible,
-					failures: result.mappingFailures,
-					teamFailures: result.teamMappingFailures,
-				}),
-			};
-			if (result.mappingFailures > 0 || result.teamMappingFailures > 0) {
-				dispatch(showWarningSnackbar(toastPayload));
-			} else {
-				dispatch(showSuccessSnackbar(toastPayload));
-			}
-		} catch (error) {
-			dispatch(
-				showErrorSnackbar({
-					message: error instanceof Error ? error.message : t('externalMatchOddsSyncError'),
-				})
-			);
-		} finally {
-			setOddsSyncing(false);
-		}
-	};
-
 	const handleApplyApiScore = async (): Promise<void> => {
 		if (!editMatch?.id || !activeSeason?.id || !effectiveLeagueCode) {
 			return;
@@ -868,47 +717,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const sortedMatches = useMemo(() => {
 		if (!data?.matches) return [];
-		const sorted = [...data.matches].sort((a, b) => {
-			const da = isWcLeague
-				? resolveExternalMatchKickoffUtcMs(a, betMatchDay)
-				: (utcDateMs(a.utcDate) ?? 0);
-			const db = isWcLeague
-				? resolveExternalMatchKickoffUtcMs(b, betMatchDay)
-				: (utcDateMs(b.utcDate) ?? 0);
-			return da - db;
-		});
-		if (isWcBettingSlotActive) {
-			const filtered = filterExternalMatchesForWcSlot(sorted, betMatchDay);
-			const merged = mergeExternalMatchesWithWcSchedule(filtered, betMatchDay, {
-				leagueCode: effectiveLeagueCode,
-				season: externalSeason,
-				matchday: effectiveMatchday,
-				leagueId: selectedLeague?.id,
-			});
-			return merged.sort((a, b) => {
-				const da = resolveExternalMatchKickoffUtcMs(a, betMatchDay);
-				const db = resolveExternalMatchKickoffUtcMs(b, betMatchDay);
-				return da - db;
-			});
-		}
-		return sorted;
-	}, [
-		data?.matches,
-		isWcBettingSlotActive,
-		betMatchDay,
-		isWcLeague,
-		effectiveLeagueCode,
-		externalSeason,
-		effectiveMatchday,
-		selectedLeague?.id,
-	]);
+		return [...data.matches].sort(
+			(a, b) => resolveExternalMatchKickoffUtcMs(a) - resolveExternalMatchKickoffUtcMs(b)
+		);
+	}, [data?.matches]);
 
-	const syncProgressTotal = useMemo(() => {
-		if (isWcBettingSlotActive) {
-			return expectedBerlinMatchCount(betMatchDay);
-		}
-		return data?.sync?.expectedMatchCount ?? 0;
-	}, [isWcBettingSlotActive, betMatchDay, data?.sync?.expectedMatchCount]);
+	const syncProgressTotal = data?.sync?.expectedMatchCount ?? 0;
 
 	const syncProgressStarted = useMemo(
 		() =>
@@ -916,13 +730,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				if (isMatchStartedOrFinished(m.status)) {
 					return true;
 				}
-				const kickoffMs = resolveExternalMatchKickoffUtcMs(
-					m,
-					isWcLeague ? betMatchDay : undefined
-				);
+				const kickoffMs = resolveExternalMatchKickoffUtcMs(m);
 				return kickoffMs > 0 && kickoffMs <= Date.now();
 			}).length,
-		[sortedMatches, isWcLeague, betMatchDay]
+		[sortedMatches]
 	);
 
 	const syncProgressFinalized = useMemo(
@@ -935,12 +746,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		[sortedMatches, syncProgressStarted]
 	);
 
-	const syncProgressAvailable = useMemo(() => {
-		if (data?.sync) {
-			return true;
-		}
-		return isWcLeague && isWcBettingSlotActive && syncProgressTotal > 0;
-	}, [data?.sync, isWcLeague, isWcBettingSlotActive, syncProgressTotal]);
+	const syncProgressAvailable = Boolean(data?.sync);
 
 	const syncChip = useMemo(() => {
 		if (!syncProgressAvailable) {
@@ -1016,143 +822,10 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							textAlign: 'center',
 							fontSize: '1rem',
 							lineHeight: 1.2,
-							pl: canSync ? 6.5 : 0,
-							pr: canSync && isWcLeague ? 5.5 : 0,
 						}}
 					>
 						{t('externalMatchResults')}
 					</Typography>
-					{canSync ? (
-						<>
-							<Box
-								sx={{
-									position: 'absolute',
-									left: 0,
-									top: '50%',
-									transform: 'translateY(-50%)',
-									display: 'flex',
-									alignItems: 'center',
-									gap: 0.25,
-								}}
-							>
-								<Tooltip title={t('externalMatchSyncFromApi')}>
-									<span>
-										<IconButton
-											size="small"
-											disabled={
-												syncing ||
-												oddsSyncing ||
-												marathonbetSyncing ||
-												loading
-											}
-											onClick={() => void handleSyncFromApi()}
-											aria-label={t('externalMatchSyncFromApi')}
-											sx={{
-												width: 26,
-												height: 26,
-												p: 0,
-												bgcolor: 'secondary.main',
-												color: 'common.white',
-												'&:hover': { bgcolor: 'secondary.dark' },
-												'&.Mui-disabled': {
-													bgcolor: 'action.disabledBackground',
-													color: 'action.disabled',
-												},
-											}}
-										>
-											{syncing ? (
-												<CircularProgress size={18} sx={{ color: 'common.white' }} />
-											) : (
-												<RefreshIcon sx={{ fontSize: 20, color: 'common.white' }} />
-											)}
-										</IconButton>
-									</span>
-								</Tooltip>
-								<Tooltip title={t('externalMatchOddsSyncFromApi')}>
-									<span>
-										<IconButton
-											size="small"
-											disabled={
-												marathonbetSyncing ||
-												oddsSyncing ||
-												syncing ||
-												loading ||
-												!selectedLeague?.id
-											}
-											onClick={() => void handleOddsSyncFromApi()}
-											aria-label={t('externalMatchOddsSyncFromApi')}
-											sx={{
-												width: 26,
-												height: 26,
-												p: 0,
-												bgcolor: 'primary.main',
-												color: 'common.white',
-												'&:hover': { bgcolor: 'primary.dark' },
-												'&.Mui-disabled': {
-													bgcolor: 'action.disabledBackground',
-													color: 'action.disabled',
-												},
-											}}
-										>
-											{oddsSyncing ? (
-												<CircularProgress size={18} sx={{ color: 'common.white' }} />
-											) : (
-												<PaidIcon sx={{ fontSize: 18, color: 'common.white' }} />
-											)}
-										</IconButton>
-									</span>
-								</Tooltip>
-							</Box>
-							{isWcLeague ? (
-								<Box
-									sx={{
-										position: 'absolute',
-										right: 0,
-										top: '50%',
-										transform: 'translateY(-50%)',
-										display: 'flex',
-										alignItems: 'center',
-										gap: 0.25,
-									}}
-								>
-									<Tooltip title={t('externalMatchMarathonbetSyncFromApi')}>
-										<span>
-											<IconButton
-												size="small"
-												disabled={
-													marathonbetSyncing ||
-													oddsSyncing ||
-													syncing ||
-													loading ||
-													!selectedLeague?.id
-												}
-												onClick={() => void handleMarathonbetSyncFromApi()}
-												aria-label={t('externalMatchMarathonbetSyncFromApi')}
-												sx={{
-													width: 26,
-													height: 26,
-													p: 0,
-													bgcolor: 'warning.main',
-													color: 'common.white',
-													'&:hover': { bgcolor: 'warning.dark' },
-													'&.Mui-disabled': {
-														bgcolor: 'action.disabledBackground',
-														color: 'action.disabled',
-													},
-												}}
-											>
-												{marathonbetSyncing ? (
-													<CircularProgress size={18} sx={{ color: 'common.white' }} />
-												) : (
-													<PriceChangeIcon sx={{ fontSize: 18, color: 'common.white' }} />
-												)}
-											</IconButton>
-										</span>
-									</Tooltip>
-								</Box>
-							) : null}
-						</>
-					) : null}
 				</Box>
 
 				<Box
@@ -1313,7 +986,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					color="text.secondary"
 					sx={{ py: 3, px: 1 }}
 				>
-					{canSync ? t('externalMatchNoDataHintModerator') : t('externalMatchNoDataHint')}
+					{t('externalMatchNoDataHint')}
 				</Typography>
 			)}
 
@@ -1340,10 +1013,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 							const homeTeam = matchSideToDisplayTeam(match, 'home');
 							const awayTeam = matchSideToDisplayTeam(match, 'away');
 							const gameScore: GameScore | null = match.gameScore ?? null;
-							const kickoffUtcMs = resolveExternalMatchKickoffUtcMs(
-								match,
-								isWcLeague ? betMatchDay : undefined
-							);
+							const kickoffUtcMs = resolveExternalMatchKickoffUtcMs(match);
 							const scoreView = resolveExternalMatchScoreView({
 								gameScore,
 								matchStatus: match.status,
