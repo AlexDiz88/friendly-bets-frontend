@@ -12,33 +12,9 @@ export function normalizeMatchStatus(status: string): string {
 
 const NOT_STARTED_STATUSES = new Set(['SCHEDULED', 'TIMED']);
 
-const LIVE_STATUSES = new Set(['IN_PLAY', 'PAUSED', 'EXTRA_TIME', 'PENALTY_SHOOTOUT', 'SUSPENDED']);
-
-const FINISHED_STATUSES = new Set(['FINISHED', 'AWARDED']);
-
 /** Матч ещё не начался (нет kick-off). */
 export function isMatchNotStarted(status: string): boolean {
 	return NOT_STARTED_STATUSES.has(normalizeMatchStatus(status));
-}
-
-/** Матч уже начался (live) или завершён. */
-export function isMatchStartedOrFinished(status: string): boolean {
-	const normalized = normalizeMatchStatus(status);
-	return LIVE_STATUSES.has(normalized) || FINISHED_STATUSES.has(normalized);
-}
-
-/** Тур ещё не начался: нет завершённых матчей в sync и ни один матч не live/finished. */
-export function isMatchdayNotStarted(
-	matches: { status: string }[],
-	finishedSyncCount = 0
-): boolean {
-	if (finishedSyncCount > 0) {
-		return false;
-	}
-	if (matches.length === 0) {
-		return true;
-	}
-	return !matches.some((m) => isMatchStartedOrFinished(m.status));
 }
 
 /** Статусы матча → ключ i18n `matchStatus.*` */

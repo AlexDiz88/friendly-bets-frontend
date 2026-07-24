@@ -48,8 +48,6 @@ import {
 import {
 	getMatchStatusChipColor,
 	isMatchNotStarted,
-	isMatchStartedOrFinished,
-	isMatchdayNotStarted,
 	translateMatchStatus,
 } from './matchStatusI18n';
 import { resolveExternalSeasonForLeague } from './seasonExternalYear';
@@ -596,47 +594,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		);
 	}, [data?.matches]);
 
-	const syncProgressTotal = data?.sync?.expectedMatchCount ?? 0;
-
-	const syncProgressStarted = useMemo(
-		() =>
-			sortedMatches.filter((m) => {
-				if (isMatchStartedOrFinished(m.status)) {
-					return true;
-				}
-				const kickoffMs = resolveExternalMatchKickoffUtcMs(m);
-				return kickoffMs > 0 && kickoffMs <= Date.now();
-			}).length,
-		[sortedMatches]
-	);
-
-	const syncProgressFinalized = useMemo(
-		() => sortedMatches.filter((m) => m.finalized).length,
-		[sortedMatches]
-	);
-
-	const matchdayNotStarted = useMemo(
-		() => isMatchdayNotStarted(sortedMatches, syncProgressStarted),
-		[sortedMatches, syncProgressStarted]
-	);
-
-	const syncProgressAvailable = Boolean(data?.sync);
-
-	const syncChip = useMemo(() => {
-		if (!syncProgressAvailable) {
-			return null;
-		}
-		const total = syncProgressTotal;
-		const finalized = syncProgressFinalized;
-		if (total > 0 && finalized >= total) {
-			return { label: t('externalMatchSyncCompleted'), color: 'success' as const };
-		}
-		if (matchdayNotStarted) {
-			return { label: t('externalMatchSyncNotStarted'), color: 'default' as const };
-		}
-		return { label: t('externalMatchSyncPolling'), color: 'warning' as const };
-	}, [syncProgressAvailable, matchdayNotStarted, syncProgressFinalized, syncProgressTotal, t]);
-
 	const renderViewMatchBetsButton = (match: ExternalMatch): JSX.Element | null => {
 		if (!showViewMatchBetsButton(match)) {
 			return null;
@@ -739,42 +696,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						/>
 					</Box>
 				</Box>
-
-				{isExternalPageReady && syncChip && (
-					<Box
-						sx={{
-							display: 'flex',
-							flexWrap: 'wrap',
-							gap: 0.25,
-							alignItems: 'center',
-							justifyContent: 'center',
-							px: 0.5,
-							flexShrink: 0,
-						}}
-					>
-						<Chip
-							size="medium"
-							label={syncChip.label}
-							color={syncChip.color}
-							sx={{
-								height: 22,
-								my: 0.5,
-								fontSize: '0.75rem',
-								'& .MuiChip-label': { p: 0.75 },
-							}}
-						/>
-						<Typography
-							variant="caption"
-							color="text.secondary"
-							sx={{ px: 1 }}
-						>
-							{t('externalMatchSyncProgress', {
-								finished: syncProgressStarted,
-								total: syncProgressTotal,
-							})}
-						</Typography>
-					</Box>
-				)}
 			</Box>
 
 			{isBettingCalendarMissing ? (
