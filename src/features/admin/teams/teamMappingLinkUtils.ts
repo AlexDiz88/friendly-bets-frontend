@@ -2,7 +2,7 @@ import Team from './types/Team';
 import {
 	FOURSCORE_PROVIDER,
 	MARATHONBET_PROVIDER,
-	ODDS_API_PROVIDER,
+	SOCCER365_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 } from './teamProviderConstants';
 import { TeamFormValues } from './teamFormUtils';
@@ -77,16 +77,6 @@ export function buildExternalAliasPrefill(
 	externalId?: string,
 	externalName?: string
 ): Partial<TeamFormValues> {
-	if (provider === ODDS_API_PROVIDER) {
-		const patch: Partial<TeamFormValues> = {};
-		if (externalName) {
-			patch.oddsApiExternalName = externalName;
-		}
-		if (externalId) {
-			patch.oddsApiTeamId = externalId;
-		}
-		return patch;
-	}
 	if (provider === MARATHONBET_PROVIDER) {
 		const patch: Partial<TeamFormValues> = {};
 		if (externalName) {
@@ -105,6 +95,13 @@ export function buildExternalAliasPrefill(
 		const patch: Partial<TeamFormValues> = {};
 		if (externalName) {
 			patch.twentyFourScoreExternalName = externalName;
+		}
+		return patch;
+	}
+	if (provider === SOCCER365_PROVIDER) {
+		const patch: Partial<TeamFormValues> = {};
+		if (externalName) {
+			patch.soccer365ExternalName = externalName;
 		}
 		return patch;
 	}

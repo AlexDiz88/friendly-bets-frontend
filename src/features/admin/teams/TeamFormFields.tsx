@@ -116,27 +116,17 @@ export default function TeamFormFields({
 				/>
 			</Box>
 
-			<Typography sx={sectionSx}>{t('teamOddsApiSection')}</Typography>
+			<Typography sx={sectionSx}>{t('teamSoccer365Section')}</Typography>
 			<Box sx={sectionContentSx}>
 				<TextField
 					fullWidth
 					size="small"
 					sx={fieldSx}
-					id="odds-api-team-id"
-					label={t('teamOddsApiId')}
+					id="soccer365-external-name"
+					label={t('teamSoccer365ExternalName')}
 					variant="outlined"
-					value={values.oddsApiTeamId}
-					onChange={(e) => onChange({ oddsApiTeamId: e.target.value })}
-				/>
-				<TextField
-					fullWidth
-					size="small"
-					sx={fieldSx}
-					id="odds-api-external-name"
-					label={t('teamOddsApiExternalName')}
-					variant="outlined"
-					value={values.oddsApiExternalName}
-					onChange={(e) => onChange({ oddsApiExternalName: e.target.value })}
+					value={values.soccer365ExternalName}
+					onChange={(e) => onChange({ soccer365ExternalName: e.target.value })}
 				/>
 			</Box>
 		</FormControl>
