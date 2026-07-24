@@ -57,20 +57,3 @@ export async function getLeagueTeams(leagueId: string): Promise<{ teams: Team[] 
 	}
 	return result.json();
 }
-
-export type PurgeOddsApiAliasesResult = {
-	teamsUpdated: number;
-	aliasesRemoved: number;
-};
-
-/** Remove all external_aliases entries with provider odds-api.io from every team. */
-export async function purgeOddsApiAliases(): Promise<PurgeOddsApiAliasesResult> {
-	const result = await apiFetch(`${teamsBaseUrl()}/purge-odds-api-aliases`, {
-		method: 'POST',
-	});
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
-}
