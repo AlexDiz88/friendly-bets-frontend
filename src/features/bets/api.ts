@@ -140,17 +140,9 @@ export async function getSlotMatchBetCounts(
 
 export async function getMatchBets(
 	seasonId: string,
-	leagueId: string,
-	matchDay: string,
-	homeTeamId: string,
-	awayTeamId: string
+	matchScheduleId: string
 ): Promise<{ bets: Bet[] }> {
-	const queryParams = new URLSearchParams({
-		leagueId,
-		matchDay,
-		homeTeamId,
-		awayTeamId,
-	});
+	const queryParams = new URLSearchParams({ matchScheduleId });
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/bets/match/seasons/${seasonId}?${queryParams.toString()}`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/bets/match/seasons/${seasonId}?${queryParams.toString()}`;

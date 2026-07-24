@@ -60,8 +60,6 @@ type Props = {
 	onClose: () => void;
 	match: ExternalMatch;
 	seasonId: string;
-	leagueId: string;
-	matchDay: string;
 	currentUserId?: string;
 };
 
@@ -89,8 +87,6 @@ export default function ExternalMatchBetsDialog({
 	onClose,
 	match,
 	seasonId,
-	leagueId,
-	matchDay,
 	currentUserId,
 }: Props): JSX.Element {
 	const { t, i18n } = useTranslation();
@@ -121,19 +117,13 @@ export default function ExternalMatchBetsDialog({
 	}, [bets, currentUserId]);
 
 	const loadBets = useCallback(async (): Promise<void> => {
-		if (!open || !match.homeTeamId || !match.awayTeamId) {
+		if (!open || !match.id) {
 			return;
 		}
 		setLoading(true);
 		setBets([]);
 		try {
-			const { bets: matchBets } = await getMatchBets(
-				seasonId,
-				leagueId,
-				matchDay,
-				match.homeTeamId,
-				match.awayTeamId
-			);
+			const { bets: matchBets } = await getMatchBets(seasonId, match.id);
 			setBets(matchBets);
 		} catch (e) {
 			dispatch(
@@ -145,16 +135,7 @@ export default function ExternalMatchBetsDialog({
 		} finally {
 			setLoading(false);
 		}
-	}, [
-		open,
-		match.homeTeamId,
-		match.awayTeamId,
-		seasonId,
-		leagueId,
-		matchDay,
-		dispatch,
-		onClose,
-	]);
+	}, [open, match.id, seasonId, dispatch, onClose]);
 
 	useEffect(() => {
 		void loadBets();

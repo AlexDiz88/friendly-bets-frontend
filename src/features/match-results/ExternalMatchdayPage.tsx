@@ -1,50 +1,29 @@
-import EditIcon from '@mui/icons-material/Edit';
 import {
 	Avatar,
 	Alert,
 	Box,
 	Chip,
 	CircularProgress,
-	FormControlLabel,
-	IconButton,
 	SelectChangeEvent,
-	Tooltip,
 	Typography,
 } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
-import CustomSwitch from '../../components/custom/controls/CustomSwitch';
-import { toggleFormControlLabelSx } from '../../components/custom/controls/customToggleStyles';
 import i18n, { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { pageHasLiveMatches } from '../../shared/livePagePolling';
 import { useLivePagePolling } from '../../shared/useLivePagePolling';
 import { useVisibilityPageRefresh } from '../../shared/useVisibilityPageRefresh';
-import {
-	showErrorSnackbar,
-	showSuccessSnackbar,
-} from '../../components/custom/snackbar/snackbarSlice';
+import { showErrorSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import { formatSlotLabel } from '../../components/matchday/formatSlotLabel';
 import MatchdayNavigator from '../../components/matchday/MatchdayNavigator';
-import OddsPickDialog from '../../components/odds/OddsPickDialog';
 import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
 import { selectAllCalendarNodes } from '../admin/calendars/selectors';
-import {
-	findLeagueMatchdayInCalendars,
-	resolveBetSizeForBetInput,
-	resolveSeasonDefaultBetSize,
-} from '../bets/betSizeDefaults';
+import { findLeagueMatchdayInCalendars } from '../bets/betSizeDefaults';
 import { resolveExternalMatchScoreView } from './externalMatchScoreView';
 import { resolveExternalMatchKickoffUtcMs } from './externalMatchKickoff';
-import GameResultScoreEditDialog from './GameResultScoreEditDialog';
-import {
-	adminCorrectGameResultScore,
-	applyPrimaryApiGameResultScore,
-	gameScoreToAdminBody,
-	settleMatchdayAndRecalculateStats,
-} from './gameResultsAdminApi';
 import { matchSideToDisplayTeam } from './externalMatchDisplay';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -201,7 +180,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const user = useAppSelector(selectUser);
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const calendarNodes = useAppSelector(selectAllCalendarNodes);
-	const isAdmin = user?.role === 'ADMIN';
 
 	useFetchActiveSeason(activeSeason?.id);
 
@@ -251,11 +229,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(true);
-	const [editMatch, setEditMatch] = useState<ExternalMatch | null>(null);
-	const [pickMatch, setPickMatch] = useState<ExternalMatch | null>(null);
 	const [betsMatch, setBetsMatch] = useState<ExternalMatch | null>(null);
-	const [slotBetsRefreshKey, setSlotBetsRefreshKey] = useState(0);
-	const [adminOptionsEnabled, setAdminOptionsEnabled] = useState(false);
 	const [calendarsReady, setCalendarsReady] = useState(false);
 
 	const effectiveMatchday = useMemo(() => {
@@ -272,8 +246,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		}
 		return values[values.length - 1];
 	}, [matchday, matchdayTouched, competitionInfo, competitionInfoLoading, matchdaySlots]);
-
-	const showAdminTools = isAdmin && adminOptionsEnabled;
 
 	const isSeasonParticipant = useMemo(() => {
 		if (!user?.id || !activeSeason?.players) {
@@ -307,7 +279,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		seasonId: activeSeason?.id,
 		leagueId: selectedLeague?.id,
 		matchDay: betMatchDay,
-		refreshKey: slotBetsRefreshKey,
 	});
 
 	const calendarMatch = useMemo(() => {
@@ -337,7 +308,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		seasonId: activeSeason?.id,
 		leagueId: selectedLeague?.id,
 		matchDay: betMatchDay,
-		refreshKey: slotBetsRefreshKey,
 	});
 
 	const matchesLoading = competitionInfoLoading || loading;
@@ -372,42 +342,19 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const isBettingCalendarMissing = isExternalPageReady && !calendarMatch;
 
-	const isMatchOpenForBetting = useCallback(
-		(match: ExternalMatch): boolean => {
-			if (!match.id || !match.homeTeamId || !match.awayTeamId) {
-				return false;
-			}
-			if (!isMatchNotStarted(match.status)) {
-				return false;
-			}
-			const kickoffMs = resolveExternalMatchKickoffUtcMs(match);
-			if (kickoffMs > 0 && kickoffMs <= Date.now()) {
-				return false;
-			}
-			return true;
-		},
-		[]
-	);
-
-	const canUserBetOnMatch = useCallback(
-		(match: ExternalMatch): boolean => {
-			if (!user || !isSeasonParticipant || !selectedLeague?.id || !activeSeason?.id) {
-				return false;
-			}
-			if (!calendarMatch) {
-				return false;
-			}
-			return isMatchOpenForBetting(match);
-		},
-		[
-			user,
-			isSeasonParticipant,
-			selectedLeague?.id,
-			activeSeason?.id,
-			calendarMatch,
-			isMatchOpenForBetting,
-		]
-	);
+	const isMatchOpenForBetting = useCallback((match: ExternalMatch): boolean => {
+		if (!match.homeTeamId || !match.awayTeamId) {
+			return false;
+		}
+		if (!isMatchNotStarted(match.status)) {
+			return false;
+		}
+		const kickoffMs = resolveExternalMatchKickoffUtcMs(match);
+		if (kickoffMs > 0 && kickoffMs <= Date.now()) {
+			return false;
+		}
+		return true;
+	}, []);
 
 	const canViewMatchBets = useCallback(
 		(match: ExternalMatch): boolean => {
@@ -457,51 +404,17 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	);
 
 	const isMatchCardClickable = useCallback(
-		(match: ExternalMatch): boolean => canUserBetOnMatch(match) || canViewMatchBets(match),
-		[canUserBetOnMatch, canViewMatchBets]
-	);
-
-	const handleMatchPick = useCallback(
-		(match: ExternalMatch): void => {
-			if (!calendarMatch) {
-				dispatch(showErrorSnackbar({ message: 'matchdayNotInCalendar' }));
-				return;
-			}
-			if (!user || !isSeasonParticipant) {
-				dispatch(showErrorSnackbar({ message: 'notSeasonParticipant' }));
-				return;
-			}
-			if (!selectedLeague?.id || !activeSeason?.id) {
-				return;
-			}
-			if (!isMatchOpenForBetting(match)) {
-				dispatch(showErrorSnackbar({ message: 'matchAlreadyStarted' }));
-				return;
-			}
-			setPickMatch(match);
-		},
-		[
-			calendarMatch,
-			user,
-			isSeasonParticipant,
-			selectedLeague?.id,
-			activeSeason?.id,
-			isMatchOpenForBetting,
-			dispatch,
-		]
+		(match: ExternalMatch): boolean => canViewMatchBets(match),
+		[canViewMatchBets]
 	);
 
 	const handleMatchClick = useCallback(
 		(match: ExternalMatch): void => {
-			if (canUserBetOnMatch(match)) {
-				handleMatchPick(match);
-				return;
-			}
 			if (canViewMatchBets(match)) {
 				setBetsMatch(match);
 			}
 		},
-		[canUserBetOnMatch, canViewMatchBets, handleMatchPick]
+		[canViewMatchBets]
 	);
 
 	const reloadMatchday = useCallback(async (): Promise<void> => {
@@ -671,50 +584,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		setLoading(true);
 	};
 
-	const handleApplyApiScore = async (): Promise<void> => {
-		if (!editMatch?.id || !activeSeason?.id || !effectiveLeagueCode) {
-			return;
-		}
-		await applyPrimaryApiGameResultScore(editMatch.id);
-		const result = await settleMatchdayAndRecalculateStats({
-			seasonId: activeSeason.id,
-			leagueCode: effectiveLeagueCode,
-			matchday: effectiveMatchday,
-			externalSeason,
-		});
-		await reloadMatchday();
-		dispatch(
-			showSuccessSnackbar({
-				message: t('gameResultApiScoreApplied', {
-					matches: result.matchesSubmitted,
-					bets: result.betsProcessed,
-				}),
-			})
-		);
-	};
-
-	const handleAdminScoreSave = async (score: GameScore): Promise<void> => {
-		if (!editMatch?.id || !activeSeason?.id || !effectiveLeagueCode) {
-			return;
-		}
-		await adminCorrectGameResultScore(editMatch.id, gameScoreToAdminBody(score));
-		const result = await settleMatchdayAndRecalculateStats({
-			seasonId: activeSeason.id,
-			leagueCode: effectiveLeagueCode,
-			matchday: effectiveMatchday,
-			externalSeason,
-		});
-		await reloadMatchday();
-		dispatch(
-			showSuccessSnackbar({
-				message: t('gameResultScoreCorrected', {
-					matches: result.matchesSubmitted,
-					bets: result.betsProcessed,
-				}),
-			})
-		);
-	};
-
 	const sortedMatches = useMemo(() => {
 		if (!data?.matches) return [];
 		return [...data.matches].sort(
@@ -767,8 +636,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		if (!showViewMatchBetsButton(match)) {
 			return null;
 		}
-		const count =
-			countsByMatch.get(matchBetCountKey(match.homeTeamId!, match.awayTeamId!)) ?? 0;
+		const count = match.id ? countsByMatch.get(matchBetCountKey(match.id)) ?? 0 : 0;
 		return (
 			<ExternalMatchViewBetsButton
 				count={count}
@@ -902,28 +770,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						</Typography>
 					</Box>
 				)}
-				{isAdmin ? (
-					<Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%', px: 0.5 }}>
-						<FormControlLabel
-							sx={
-								[
-									toggleFormControlLabelSx,
-									{ '& .MuiFormControlLabel-label': { fontSize: '0.8rem' } },
-								] as SxProps<Theme>
-							}
-							control={
-								<CustomSwitch
-									size="small"
-									checked={adminOptionsEnabled}
-									onChange={(e) => setAdminOptionsEnabled(e.target.checked)}
-									inputProps={{ 'aria-label': t('gameResultAdminOptions') }}
-								/>
-							}
-							label={t('gameResultAdminOptions')}
-							labelPlacement="start"
-						/>
-					</Box>
-				) : null}
 			</Box>
 
 			{isBettingCalendarMissing ? (
@@ -932,44 +778,12 @@ export default function ExternalMatchdayPage(): JSX.Element {
 				</Alert>
 			) : null}
 
-			<GameResultScoreEditDialog
-				open={editMatch !== null}
-				match={editMatch}
-				onClose={() => setEditMatch(null)}
-				onSave={handleAdminScoreSave}
-				onApplyApiScore={editMatch?.finalized ? handleApplyApiScore : undefined}
-			/>
-
-			{pickMatch && user && activeSeason && selectedLeague && calendarMatch && pickMatch.id ? (
-				<OddsPickDialog
-					open
-					onClose={() => setPickMatch(null)}
-					gameResultId={pickMatch.id}
-					match={pickMatch}
-					seasonId={activeSeason.id}
-					leagueId={selectedLeague.id}
-					matchDay={betMatchDay}
-					calendarNodeId={calendarMatch.calendar.id}
-					betSize={resolveBetSizeForBetInput(
-						resolveSeasonDefaultBetSize(activeSeason),
-						betMatchDay,
-						calendarMatch.node
-					)}
-					userId={user.id}
-					onBetPlaced={() => {
-						setSlotBetsRefreshKey((k) => k + 1);
-					}}
-				/>
-			) : null}
-
 			{betsMatch && user && activeSeason && selectedLeague ? (
 				<ExternalMatchBetsDialog
 					open
 					onClose={() => setBetsMatch(null)}
 					match={betsMatch}
 					seasonId={activeSeason.id}
-					leagueId={selectedLeague.id}
-					matchDay={betMatchDay}
 					currentUserId={user.id}
 				/>
 			) : null}
@@ -1079,23 +893,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 												}}
 											/>
 											{renderViewMatchBetsButton(match)}
-											{showAdminTools && match.id ? (
-												<Tooltip title={t('gameResultEditScore')}>
-													<span>
-														<IconButton
-															size="small"
-															onClick={(e) => {
-																e.stopPropagation();
-																setEditMatch(match);
-															}}
-															sx={{ p: 0.25 }}
-															aria-label={t('gameResultEditScore')}
-														>
-															<EditIcon sx={{ fontSize: 16 }} />
-														</IconButton>
-													</span>
-												</Tooltip>
-											) : null}
 										</Box>
 									</Box>
 									<CompactMatchRow

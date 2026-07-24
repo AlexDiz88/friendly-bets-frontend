@@ -74,6 +74,20 @@ export default function TeamFormFields({
 				onChange={(e) => onChange({ nameRu: e.target.value })}
 			/>
 
+			<Typography sx={sectionSx}>{t('teamSoccer365Section')}</Typography>
+			<Box sx={sectionContentSx}>
+				<TextField
+					fullWidth
+					size="small"
+					sx={fieldSx}
+					id="soccer365-external-name"
+					label={t('teamSoccer365ExternalName')}
+					variant="outlined"
+					value={values.soccer365ExternalName}
+					onChange={(e) => onChange({ soccer365ExternalName: e.target.value })}
+				/>
+			</Box>
+
 			<Typography sx={sectionSx}>{t('teamFourScoreSection')}</Typography>
 			<Box sx={sectionContentSx}>
 				<TextField
@@ -113,20 +127,6 @@ export default function TeamFormFields({
 					variant="outlined"
 					value={values.marathonbetExternalName}
 					onChange={(e) => onChange({ marathonbetExternalName: e.target.value })}
-				/>
-			</Box>
-
-			<Typography sx={sectionSx}>{t('teamSoccer365Section')}</Typography>
-			<Box sx={sectionContentSx}>
-				<TextField
-					fullWidth
-					size="small"
-					sx={fieldSx}
-					id="soccer365-external-name"
-					label={t('teamSoccer365ExternalName')}
-					variant="outlined"
-					value={values.soccer365ExternalName}
-					onChange={(e) => onChange({ soccer365ExternalName: e.target.value })}
 				/>
 			</Box>
 		</FormControl>
