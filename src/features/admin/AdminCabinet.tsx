@@ -14,10 +14,12 @@ import {
 	ADMIN_PAGE_TITLE_SX,
 } from './adminPanelStyles';
 import LeagueFormatAssignment from './leagues/LeagueFormatAssignment';
-import MatchResultSyncSettingsManagement from './match-result-sync/MatchResultSyncSettingsManagement';
 import SeasonDateAssignment from './seasons/SeasonDateAssignment';
 import SeasonsManagement from './seasons/SeasonsManagement';
+import Soccer365TeamNamesPanel from './soccer365/Soccer365TeamNamesPanel';
+import MatchSchedulesMigrationPanel from './match-schedules/MatchSchedulesMigrationPanel';
 import TeamsManagement from './teams/TeamsManagement';
+import TournamentArchiveImportPanel from './tournament-archive/TournamentArchiveImportPanel';
 import TournamentFormatsManagement from './tournament-formats/TournamentFormatsManagement';
 
 export default function AdminCabinet(): JSX.Element {
@@ -50,7 +52,9 @@ export default function AdminCabinet(): JSX.Element {
 					<LeagueFormatAssignment />
 
 					<AdminGroupHeading label={t('adminPanelGroupSync')} />
-					<MatchResultSyncSettingsManagement />
+					<TournamentArchiveImportPanel />
+					<Soccer365TeamNamesPanel />
+					<MatchSchedulesMigrationPanel />
 
 					<AdminGroupHeading label={t('adminPanelGroupTeams')} />
 					<TeamsManagement />

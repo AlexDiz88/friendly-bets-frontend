@@ -223,11 +223,13 @@ export const wc26MatchMetaSx: SxProps<Theme> = (theme) => ({
 
 export const wc26MatchScoreSx: SxProps<Theme> = (theme) => ({
 	display: 'block',
-	py: 1,
+	py: 0.25,
 	fontWeight: 800,
 	fontSize: { xs: '1.05rem', sm: '1.15rem' },
 	fontVariantNumeric: 'tabular-nums',
-	lineHeight: 1,
+	lineHeight: 1.2,
+	textAlign: 'center',
+	whiteSpace: 'pre-line',
 	color: theme.palette.mode === 'dark' ? '#9de8c4' : '#047857',
 	textShadow:
 		theme.palette.mode === 'dark'

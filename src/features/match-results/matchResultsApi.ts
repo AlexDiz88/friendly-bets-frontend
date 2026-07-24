@@ -60,25 +60,3 @@ export async function getLeagueExternalCompetitionInfo(
 	}
 	return result.json();
 }
-
-/** Принудительная синхронизация тура (4score + 24score) и сохранение в БД. */
-export async function syncMatchdayFromApi(
-	competitionCode: string,
-	matchday: number,
-	season: string,
-	leagueId?: string
-): Promise<ExternalMatchdayPage> {
-	const params = new URLSearchParams({ season });
-	if (leagueId) {
-		params.set('leagueId', leagueId);
-	}
-	const syncResult = await apiFetch(
-		apiUrl(`/api/match-results/competitions/${competitionCode}/matchdays/${matchday}/sync?${params}`),
-		{ method: 'POST' }
-	);
-	if (syncResult.status >= 400) {
-		const { message }: { message: string } = await syncResult.json();
-		throw new Error(message);
-	}
-	return getMatchdayFromCache(competitionCode, matchday, season, leagueId);
-}

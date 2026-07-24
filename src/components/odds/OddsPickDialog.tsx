@@ -138,6 +138,10 @@ export default function OddsPickDialog({
 		if (!selection?.betTitle) {
 			return;
 		}
+		if (!match.id) {
+			dispatch(showErrorSnackbar({ message: 'matchScheduleNotFound' }));
+			return;
+		}
 		setSubmitting(true);
 		try {
 			const result = await dispatch(
@@ -153,6 +157,7 @@ export default function OddsPickDialog({
 						betOdds: selection.clientOdds,
 						betSize,
 						calendarNodeId,
+						matchScheduleId: match.id,
 					},
 				})
 			);

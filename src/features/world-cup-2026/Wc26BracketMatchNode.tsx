@@ -2,18 +2,12 @@ import { Box, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
-import Wc26LiveBadge from './Wc26LiveBadge';
-import Wc26MatchCenterStatus, { isWc26LiveStackedDisplay } from './Wc26MatchCenterStatus';
+import Wc26MatchCenterStatus from './Wc26MatchCenterStatus';
 import Wc26TeamFlag from './Wc26TeamFlag';
-import type { Wc26FifaBracketMatch } from './wc26FifaApi';
-import {
-	bracketPlaceholderLabel,
-	bracketScoreLabel,
-	resolveWc26TeamId,
-} from './wc26FifaDisplay';
+import type { Wc26BracketMatch } from './wc26ArchiveApi';
+import { bracketPlaceholderLabel, bracketScoreLabel, resolveWc26TeamId } from './wc26Display';
 import { parseUtcDate } from '../../shared/utcDate';
-import { wc26MatchMetaSx, wc26MatchLiveMinuteSx, wc26LiveScoreSx, wc26KickoffTimeSx } from './wc26PageStyles';
-import { normalizeMatchStatus } from '../match-results/matchStatusI18n';
+import { wc26MatchMetaSx, wc26KickoffTimeSx } from './wc26PageStyles';
 
 function translatePlaceholder(code: string, t: TFunction): string {
 	const trimmed = code.trim();
@@ -36,7 +30,7 @@ function translatePlaceholder(code: string, t: TFunction): string {
 }
 
 interface Wc26BracketMatchNodeProps {
-	match: Wc26FifaBracketMatch;
+	match: Wc26BracketMatch;
 	showConnector?: boolean;
 }
 
@@ -53,12 +47,6 @@ export default function Wc26BracketMatchNode({
 		match.homePenaltyScore,
 		match.awayPenaltyScore
 	);
-	const status = match.status ?? 'SCHEDULED';
-	const finalized = status === 'FINISHED';
-	const isLiveStacked = isWc26LiveStackedDisplay(status, finalized);
-	const isPausedLive = normalizeMatchStatus(status) === 'PAUSED' && isLiveStacked;
-	const showLiveBadge = isLiveStacked && !isPausedLive;
-	const kickoffUtcMs = parseUtcDate(match.utcDate)?.getTime() ?? 0;
 	const kickoffTime = useMemo(() => {
 		const date = parseUtcDate(match.utcDate);
 		if (!date) {
@@ -120,13 +108,7 @@ export default function Wc26BracketMatchNode({
 				sx={(theme) => ({
 					border: '1px solid',
 					borderColor:
-						showLiveBadge
-							? theme.palette.mode === 'dark'
-								? 'rgba(255, 80, 80, 0.45)'
-								: 'rgba(229, 57, 53, 0.35)'
-							: theme.palette.mode === 'dark'
-								? 'rgba(255, 214, 0, 0.18)'
-								: 'rgba(4, 90, 55, 0.18)',
+						theme.palette.mode === 'dark' ? 'rgba(255, 214, 0, 0.18)' : 'rgba(4, 90, 55, 0.18)',
 					borderRadius: 2,
 					px: 1,
 					py: 0.75,
@@ -138,7 +120,6 @@ export default function Wc26BracketMatchNode({
 					<Typography variant="caption" sx={{ ...wc26MatchMetaSx, mb: 0 }}>
 						#{match.matchNumber}
 					</Typography>
-					{showLiveBadge ? <Wc26LiveBadge /> : null}
 				</Box>
 
 				<Box sx={{ display: 'flex', alignItems: 'stretch', gap: 0.75 }}>
@@ -149,16 +130,8 @@ export default function Wc26BracketMatchNode({
 					<Box sx={{ flexShrink: 0, minWidth: '3rem', textAlign: 'center' }}>
 						<Wc26MatchCenterStatus
 							kickoffTime={kickoffTime}
-							kickoffUtcMs={kickoffUtcMs}
 							scoreView={scoreView}
-							liveMinuteLabel={match.liveMinuteLabel}
-							liveDataFetchedAt={match.utcDate}
-							matchStatus={status}
-							liveStacked={isLiveStacked && Boolean(scoreView)}
-							scoresReady
 							kickoffSx={wc26KickoffTimeSx}
-							liveMinuteSx={wc26MatchLiveMinuteSx}
-							liveScoreSx={wc26LiveScoreSx}
 						/>
 					</Box>
 				</Box>

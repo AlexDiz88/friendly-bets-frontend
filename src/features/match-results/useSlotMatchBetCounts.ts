@@ -58,6 +58,6 @@ export function useSlotMatchBetCounts({
 	return { countsByMatch, loading: loading && enabled };
 }
 
-export function matchBetCountKey(homeTeamId: string, awayTeamId: string): string {
-	return `${homeTeamId}_${awayTeamId}`;
+export function matchBetCountKey(matchScheduleId: string): string {
+	return matchScheduleId;
 }

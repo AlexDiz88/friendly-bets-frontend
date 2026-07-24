@@ -25,7 +25,6 @@ import {
 } from '../../../components/custom/snackbar/snackbarSlice';
 import TeamFormFields from './TeamFormFields';
 import TeamFormStatusIcon from './TeamFormStatusIcon';
-import { notifyExternalSyncIssuesChanged } from '../external-sync-issues/api';
 import {
 	buildExternalAliasPrefill,
 	clearTeamMappingSearchParams,
@@ -51,7 +50,6 @@ export default function EditTeamPanel(): JSX.Element {
 	const [selected, setSelected] = useState<Team | null>(null);
 	const [values, setValues] = useState(emptyTeamFormValues);
 	const [saving, setSaving] = useState(false);
-	const [unmappedHintsRefreshKey, setUnmappedHintsRefreshKey] = useState(0);
 	const [mappingSession, setMappingSession] = useState<TeamMappingRef | null>(null);
 	const prefillTeamIdRef = useRef<string | null>(null);
 	const mappingUrlConsumedRef = useRef(false);
@@ -188,11 +186,9 @@ export default function EditTeamPanel(): JSX.Element {
 		setSaving(false);
 		if (updateTeam.fulfilled.match(result)) {
 			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyUpdated') }));
-			notifyExternalSyncIssuesChanged();
 			exitMappingMode();
 			setSelected(null);
 			setValues(emptyTeamFormValues());
-			setUnmappedHintsRefreshKey((k) => k + 1);
 		}
 		if (updateTeam.rejected.match(result)) {
 			dispatch(showErrorSnackbar({ message: result.error.message }));
@@ -252,7 +248,6 @@ export default function EditTeamPanel(): JSX.Element {
 						values={values}
 						onChange={handleChange}
 						titleReadOnly
-						unmappedHintsRefreshKey={unmappedHintsRefreshKey}
 					/>
 					<Box sx={{ textAlign: 'center', mt: 1 }}>
 						<CustomCancelButton onClick={handleCancel} sx={{ mb: 0.75 }} />

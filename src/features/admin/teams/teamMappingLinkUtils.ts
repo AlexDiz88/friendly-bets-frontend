@@ -1,9 +1,8 @@
-import { ExternalSyncIssue } from '../external-sync-issues/types/ExternalSyncIssue';
 import Team from './types/Team';
 import {
 	FOURSCORE_PROVIDER,
 	MARATHONBET_PROVIDER,
-	ODDS_API_PROVIDER,
+	SOCCER365_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 } from './teamProviderConstants';
 import { TeamFormValues } from './teamFormUtils';
@@ -13,30 +12,6 @@ export type TeamMappingRef = {
 	externalId?: string;
 	externalName?: string;
 };
-
-export function extractTeamMappingFromIssue(issue: ExternalSyncIssue): TeamMappingRef | null {
-	if (issue.issueType !== 'TEAM_MAPPING_MISSING') {
-		return null;
-	}
-	const provider = issue.provider ?? FOURSCORE_PROVIDER;
-	if (issue.homeTeamName || issue.homeTeamExternalId) {
-		return {
-			provider,
-			externalName: issue.homeTeamName,
-			externalId:
-				issue.homeTeamExternalId != null ? String(issue.homeTeamExternalId) : undefined,
-		};
-	}
-	if (issue.awayTeamName || issue.awayTeamExternalId) {
-		return {
-			provider,
-			externalName: issue.awayTeamName,
-			externalId:
-				issue.awayTeamExternalId != null ? String(issue.awayTeamExternalId) : undefined,
-		};
-	}
-	return null;
-}
 
 export const TEAM_MAPPING_SEARCH_PARAM_KEYS = [
 	'provider',
@@ -78,17 +53,6 @@ export function clearTeamMappingSearchParams(
 	);
 }
 
-export function buildTeamMappingAdminLink(mapping: TeamMappingRef): string {
-	const params = new URLSearchParams({ openTeamEdit: '1', provider: mapping.provider });
-	if (mapping.externalId) {
-		params.set('externalId', mapping.externalId);
-	}
-	if (mapping.externalName) {
-		params.set('externalName', mapping.externalName);
-	}
-	return `/admin/cabinet?${params.toString()}`;
-}
-
 export function findTeamByExternalAlias(
 	teams: Team[],
 	provider: string,
@@ -113,16 +77,6 @@ export function buildExternalAliasPrefill(
 	externalId?: string,
 	externalName?: string
 ): Partial<TeamFormValues> {
-	if (provider === ODDS_API_PROVIDER) {
-		const patch: Partial<TeamFormValues> = {};
-		if (externalName) {
-			patch.oddsApiExternalName = externalName;
-		}
-		if (externalId) {
-			patch.oddsApiTeamId = externalId;
-		}
-		return patch;
-	}
 	if (provider === MARATHONBET_PROVIDER) {
 		const patch: Partial<TeamFormValues> = {};
 		if (externalName) {
@@ -141,6 +95,13 @@ export function buildExternalAliasPrefill(
 		const patch: Partial<TeamFormValues> = {};
 		if (externalName) {
 			patch.twentyFourScoreExternalName = externalName;
+		}
+		return patch;
+	}
+	if (provider === SOCCER365_PROVIDER) {
+		const patch: Partial<TeamFormValues> = {};
+		if (externalName) {
+			patch.soccer365ExternalName = externalName;
 		}
 		return patch;
 	}

@@ -8,4 +8,6 @@ export default interface NewOpenedBet extends NewEmptyBet {
 	betOdds: number;
 	prevCalendarNodeId?: string | undefined;
 	calendarNodeId: string | undefined;
+	/** Обязательный match_schedules._id. */
+	matchScheduleId: string;
 }

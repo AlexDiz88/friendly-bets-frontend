@@ -4,7 +4,7 @@ import type { Theme } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Wc26BracketMatchNode from './Wc26BracketMatchNode';
-import { useWc26FifaBracket } from './useWc26FifaData';
+import { useWc26Bracket } from './useWc26ArchiveData';
 import type { Wc26Stage } from './wc26Schedule';
 import {
 	WC26_BRACKET_STAGE_ORDER,
@@ -32,7 +32,7 @@ export default function Wc26BracketView({
 	onStageFilterChange,
 }: Wc26BracketViewProps): JSX.Element {
 	const { t } = useTranslation();
-	const { data, loading, error } = useWc26FifaBracket(stageFilter);
+	const { data, loading, error } = useWc26Bracket(stageFilter);
 
 	const stageChips = useMemo(
 		() =>
@@ -106,8 +106,8 @@ export default function Wc26BracketView({
 			</Box>
 
 			{error ? (
-				<Typography variant="body2" color="error" sx={{ textAlign: 'center', py: 2 }}>
-					{t(`error.${error}`, { defaultValue: error })}
+				<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+					{t('wc26.noData')}
 				</Typography>
 			) : null}
 
@@ -117,9 +117,9 @@ export default function Wc26BracketView({
 				</Typography>
 			) : null}
 
-			{!loading && matches.length === 0 ? (
+			{!loading && !error && matches.length === 0 ? (
 				<Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
-					{t('wc26.bracket.empty')}
+					{t('wc26.noData')}
 				</Typography>
 			) : null}
 

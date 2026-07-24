@@ -24,7 +24,7 @@ import BetStatusIcon from '../bets/BetStatusIcon';
 import { getMatchBets } from '../bets/api';
 import Bet from '../bets/types/Bet';
 import Wc26TeamFlag from '../world-cup-2026/Wc26TeamFlag';
-import { findWc26ScheduleMatchForExternal, resolveWc26TeamIdFromCountry } from '../world-cup-2026/wc26BetSlots';
+import { resolveWc26TeamIdFromCountry } from '../world-cup-2026/wc26BetSlots';
 import { matchSideToDisplayTeam } from './externalMatchDisplay';
 import { resolveExternalMatchScoreView } from './externalMatchScoreView';
 import { parseUtcDate } from '../../shared/utcDate';
@@ -60,8 +60,6 @@ type Props = {
 	onClose: () => void;
 	match: ExternalMatch;
 	seasonId: string;
-	leagueId: string;
-	matchDay: string;
 	currentUserId?: string;
 };
 
@@ -89,8 +87,6 @@ export default function ExternalMatchBetsDialog({
 	onClose,
 	match,
 	seasonId,
-	leagueId,
-	matchDay,
 	currentUserId,
 }: Props): JSX.Element {
 	const { t, i18n } = useTranslation();
@@ -98,16 +94,8 @@ export default function ExternalMatchBetsDialog({
 	const [loading, setLoading] = useState(false);
 	const [bets, setBets] = useState<Bet[]>([]);
 
-	const scheduled = useMemo(
-		() => findWc26ScheduleMatchForExternal(match, matchDay),
-		[match, matchDay]
-	);
-	const groupScheduled =
-		scheduled?.home && scheduled?.away ? scheduled : undefined;
-	const homeWcTeam =
-		groupScheduled?.home ?? resolveWc26TeamIdFromCountry(match.homeTeamCountry);
-	const awayWcTeam =
-		groupScheduled?.away ?? resolveWc26TeamIdFromCountry(match.awayTeamCountry);
+	const homeWcTeam = resolveWc26TeamIdFromCountry(match.homeTeamCountry);
+	const awayWcTeam = resolveWc26TeamIdFromCountry(match.awayTeamCountry);
 	const homeTeam = matchSideToDisplayTeam(match, 'home');
 	const awayTeam = matchSideToDisplayTeam(match, 'away');
 	const matchFinalized = Boolean(match.finalized);
@@ -129,19 +117,13 @@ export default function ExternalMatchBetsDialog({
 	}, [bets, currentUserId]);
 
 	const loadBets = useCallback(async (): Promise<void> => {
-		if (!open || !match.homeTeamId || !match.awayTeamId) {
+		if (!open || !match.id) {
 			return;
 		}
 		setLoading(true);
 		setBets([]);
 		try {
-			const { bets: matchBets } = await getMatchBets(
-				seasonId,
-				leagueId,
-				matchDay,
-				match.homeTeamId,
-				match.awayTeamId
-			);
+			const { bets: matchBets } = await getMatchBets(seasonId, match.id);
 			setBets(matchBets);
 		} catch (e) {
 			dispatch(
@@ -153,16 +135,7 @@ export default function ExternalMatchBetsDialog({
 		} finally {
 			setLoading(false);
 		}
-	}, [
-		open,
-		match.homeTeamId,
-		match.awayTeamId,
-		seasonId,
-		leagueId,
-		matchDay,
-		dispatch,
-		onClose,
-	]);
+	}, [open, match.id, seasonId, dispatch, onClose]);
 
 	useEffect(() => {
 		void loadBets();

@@ -19,7 +19,6 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link as RouterLink } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomButton from '../../components/custom/btn/CustomButton';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
@@ -38,7 +37,7 @@ import {
 	oddsDemoPanelSx,
 	oddsDemoTitleSx,
 	oddsDemoToolbarRowSx,
-} from '../odds-demo/oddsDemoPageStyles';
+} from './oddsDemoPageStyles';
 import {
 	fetchLatestMarathonbetSyncRun,
 	fetchMarathonbetRequestStats,
@@ -559,7 +558,7 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 				<Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
 					{t('marathonbetOdds.tournamentId')}: {preview?.tournamentTreeId ?? '2253726'}
 					{' · '}
-					<RouterLink to="/external-sync-issues">{t('marathonbetOdds.issuesLink')}</RouterLink>
+					{t('marathonbetOdds.issuesLink')}
 				</Typography>
 			</Box>
 

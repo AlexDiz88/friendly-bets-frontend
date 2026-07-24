@@ -1,9 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import Wc26TeamFlag from './Wc26TeamFlag';
-import Wc26LiveScoreChip from './Wc26LiveScoreChip';
-import { formatGoalDifference, formatGoalsLine, resolveWc26TeamId } from './wc26FifaDisplay';
-import type { Wc26FifaGroupTable, Wc26QualificationStatus } from './wc26FifaApi';
+import { formatGoalDifference, formatGoalsLine, resolveWc26TeamId } from './wc26Display';
+import type { Wc26GroupTable, Wc26QualificationStatus } from './wc26ArchiveApi';
 import { wc26GroupTableHeaderSx } from './wc26PageStyles';
 
 const WC26_STANDINGS_STAT_COL_WIDTH = 22;
@@ -56,7 +55,7 @@ function rankCellStyle(status: Wc26QualificationStatus, rank: number): { backgro
 }
 
 interface Wc26GroupStandingsCardProps {
-	table: Wc26FifaGroupTable;
+	table: Wc26GroupTable;
 	title?: string;
 	/** Карточка в сетке «все группы» на экране ≥800px — уже колонка, шире место под название. */
 	twoColumnGrid?: boolean;
@@ -179,9 +178,6 @@ export default function Wc26GroupStandingsCard({
 													{row.fifaCode}
 												</Typography>
 											)}
-											{row.liveNow ? (
-												<Wc26LiveScoreChip score={row.liveMatchScore ?? '0:0'} />
-											) : null}
 										</Box>
 									</Box>
 								</td>

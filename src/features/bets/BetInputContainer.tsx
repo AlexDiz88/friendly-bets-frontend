@@ -17,7 +17,6 @@ import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 import {
 	isValidBetOddsInput,
 	isValidBetSizeInput,
-	parseDecimalInput,
 	isAllowedIntegerInput,
 } from '../../components/utils/decimalInput';
 import { getFullBetTitle } from '../../components/utils/stringTransform';
@@ -44,7 +43,7 @@ import BetInputTitle from './BetInputTitle';
 import BetSummaryInfo from './BetSummaryInfo';
 import MatchDayForm from './MatchDayForm';
 import { resolveDefaultMatchDay } from '../../components/utils/matchdaySlots';
-import { addEmptyBet, addOpenedBet } from './betsSlice';
+import { addEmptyBet } from './betsSlice';
 import {
 	betInputPageRootSx,
 	betInputSelectedBetSx,
@@ -90,54 +89,11 @@ export default function BetInputContainer(): JSX.Element {
 				dispatch(showErrorSnackbar({ message: 'betCoefIsNotNumber' }));
 				return;
 			}
-			const betOddsToNumber = parseDecimalInput(selectedBetOdds);
-
-			const dispatchResult = await dispatch(
-				addOpenedBet({
-					newOpenedBet: {
-						seasonId: season.id,
-						leagueId: selectedLeagueId,
-						userId: selectedUser?.id,
-						matchDay,
-						homeTeamId: selectedHomeTeam?.id,
-						awayTeamId: selectedAwayTeam?.id,
-						betTitle: selectedBetTitle
-							? selectedBetTitle
-							: { code: 0, label: 'EMPTY BET', isNot: false },
-						betOdds: betOddsToNumber,
-						betSize: Number(selectedBetSize),
-						calendarNodeId: calendar?.id,
-					},
-				})
-			);
-
-			if (addOpenedBet.fulfilled.match(dispatchResult)) {
-				dispatch(showSuccessSnackbar({ message: t('betWasSuccessfullyAdded') }));
-				setResetTeams(!resetTeams);
-				setSelectedHomeTeam(undefined);
-				setSelectedAwayTeam(undefined);
-			}
-			if (addOpenedBet.rejected.match(dispatchResult)) {
-				dispatch(showErrorSnackbar({ message: dispatchResult.error.message }));
-			}
-			setSelectedBetTitle(undefined);
-			setSelectedBetOdds('');
+			// Opened bets require match_schedules._id (player flow: OddsPick / Results).
+			// Moderator calendar UI is not wired to schedules yet — fail loudly, no resolve fallback.
+			dispatch(showErrorSnackbar({ message: 'matchScheduleNotFound' }));
 		}
-	}, [
-		resetTeams,
-		season,
-		selectedAwayTeam,
-		selectedBetOdds,
-		selectedBetSize,
-		selectedBetTitle,
-		selectedHomeTeam,
-		selectedLeagueId,
-		matchDay,
-		selectedUser,
-		t,
-		calendar,
-		dispatch,
-	]);
+	}, [season, selectedUser, selectedHomeTeam, selectedAwayTeam, selectedBetOdds, selectedBetSize, dispatch]);
 
 	// добавление пустой ставки
 	const handleSaveEmptyBet = useCallback(async () => {

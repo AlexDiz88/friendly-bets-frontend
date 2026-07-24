@@ -1,22 +1,9 @@
 import { Box, Chip, Typography } from '@mui/material';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { translateMatchStatus, normalizeMatchStatus } from '../match-results/matchStatusI18n';
 import Wc26TeamFlag from './Wc26TeamFlag';
-import Wc26MatchCenterStatus, { isWc26LiveStackedDisplay } from './Wc26MatchCenterStatus';
-import Wc26LiveScoreChip from './Wc26LiveScoreChip';
-import { compactLiveScore } from './wc26LiveScore';
-import { berlinKickoffToUtcMs } from './wc26Time';
+import Wc26MatchCenterStatus from './Wc26MatchCenterStatus';
 import type { Wc26Match } from './wc26Schedule';
-import {
-	wc26MatchMetaSx,
-	wc26MatchCardRowSx,
-	wc26MatchLiveMinuteSx,
-	wc26LiveScoreSx,
-	wc26HalftimeBadgeSx,
-	wc26KickoffTimeSx,
-	wc26MatchScoreSx,
-} from './wc26PageStyles';
+import { wc26MatchMetaSx, wc26MatchCardRowSx, wc26KickoffTimeSx, wc26MatchScoreSx } from './wc26PageStyles';
 import { formatPickOdds } from '../../components/odds/formatPickOdds';
 import Bet from '../bets/types/Bet';
 
@@ -25,9 +12,6 @@ interface Wc26MatchCardProps {
 	scoreView?: string;
 	status?: string;
 	finalized?: boolean;
-	liveMinuteLabel?: string | null;
-	fetchedAt?: string;
-	scoresReady?: boolean;
 	onClick?: () => void;
 	clickable?: boolean;
 	userBet?: Bet;
@@ -36,27 +20,13 @@ interface Wc26MatchCardProps {
 export default function Wc26MatchCard({
 	match,
 	scoreView,
-	status = 'SCHEDULED',
-	finalized = false,
-	liveMinuteLabel,
-	fetchedAt,
-	scoresReady = true,
 	onClick,
 	clickable = false,
 	userBet,
 }: Wc26MatchCardProps): JSX.Element {
 	const { t } = useTranslation();
-	const kickoffUtcMs = useMemo(
-		() => berlinKickoffToUtcMs(match.date, match.timeLocal),
-		[match.date, match.timeLocal]
-	);
 	const hasTeams = Boolean(match.home && match.away);
 	const interactive = clickable && Boolean(onClick);
-	const hasScore = Boolean(scoreView && scoreView !== '—');
-	const isLiveStacked = isWc26LiveStackedDisplay(status, finalized);
-	const isPausedLive = normalizeMatchStatus(status) === 'PAUSED' && isLiveStacked;
-	const showLiveBadge = isLiveStacked && !isPausedLive;
-	const statusLabel = finalized ? t('gameResultFinalized') : translateMatchStatus(status, t);
 
 	return (
 		<Box
@@ -73,7 +43,7 @@ export default function Wc26MatchCard({
 						}
 					: undefined
 			}
-			sx={wc26MatchCardRowSx(isLiveStacked, interactive)}
+			sx={wc26MatchCardRowSx(false, interactive)}
 		>
 			{(match.group || match.id) && (
 				<Box
@@ -101,13 +71,6 @@ export default function Wc26MatchCard({
 							/>
 						)}
 					</Box>
-					{showLiveBadge ? (
-						<Wc26LiveScoreChip score={compactLiveScore(scoreView)} />
-					) : isPausedLive ? (
-						<Box component="span" sx={wc26HalftimeBadgeSx}>
-							{statusLabel}
-						</Box>
-					) : null}
 				</Box>
 			)}
 
@@ -120,14 +83,7 @@ export default function Wc26MatchCard({
 						width: '100%',
 					}}
 				>
-					<Box
-						sx={{
-							flex: 1,
-							display: 'flex',
-							justifyContent: 'flex-end',
-							minWidth: 0,
-						}}
-					>
+					<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', minWidth: 0 }}>
 						<Wc26TeamFlag teamId={match.home!} side="home" />
 					</Box>
 
@@ -146,28 +102,13 @@ export default function Wc26MatchCard({
 					>
 						<Wc26MatchCenterStatus
 							kickoffTime={match.timeLocal}
-							kickoffUtcMs={kickoffUtcMs}
 							scoreView={scoreView}
-							liveMinuteLabel={liveMinuteLabel}
-							liveDataFetchedAt={fetchedAt}
-							matchStatus={status}
-							liveStacked={isLiveStacked && hasScore}
-							scoresReady={scoresReady}
 							kickoffSx={wc26KickoffTimeSx}
-							liveMinuteSx={wc26MatchLiveMinuteSx}
-							liveScoreSx={wc26LiveScoreSx}
 							scoreSx={wc26MatchScoreSx}
 						/>
 					</Box>
 
-					<Box
-						sx={{
-							flex: 1,
-							display: 'flex',
-							justifyContent: 'flex-start',
-							minWidth: 0,
-						}}
-					>
+					<Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-start', minWidth: 0 }}>
 						<Wc26TeamFlag teamId={match.away!} side="away" />
 					</Box>
 				</Box>
@@ -175,16 +116,8 @@ export default function Wc26MatchCard({
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 					<Wc26MatchCenterStatus
 						kickoffTime={match.timeLocal}
-						kickoffUtcMs={kickoffUtcMs}
 						scoreView={scoreView}
-						liveMinuteLabel={liveMinuteLabel}
-						liveDataFetchedAt={fetchedAt}
-						matchStatus={status}
-						liveStacked={isLiveStacked && hasScore}
-						scoresReady={scoresReady}
 						kickoffSx={wc26KickoffTimeSx}
-						liveMinuteSx={wc26MatchLiveMinuteSx}
-						liveScoreSx={wc26LiveScoreSx}
 						scoreSx={wc26MatchScoreSx}
 					/>
 					{!scoreView ? (
