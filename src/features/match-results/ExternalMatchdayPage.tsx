@@ -254,6 +254,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		return activeSeason.players.some((p) => p.id === user.id);
 	}, [user?.id, activeSeason?.players]);
 
+	const isAdminOrModerator =
+		user?.role === 'ADMIN' || user?.role === 'MODERATOR';
+
+	const canAccessMatchBetsView = isSeasonParticipant || isAdminOrModerator;
+
 	const betMatchDay = useMemo(() => {
 		const slot = matchdaySlots.find((s) => s.value === effectiveMatchday);
 		return slot?.slotId ?? String(effectiveMatchday);
@@ -300,7 +305,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	);
 
 	const needsMatchBetCounts =
-		Boolean(user?.id) && isSeasonParticipant && Boolean(selectedLeague?.id) && Boolean(activeSeason?.id);
+		Boolean(user?.id) && canAccessMatchBetsView && Boolean(selectedLeague?.id) && Boolean(activeSeason?.id);
 
 	const { countsByMatch } = useSlotMatchBetCounts({
 		enabled: needsMatchBetCounts,
@@ -358,7 +363,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const canViewMatchBets = useCallback(
 		(match: ExternalMatch): boolean => {
-			if (!user || !isSeasonParticipant || !selectedLeague?.id || !activeSeason?.id) {
+			if (!user || !canAccessMatchBetsView || !selectedLeague?.id || !activeSeason?.id) {
 				return false;
 			}
 			if (!calendarMatch) {
@@ -371,7 +376,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		},
 		[
 			user,
-			isSeasonParticipant,
+			canAccessMatchBetsView,
 			selectedLeague?.id,
 			activeSeason?.id,
 			calendarMatch,
@@ -381,7 +386,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const canOpenMatchBetsDialog = useCallback(
 		(match: ExternalMatch): boolean => {
-			if (!user || !isSeasonParticipant || !selectedLeague?.id || !activeSeason?.id) {
+			if (!user || !canAccessMatchBetsView || !selectedLeague?.id || !activeSeason?.id) {
 				return false;
 			}
 			if (!calendarMatch) {
@@ -392,7 +397,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			}
 			return true;
 		},
-		[user, isSeasonParticipant, selectedLeague?.id, activeSeason?.id, calendarMatch]
+		[user, canAccessMatchBetsView, selectedLeague?.id, activeSeason?.id, calendarMatch]
 	);
 
 	const showViewMatchBetsButton = useCallback(
