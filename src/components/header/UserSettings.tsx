@@ -29,7 +29,6 @@ export default function UserSettings(): JSX.Element {
 		t('editBet'),
 		t('myProfile'),
 		t('adminPanel'),
-		t('marathonbetOdds.menuLink'),
 		errorLogsLabel,
 		t('logout'),
 	];
@@ -42,7 +41,6 @@ export default function UserSettings(): JSX.Element {
 		t('myProfile'),
 		// t('myStats'),
 		t('seasonRegister'),
-		t('marathonbetOdds.menuLink'),
 		errorLogsLabel,
 		t('logout'),
 	];
@@ -103,8 +101,6 @@ export default function UserSettings(): JSX.Element {
 			navigate('/bet-input');
 		} else if (setting === t('adminPanel')) {
 			navigate('/admin/cabinet');
-		} else if (setting === t('marathonbetOdds.menuLink')) {
-			navigate('/marathonbet-odds');
 		} else if (setting === errorLogsLabel) {
 			navigate('/error-logs');
 		} else if (setting === t('seasonRegister')) {

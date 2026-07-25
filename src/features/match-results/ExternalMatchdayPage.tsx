@@ -67,7 +67,7 @@ import ExternalMatchViewBetsButton from './ExternalMatchViewBetsButton';
 import WcExternalSlotPanel from './WcExternalSlotPanel';
 import { useWcSlotUserBets } from './useWcSlotUserBets';
 import { matchBetCountKey, useSlotMatchBetCounts } from './useSlotMatchBetCounts';
-import { syncMarathonbetSlot } from '../marathonbet-odds/marathonbetOddsApi';
+import { syncMarathonbetSlot } from './matchOddsApi';
 import OddsPickDialog from '../../components/odds/OddsPickDialog';
 import {
 	FALLBACK_DEFAULT_BET_SIZE,

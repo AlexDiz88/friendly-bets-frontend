@@ -32,7 +32,6 @@ import BetsList from './features/bets/BetsList';
 import CompletedBetsList from './features/bets/CompletedBetsList';
 import OpenedBetsList from './features/bets/OpenedBetsList';
 import ExternalMatchdayPage from './features/match-results/ExternalMatchdayPage';
-import MarathonbetOddsPage from './features/marathonbet-odds/MarathonbetOddsPage';
 import ErrorLogsPage from './features/error-logs/ErrorLogsPage';
 import WorldCup26Page from './features/world-cup-2026/WorldCup26Page';
 import Gameweek from './features/gameweeks/Gameweek';
@@ -84,10 +83,6 @@ function App(): JSX.Element {
 
 				<Route element={<PrivateRoute roles={['ADMIN']} />}>
 					<Route path="/admin/cabinet" element={<AdminCabinet />} />
-				</Route>
-
-				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
-					<Route path="/marathonbet-odds" element={<MarathonbetOddsPage />} />
 				</Route>
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
