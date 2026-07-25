@@ -207,19 +207,12 @@ export const oddsPickDialogAwayTeamNameSx: SxProps<Theme> = (theme) => ({
 	textAlign: 'left',
 });
 
-export const oddsPickDialogTeamAvatarSx: SxProps<Theme> = (theme) => {
-	const p = oddsPickPalette(theme.palette.mode);
-	return {
-		width: { xs: 32, sm: 36 },
-		height: { xs: 32, sm: 36 },
-		flexShrink: 0,
-		borderRadius: 1,
-		bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : '#fff',
-		border: '1px solid',
-		borderColor: p.divider,
-		boxShadow:
-			theme.palette.mode === 'dark' ? 'none' : '0 1px 4px rgba(4, 90, 55, 0.08)',
-	};
+export const oddsPickDialogTeamAvatarSx: SxProps<Theme> = {
+	width: { xs: 32, sm: 36 },
+	height: { xs: 32, sm: 36 },
+	flexShrink: 0,
+	borderRadius: 0,
+	bgcolor: 'transparent',
 };
 
 export const oddsPickDialogVsSx: SxProps<Theme> = (theme) => {
@@ -516,17 +509,12 @@ export const oddsPickConfirmTeamSideSx: SxProps<Theme> = {
 	maxWidth: '46%',
 };
 
-export const oddsPickConfirmTeamAvatarSx: SxProps<Theme> = (theme) => {
-	const p = oddsPickPalette(theme.palette.mode);
-	return {
-		width: { xs: 32, sm: 36 },
-		height: { xs: 32, sm: 36 },
-		flexShrink: 0,
-		borderRadius: 1,
-		bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : '#fff',
-		border: '1px solid',
-		borderColor: p.divider,
-	};
+export const oddsPickConfirmTeamAvatarSx: SxProps<Theme> = {
+	width: { xs: 32, sm: 36 },
+	height: { xs: 32, sm: 36 },
+	flexShrink: 0,
+	borderRadius: 0,
+	bgcolor: 'transparent',
 };
 
 export const oddsPickConfirmTeamNameSx: SxProps<Theme> = (theme) => {

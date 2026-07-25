@@ -1104,6 +1104,7 @@
 	"externalDataLiveSyncSuccess": "Live: updated {{updated}}, finished {{finished}}",
 	"errorLogs": {
 		"menuLink": "Error log",
+		"hasEntriesAria": "Error log has entries",
 		"layer": {
 			"SCHEDULE": "Schedule",
 			"ODDS": "Odds",
@@ -1128,7 +1129,6 @@
 		}
 	},
 	"errorLogsTitle": "Error log",
-	"errorLogsHint": "Failures from SCHEDULE / ODDS / LIVE / FULL and mapping. Key fields are highlighted as chips.",
 	"errorLogsCount": "Entries: {{count}}",
 	"errorLogsRefresh": "Refresh",
 	"errorLogsClearAll": "Clear log",

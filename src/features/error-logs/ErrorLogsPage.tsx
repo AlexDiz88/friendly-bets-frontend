@@ -34,7 +34,6 @@ import {
 	errorLogMessageSx,
 	errorLogMetaRowSx,
 	errorLogTimeSx,
-	errorLogsHintSx,
 	errorLogsPageRootSx,
 	errorLogsTitleSx,
 	errorLogsToolbarSx,
@@ -131,7 +130,6 @@ export default function ErrorLogsPage(): JSX.Element {
 			<Typography component="h1" sx={errorLogsTitleSx}>
 				{t('errorLogsTitle')}
 			</Typography>
-			<Typography sx={errorLogsHintSx}>{t('errorLogsHint')}</Typography>
 
 			<Box sx={errorLogsToolbarSx}>
 				<Typography variant="body2" color="text.secondary">

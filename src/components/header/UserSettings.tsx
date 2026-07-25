@@ -1,3 +1,4 @@
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Avatar, Box, IconButton, Menu, MenuItem, Typography, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
@@ -6,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getProfile, logout } from '../../features/auth/authSlice';
 import { selectUser } from '../../features/auth/selectors';
 import User from '../../features/auth/types/User';
+import { fetchErrorLogsCount } from '../../features/error-logs/errorLogsApi';
 import { headerIconButtonSx } from './headerPageStyles';
 import { avatarBase64Converter } from '../utils/imgBase64Converter';
 
@@ -14,6 +16,10 @@ export default function UserSettings(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+	const [errorLogsNonEmpty, setErrorLogsNonEmpty] = useState(false);
+
+	const errorLogsLabel = t('errorLogs.menuLink');
+	const canViewErrorLogs = user?.role === 'ADMIN' || user?.role === 'MODERATOR';
 
 	const adminSettings = [
 		t('inputBet'),
@@ -24,7 +30,7 @@ export default function UserSettings(): JSX.Element {
 		t('myProfile'),
 		t('adminPanel'),
 		t('marathonbetOdds.menuLink'),
-		t('errorLogs.menuLink'),
+		errorLogsLabel,
 		t('logout'),
 	];
 	const moderSettings = [
@@ -37,7 +43,7 @@ export default function UserSettings(): JSX.Element {
 		// t('myStats'),
 		t('seasonRegister'),
 		t('marathonbetOdds.menuLink'),
-		t('errorLogs.menuLink'),
+		errorLogsLabel,
 		t('logout'),
 	];
 	const authSettings = [t('myProfile'), t('seasonRegister'), t('logout')];
@@ -69,6 +75,13 @@ export default function UserSettings(): JSX.Element {
 
 	const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>): void => {
 		setAnchorElUser(event.currentTarget);
+		if (canViewErrorLogs) {
+			void fetchErrorLogsCount()
+				.then((count) => setErrorLogsNonEmpty(count > 0))
+				.catch(() => setErrorLogsNonEmpty(false));
+		} else {
+			setErrorLogsNonEmpty(false);
+		}
 	};
 
 	const handleCloseUserMenu = (): void => {
@@ -92,7 +105,7 @@ export default function UserSettings(): JSX.Element {
 			navigate('/admin/cabinet');
 		} else if (setting === t('marathonbetOdds.menuLink')) {
 			navigate('/marathonbet-odds');
-		} else if (setting === t('errorLogs.menuLink')) {
+		} else if (setting === errorLogsLabel) {
 			navigate('/error-logs');
 		} else if (setting === t('seasonRegister')) {
 			navigate('/season/register');
@@ -140,7 +153,24 @@ export default function UserSettings(): JSX.Element {
 			>
 				{settings.map((setting: string, index: number) => (
 					<MenuItem key={index} onClick={() => handleMenuSelect(setting)}>
-						<Typography sx={{ fontWeight: 600 }}>{setting}</Typography>
+						<Box
+							sx={{
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+								gap: 1.25,
+								width: '100%',
+								minWidth: 180,
+							}}
+						>
+							<Typography sx={{ fontWeight: 600 }}>{setting}</Typography>
+							{setting === errorLogsLabel && errorLogsNonEmpty ? (
+								<WarningAmberIcon
+									sx={{ color: '#d4a017', fontSize: 20 }}
+									aria-label={t('errorLogs.hasEntriesAria')}
+								/>
+							) : null}
+						</Box>
 					</MenuItem>
 				))}
 			</Menu>

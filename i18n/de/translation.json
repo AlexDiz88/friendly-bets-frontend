@@ -1104,6 +1104,7 @@
 	"externalDataLiveSyncSuccess": "Live: aktualisiert {{updated}}, beendet {{finished}}",
 	"errorLogs": {
 		"menuLink": "Fehlerprotokoll",
+		"hasEntriesAria": "Das Log enthält Einträge",
 		"layer": {
 			"SCHEDULE": "Spielplan",
 			"ODDS": "Quoten",
@@ -1128,7 +1129,6 @@
 		}
 	},
 	"errorLogsTitle": "Fehlerprotokoll",
-	"errorLogsHint": "Fehler aus SCHEDULE / ODDS / LIVE / FULL und Mapping. Wichtige Felder als Chips hervorgehoben.",
 	"errorLogsCount": "Einträge: {{count}}",
 	"errorLogsRefresh": "Aktualisieren",
 	"errorLogsClearAll": "Log leeren",

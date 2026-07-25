@@ -1104,6 +1104,7 @@
 	"externalDataLiveSyncSuccess": "Live: обновлено {{updated}}, завершено {{finished}}",
 	"errorLogs": {
 		"menuLink": "Лог ошибок",
+		"hasEntriesAria": "В логе есть записи",
 		"layer": {
 			"SCHEDULE": "Расписание",
 			"ODDS": "Кэфы",
@@ -1128,7 +1129,6 @@
 		}
 	},
 	"errorLogsTitle": "Лог ошибок",
-	"errorLogsHint": "Сбои SCHEDULE / ODDS / LIVE / FULL и маппинга. Ключевые поля подсвечены чипами.",
 	"errorLogsCount": "Записей: {{count}}",
 	"errorLogsRefresh": "Обновить",
 	"errorLogsClearAll": "Очистить лог",

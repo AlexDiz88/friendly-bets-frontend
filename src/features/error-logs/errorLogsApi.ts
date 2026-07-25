@@ -35,6 +35,16 @@ export async function fetchErrorLogs(): Promise<ErrorLogEntry[]> {
 	return result.json();
 }
 
+export async function fetchErrorLogsCount(): Promise<number> {
+	const result = await apiFetch(apiUrl('/api/error-logs/count'), { method: 'GET' });
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	const body: { count?: number } = await result.json();
+	return body.count ?? 0;
+}
+
 export async function deleteErrorLog(id: string): Promise<void> {
 	const result = await apiFetch(apiUrl(`/api/error-logs/${id}`), { method: 'DELETE' });
 	if (result.status >= 400) {

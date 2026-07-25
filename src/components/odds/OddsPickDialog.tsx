@@ -118,11 +118,11 @@ export default function OddsPickDialog({
 			const data = await getOddsEventMarkets(matchScheduleId);
 			setMarkets(data);
 		} catch (e) {
-			dispatch(
-				showErrorSnackbar({
-					message: e instanceof Error ? e.message : 'unknownError',
-				})
-			);
+			const message = e instanceof Error ? e.message : 'unknownError';
+			// Empty state in the dialog is enough; no toast for missing odds.
+			if (message !== 'oddsNotAvailable') {
+				dispatch(showErrorSnackbar({ message }));
+			}
 		} finally {
 			setLoading(false);
 		}

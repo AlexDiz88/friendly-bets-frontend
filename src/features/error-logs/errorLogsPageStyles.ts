@@ -21,19 +21,8 @@ export const errorLogsTitleSx: SxProps<Theme> = {
 	fontWeight: 700,
 	fontSize: { xs: '1.35rem', sm: '1.5rem' },
 	letterSpacing: '-0.02em',
-	mb: 0.5,
+	mb: 1.5,
 };
-
-export const errorLogsHintSx: SxProps<Theme> = (theme) => ({
-	fontSize: '0.8125rem',
-	lineHeight: 1.45,
-	color: 'text.secondary',
-	mb: 2,
-	px: 0.25,
-	borderLeft: '3px solid',
-	borderColor: alpha(ERROR_LOG_ACCENT, theme.palette.mode === 'dark' ? 0.7 : 0.55),
-	pl: 1.25,
-});
 
 export const errorLogsToolbarSx: SxProps<Theme> = {
 	display: 'flex',
