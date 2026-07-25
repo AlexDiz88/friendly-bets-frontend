@@ -19,7 +19,7 @@ function isEffectivelyLiveMatch(matchStatus: string, liveMinuteLabel?: string | 
 	return isLiveMatchStatus(matchStatus) || hasLiveMinuteLabel(liveMinuteLabel);
 }
 
-/** Показывать live-счёт с primary-провайдера (4score), а не прочерк. */
+/** Показывать live-счёт с LIVE-провайдера, а не прочерк. */
 export function trustExternalLiveScore(
 	gameScore: GameScore | null | undefined,
 	matchStatus: string,
@@ -31,7 +31,7 @@ export function trustExternalLiveScore(
 	);
 }
 
-/** Отображаемый счёт; при trustLiveScore — live-счёт 4score. */
+/** Отображаемый счёт; при trustLiveScore — live-счёт. */
 export function getExternalMatchScoreView(
 	gameScore: GameScore | null | undefined,
 	matchStatus: string,

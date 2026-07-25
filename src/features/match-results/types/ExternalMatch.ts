@@ -28,7 +28,7 @@ export interface ExternalMatch {
 	finalizedAt?: string;
 	finalizedSource?: string;
 	adminCorrected?: boolean;
-	/** Текущая минута live с 4score (напр. 72'). */
+	/** Текущая минута live (напр. 72'). */
 	liveMinuteLabel?: string | null;
 	fetchedAt?: string;
 	/** Id в wc26_schedule (1–104), если связан в БД. */

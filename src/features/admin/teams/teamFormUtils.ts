@@ -2,7 +2,6 @@ import i18n from '../../../i18n';
 import NewTeam from './types/NewTeam';
 import Team, { TeamDisplayNames, TeamExternalAlias } from './types/Team';
 import {
-	FOURSCORE_PROVIDER,
 	MARATHONBET_PROVIDER,
 	SOCCER365_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
@@ -13,6 +12,7 @@ const DROPPED_PROVIDERS = new Set([
 	'football-data',
 	'api-football',
 	'odds-api.io',
+	'4score.ru',
 ]);
 
 export type TeamFormValues = {
@@ -22,7 +22,6 @@ export type TeamFormValues = {
 	nameRu: string;
 	nameDe: string;
 	marathonbetExternalName: string;
-	fourscoreExternalName: string;
 	twentyFourScoreExternalName: string;
 	soccer365ExternalName: string;
 };
@@ -35,14 +34,9 @@ export function emptyTeamFormValues(): TeamFormValues {
 		nameRu: '',
 		nameDe: '',
 		marathonbetExternalName: '',
-		fourscoreExternalName: '',
 		twentyFourScoreExternalName: '',
 		soccer365ExternalName: '',
 	};
-}
-
-export function hasFourScoreApiMapping(values: TeamFormValues): boolean {
-	return values.fourscoreExternalName.trim() !== '';
 }
 
 export function hasTwentyFourScoreApiMapping(values: TeamFormValues): boolean {
@@ -129,7 +123,6 @@ export function isTeamFormComplete(values: TeamFormValues): boolean {
 		formFieldFilled(values.nameEn) &&
 		formFieldFilled(values.nameRu) &&
 		formFieldFilled(values.nameDe) &&
-		hasFourScoreApiMapping(values) &&
 		hasTwentyFourScoreApiMapping(values) &&
 		hasMarathonbetApiMapping(values)
 	);
@@ -141,7 +134,6 @@ export function isTeamComplete(team: Team): boolean {
 
 export function teamToFormValues(team: Team): TeamFormValues {
 	const marathonAlias = team.externalAliases?.find((a) => a.provider === MARATHONBET_PROVIDER);
-	const fourScoreAlias = team.externalAliases?.find((a) => a.provider === FOURSCORE_PROVIDER);
 	const twentyFourScoreAlias = team.externalAliases?.find(
 		(a) => a.provider === TWENTYFOUR_SCORE_PROVIDER
 	);
@@ -154,7 +146,6 @@ export function teamToFormValues(team: Team): TeamFormValues {
 			nameRu: team.displayNames?.ru ?? '',
 			nameDe: team.displayNames?.de ?? '',
 			marathonbetExternalName: marathonAlias?.externalName ?? '',
-			fourscoreExternalName: fourScoreAlias?.externalName ?? '',
 			twentyFourScoreExternalName: twentyFourScoreAlias?.externalName ?? '',
 			soccer365ExternalName: soccer365Alias?.externalName ?? '',
 		},
@@ -174,17 +165,6 @@ function buildDisplayNames(
 		en: en || undefined,
 		ru: ru || undefined,
 		de: de || undefined,
-	};
-}
-
-function buildFourScoreAlias(values: TeamFormValues): TeamExternalAlias | undefined {
-	const name = values.fourscoreExternalName.trim();
-	if (!name) {
-		return undefined;
-	}
-	return {
-		provider: FOURSCORE_PROVIDER,
-		externalName: name,
 	};
 }
 
@@ -221,7 +201,7 @@ function buildSoccer365Alias(values: TeamFormValues): TeamExternalAlias | undefi
 	};
 }
 
-/** Merge form aliases; legacy providers (incl. odds-api.io) are dropped on save. */
+/** Merge form aliases; legacy providers (incl. odds-api.io / 4score.ru) are dropped on save. */
 export function buildExternalAliases(
 	values: TeamFormValues,
 	existing?: TeamExternalAlias[]
@@ -233,17 +213,12 @@ export function buildExternalAliases(
 		}
 	}
 	byProvider.delete('odds-api.io');
+	byProvider.delete('4score.ru');
 	const marathon = buildMarathonbetAlias(values);
 	if (marathon) {
 		byProvider.set(MARATHONBET_PROVIDER, marathon);
 	} else {
 		byProvider.delete(MARATHONBET_PROVIDER);
-	}
-	const fourScore = buildFourScoreAlias(values);
-	if (fourScore) {
-		byProvider.set(FOURSCORE_PROVIDER, fourScore);
-	} else {
-		byProvider.delete(FOURSCORE_PROVIDER);
 	}
 	const twentyFourScore = buildTwentyFourScoreAlias(values);
 	if (twentyFourScore) {

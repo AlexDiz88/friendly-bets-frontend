@@ -24,6 +24,7 @@ export default function UserSettings(): JSX.Element {
 		t('myProfile'),
 		t('adminPanel'),
 		t('marathonbetOdds.menuLink'),
+		t('errorLogs.menuLink'),
 		t('logout'),
 	];
 	const moderSettings = [
@@ -36,6 +37,7 @@ export default function UserSettings(): JSX.Element {
 		// t('myStats'),
 		t('seasonRegister'),
 		t('marathonbetOdds.menuLink'),
+		t('errorLogs.menuLink'),
 		t('logout'),
 	];
 	const authSettings = [t('myProfile'), t('seasonRegister'), t('logout')];
@@ -90,6 +92,8 @@ export default function UserSettings(): JSX.Element {
 			navigate('/admin/cabinet');
 		} else if (setting === t('marathonbetOdds.menuLink')) {
 			navigate('/marathonbet-odds');
+		} else if (setting === t('errorLogs.menuLink')) {
+			navigate('/error-logs');
 		} else if (setting === t('seasonRegister')) {
 			navigate('/season/register');
 		} else if (setting === t('summaryResults')) {

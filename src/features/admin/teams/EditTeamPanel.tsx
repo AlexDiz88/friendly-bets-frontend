@@ -231,7 +231,7 @@ export default function EditTeamPanel(): JSX.Element {
 
 			{mappingSession && !selected ? (
 				<Typography variant="body2" sx={{ mb: 1.5, opacity: 0.85, textAlign: 'left' }}>
-					{t('externalSyncIssuesTeamMappingPrefillHint', {
+					{t('errorLogsTeamMappingPrefillHint', {
 						name: mappingSession.externalName ?? '—',
 						id: mappingSession.externalId ?? '—',
 					})}
