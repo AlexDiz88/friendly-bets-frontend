@@ -17,7 +17,6 @@
 	"previousMatchday": "Vorheriger Spieltag",
 	"nextMatchday": "Nächster Spieltag",
 	"externalMatchOddsSyncFromApi": "Quoten von odds-api.io laden",
-	"externalMatchMarathonbetSyncFromApi": "Quoten von Marathonbet laden",
 	"externalMatchMarathonbetSyncSuccess": "Marathonbet: zugeordnet {{matched}}/{{eligible}}, gespeichert {{saved}}, SSE {{sse}}, ohne Zuordnung {{failures}}",
 	"externalMatchOddsSyncSuccess": "Quoten für {{matches}} Spiele aktualisiert, {{failures}} ohne Zuordnung, {{teamFailures}} Team-Abweichungen",
 	"externalMatchOddsSyncError": "Quoten konnten nicht geladen werden",
@@ -323,7 +322,7 @@
 	"externalTeamAliasProviderMarathonbet": "Marathonbet",
 	"externalTeamAliasProvider24score": "24score.pro",
 	"manualExternalSyncTitle": "Manuelle Synchronisation",
-	"manualExternalSyncHint": "Einmaliger SCHEDULE- und LIVE-Sync für die gewählte Liga.",
+	"manualExternalSyncHint": "Einmalige SCHEDULE-, Marathonbet-ODDS- und LIVE-Sync für eine ausgewählte Liga.",
 	"externalDataScheduleSyncTitle": "Spielplan jetzt",
 	"teamUnmappedTwentyFourScoreNamesHint": "Nicht zugeordnete 24score.pro-Namen — zum Ausfüllen anklicken:",
 	"teamUnmappedOddsApiNamesHint": "Nicht zugeordnete odds-api.io-Namen — zum Ausfüllen der Felder unten anklicken:",
@@ -684,7 +683,9 @@
 		"errorLogsDeleteFailed": "Eintrag konnte nicht gelöscht werden",
 		"errorLogsClearFailed": "Log konnte nicht geleert werden",
 		"errorLogDeleted": "Eintrag gelöscht",
-		"errorLogsCleared": "Log geleert"
+		"errorLogsCleared": "Log geleert",
+		"matchdayRequired": "Spieltag erforderlich",
+		"matchScheduleIdsRequired": "Mindestens ein Spiel auswählen"
 	},
 	"oddsDemo": {
 		"menuLink": "Quoten (Demo)",
@@ -1078,5 +1079,15 @@
 	"errorLogsEntryDeleted": "Eintrag gelöscht",
 	"errorLogsCleared": "Log geleert",
 	"errorLogsMatchdayChip": "ST {{number}}",
-	"errorLogsTeamMappingPrefillHint": "Team für Zuordnung wählen: {{name}} (ID {{id}})"
+	"errorLogsTeamMappingPrefillHint": "Team für Zuordnung wählen: {{name}} (ID {{id}})",
+	"externalDataOddsSyncTitle": "Marathonbet-Quoten",
+	"externalDataOddsSyncNow": "Quoten synchronisieren",
+	"externalDataOddsSyncMissingOnlyNote": "Es werden nur Spiele des aktuellen Spieltags der gewählten Liga aktualisiert, für die noch keine Quoten vorliegen.",
+	"externalDataOddsForceUpdate": "Erzwungenes Update",
+	"externalDataOddsForceUpdateNote": "Quoten der ausgewählten Spiele werden erneut geladen, auch wenn sie bereits vorhanden sind.",
+	"externalDataOddsForceMatchday": "Spieltag",
+	"externalDataOddsForceMatches": "Spiele",
+	"externalDataOddsForceMatchesEmpty": "Spiele auswählen",
+	"externalDataOddsForceMatchesSelected": "Ausgewählt: {{count}}",
+	"externalDataOddsForceSyncNow": "Quoten der ausgewählten Spiele aktualisieren"
 }

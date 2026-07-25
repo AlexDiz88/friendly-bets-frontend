@@ -17,7 +17,6 @@
 	"previousMatchday": "Предыдущий тур",
 	"nextMatchday": "Следующий тур",
 	"externalMatchOddsSyncFromApi": "Загрузить кэфы с odds-api.io",
-	"externalMatchMarathonbetSyncFromApi": "Загрузить кэфы с Marathonbet",
 	"externalMatchMarathonbetSyncSuccess": "Marathonbet: сопоставлено {{matched}}/{{eligible}}, сохранено {{saved}}, SSE {{sse}}, без сопоставления {{failures}}",
 	"externalMatchOddsSyncSuccess": "Кэфы обновлены для {{matches}} матчей, {{failures}} без сопоставления, {{teamFailures}} несоответствий по командам",
 	"externalMatchOddsSyncError": "Не удалось загрузить кэфы",
@@ -323,7 +322,7 @@
 	"externalTeamAliasProviderMarathonbet": "Marathonbet",
 	"externalTeamAliasProvider24score": "24score.pro",
 	"manualExternalSyncTitle": "Ручная синхронизация",
-	"manualExternalSyncHint": "Разовые sync расписания (SCHEDULE) и live-счётов по выбранной лиге.",
+	"manualExternalSyncHint": "Разовые sync расписания (SCHEDULE), кэфов Marathonbet (ODDS) и live-счётов по выбранной лиге.",
 	"externalDataScheduleSyncTitle": "Расписание сейчас",
 	"teamUnmappedTwentyFourScoreNamesHint": "Непривязанные названия 24score.pro — нажмите, чтобы подставить:",
 	"teamUnmappedOddsApiNamesHint": "Непривязанные названия odds-api.io — нажмите, чтобы подставить в поля ниже:",
@@ -684,7 +683,9 @@
 		"errorLogsDeleteFailed": "Не удалось удалить запись",
 		"errorLogsClearFailed": "Не удалось очистить лог",
 		"errorLogDeleted": "Запись удалена",
-		"errorLogsCleared": "Лог очищен"
+		"errorLogsCleared": "Лог очищен",
+		"matchdayRequired": "Укажите тур",
+		"matchScheduleIdsRequired": "Выберите хотя бы один матч"
 	},
 	"oddsDemo": {
 		"menuLink": "Кэфы (демо)",
@@ -1078,5 +1079,15 @@
 	"errorLogsEntryDeleted": "Запись удалена",
 	"errorLogsCleared": "Лог очищен",
 	"errorLogsMatchdayChip": "тур {{number}}",
-	"errorLogsTeamMappingPrefillHint": "Выберите команду для привязки {{name}} (ID {{id}})"
+	"errorLogsTeamMappingPrefillHint": "Выберите команду для привязки {{name}} (ID {{id}})",
+	"externalDataOddsSyncTitle": "Кэфы Marathonbet",
+	"externalDataOddsSyncNow": "Синхронизировать кэфы",
+	"externalDataOddsSyncMissingOnlyNote": "Будут обновлены только матчи выбранной лиги текущего тура, у которых ещё нет кэфов.",
+	"externalDataOddsForceUpdate": "Принудительное обновление",
+	"externalDataOddsForceUpdateNote": "Кэфы выбранных матчей будут запрошены заново, даже если они уже есть.",
+	"externalDataOddsForceMatchday": "Тур",
+	"externalDataOddsForceMatches": "Матчи",
+	"externalDataOddsForceMatchesEmpty": "Выберите матчи",
+	"externalDataOddsForceMatchesSelected": "Выбрано: {{count}}",
+	"externalDataOddsForceSyncNow": "Обновить кэфы выбранных матчей"
 }

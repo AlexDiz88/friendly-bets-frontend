@@ -482,7 +482,6 @@ function wc26ToolbarIconButton(role: 'gold' | 'green' | 'burgundy'): SxProps<The
 }
 
 export const externalMatchWcOddsSyncButtonSx = wc26ToolbarIconButton('gold');
-export const externalMatchWcMarathonbetSyncButtonSx = wc26ToolbarIconButton('burgundy');
 export const externalMatchWcRefreshSyncButtonSx = wc26ToolbarIconButton('green');
 
 export function externalMatchWcCardRowSx(

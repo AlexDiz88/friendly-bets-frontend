@@ -35,7 +35,7 @@ export interface ExternalMatch {
 	wc26ScheduleId?: number | null;
 }
 
-export interface ExternalMatchdayPage {
+export interface MatchdayPageData {
 	matches: ExternalMatch[];
 }
 

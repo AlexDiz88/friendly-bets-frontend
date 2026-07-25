@@ -103,3 +103,43 @@ export async function syncExternalSchedule(leagueCode: string): Promise<External
 	}
 	return result.json();
 }
+
+export type MarathonbetOddsSyncResult = {
+	message: string;
+	tournamentFetched: boolean;
+	matchesEligible: number;
+	matchesMatched: number;
+	mergedSaved: number;
+	sseCalls: number;
+	mappingFailures: number;
+	failedMatchScheduleIds?: string[];
+};
+
+/** Manual ODDS sync. Default: current matchday, missing odds only. Force: matchday + match ids. */
+export async function syncMarathonbetOdds(params: {
+	leagueId: string;
+	season?: string;
+	force?: boolean;
+	matchday?: number;
+	matchScheduleIds?: string[];
+}): Promise<MarathonbetOddsSyncResult> {
+	const search = new URLSearchParams({ leagueId: params.leagueId });
+	if (params.season) {
+		search.set('season', params.season);
+	}
+	if (params.force) {
+		search.set('force', 'true');
+		if (params.matchday != null) {
+			search.set('matchday', String(params.matchday));
+		}
+		params.matchScheduleIds?.forEach((id) => search.append('matchScheduleIds', id));
+	}
+	const result = await apiFetch(apiUrl(`/api/admin/marathonbet/sync-slot?${search}`), {
+		method: 'POST',
+	});
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}

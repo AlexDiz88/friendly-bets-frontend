@@ -4,23 +4,17 @@ import {
 	Box,
 	Chip,
 	CircularProgress,
-	IconButton,
 	SelectChangeEvent,
-	Tooltip,
 	Typography,
 } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
-import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import i18n, { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { pageHasLiveMatches } from '../../shared/livePagePolling';
 import { useLivePagePolling } from '../../shared/useLivePagePolling';
 import { useVisibilityPageRefresh } from '../../shared/useVisibilityPageRefresh';
-import {
-	showErrorSnackbar,
-	showSuccessSnackbar,
-} from '../../components/custom/snackbar/snackbarSlice';
+import { showErrorSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import { formatSlotLabel } from '../../components/matchday/formatSlotLabel';
@@ -60,14 +54,13 @@ import { resolveExternalSeasonForLeague } from './seasonExternalYear';
 import {
 	ExternalCompetitionInfo,
 	ExternalMatch,
-	ExternalMatchdayPage as MatchdayPageData,
+	MatchdayPageData,
 } from './types/ExternalMatch';
 import ExternalMatchBetsDialog from './ExternalMatchBetsDialog';
 import ExternalMatchViewBetsButton from './ExternalMatchViewBetsButton';
 import WcExternalSlotPanel from './WcExternalSlotPanel';
 import { useWcSlotUserBets } from './useWcSlotUserBets';
 import { matchBetCountKey, useSlotMatchBetCounts } from './useSlotMatchBetCounts';
-import { syncMarathonbetSlot } from './matchOddsApi';
 import OddsPickDialog from '../../components/odds/OddsPickDialog';
 import {
 	FALLBACK_DEFAULT_BET_SIZE,
@@ -185,7 +178,7 @@ function leagueCodeToCompetition(leagueCode: string): string {
 	);
 }
 
-export default function ExternalMatchdayPage(): JSX.Element {
+export default function MatchdayPage(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const user = useAppSelector(selectUser);
 	const activeSeason = useAppSelector(selectActiveSeason);
@@ -242,7 +235,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [betsMatch, setBetsMatch] = useState<ExternalMatch | null>(null);
 	const [oddsPickMatch, setOddsPickMatch] = useState<ExternalMatch | null>(null);
 	const [calendarsReady, setCalendarsReady] = useState(false);
-	const [marathonbetSyncing, setMarathonbetSyncing] = useState(false);
 
 	const effectiveMatchday = useMemo(() => {
 		const baseMatchday =
@@ -625,45 +617,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		setLoading(true);
 	};
 
-	const handleMarathonbetOddsSync = useCallback(async (): Promise<void> => {
-		if (!selectedLeague?.id || marathonbetSyncing) {
-			return;
-		}
-		setMarathonbetSyncing(true);
-		try {
-			const result = await syncMarathonbetSlot(
-				selectedLeague.id,
-				effectiveMatchday,
-				externalSeason ?? undefined
-			);
-			dispatch(
-				showSuccessSnackbar({
-					message: t('externalMatchMarathonbetSyncSuccess', {
-						matched: result.matchesMatched,
-						eligible: result.matchesEligible,
-						saved: result.mergedSaved,
-						sse: result.sseCalls,
-						failures: result.mappingFailures,
-					}),
-				})
-			);
-		} catch (error) {
-			dispatch(
-				showErrorSnackbar({
-					message: error instanceof Error ? error.message : 'unknownError',
-				})
-			);
-		} finally {
-			setMarathonbetSyncing(false);
-		}
-	}, [
-		selectedLeague?.id,
-		marathonbetSyncing,
-		effectiveMatchday,
-		externalSeason,
-		dispatch,
-	]);
-
 	const sortedMatches = useMemo(() => {
 		if (!data?.matches) return [];
 		return [...data.matches].sort(
@@ -736,42 +689,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					>
 						{t('externalMatchResults')}
 					</Typography>
-					{isAdminOrModerator ? (
-						<Tooltip title={t('externalMatchMarathonbetSyncFromApi')}>
-							<span
-								style={{
-									position: 'absolute',
-									right: 0,
-									top: '50%',
-									transform: 'translateY(-50%)',
-								}}
-							>
-								<IconButton
-									size="small"
-									aria-label={t('externalMatchMarathonbetSyncFromApi')}
-									disabled={
-										!selectedLeague?.id ||
-										marathonbetSyncing ||
-										competitionInfoLoading
-									}
-									onClick={() => void handleMarathonbetOddsSync()}
-									sx={{
-										minWidth: 30,
-										minHeight: 30,
-										color: 'text.secondary',
-										opacity: 0.85,
-										'&:hover': { opacity: 1 },
-									}}
-								>
-									{marathonbetSyncing ? (
-										<CircularProgress size={16} thickness={5} />
-									) : (
-										<RequestQuoteOutlinedIcon sx={{ fontSize: 18 }} />
-									)}
-								</IconButton>
-							</span>
-						</Tooltip>
-					) : null}
 				</Box>
 
 				<Box

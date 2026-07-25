@@ -17,7 +17,6 @@
 	"previousMatchday": "Previous matchday",
 	"nextMatchday": "Next matchday",
 	"externalMatchOddsSyncFromApi": "Fetch odds from odds-api.io",
-	"externalMatchMarathonbetSyncFromApi": "Fetch odds from Marathonbet",
 	"externalMatchMarathonbetSyncSuccess": "Marathonbet: matched {{matched}}/{{eligible}}, saved {{saved}}, SSE {{sse}}, mapping failures {{failures}}",
 	"externalMatchOddsSyncSuccess": "Odds updated for {{matches}} matches, {{failures}} mapping failures, {{teamFailures}} team mismatches",
 	"externalMatchOddsSyncError": "Failed to fetch odds",
@@ -323,7 +322,7 @@
 	"externalTeamAliasProviderMarathonbet": "Marathonbet",
 	"externalTeamAliasProvider24score": "24score.pro",
 	"manualExternalSyncTitle": "Manual sync",
-	"manualExternalSyncHint": "One-off SCHEDULE and LIVE sync for the selected league.",
+	"manualExternalSyncHint": "One-off SCHEDULE, Marathonbet ODDS, and LIVE sync for a selected league.",
 	"externalDataScheduleSyncTitle": "Schedule now",
 	"teamUnmappedTwentyFourScoreNamesHint": "Unmapped 24score.pro names — click to fill the field below:",
 	"teamUnmappedOddsApiNamesHint": "Unmapped odds-api.io names — click to fill the fields below:",
@@ -684,7 +683,9 @@
 		"errorLogsDeleteFailed": "Failed to delete entry",
 		"errorLogsClearFailed": "Failed to clear log",
 		"errorLogDeleted": "Entry deleted",
-		"errorLogsCleared": "Log cleared"
+		"errorLogsCleared": "Log cleared",
+		"matchdayRequired": "Matchday is required",
+		"matchScheduleIdsRequired": "Select at least one match"
 	},
 	"oddsDemo": {
 		"menuLink": "Odds (demo)",
@@ -1078,5 +1079,15 @@
 	"errorLogsEntryDeleted": "Entry deleted",
 	"errorLogsCleared": "Log cleared",
 	"errorLogsMatchdayChip": "MD {{number}}",
-	"errorLogsTeamMappingPrefillHint": "Select a team to map {{name}} (ID {{id}})"
+	"errorLogsTeamMappingPrefillHint": "Select a team to map {{name}} (ID {{id}})",
+	"externalDataOddsSyncTitle": "Marathonbet odds",
+	"externalDataOddsSyncNow": "Sync odds",
+	"externalDataOddsSyncMissingOnlyNote": "Only matches of the selected league’s current matchday that do not have odds yet will be updated.",
+	"externalDataOddsForceUpdate": "Force update",
+	"externalDataOddsForceUpdateNote": "Odds for the selected matches will be fetched again even if they already exist.",
+	"externalDataOddsForceMatchday": "Matchday",
+	"externalDataOddsForceMatches": "Matches",
+	"externalDataOddsForceMatchesEmpty": "Select matches",
+	"externalDataOddsForceMatchesSelected": "Selected: {{count}}",
+	"externalDataOddsForceSyncNow": "Update odds for selected matches"
 }
