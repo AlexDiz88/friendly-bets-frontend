@@ -237,7 +237,7 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 			);
 			setPreview(result);
 			if (result.matches.length > 0 && !selectedMatchId) {
-				setSelectedMatchId(result.matches[0].gameResultId);
+				setSelectedMatchId(result.matches[0].matchScheduleId);
 			}
 		} catch (e) {
 			const message = e instanceof Error ? e.message : 'unknownError';
@@ -314,7 +314,7 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 	}, [dispatch, treeIdInput]);
 
 	const selectedPreview: MarathonbetSlotMatchPreview | null = useMemo(
-		() => preview?.matches.find((m) => m.gameResultId === selectedMatchId) ?? null,
+		() => preview?.matches.find((m) => m.matchScheduleId === selectedMatchId) ?? null,
 		[preview, selectedMatchId]
 	);
 
@@ -584,11 +584,11 @@ export default function MarathonbetOddsPage(): JSX.Element | null {
 						<TableBody>
 							{preview.matches.map((m) => (
 								<TableRow
-									key={m.gameResultId}
-									selected={m.gameResultId === selectedMatchId}
+									key={m.matchScheduleId}
+									selected={m.matchScheduleId === selectedMatchId}
 									hover
 									sx={{ cursor: 'pointer' }}
-									onClick={() => setSelectedMatchId(m.gameResultId)}
+									onClick={() => setSelectedMatchId(m.matchScheduleId)}
 								>
 									<TableCell>
 										{m.homeTeamTitle} — {m.awayTeamTitle}

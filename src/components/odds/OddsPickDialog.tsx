@@ -66,7 +66,7 @@ import {
 type Props = {
 	open: boolean;
 	onClose: () => void;
-	gameResultId: string;
+	matchScheduleId: string;
 	match: ExternalMatch;
 	seasonId: string;
 	leagueId: string;
@@ -80,7 +80,7 @@ type Props = {
 export default function OddsPickDialog({
 	open,
 	onClose,
-	gameResultId,
+	matchScheduleId,
 	match,
 	seasonId,
 	leagueId,
@@ -105,14 +105,14 @@ export default function OddsPickDialog({
 	const awayTeam = matchSideToDisplayTeam(match, 'away');
 
 	const loadMarkets = useCallback(async () => {
-		if (!open || !gameResultId) {
+		if (!open || !matchScheduleId) {
 			return;
 		}
 		setLoading(true);
 		setMarkets(null);
 		setSelection(null);
 		try {
-			const data = await getOddsEventMarkets(gameResultId);
+			const data = await getOddsEventMarkets(matchScheduleId);
 			setMarkets(data);
 		} catch (e) {
 			dispatch(
@@ -123,7 +123,7 @@ export default function OddsPickDialog({
 		} finally {
 			setLoading(false);
 		}
-	}, [open, gameResultId, dispatch]);
+	}, [open, matchScheduleId, dispatch]);
 
 	useEffect(() => {
 		void loadMarkets();

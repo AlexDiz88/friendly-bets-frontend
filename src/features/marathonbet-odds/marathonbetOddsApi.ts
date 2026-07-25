@@ -41,7 +41,7 @@ export type MarathonbetScrapeResult = {
 };
 
 export type MarathonbetSlotMatchPreview = {
-	gameResultId: string;
+	matchScheduleId: string;
 	matchday: number;
 	homeTeamTitle: string | null;
 	awayTeamTitle: string | null;
@@ -152,21 +152,21 @@ export type MarathonbetSlotSyncResult = {
 	mergedSaved: number;
 	sseCalls: number;
 	mappingFailures: number;
-	failedGameResultIds?: string[];
+	failedMatchScheduleIds?: string[];
 };
 
 export async function syncMarathonbetSlot(
 	leagueId: string,
 	matchday: number,
 	season?: string,
-	gameResultIds?: string[]
+	matchScheduleIds?: string[]
 ): Promise<MarathonbetSlotSyncResult> {
 	const params = new URLSearchParams({ leagueId, matchday: String(matchday) });
 	if (season) {
 		params.set('season', season);
 	}
-	if (gameResultIds?.length) {
-		gameResultIds.forEach((id) => params.append('gameResultIds', id));
+	if (matchScheduleIds?.length) {
+		matchScheduleIds.forEach((id) => params.append('matchScheduleIds', id));
 	}
 	const result = await apiFetch(apiUrl(`/api/admin/marathonbet/sync-slot?${params}`), {
 		method: 'POST',
