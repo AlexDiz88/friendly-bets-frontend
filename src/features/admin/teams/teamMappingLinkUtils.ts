@@ -17,6 +17,7 @@ export const TEAM_MAPPING_SEARCH_PARAM_KEYS = [
 	'externalId',
 	'externalName',
 	'teamId',
+	'openTeamEdit',
 ] as const;
 
 export function readTeamMappingFromSearchParams(

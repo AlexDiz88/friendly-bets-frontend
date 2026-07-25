@@ -52,7 +52,6 @@ export default function EditTeamPanel(): JSX.Element {
 	const [saving, setSaving] = useState(false);
 	const [mappingSession, setMappingSession] = useState<TeamMappingRef | null>(null);
 	const prefillTeamIdRef = useRef<string | null>(null);
-	const mappingUrlConsumedRef = useRef(false);
 
 	const prefillTeamId = searchParams.get('teamId') ?? undefined;
 
@@ -63,17 +62,18 @@ export default function EditTeamPanel(): JSX.Element {
 	}, [setSearchParams]);
 
 	useEffect(() => {
-		if (mappingUrlConsumedRef.current) {
-			return;
-		}
 		const fromUrl = readTeamMappingFromSearchParams(searchParams);
 		const teamIdFromUrl = searchParams.get('teamId');
-		if (!fromUrl && !teamIdFromUrl) {
+		const openEdit = searchParams.get('openTeamEdit') === '1';
+		if (!fromUrl && !teamIdFromUrl && !openEdit) {
 			return;
 		}
-		mappingUrlConsumedRef.current = true;
+
 		if (fromUrl) {
 			setMappingSession(fromUrl);
+			prefillTeamIdRef.current = null;
+			setSelected(null);
+			setValues(emptyTeamFormValues());
 		}
 		clearTeamMappingSearchParams(setSearchParams);
 	}, [searchParams, setSearchParams]);
