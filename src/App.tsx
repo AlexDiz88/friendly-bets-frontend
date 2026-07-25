@@ -33,6 +33,7 @@ import CompletedBetsList from './features/bets/CompletedBetsList';
 import OpenedBetsList from './features/bets/OpenedBetsList';
 import MatchdayPage from './features/match-results/MatchdayPage';
 import ErrorLogsPage from './features/error-logs/ErrorLogsPage';
+import ApiSandboxPage from './features/api-sandbox/ApiSandboxPage';
 import ExternalApiMonitoringPage from './features/external-api-monitoring/ExternalApiMonitoringPage';
 import WorldCup26Page from './features/world-cup-2026/WorldCup26Page';
 import Gameweek from './features/gameweeks/Gameweek';
@@ -92,6 +93,10 @@ function App(): JSX.Element {
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
 					<Route path="/external-api-monitoring" element={<ExternalApiMonitoringPage />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/api-sandbox" element={<ApiSandboxPage />} />
 				</Route>
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>

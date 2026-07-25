@@ -20,6 +20,7 @@ export default function UserSettings(): JSX.Element {
 
 	const errorLogsLabel = t('errorLogs.menuLink');
 	const monitoringLabel = t('externalApiMonitoring.menuLink');
+	const apiSandboxLabel = t('apiSandbox.menuLink');
 	const canViewErrorLogs = user?.role === 'ADMIN' || user?.role === 'MODERATOR';
 
 	const adminSettings = [
@@ -31,6 +32,7 @@ export default function UserSettings(): JSX.Element {
 		t('myProfile'),
 		t('adminPanel'),
 		monitoringLabel,
+		apiSandboxLabel,
 		errorLogsLabel,
 		t('logout'),
 	];
@@ -44,6 +46,7 @@ export default function UserSettings(): JSX.Element {
 		// t('myStats'),
 		t('seasonRegister'),
 		monitoringLabel,
+		apiSandboxLabel,
 		errorLogsLabel,
 		t('logout'),
 	];
@@ -106,6 +109,8 @@ export default function UserSettings(): JSX.Element {
 			navigate('/admin/cabinet');
 		} else if (setting === monitoringLabel) {
 			navigate('/external-api-monitoring');
+		} else if (setting === apiSandboxLabel) {
+			navigate('/api-sandbox');
 		} else if (setting === errorLogsLabel) {
 			navigate('/error-logs');
 		} else if (setting === t('seasonRegister')) {

@@ -690,7 +690,13 @@
 		"externalApiMonitoringLayerInvalid": "Некорректный слой API",
 		"externalApiMonitoringRunNotFound": "Запись мониторинга не найдена",
 		"externalApiMonitoringRunRequired": "Нет run для сохранения",
-		"externalApiMonitoringLoadFailed": "Не удалось загрузить мониторинг API"
+		"externalApiMonitoringLoadFailed": "Не удалось загрузить мониторинг API",
+		"sandboxUnsupportedProvider": "Провайдер не поддерживается для этого слоя",
+		"sandboxCompetitionIdRequired": "Укажите competition ID",
+		"sandboxTreeIdRequired": "Укажите tree ID",
+		"sandboxOddsModeRequired": "Выберите режим: tournament или event",
+		"sandboxDateRequired": "Укажите дату (YYYY-MM-DD)",
+		"sandboxGameIdRequired": "Укажите game ID"
 	},
 	"oddsDemo": {
 		"menuLink": "Кэфы (демо)",
@@ -1095,6 +1101,79 @@
 	"externalDataOddsForceMatchesEmpty": "Выберите матчи",
 	"externalDataOddsForceMatchesSelected": "Выбрано: {{count}}",
 	"externalDataOddsForceSyncNow": "Обновить кэфы выбранных матчей",
+	"apiSandbox": {
+		"menuLink": "API Sandbox",
+		"title": "Тестовый стенд API",
+		"hint": "Четыре независимых стенда для реальных запросов SCHEDULE, ODDS, LIVE и FULL_MATCH. Без записи в базу. Копируйте ID между вкладками.",
+		"tabsAria": "Слои API sandbox",
+		"runRequest": "Запросить",
+		"copy": "Копировать",
+		"copied": "Скопировано",
+		"copyParsed": "Копировать parsed JSON",
+		"copyRaw": "Копировать raw",
+		"parsedJson": "Parsed JSON",
+		"rawPayload": "Raw payload",
+		"rawTruncated": "Raw обрезан",
+		"statusOk": "OK",
+		"statusFail": "Ошибка",
+		"emptyResult": "Результат появится после запроса",
+		"scheduleHint": "Произвольный competition ID soccer365 — без Season/League в БД.",
+		"scheduleEmpty": "Введите competition ID и нажмите «Запросить»",
+		"oddsHint": "Tournament: список событий. Event: рынки кэфов по tree ID события.",
+		"oddsEmpty": "Введите tree ID и нажмите «Запросить»",
+		"liveHint": "Страница футбола 24score на дату. Фильтр title — подстрока названия лиги.",
+		"liveEmpty": "Выберите дату и нажмите «Запросить»",
+		"fullMatchHint": "Карточка матча soccer365 по game ID (из SCHEDULE).",
+		"fullMatchEmpty": "Вставьте game ID и нажмите «Запросить»",
+		"titleContainsPlaceholder": "например Казахстан",
+		"layer": {
+			"SCHEDULE": "SCHEDULE",
+			"ODDS": "ODDS",
+			"LIVE": "LIVE",
+			"FULL_MATCH": "FULL_MATCH"
+		},
+		"fields": {
+			"provider": "Провайдер",
+			"competitionId": "Competition ID",
+			"treeId": "Tree ID",
+			"oddsMode": "Режим",
+			"date": "Дата",
+			"titleContains": "Фильтр лиги (title)",
+			"gameId": "Game ID"
+		},
+		"oddsMode": {
+			"tournament": "Tournament (события)",
+			"event": "Event (кэфы)"
+		},
+		"kpi": {
+			"matches": "Матчи",
+			"rounds": "Туры",
+			"events": "События",
+			"markets": "Рынки",
+			"competitions": "Лиги",
+			"goals": "Голы"
+		},
+		"col": {
+			"round": "Тур",
+			"home": "Хозяева",
+			"away": "Гости",
+			"kickoff": "Kickoff UTC",
+			"status": "Статус",
+			"gameId": "Game ID",
+			"treeId": "Tree ID",
+			"name": "Название",
+			"league": "Лига",
+			"score": "Счёт",
+			"minute": "Минута",
+			"externalId": "External ID"
+		},
+		"score": {
+			"fullTime": "FT",
+			"firstTime": "HT",
+			"overTime": "OT",
+			"penalty": "PEN"
+		}
+	},
 	"externalApiMonitoring": {
 		"menuLink": "Мониторинг API",
 		"title": "Мониторинг внешних API",

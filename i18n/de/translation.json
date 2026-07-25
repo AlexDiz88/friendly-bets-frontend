@@ -690,7 +690,13 @@
 		"externalApiMonitoringLayerInvalid": "Ungültiger API-Layer",
 		"externalApiMonitoringRunNotFound": "Monitoring-Eintrag nicht gefunden",
 		"externalApiMonitoringRunRequired": "Monitoring-Run erforderlich",
-		"externalApiMonitoringLoadFailed": "API-Monitoring konnte nicht geladen werden"
+		"externalApiMonitoringLoadFailed": "API-Monitoring konnte nicht geladen werden",
+		"sandboxUnsupportedProvider": "Anbieter für diese Schicht nicht unterstützt",
+		"sandboxCompetitionIdRequired": "Competition-ID erforderlich",
+		"sandboxTreeIdRequired": "Tree-ID erforderlich",
+		"sandboxOddsModeRequired": "Modus wählen: tournament oder event",
+		"sandboxDateRequired": "Datum erforderlich (YYYY-MM-DD)",
+		"sandboxGameIdRequired": "Game-ID erforderlich"
 	},
 	"oddsDemo": {
 		"menuLink": "Quoten (Demo)",
@@ -1095,6 +1101,79 @@
 	"externalDataOddsForceMatchesEmpty": "Spiele auswählen",
 	"externalDataOddsForceMatchesSelected": "Ausgewählt: {{count}}",
 	"externalDataOddsForceSyncNow": "Quoten der ausgewählten Spiele aktualisieren",
+	"apiSandbox": {
+		"menuLink": "API Sandbox",
+		"title": "API-Teststand",
+		"hint": "Vier unabhängige Stände für echte SCHEDULE-, ODDS-, LIVE- und FULL_MATCH-Anfragen. Keine DB-Schreibvorgänge. IDs zwischen Tabs kopieren.",
+		"tabsAria": "API-Sandbox-Schichten",
+		"runRequest": "Anfragen",
+		"copy": "Kopieren",
+		"copied": "Kopiert",
+		"copyParsed": "Parsed JSON kopieren",
+		"copyRaw": "Raw kopieren",
+		"parsedJson": "Parsed JSON",
+		"rawPayload": "Raw payload",
+		"rawTruncated": "Raw gekürzt",
+		"statusOk": "OK",
+		"statusFail": "Fehler",
+		"emptyResult": "Ergebnis erscheint nach der Anfrage",
+		"scheduleHint": "Beliebige soccer365 Competition-ID — ohne Season/League in der DB.",
+		"scheduleEmpty": "Competition-ID eingeben und Anfragen klicken",
+		"oddsHint": "Tournament: Eventliste. Event: Quotenmärkte nach Event-Tree-ID.",
+		"oddsEmpty": "Tree-ID eingeben und Anfragen klicken",
+		"liveHint": "24score-Fußballseite für ein Datum. Title-Filter = Ligennamen-Teilstring.",
+		"liveEmpty": "Datum wählen und Anfragen klicken",
+		"fullMatchHint": "soccer365-Spielkarte nach Game-ID (aus SCHEDULE).",
+		"fullMatchEmpty": "Game-ID einfügen und Anfragen klicken",
+		"titleContainsPlaceholder": "z. B. Kasachstan",
+		"layer": {
+			"SCHEDULE": "SCHEDULE",
+			"ODDS": "ODDS",
+			"LIVE": "LIVE",
+			"FULL_MATCH": "FULL_MATCH"
+		},
+		"fields": {
+			"provider": "Anbieter",
+			"competitionId": "Competition ID",
+			"treeId": "Tree ID",
+			"oddsMode": "Modus",
+			"date": "Datum",
+			"titleContains": "Liga-Filter (title)",
+			"gameId": "Game ID"
+		},
+		"oddsMode": {
+			"tournament": "Tournament (Events)",
+			"event": "Event (Quoten)"
+		},
+		"kpi": {
+			"matches": "Spiele",
+			"rounds": "Runden",
+			"events": "Events",
+			"markets": "Märkte",
+			"competitions": "Ligen",
+			"goals": "Tore"
+		},
+		"col": {
+			"round": "Runde",
+			"home": "Heim",
+			"away": "Auswärts",
+			"kickoff": "Kickoff UTC",
+			"status": "Status",
+			"gameId": "Game ID",
+			"treeId": "Tree ID",
+			"name": "Name",
+			"league": "Liga",
+			"score": "Stand",
+			"minute": "Minute",
+			"externalId": "External ID"
+		},
+		"score": {
+			"fullTime": "FT",
+			"firstTime": "HT",
+			"overTime": "OT",
+			"penalty": "PEN"
+		}
+	},
 	"externalApiMonitoring": {
 		"menuLink": "API-Monitoring",
 		"title": "Externes API-Monitoring",

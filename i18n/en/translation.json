@@ -690,7 +690,13 @@
 		"externalApiMonitoringLayerInvalid": "Invalid API layer",
 		"externalApiMonitoringRunNotFound": "Monitoring run not found",
 		"externalApiMonitoringRunRequired": "Monitoring run is required",
-		"externalApiMonitoringLoadFailed": "Failed to load API monitoring"
+		"externalApiMonitoringLoadFailed": "Failed to load API monitoring",
+		"sandboxUnsupportedProvider": "Provider is not supported for this layer",
+		"sandboxCompetitionIdRequired": "Competition ID is required",
+		"sandboxTreeIdRequired": "Tree ID is required",
+		"sandboxOddsModeRequired": "Select mode: tournament or event",
+		"sandboxDateRequired": "Date is required (YYYY-MM-DD)",
+		"sandboxGameIdRequired": "Game ID is required"
 	},
 	"oddsDemo": {
 		"menuLink": "Odds (demo)",
@@ -1095,6 +1101,79 @@
 	"externalDataOddsForceMatchesEmpty": "Select matches",
 	"externalDataOddsForceMatchesSelected": "Selected: {{count}}",
 	"externalDataOddsForceSyncNow": "Update odds for selected matches",
+	"apiSandbox": {
+		"menuLink": "API Sandbox",
+		"title": "API Sandbox",
+		"hint": "Four independent stands for real SCHEDULE, ODDS, LIVE and FULL_MATCH requests. No database writes. Copy IDs between tabs.",
+		"tabsAria": "API sandbox layers",
+		"runRequest": "Request",
+		"copy": "Copy",
+		"copied": "Copied",
+		"copyParsed": "Copy parsed JSON",
+		"copyRaw": "Copy raw",
+		"parsedJson": "Parsed JSON",
+		"rawPayload": "Raw payload",
+		"rawTruncated": "Raw truncated",
+		"statusOk": "OK",
+		"statusFail": "Failed",
+		"emptyResult": "Result will appear after a request",
+		"scheduleHint": "Any soccer365 competition ID — no Season/League in DB.",
+		"scheduleEmpty": "Enter a competition ID and click Request",
+		"oddsHint": "Tournament: event list. Event: odds markets by event tree ID.",
+		"oddsEmpty": "Enter a tree ID and click Request",
+		"liveHint": "24score football page for a date. Title filter matches league name substring.",
+		"liveEmpty": "Pick a date and click Request",
+		"fullMatchHint": "soccer365 match card by game ID (from SCHEDULE).",
+		"fullMatchEmpty": "Paste a game ID and click Request",
+		"titleContainsPlaceholder": "e.g. Kazakhstan",
+		"layer": {
+			"SCHEDULE": "SCHEDULE",
+			"ODDS": "ODDS",
+			"LIVE": "LIVE",
+			"FULL_MATCH": "FULL_MATCH"
+		},
+		"fields": {
+			"provider": "Provider",
+			"competitionId": "Competition ID",
+			"treeId": "Tree ID",
+			"oddsMode": "Mode",
+			"date": "Date",
+			"titleContains": "League filter (title)",
+			"gameId": "Game ID"
+		},
+		"oddsMode": {
+			"tournament": "Tournament (events)",
+			"event": "Event (odds)"
+		},
+		"kpi": {
+			"matches": "Matches",
+			"rounds": "Rounds",
+			"events": "Events",
+			"markets": "Markets",
+			"competitions": "Leagues",
+			"goals": "Goals"
+		},
+		"col": {
+			"round": "Round",
+			"home": "Home",
+			"away": "Away",
+			"kickoff": "Kickoff UTC",
+			"status": "Status",
+			"gameId": "Game ID",
+			"treeId": "Tree ID",
+			"name": "Name",
+			"league": "League",
+			"score": "Score",
+			"minute": "Minute",
+			"externalId": "External ID"
+		},
+		"score": {
+			"fullTime": "FT",
+			"firstTime": "HT",
+			"overTime": "OT",
+			"penalty": "PEN"
+		}
+	},
 	"externalApiMonitoring": {
 		"menuLink": "API monitoring",
 		"title": "External API monitoring",
