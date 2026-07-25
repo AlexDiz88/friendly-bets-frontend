@@ -1045,6 +1045,7 @@
 		},
 		"oddsPick": {
 			"title": "Pick a bet",
+			"viewTitle": "Match odds",
 			"bestOdds": "Odds",
 			"confirmTitle": "Bet confirmation",
 			"confirmHelper": "Confirm your selected bet at the stated odds. Once submitted, they cannot be changed.",

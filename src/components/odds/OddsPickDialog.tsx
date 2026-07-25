@@ -68,13 +68,15 @@ type Props = {
 	onClose: () => void;
 	matchScheduleId: string;
 	match: ExternalMatch;
-	seasonId: string;
-	leagueId: string;
-	matchDay: string;
-	calendarNodeId: string;
-	betSize: number;
-	userId: string;
-	onBetPlaced: () => void;
+	/** Staff can browse markets without placing a bet. */
+	viewOnly?: boolean;
+	seasonId?: string;
+	leagueId?: string;
+	matchDay?: string;
+	calendarNodeId?: string;
+	betSize?: number;
+	userId?: string;
+	onBetPlaced?: () => void;
 };
 
 export default function OddsPickDialog({
@@ -82,6 +84,7 @@ export default function OddsPickDialog({
 	onClose,
 	matchScheduleId,
 	match,
+	viewOnly = false,
 	seasonId,
 	leagueId,
 	matchDay,
@@ -130,16 +133,26 @@ export default function OddsPickDialog({
 	}, [loadMarkets]);
 
 	const handleSelect = (row: OddsRowSelection) => {
+		if (viewOnly) {
+			return;
+		}
 		setSelection(row);
 		setConfirmOpen(true);
 	};
 
 	const handleConfirm = async () => {
+		if (viewOnly) {
+			return;
+		}
 		if (!selection?.betTitle) {
 			return;
 		}
 		if (!match.id) {
 			dispatch(showErrorSnackbar({ message: 'matchScheduleNotFound' }));
+			return;
+		}
+		if (!seasonId || !leagueId || !matchDay || !calendarNodeId || !userId || betSize == null) {
+			dispatch(showErrorSnackbar({ message: 'unknownError' }));
 			return;
 		}
 		setSubmitting(true);
@@ -166,13 +179,13 @@ export default function OddsPickDialog({
 			}
 			dispatch(showSuccessSnackbar({ message: t('wc26.oddsPick.success') }));
 			setConfirmOpen(false);
-			onBetPlaced();
+			onBetPlaced?.();
 			onClose();
 		} catch (e) {
 			const message = e instanceof Error ? e.message : 'unknownError';
 			dispatch(showErrorSnackbar({ message }));
 			if (message === 'betAlreadyAdded') {
-				onBetPlaced();
+				onBetPlaced?.();
 			}
 		} finally {
 			setSubmitting(false);
@@ -200,7 +213,7 @@ export default function OddsPickDialog({
 					<Box sx={oddsPickDialogHeaderSx}>
 						<Box sx={oddsPickDialogTitleRowSx}>
 							<Typography component="h2" sx={oddsPickDialogTitleSx}>
-								{t('wc26.oddsPick.title')}
+								{t(viewOnly ? 'wc26.oddsPick.viewTitle' : 'wc26.oddsPick.title')}
 							</Typography>
 							<Box sx={oddsPickDialogHeaderActionsSx}>
 								<ThemeModeToggle iconButtonSx={oddsPickDialogThemeToggleSx} />
@@ -249,8 +262,8 @@ export default function OddsPickDialog({
 										bookmakers={markets.bookmakers}
 										displayMode="best"
 										pickMode
-										selectable
-										onSelect={handleSelect}
+										selectable={!viewOnly}
+										onSelect={viewOnly ? undefined : handleSelect}
 									/>
 								) : (
 									<OddsMarketGroupAccordion
@@ -259,8 +272,8 @@ export default function OddsPickDialog({
 										bookmakers={markets.bookmakers}
 										displayMode="best"
 										pickMode
-										selectable
-										onSelect={handleSelect}
+										selectable={!viewOnly}
+										onSelect={viewOnly ? undefined : handleSelect}
 									/>
 								)
 							)
@@ -271,6 +284,7 @@ export default function OddsPickDialog({
 				</Box>
 			</Dialog>
 
+			{!viewOnly ? (
 			<CustomCalendarDialog
 				open={confirmOpen}
 				onClose={() => !submitting && setConfirmOpen(false)}
@@ -340,6 +354,7 @@ export default function OddsPickDialog({
 					) : undefined
 				}
 			/>
+			) : null}
 		</>
 	);
 }

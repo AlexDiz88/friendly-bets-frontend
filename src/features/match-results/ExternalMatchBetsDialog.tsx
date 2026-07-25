@@ -94,8 +94,9 @@ export default function ExternalMatchBetsDialog({
 	const [loading, setLoading] = useState(false);
 	const [bets, setBets] = useState<Bet[]>([]);
 
-	const homeWcTeam = resolveWc26TeamIdFromCountry(match.homeTeamCountry);
-	const awayWcTeam = resolveWc26TeamIdFromCountry(match.awayTeamCountry);
+	const isWcMatch = match.leagueCode === 'WC' || match.wc26ScheduleId != null;
+	const homeWcTeam = isWcMatch ? resolveWc26TeamIdFromCountry(match.homeTeamCountry) : null;
+	const awayWcTeam = isWcMatch ? resolveWc26TeamIdFromCountry(match.awayTeamCountry) : null;
 	const homeTeam = matchSideToDisplayTeam(match, 'home');
 	const awayTeam = matchSideToDisplayTeam(match, 'away');
 	const matchFinalized = Boolean(match.finalized);

@@ -1045,6 +1045,7 @@
 		},
 		"oddsPick": {
 			"title": "Wette wählen",
+			"viewTitle": "Spielquoten",
 			"bestOdds": "Quote",
 			"confirmTitle": "Wettbestätigung",
 			"confirmHelper": "Bestätigen Sie Ihre gewählte Wette mit der angegebenen Quote. Nach dem Absenden können sie nicht mehr geändert werden.",
