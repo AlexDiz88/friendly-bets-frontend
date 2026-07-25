@@ -20,7 +20,11 @@ import FullMatchSandboxStand, {
 	type FullMatchStandForm,
 } from './stands/FullMatchSandboxStand';
 import LiveSandboxStand, { type LiveStandForm } from './stands/LiveSandboxStand';
-import OddsSandboxStand, { type OddsStandForm } from './stands/OddsSandboxStand';
+import OddsSandboxStand, {
+	type OddsMode,
+	type OddsModeForm,
+	type OddsModeStandState,
+} from './stands/OddsSandboxStand';
 import ScheduleSandboxStand, { type ScheduleStandForm } from './stands/ScheduleSandboxStand';
 
 function todayIsoDate(): string {
@@ -29,6 +33,14 @@ function todayIsoDate(): string {
 	const mm = String(d.getMonth() + 1).padStart(2, '0');
 	const dd = String(d.getDate()).padStart(2, '0');
 	return `${yyyy}-${mm}-${dd}`;
+}
+
+function emptyOddsMode(provider = 'marathonbet'): OddsModeStandState {
+	return {
+		form: { provider, treeId: '' },
+		loading: false,
+		result: null,
+	};
 }
 
 type LayerStandState<F> = {
@@ -45,15 +57,13 @@ export default function ApiSandboxPage(): JSX.Element {
 	const [configLoading, setConfigLoading] = useState(true);
 
 	const [schedule, setSchedule] = useState<LayerStandState<ScheduleStandForm>>({
-		form: { provider: 'soccer365.ru', competitionId: '' },
+		form: { provider: 'soccer365.ru', competitionId: '', round: '', limit: '1' },
 		loading: false,
 		result: null,
 	});
-	const [odds, setOdds] = useState<LayerStandState<OddsStandForm>>({
-		form: { provider: 'marathonbet', mode: 'tournament', treeId: '' },
-		loading: false,
-		result: null,
-	});
+	const [oddsMode, setOddsMode] = useState<OddsMode>('tournament');
+	const [oddsTournament, setOddsTournament] = useState<OddsModeStandState>(() => emptyOddsMode());
+	const [oddsEvent, setOddsEvent] = useState<OddsModeStandState>(() => emptyOddsMode());
 	const [live, setLive] = useState<LayerStandState<LiveStandForm>>({
 		form: { provider: '24score.pro', date: todayIsoDate(), titleContains: '' },
 		loading: false,
@@ -76,6 +86,7 @@ export default function ApiSandboxPage(): JSX.Element {
 				const oddsProviders = config.capabilities?.ODDS || [];
 				const liveProviders = config.capabilities?.LIVE || [];
 				const fullProviders = config.capabilities?.FULL_MATCH || [];
+				const oddsProvider = oddsProviders[0] || 'marathonbet';
 				setSchedule((prev) => ({
 					...prev,
 					form: {
@@ -83,12 +94,13 @@ export default function ApiSandboxPage(): JSX.Element {
 						provider: scheduleProviders[0] || prev.form.provider,
 					},
 				}));
-				setOdds((prev) => ({
+				setOddsTournament((prev) => ({
 					...prev,
-					form: {
-						...prev.form,
-						provider: oddsProviders[0] || prev.form.provider,
-					},
+					form: { ...prev.form, provider: oddsProvider },
+				}));
+				setOddsEvent((prev) => ({
+					...prev,
+					form: { ...prev.form, provider: oddsProvider },
 				}));
 				setLive((prev) => ({
 					...prev,
@@ -124,11 +136,31 @@ export default function ApiSandboxPage(): JSX.Element {
 			dispatch(showErrorSnackbar({ message: 'sandboxCompetitionIdRequired' }));
 			return;
 		}
+		const roundRaw = schedule.form.round.trim();
+		let round: number | undefined;
+		if (roundRaw) {
+			round = Number(roundRaw);
+			if (!Number.isFinite(round) || round <= 0) {
+				dispatch(showErrorSnackbar({ message: 'sandboxRoundInvalid' }));
+				return;
+			}
+		}
+		const limitRaw = schedule.form.limit.trim();
+		let limit: number | undefined;
+		if (limitRaw) {
+			limit = Number(limitRaw);
+			if (!Number.isFinite(limit) || limit <= 0) {
+				dispatch(showErrorSnackbar({ message: 'sandboxLimitInvalid' }));
+				return;
+			}
+		}
 		setSchedule((prev) => ({ ...prev, loading: true }));
 		try {
 			const result = await sandboxSchedule({
 				provider: schedule.form.provider,
 				competitionId,
+				round,
+				limit,
 			});
 			setSchedule((prev) => ({ ...prev, result, loading: false }));
 		} catch (err) {
@@ -137,25 +169,28 @@ export default function ApiSandboxPage(): JSX.Element {
 		}
 	}, [dispatch, schedule.form]);
 
-	const runOdds = useCallback(async () => {
-		const treeId = Number(odds.form.treeId);
-		if (!Number.isFinite(treeId) || treeId <= 0) {
-			dispatch(showErrorSnackbar({ message: 'sandboxTreeIdRequired' }));
-			return;
-		}
-		setOdds((prev) => ({ ...prev, loading: true }));
-		try {
-			const result = await sandboxOdds({
-				provider: odds.form.provider,
-				mode: odds.form.mode,
-				treeId,
-			});
-			setOdds((prev) => ({ ...prev, result, loading: false }));
-		} catch (err) {
-			setOdds((prev) => ({ ...prev, loading: false }));
-			dispatch(showErrorSnackbar({ message: (err as Error).message }));
-		}
-	}, [dispatch, odds.form]);
+	const runOddsMode = useCallback(
+		async (mode: OddsMode, form: OddsModeForm, setState: typeof setOddsTournament) => {
+			const treeId = Number(form.treeId);
+			if (!Number.isFinite(treeId) || treeId <= 0) {
+				dispatch(showErrorSnackbar({ message: 'sandboxTreeIdRequired' }));
+				return;
+			}
+			setState((prev) => ({ ...prev, loading: true }));
+			try {
+				const result = await sandboxOdds({
+					provider: form.provider,
+					mode,
+					treeId,
+				});
+				setState((prev) => ({ ...prev, result, loading: false }));
+			} catch (err) {
+				setState((prev) => ({ ...prev, loading: false }));
+				dispatch(showErrorSnackbar({ message: (err as Error).message }));
+			}
+		},
+		[dispatch]
+	);
 
 	const runLive = useCallback(async () => {
 		if (!live.form.date) {
@@ -220,11 +255,18 @@ export default function ApiSandboxPage(): JSX.Element {
 					{activeLayer === 'ODDS' ? (
 						<OddsSandboxStand
 							providers={capabilities.ODDS || []}
-							form={odds.form}
-							onFormChange={(form) => setOdds((prev) => ({ ...prev, form }))}
-							loading={odds.loading}
-							result={odds.result}
-							onRun={() => void runOdds()}
+							activeMode={oddsMode}
+							onModeChange={setOddsMode}
+							tournament={oddsTournament}
+							event={oddsEvent}
+							onTournamentFormChange={(form) =>
+								setOddsTournament((prev) => ({ ...prev, form }))
+							}
+							onEventFormChange={(form) => setOddsEvent((prev) => ({ ...prev, form }))}
+							onRunTournament={() =>
+								void runOddsMode('tournament', oddsTournament.form, setOddsTournament)
+							}
+							onRunEvent={() => void runOddsMode('event', oddsEvent.form, setOddsEvent)}
 						/>
 					) : null}
 					{activeLayer === 'LIVE' ? (

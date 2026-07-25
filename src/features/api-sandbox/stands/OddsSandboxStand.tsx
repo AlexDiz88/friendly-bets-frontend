@@ -20,6 +20,7 @@ import {
 	LAYER_ACCENT,
 	sandboxFieldLabelSx,
 	sandboxFormColSx,
+	sandboxLayerChipSx,
 	sandboxResultColSx,
 	sandboxStandLayoutSx,
 	sandboxTableSx,
@@ -27,10 +28,17 @@ import {
 import CopyableValue from '../CopyableValue';
 import SandboxResultPanel from '../SandboxResultPanel';
 
-export type OddsStandForm = {
+export type OddsMode = 'tournament' | 'event';
+
+export type OddsModeForm = {
 	provider: string;
-	mode: 'tournament' | 'event';
 	treeId: string;
+};
+
+export type OddsModeStandState = {
+	form: OddsModeForm;
+	loading: boolean;
+	result: SandboxResult | null;
 };
 
 type OddsParsed = {
@@ -43,7 +51,6 @@ type OddsParsed = {
 	events?: Array<{
 		treeId?: number;
 		eventId?: number | null;
-		name?: string;
 		homeTeam?: string;
 		awayTeam?: string;
 		displayTimeMillis?: number | null;
@@ -52,32 +59,45 @@ type OddsParsed = {
 
 type OddsSandboxStandProps = {
 	providers: string[];
-	form: OddsStandForm;
-	onFormChange: (next: OddsStandForm) => void;
-	loading: boolean;
-	result: SandboxResult | null;
-	onRun: () => void;
+	activeMode: OddsMode;
+	onModeChange: (mode: OddsMode) => void;
+	tournament: OddsModeStandState;
+	event: OddsModeStandState;
+	onTournamentFormChange: (next: OddsModeForm) => void;
+	onEventFormChange: (next: OddsModeForm) => void;
+	onRunTournament: () => void;
+	onRunEvent: () => void;
 };
 
 export default function OddsSandboxStand({
 	providers,
-	form,
-	onFormChange,
-	loading,
-	result,
-	onRun,
+	activeMode,
+	onModeChange,
+	tournament,
+	event,
+	onTournamentFormChange,
+	onEventFormChange,
+	onRunTournament,
+	onRunEvent,
 }: OddsSandboxStandProps): JSX.Element {
 	const { t } = useTranslation();
 	const accent = LAYER_ACCENT.ODDS;
-	const parsed = (result?.parsed || null) as OddsParsed | null;
 	const providerOptions = providers.length > 0 ? providers : ['marathonbet'];
+
+	const active = activeMode === 'tournament' ? tournament : event;
+	const onFormChange = activeMode === 'tournament' ? onTournamentFormChange : onEventFormChange;
+	const onRun = activeMode === 'tournament' ? onRunTournament : onRunEvent;
+	const form = active.form;
+	const loading = active.loading;
+	const result = active.result;
 	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
+	const parsed = (result?.parsed || null) as OddsParsed | null;
 
 	const summary =
 		result?.success && parsed ? (
 			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
 				<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
-					<Chip size="small" label={parsed.mode || form.mode} color="warning" variant="outlined" />
+					<Chip size="small" label={parsed.mode || activeMode} color="warning" variant="outlined" />
 					{parsed.mode === 'tournament' ? (
 						<>
 							<Chip size="small" label={`${t('apiSandbox.kpi.events')}: ${parsed.eventsCount ?? 0}`} />
@@ -99,23 +119,19 @@ export default function OddsSandboxStand({
 									<TableCell>{t('apiSandbox.col.treeId')}</TableCell>
 									<TableCell>{t('apiSandbox.col.home')}</TableCell>
 									<TableCell>{t('apiSandbox.col.away')}</TableCell>
-									<TableCell>{t('apiSandbox.col.name')}</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{(parsed.events || []).map((event, idx) => (
-									<TableRow key={`${event.treeId}-${idx}`}>
+								{(parsed.events || []).map((ev, idx) => (
+									<TableRow key={`${ev.treeId}-${idx}`}>
 										<TableCell>
-											<CopyableValue value={event.treeId} />
+											<CopyableValue value={ev.treeId} />
 										</TableCell>
 										<TableCell>
-											<CopyableValue value={event.homeTeam} mono={false} />
+											<CopyableValue value={ev.homeTeam} mono={false} />
 										</TableCell>
 										<TableCell>
-											<CopyableValue value={event.awayTeam} mono={false} />
-										</TableCell>
-										<TableCell sx={{ maxWidth: 220 }}>
-											<CopyableValue value={event.name} mono={false} />
+											<CopyableValue value={ev.awayTeam} mono={false} />
 										</TableCell>
 									</TableRow>
 								))}
@@ -141,8 +157,21 @@ export default function OddsSandboxStand({
 					{t('apiSandbox.layer.ODDS')}
 				</Typography>
 				<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', mt: -1 }}>
-					{t('apiSandbox.oddsHint')}
+					{activeMode === 'tournament' ? t('apiSandbox.oddsTournamentHint') : t('apiSandbox.oddsEventHint')}
 				</Typography>
+
+				<Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
+					<Chip
+						label={t('apiSandbox.oddsMode.tournamentShort')}
+						onClick={() => onModeChange('tournament')}
+						sx={sandboxLayerChipSx(activeMode === 'tournament', accent)}
+					/>
+					<Chip
+						label={t('apiSandbox.oddsMode.eventShort')}
+						onClick={() => onModeChange('event')}
+						sx={sandboxLayerChipSx(activeMode === 'event', accent)}
+					/>
+				</Box>
 
 				<Box>
 					<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.provider')}</Typography>
@@ -161,28 +190,17 @@ export default function OddsSandboxStand({
 				</Box>
 
 				<Box>
-					<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.oddsMode')}</Typography>
-					<FormControl fullWidth size="small">
-						<Select
-							value={form.mode}
-							onChange={(e) =>
-								onFormChange({ ...form, mode: e.target.value as 'tournament' | 'event' })
-							}
-						>
-							<MenuItem value="tournament">{t('apiSandbox.oddsMode.tournament')}</MenuItem>
-							<MenuItem value="event">{t('apiSandbox.oddsMode.event')}</MenuItem>
-						</Select>
-					</FormControl>
-				</Box>
-
-				<Box>
-					<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.treeId')}</Typography>
+					<Typography sx={sandboxFieldLabelSx}>
+						{activeMode === 'tournament'
+							? t('apiSandbox.fields.tournamentTreeId')
+							: t('apiSandbox.fields.eventTreeId')}
+					</Typography>
 					<TextField
 						fullWidth
 						size="small"
 						value={form.treeId}
 						onChange={(e) => onFormChange({ ...form, treeId: e.target.value })}
-						placeholder="21520"
+						placeholder={activeMode === 'tournament' ? '22433' : '29432420'}
 						inputProps={{ inputMode: 'numeric' }}
 					/>
 				</Box>
@@ -202,7 +220,9 @@ export default function OddsSandboxStand({
 					result={result}
 					accent={accent}
 					summary={summary}
-					emptyHint={t('apiSandbox.oddsEmpty')}
+					emptyHint={
+						activeMode === 'tournament' ? t('apiSandbox.oddsTournamentEmpty') : t('apiSandbox.oddsEventEmpty')
+					}
 				/>
 			</Box>
 		</Box>

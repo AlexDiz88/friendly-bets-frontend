@@ -696,7 +696,9 @@
 		"sandboxTreeIdRequired": "Tree-ID erforderlich",
 		"sandboxOddsModeRequired": "Modus wählen: tournament oder event",
 		"sandboxDateRequired": "Datum erforderlich (YYYY-MM-DD)",
-		"sandboxGameIdRequired": "Game-ID erforderlich"
+		"sandboxGameIdRequired": "Game-ID erforderlich",
+		"sandboxRoundInvalid": "Runde muss eine positive Zahl sein",
+		"sandboxLimitInvalid": "Limit muss eine positive Zahl sein"
 	},
 	"oddsDemo": {
 		"menuLink": "Quoten (Demo)",
@@ -1110,17 +1112,22 @@
 		"copy": "Kopieren",
 		"copied": "Kopiert",
 		"copyParsed": "Parsed JSON kopieren",
-		"copyRaw": "Raw kopieren",
 		"parsedJson": "Parsed JSON",
-		"rawPayload": "Raw payload",
-		"rawTruncated": "Raw gekürzt",
+		"parsedTruncated": "Parsed durch Filter gekürzt",
+		"parsedDisplayTruncated": "Parsed JSON in UI gekürzt",
 		"statusOk": "OK",
 		"statusFail": "Fehler",
 		"emptyResult": "Ergebnis erscheint nach der Anfrage",
-		"scheduleHint": "Beliebige soccer365 Competition-ID — ohne Season/League in der DB.",
+		"scheduleHint": "Beliebige soccer365 Competition-ID — ohne Season/League in der DB. Runde und Limit kürzen nur parsed.",
 		"scheduleEmpty": "Competition-ID eingeben und Anfragen klicken",
+		"roundOptional": "optional",
+		"limitOptional": "z. B. 1",
 		"oddsHint": "Tournament: Eventliste. Event: Quotenmärkte nach Event-Tree-ID.",
+		"oddsTournamentHint": "Marathonbet-Turnier-Events nach Tournament-Tree-ID.",
+		"oddsEventHint": "Event-Quoten — Match-Tree-ID aus dem Tournament-Tab einfügen.",
 		"oddsEmpty": "Tree-ID eingeben und Anfragen klicken",
+		"oddsTournamentEmpty": "Tournament-Tree-ID eingeben und Anfragen klicken",
+		"oddsEventEmpty": "Match-Tree-ID einfügen und Anfragen klicken",
 		"liveHint": "24score-Fußballseite für ein Datum. Title-Filter = Ligennamen-Teilstring.",
 		"liveEmpty": "Datum wählen und Anfragen klicken",
 		"fullMatchHint": "soccer365-Spielkarte nach Game-ID (aus SCHEDULE).",
@@ -1135,7 +1142,11 @@
 		"fields": {
 			"provider": "Anbieter",
 			"competitionId": "Competition ID",
+			"round": "Runde",
+			"limit": "Match-Limit",
 			"treeId": "Tree ID",
+			"tournamentTreeId": "Tournament tree ID",
+			"eventTreeId": "Event tree ID",
 			"oddsMode": "Modus",
 			"date": "Datum",
 			"titleContains": "Liga-Filter (title)",
@@ -1143,7 +1154,9 @@
 		},
 		"oddsMode": {
 			"tournament": "Tournament (Events)",
-			"event": "Event (Quoten)"
+			"event": "Event (Quoten)",
+			"tournamentShort": "Tournament",
+			"eventShort": "Event"
 		},
 		"kpi": {
 			"matches": "Spiele",

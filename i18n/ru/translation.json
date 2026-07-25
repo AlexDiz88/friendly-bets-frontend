@@ -696,7 +696,9 @@
 		"sandboxTreeIdRequired": "Укажите tree ID",
 		"sandboxOddsModeRequired": "Выберите режим: tournament или event",
 		"sandboxDateRequired": "Укажите дату (YYYY-MM-DD)",
-		"sandboxGameIdRequired": "Укажите game ID"
+		"sandboxGameIdRequired": "Укажите game ID",
+		"sandboxRoundInvalid": "Номер тура должен быть положительным числом",
+		"sandboxLimitInvalid": "Лимит должен быть положительным числом"
 	},
 	"oddsDemo": {
 		"menuLink": "Кэфы (демо)",
@@ -1110,17 +1112,22 @@
 		"copy": "Копировать",
 		"copied": "Скопировано",
 		"copyParsed": "Копировать parsed JSON",
-		"copyRaw": "Копировать raw",
 		"parsedJson": "Parsed JSON",
-		"rawPayload": "Raw payload",
-		"rawTruncated": "Raw обрезан",
+		"parsedTruncated": "Parsed обрезан фильтром",
+		"parsedDisplayTruncated": "Parsed JSON обрезан в UI",
 		"statusOk": "OK",
 		"statusFail": "Ошибка",
 		"emptyResult": "Результат появится после запроса",
-		"scheduleHint": "Произвольный competition ID soccer365 — без Season/League в БД.",
+		"scheduleHint": "Произвольный competition ID soccer365 — без Season/League в БД. Тур и лимит режут только parsed.",
 		"scheduleEmpty": "Введите competition ID и нажмите «Запросить»",
+		"roundOptional": "необязательно",
+		"limitOptional": "напр. 1",
 		"oddsHint": "Tournament: список событий. Event: рынки кэфов по tree ID события.",
+		"oddsTournamentHint": "Список событий турнира Marathonbet по tournament tree ID.",
+		"oddsEventHint": "Рынки кэфов события — вставляй tree ID матча из вкладки Tournament.",
 		"oddsEmpty": "Введите tree ID и нажмите «Запросить»",
+		"oddsTournamentEmpty": "Введите tournament tree ID и нажмите «Запросить»",
+		"oddsEventEmpty": "Вставьте tree ID матча и нажмите «Запросить»",
 		"liveHint": "Страница футбола 24score на дату. Фильтр title — подстрока названия лиги.",
 		"liveEmpty": "Выберите дату и нажмите «Запросить»",
 		"fullMatchHint": "Карточка матча soccer365 по game ID (из SCHEDULE).",
@@ -1135,7 +1142,11 @@
 		"fields": {
 			"provider": "Провайдер",
 			"competitionId": "Competition ID",
+			"round": "Тур",
+			"limit": "Лимит матчей",
 			"treeId": "Tree ID",
+			"tournamentTreeId": "Tournament tree ID",
+			"eventTreeId": "Event tree ID",
 			"oddsMode": "Режим",
 			"date": "Дата",
 			"titleContains": "Фильтр лиги (title)",
@@ -1143,7 +1154,9 @@
 		},
 		"oddsMode": {
 			"tournament": "Tournament (события)",
-			"event": "Event (кэфы)"
+			"event": "Event (кэфы)",
+			"tournamentShort": "Tournament",
+			"eventShort": "Event"
 		},
 		"kpi": {
 			"matches": "Матчи",

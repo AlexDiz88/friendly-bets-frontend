@@ -16,8 +16,6 @@ export type SandboxResult = {
 	errorKey?: string | null;
 	errorDetail?: string | null;
 	parsed?: unknown;
-	rawPayload?: string | null;
-	rawTruncated?: boolean;
 };
 
 async function postSandbox(path: string, body: unknown): Promise<SandboxResult> {
@@ -36,6 +34,8 @@ async function postSandbox(path: string, body: unknown): Promise<SandboxResult> 
 export async function sandboxSchedule(body: {
 	provider: string;
 	competitionId: number;
+	round?: number;
+	limit?: number;
 }): Promise<SandboxResult> {
 	return postSandbox('/api/admin/external-data/sandbox/schedule', body);
 }

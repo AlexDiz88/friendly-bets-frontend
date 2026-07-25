@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '../../app/hooks';
 import { showSuccessSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import type { SandboxResult } from './apiSandboxApi';
-import { sandboxPreCompactSx, sandboxPreSx } from './apiSandboxPageStyles';
+import { sandboxPreSx } from './apiSandboxPageStyles';
 import { copyText } from './CopyableValue';
 
 type SandboxResultPanelProps = {
@@ -34,15 +34,17 @@ export default function SandboxResultPanel({
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const handleCopyParsed = async (): Promise<void> => {
-		if (!result?.parsed) return;
-		await copyText(JSON.stringify(result.parsed, null, 2));
-		dispatch(showSuccessSnackbar({ message: t('apiSandbox.copied'), duration: 1600 }));
-	};
+	const fullParsedJson =
+		result?.parsed != null ? JSON.stringify(result.parsed, null, 2) : '';
+	const PARSED_DISPLAY_MAX = 12_000;
+	const parsedDisplayTruncated = fullParsedJson.length > PARSED_DISPLAY_MAX;
+	const displayedParsedJson = parsedDisplayTruncated
+		? `${fullParsedJson.slice(0, PARSED_DISPLAY_MAX)}\n…`
+		: fullParsedJson;
 
-	const handleCopyRaw = async (): Promise<void> => {
-		if (!result?.rawPayload) return;
-		await copyText(result.rawPayload);
+	const handleCopyParsed = async (): Promise<void> => {
+		if (!fullParsedJson) return;
+		await copyText(fullParsedJson);
 		dispatch(showSuccessSnackbar({ message: t('apiSandbox.copied'), duration: 1600 }));
 	};
 
@@ -86,21 +88,14 @@ export default function SandboxResultPanel({
 				{result.provider ? (
 					<Chip size="small" label={result.provider} variant="outlined" />
 				) : null}
-				{result.rawTruncated ? (
-					<Chip size="small" label={t('apiSandbox.rawTruncated')} color="warning" variant="outlined" />
+				{parsedDisplayTruncated ? (
+					<Chip size="small" label={t('apiSandbox.parsedDisplayTruncated')} color="warning" variant="outlined" />
 				) : null}
 				<Box sx={{ flex: 1 }} />
 				<Tooltip title={t('apiSandbox.copyParsed')}>
 					<span>
 						<IconButton size="small" disabled={!result.parsed} onClick={() => void handleCopyParsed()}>
 							<ContentCopyIcon fontSize="small" />
-						</IconButton>
-					</span>
-				</Tooltip>
-				<Tooltip title={t('apiSandbox.copyRaw')}>
-					<span>
-						<IconButton size="small" disabled={!result.rawPayload} onClick={() => void handleCopyRaw()}>
-							<ContentCopyIcon fontSize="small" sx={{ opacity: 0.7 }} />
 						</IconButton>
 					</span>
 				</Tooltip>
@@ -128,18 +123,7 @@ export default function SandboxResultPanel({
 						{t('apiSandbox.parsedJson')}
 					</Typography>
 					<Box component="pre" sx={sandboxPreSx}>
-						{JSON.stringify(result.parsed, null, 2)}
-					</Box>
-				</Box>
-			) : null}
-
-			{result.rawPayload ? (
-				<Box>
-					<Typography sx={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.05em', mb: 0.75, color: 'text.secondary' }}>
-						{t('apiSandbox.rawPayload')}
-					</Typography>
-					<Box component="pre" sx={sandboxPreCompactSx}>
-						{result.rawPayload}
+						{displayedParsedJson}
 					</Box>
 				</Box>
 			) : null}

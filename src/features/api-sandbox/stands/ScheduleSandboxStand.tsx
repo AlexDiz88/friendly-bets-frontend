@@ -31,12 +31,19 @@ import SandboxResultPanel from '../SandboxResultPanel';
 export type ScheduleStandForm = {
 	provider: string;
 	competitionId: string;
+	round: string;
+	limit: string;
 };
 
 type ScheduleParsed = {
 	competitionId?: number;
+	roundFilter?: number | null;
+	limit?: number | null;
+	matchesTotal?: number;
+	roundsTotal?: number;
 	roundsCount?: number;
 	matchesCount?: number;
+	parsedTruncated?: boolean;
 	rounds?: Array<{
 		number: number;
 		matches: Array<{
@@ -76,8 +83,18 @@ export default function ScheduleSandboxStand({
 		result?.success && parsed ? (
 			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
 				<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-					<Chip size="small" label={`${t('apiSandbox.kpi.matches')}: ${parsed.matchesCount ?? 0}`} />
+					<Chip
+						size="small"
+						label={`${t('apiSandbox.kpi.matches')}: ${parsed.matchesCount ?? 0}${
+							parsed.matchesTotal != null && parsed.matchesTotal !== parsed.matchesCount
+								? ` / ${parsed.matchesTotal}`
+								: ''
+						}`}
+					/>
 					<Chip size="small" label={`${t('apiSandbox.kpi.rounds')}: ${parsed.roundsCount ?? 0}`} />
+					{parsed.parsedTruncated ? (
+						<Chip size="small" color="warning" variant="outlined" label={t('apiSandbox.parsedTruncated')} />
+					) : null}
 					<CopyableValue value={parsed.competitionId} label={t('apiSandbox.fields.competitionId')} />
 				</Box>
 				<TableContainer sx={{ maxHeight: 280, borderRadius: 1.5, border: '1px solid', borderColor: 'divider' }}>
@@ -155,6 +172,30 @@ export default function ScheduleSandboxStand({
 						value={form.competitionId}
 						onChange={(e) => onFormChange({ ...form, competitionId: e.target.value })}
 						placeholder="12"
+						inputProps={{ inputMode: 'numeric' }}
+					/>
+				</Box>
+
+				<Box>
+					<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.round')}</Typography>
+					<TextField
+						fullWidth
+						size="small"
+						value={form.round}
+						onChange={(e) => onFormChange({ ...form, round: e.target.value })}
+						placeholder={t('apiSandbox.roundOptional')}
+						inputProps={{ inputMode: 'numeric' }}
+					/>
+				</Box>
+
+				<Box>
+					<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.limit')}</Typography>
+					<TextField
+						fullWidth
+						size="small"
+						value={form.limit}
+						onChange={(e) => onFormChange({ ...form, limit: e.target.value })}
+						placeholder={t('apiSandbox.limitOptional')}
 						inputProps={{ inputMode: 'numeric' }}
 					/>
 				</Box>

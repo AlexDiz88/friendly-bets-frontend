@@ -137,26 +137,18 @@ export const sandboxPreSx: SxProps<Theme> = (theme) => ({
 	border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(148,163,184,0.12)' : 'rgba(15,23,42,0.08)'}`,
 });
 
-export const sandboxPreCompactSx: SxProps<Theme> = (theme) => ({
-	m: 0,
-	p: 1.5,
-	borderRadius: 1.5,
-	fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-	fontSize: '0.72rem',
-	lineHeight: 1.45,
-	overflow: 'auto',
-	maxHeight: 220,
-	whiteSpace: 'pre-wrap',
-	wordBreak: 'break-word',
-	background: theme.palette.mode === 'dark' ? 'rgba(2,6,23,0.65)' : 'rgba(248,250,252,0.95)',
-	border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(148,163,184,0.12)' : 'rgba(15,23,42,0.08)'}`,
-});
-
 export const sandboxTableSx: SxProps<Theme> = (theme) => ({
 	'& .MuiTableCell-root': {
 		borderColor: theme.palette.mode === 'dark' ? 'rgba(148,163,184,0.1)' : 'rgba(15,23,42,0.06)',
 		py: 0.75,
+		px: 1.5,
 		fontSize: '0.8rem',
+	},
+	'& .MuiTableCell-root:first-of-type': {
+		pl: 2,
+	},
+	'& .MuiTableCell-root:last-of-type': {
+		pr: 2,
 	},
 	'& .MuiTableHead-root .MuiTableCell-root': {
 		fontWeight: 700,
