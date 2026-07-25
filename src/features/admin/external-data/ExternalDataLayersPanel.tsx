@@ -9,21 +9,17 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { useCallback, useEffect, useState } from 'react';
+import { useAppDispatch } from '../../../app/hooks';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
-import LeagueSelect from '../../../components/selectors/LeagueSelect';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
 import AdminSection from '../AdminSection';
-import { getActiveSeason } from '../seasons/seasonsSlice';
-import { selectActiveSeason } from '../seasons/selectors';
 import {
 	ExternalDataLayer,
 	ExternalDataLayerConfig,
 	LayerAssignment,
 	fetchExternalDataLayerConfig,
 	patchExternalDataLayerConfig,
-	syncExternalLive,
 } from './externalDataAdminApi';
 
 const LAYERS: ExternalDataLayer[] = ['SCHEDULE', 'ODDS', 'LIVE', 'FULL_MATCH'];
@@ -39,19 +35,10 @@ const NONE = '';
 
 export default function ExternalDataLayersPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
-	const activeSeason = useAppSelector(selectActiveSeason);
 	const [loading, setLoading] = useState(true);
 	const [saving, setSaving] = useState(false);
-	const [syncingLive, setSyncingLive] = useState(false);
 	const [config, setConfig] = useState<ExternalDataLayerConfig | null>(null);
 	const [draft, setDraft] = useState<Partial<Record<ExternalDataLayer, LayerAssignment>>>({});
-	const [liveLeagueCode, setLiveLeagueCode] = useState('EPL');
-
-	useEffect(() => {
-		if (!activeSeason) {
-			void dispatch(getActiveSeason());
-		}
-	}, [activeSeason, dispatch]);
 
 	const load = useCallback(async () => {
 		setLoading(true);
@@ -73,15 +60,6 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 	useEffect(() => {
 		void load();
 	}, [load]);
-
-	const leagues = useMemo(() => activeSeason?.leagues ?? [], [activeSeason?.leagues]);
-
-	const effectiveLiveLeague = useMemo(() => {
-		if (leagues.some((l) => l.leagueCode === liveLeagueCode)) {
-			return liveLeagueCode;
-		}
-		return leagues[0]?.leagueCode ?? '';
-	}, [leagues, liveLeagueCode]);
 
 	const optionsFor = (layer: ExternalDataLayer): string[] => {
 		const fromCaps = config?.capabilities?.[layer] ?? [];
@@ -123,32 +101,6 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 			);
 		} finally {
 			setSaving(false);
-		}
-	};
-
-	const handleLiveSync = async (): Promise<void> => {
-		if (!effectiveLiveLeague) {
-			return;
-		}
-		setSyncingLive(true);
-		try {
-			const result = await syncExternalLive(effectiveLiveLeague);
-			dispatch(
-				showSuccessSnackbar({
-					message: t('externalDataLiveSyncSuccess', {
-						updated: result.updated,
-						finished: result.finishedDetected,
-					}),
-				})
-			);
-		} catch (error) {
-			dispatch(
-				showErrorSnackbar({
-					message: error instanceof Error ? error.message : 'externalDataLiveSyncFailed',
-				})
-			);
-		} finally {
-			setSyncingLive(false);
 		}
 	};
 
@@ -212,28 +164,6 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 						disabled={saving}
 						loading={saving}
 						buttonText={t('btnText.save')}
-						sx={{ width: '100%', mb: 2, mr: 0 }}
-					/>
-
-					<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
-						{t('externalDataLiveSyncTitle')}
-					</Typography>
-					{leagues.length > 0 ? (
-						<Box sx={{ mb: 1 }}>
-							<LeagueSelect
-								leagues={leagues}
-								value={effectiveLiveLeague}
-								onChange={(e) => setLiveLeagueCode(String(e.target.value))}
-								withoutAll
-								fullLeagueNames
-							/>
-						</Box>
-					) : null}
-					<CustomSuccessButton
-						onClick={() => void handleLiveSync()}
-						disabled={syncingLive || !effectiveLiveLeague}
-						loading={syncingLive}
-						buttonText={t('externalDataLiveSyncNow')}
 						sx={{ width: '100%', mr: 0 }}
 					/>
 				</>

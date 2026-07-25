@@ -16,8 +16,9 @@ import {
 import LeagueFormatAssignment from './leagues/LeagueFormatAssignment';
 import SeasonDateAssignment from './seasons/SeasonDateAssignment';
 import SeasonsManagement from './seasons/SeasonsManagement';
-import Soccer365TeamNamesPanel from './soccer365/Soccer365TeamNamesPanel';
 import ExternalDataLayersPanel from './external-data/ExternalDataLayersPanel';
+import ExternalTeamAliasesPanel from './external-data/ExternalTeamAliasesPanel';
+import ManualExternalSyncPanel from './external-data/ManualExternalSyncPanel';
 import TeamsManagement from './teams/TeamsManagement';
 import TournamentFormatsManagement from './tournament-formats/TournamentFormatsManagement';
 
@@ -52,7 +53,8 @@ export default function AdminCabinet(): JSX.Element {
 
 					<AdminGroupHeading label={t('adminPanelGroupSync')} />
 					<ExternalDataLayersPanel />
-					<Soccer365TeamNamesPanel />
+					<ManualExternalSyncPanel />
+					<ExternalTeamAliasesPanel />
 
 					<AdminGroupHeading label={t('adminPanelGroupTeams')} />
 					<TeamsManagement />
