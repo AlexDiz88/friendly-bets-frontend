@@ -11,6 +11,7 @@ import type { SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
+import CustomButton from '../../../components/custom/btn/CustomButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
 import AdminSection from '../AdminSection';
@@ -35,7 +36,8 @@ const NONE = '';
 
 export default function ExternalDataLayersPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
-	const [loading, setLoading] = useState(true);
+	const [showPanel, setShowPanel] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [saving, setSaving] = useState(false);
 	const [config, setConfig] = useState<ExternalDataLayerConfig | null>(null);
 	const [draft, setDraft] = useState<Partial<Record<ExternalDataLayer, LayerAssignment>>>({});
@@ -58,8 +60,10 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 	}, [dispatch]);
 
 	useEffect(() => {
-		void load();
-	}, [load]);
+		if (showPanel && !config) {
+			void load();
+		}
+	}, [showPanel, config, load]);
 
 	const optionsFor = (layer: ExternalDataLayer): string[] => {
 		const fromCaps = config?.capabilities?.[layer] ?? [];
@@ -105,69 +109,83 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 	};
 
 	return (
-		<AdminSection title={t('externalDataLayersTitle')} hint={t('externalDataLayersHint')}>
-			{loading || !config ? (
-				<Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-					<CircularProgress size={28} />
-				</Box>
-			) : (
-				<>
-					{LAYERS.map((layer) => {
-						const options = optionsFor(layer);
-						const assignment = draft[layer] ?? {};
-						const primary = assignment.primaryProvider ?? NONE;
-						const secondary = assignment.secondaryProvider ?? NONE;
-						const safePrimary = options.includes(primary) ? primary : NONE;
-						const safeSecondary = options.includes(secondary) ? secondary : NONE;
-						return (
-							<Box key={layer} sx={{ mb: 2 }}>
-								<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
-									{t(LAYER_LABEL_KEY[layer])}
-								</Typography>
-								<FormControl fullWidth size="small" sx={{ mb: 1 }}>
-									<InputLabel id={`${layer}-primary`}>{t('externalDataPrimary')}</InputLabel>
-									<Select
-										labelId={`${layer}-primary`}
-										label={t('externalDataPrimary')}
-										value={safePrimary}
-										onChange={(e: SelectChangeEvent) => handlePrimary(layer, e.target.value)}
-									>
-										<MenuItem value={NONE}>{t('externalDataProviderNone')}</MenuItem>
-										{options.map((id) => (
-											<MenuItem key={id} value={id}>
-												{id}
-											</MenuItem>
-										))}
-									</Select>
-								</FormControl>
-								<FormControl fullWidth size="small">
-									<InputLabel id={`${layer}-secondary`}>{t('externalDataSecondary')}</InputLabel>
-									<Select
-										labelId={`${layer}-secondary`}
-										label={t('externalDataSecondary')}
-										value={safeSecondary}
-										onChange={(e: SelectChangeEvent) => handleSecondary(layer, e.target.value)}
-									>
-										<MenuItem value={NONE}>{t('externalDataProviderNone')}</MenuItem>
-										{options.map((id) => (
-											<MenuItem key={id} value={id}>
-												{id}
-											</MenuItem>
-										))}
-									</Select>
-								</FormControl>
-							</Box>
-						);
-					})}
-					<CustomSuccessButton
-						onClick={() => void handleSave()}
-						disabled={saving}
-						loading={saving}
-						buttonText={t('btnText.save')}
-						sx={{ width: '100%', mr: 0 }}
-					/>
-				</>
-			)}
+		<AdminSection
+			title={t('externalDataLayersTitle')}
+			hint={showPanel ? t('externalDataLayersHint') : undefined}
+		>
+			<CustomButton
+				sx={{ width: '100%', mb: showPanel ? 1.5 : 0 }}
+				onClick={() => setShowPanel(!showPanel)}
+				buttonColor="info"
+				buttonVariant="outlined"
+				buttonText={
+					showPanel ? t('hideExternalDataLayers') : t('showExternalDataLayers')
+				}
+			/>
+
+			{showPanel &&
+				(loading || !config ? (
+					<Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+						<CircularProgress size={28} />
+					</Box>
+				) : (
+					<>
+						{LAYERS.map((layer) => {
+							const options = optionsFor(layer);
+							const assignment = draft[layer] ?? {};
+							const primary = assignment.primaryProvider ?? NONE;
+							const secondary = assignment.secondaryProvider ?? NONE;
+							const safePrimary = options.includes(primary) ? primary : NONE;
+							const safeSecondary = options.includes(secondary) ? secondary : NONE;
+							return (
+								<Box key={layer} sx={{ mb: 2 }}>
+									<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
+										{t(LAYER_LABEL_KEY[layer])}
+									</Typography>
+									<FormControl fullWidth size="small" sx={{ mb: 1 }}>
+										<InputLabel id={`${layer}-primary`}>{t('externalDataPrimary')}</InputLabel>
+										<Select
+											labelId={`${layer}-primary`}
+											label={t('externalDataPrimary')}
+											value={safePrimary}
+											onChange={(e: SelectChangeEvent) => handlePrimary(layer, e.target.value)}
+										>
+											<MenuItem value={NONE}>{t('externalDataProviderNone')}</MenuItem>
+											{options.map((id) => (
+												<MenuItem key={id} value={id}>
+													{id}
+												</MenuItem>
+											))}
+										</Select>
+									</FormControl>
+									<FormControl fullWidth size="small">
+										<InputLabel id={`${layer}-secondary`}>{t('externalDataSecondary')}</InputLabel>
+										<Select
+											labelId={`${layer}-secondary`}
+											label={t('externalDataSecondary')}
+											value={safeSecondary}
+											onChange={(e: SelectChangeEvent) => handleSecondary(layer, e.target.value)}
+										>
+											<MenuItem value={NONE}>{t('externalDataProviderNone')}</MenuItem>
+											{options.map((id) => (
+												<MenuItem key={id} value={id}>
+													{id}
+												</MenuItem>
+											))}
+										</Select>
+									</FormControl>
+								</Box>
+							);
+						})}
+						<CustomSuccessButton
+							onClick={() => void handleSave()}
+							disabled={saving}
+							loading={saving}
+							buttonText={t('btnText.save')}
+							sx={{ width: '100%', mr: 0 }}
+						/>
+					</>
+				))}
 		</AdminSection>
 	);
 }

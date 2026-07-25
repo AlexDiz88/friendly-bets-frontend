@@ -1110,6 +1110,8 @@
 		}
 	},
 	"externalDataLayersTitle": "Data sources",
+	"showExternalDataLayers": "Show API settings",
+	"hideExternalDataLayers": "Hide API settings",
 	"externalDataLayersHint": "Primary runs the request; on error Secondary once. No dual-merge.",
 	"externalDataLayerSchedule": "Schedule (SCHEDULE)",
 	"externalDataLayerOdds": "Odds (ODDS)",

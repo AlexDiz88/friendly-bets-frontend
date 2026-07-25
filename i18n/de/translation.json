@@ -1110,6 +1110,8 @@
 		}
 	},
 	"externalDataLayersTitle": "Datenquellen",
+	"showExternalDataLayers": "API-Einstellungen anzeigen",
+	"hideExternalDataLayers": "API-Einstellungen ausblenden",
 	"externalDataLayersHint": "Primary führt die Anfrage aus; bei Fehler einmal Secondary. Kein Dual-Merge.",
 	"externalDataLayerSchedule": "Spielplan (SCHEDULE)",
 	"externalDataLayerOdds": "Quoten (ODDS)",
