@@ -676,6 +676,9 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			return null;
 		}
 		const count = match.id ? countsByMatch.get(matchBetCountKey(match.id)) ?? 0 : 0;
+		if (count <= 0) {
+			return null;
+		}
 		return (
 			<ExternalMatchViewBetsButton
 				count={count}

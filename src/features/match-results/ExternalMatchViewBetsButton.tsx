@@ -1,14 +1,11 @@
-import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
-import { Badge, IconButton, Tooltip } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
+import { Box, ButtonBase, Tooltip } from '@mui/material';
+import { externalMatchViewBetsChipSx } from './externalMatchWcPageStyles';
 
 interface ExternalMatchViewBetsButtonProps {
 	count: number;
 	tooltip: string;
 	ariaLabel: string;
 	onClick: () => void;
-	iconSx?: SxProps<Theme>;
-	badgeSx?: SxProps<Theme>;
 }
 
 export default function ExternalMatchViewBetsButton({
@@ -16,52 +13,36 @@ export default function ExternalMatchViewBetsButton({
 	tooltip,
 	ariaLabel,
 	onClick,
-	iconSx,
-	badgeSx,
 }: ExternalMatchViewBetsButtonProps): JSX.Element {
+	const displayCount = count > 99 ? '99+' : String(count);
+
 	return (
 		<Tooltip title={tooltip}>
-			<span>
-				<IconButton
-					size="small"
+			<span style={{ display: 'inline-flex', alignItems: 'center', lineHeight: 0 }}>
+				<ButtonBase
 					onClick={(e) => {
 						e.stopPropagation();
 						onClick();
 					}}
-					sx={{ p: 0.35, minWidth: 32, minHeight: 32 }}
 					aria-label={ariaLabel}
+					sx={externalMatchViewBetsChipSx}
 				>
-					<Badge
-						badgeContent={count}
-						color="primary"
-						showZero
-						max={99}
-						sx={[
-							{
-								'& .MuiBadge-badge': {
-									fontSize: '0.7rem',
-									mt: 0.25,
-									mr: 0.15,
-									height: 20,
-									minWidth: 20,
-									padding: 0,
-									fontWeight: 700,
-									lineHeight: 9,
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									boxSizing: 'border-box',
-									fontVariantNumeric: 'tabular-nums',
-								},
-							},
-							...(badgeSx ? (Array.isArray(badgeSx) ? badgeSx : [badgeSx]) : []),
-						]}
+					<Box
+						component="span"
+						sx={{
+							fontFamily: "'Exo 2', sans-serif",
+							fontSize: '0.7rem',
+							fontWeight: 800,
+							lineHeight: 1,
+							fontVariantNumeric: 'tabular-nums',
+							letterSpacing: '-0.03em',
+							color: (theme) =>
+								theme.palette.mode === 'dark' ? '#9de8c4' : '#046a3d',
+						}}
 					>
-						<GroupsOutlinedIcon
-							sx={[{ fontSize: 22 }, ...(iconSx ? (Array.isArray(iconSx) ? iconSx : [iconSx]) : [])]}
-						/>
-					</Badge>
-				</IconButton>
+						{displayCount}
+					</Box>
+				</ButtonBase>
 			</span>
 		</Tooltip>
 	);
