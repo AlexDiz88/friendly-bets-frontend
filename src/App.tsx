@@ -33,6 +33,7 @@ import CompletedBetsList from './features/bets/CompletedBetsList';
 import OpenedBetsList from './features/bets/OpenedBetsList';
 import MatchdayPage from './features/match-results/MatchdayPage';
 import ErrorLogsPage from './features/error-logs/ErrorLogsPage';
+import ExternalApiMonitoringPage from './features/external-api-monitoring/ExternalApiMonitoringPage';
 import WorldCup26Page from './features/world-cup-2026/WorldCup26Page';
 import Gameweek from './features/gameweeks/Gameweek';
 import BetTitlesStatsPage from './features/stats/BetTitlesStatsPage';
@@ -87,6 +88,10 @@ function App(): JSX.Element {
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
 					<Route path="/error-logs" element={<ErrorLogsPage />} />
+				</Route>
+
+				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>
+					<Route path="/external-api-monitoring" element={<ExternalApiMonitoringPage />} />
 				</Route>
 
 				<Route element={<PrivateRoute roles={['ADMIN', 'MODERATOR']} />}>

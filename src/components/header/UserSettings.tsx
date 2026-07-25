@@ -19,6 +19,7 @@ export default function UserSettings(): JSX.Element {
 	const [errorLogsNonEmpty, setErrorLogsNonEmpty] = useState(false);
 
 	const errorLogsLabel = t('errorLogs.menuLink');
+	const monitoringLabel = t('externalApiMonitoring.menuLink');
 	const canViewErrorLogs = user?.role === 'ADMIN' || user?.role === 'MODERATOR';
 
 	const adminSettings = [
@@ -29,6 +30,7 @@ export default function UserSettings(): JSX.Element {
 		t('editBet'),
 		t('myProfile'),
 		t('adminPanel'),
+		monitoringLabel,
 		errorLogsLabel,
 		t('logout'),
 	];
@@ -41,6 +43,7 @@ export default function UserSettings(): JSX.Element {
 		t('myProfile'),
 		// t('myStats'),
 		t('seasonRegister'),
+		monitoringLabel,
 		errorLogsLabel,
 		t('logout'),
 	];
@@ -101,6 +104,8 @@ export default function UserSettings(): JSX.Element {
 			navigate('/bet-input');
 		} else if (setting === t('adminPanel')) {
 			navigate('/admin/cabinet');
+		} else if (setting === monitoringLabel) {
+			navigate('/external-api-monitoring');
 		} else if (setting === errorLogsLabel) {
 			navigate('/error-logs');
 		} else if (setting === t('seasonRegister')) {

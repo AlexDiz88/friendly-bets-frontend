@@ -685,7 +685,12 @@
 		"errorLogDeleted": "Eintrag gelöscht",
 		"errorLogsCleared": "Log geleert",
 		"matchdayRequired": "Spieltag erforderlich",
-		"matchScheduleIdsRequired": "Mindestens ein Spiel auswählen"
+		"matchScheduleIdsRequired": "Mindestens ein Spiel auswählen",
+		"externalApiMonitoringLayerRequired": "API-Layer erforderlich",
+		"externalApiMonitoringLayerInvalid": "Ungültiger API-Layer",
+		"externalApiMonitoringRunNotFound": "Monitoring-Eintrag nicht gefunden",
+		"externalApiMonitoringRunRequired": "Monitoring-Run erforderlich",
+		"externalApiMonitoringLoadFailed": "API-Monitoring konnte nicht geladen werden"
 	},
 	"oddsDemo": {
 		"menuLink": "Quoten (Demo)",
@@ -1089,5 +1094,45 @@
 	"externalDataOddsForceMatches": "Spiele",
 	"externalDataOddsForceMatchesEmpty": "Spiele auswählen",
 	"externalDataOddsForceMatchesSelected": "Ausgewählt: {{count}}",
-	"externalDataOddsForceSyncNow": "Quoten der ausgewählten Spiele aktualisieren"
+	"externalDataOddsForceSyncNow": "Quoten der ausgewählten Spiele aktualisieren",
+	"externalApiMonitoring": {
+		"menuLink": "API-Monitoring",
+		"title": "Externes API-Monitoring",
+		"hint": "Sync-Historie für SCHEDULE, ODDS, LIVE und FULL_MATCH. Zeile öffnen für HTTP-Logs.",
+		"period": "Zeitraum",
+		"refresh": "Aktualisieren",
+		"noRuns": "Keine Läufe im gewählten Zeitraum",
+		"failedIds": "Failed match IDs",
+		"noHttpLogs": "Keine HTTP-Logs",
+		"layer": {
+			"SCHEDULE": "SCHEDULE",
+			"ODDS": "ODDS",
+			"LIVE": "LIVE",
+			"FULL_MATCH": "FULL_MATCH"
+		},
+		"status": {
+			"SUCCESS": "OK",
+			"PARTIAL": "Partial",
+			"FAILED": "Failed",
+			"SKIPPED": "Skipped"
+		},
+		"col": {
+			"started": "Start",
+			"trigger": "Trigger",
+			"provider": "Provider",
+			"league": "Liga",
+			"duration": "Dauer",
+			"status": "Status",
+			"counters": "Counters",
+			"http": "HTTP"
+		},
+		"http": {
+			"type": "Type",
+			"target": "Target",
+			"status": "Status",
+			"outcome": "Outcome",
+			"duration": "Dauer",
+			"detail": "Detail"
+		}
+	}
 }

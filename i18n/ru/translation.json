@@ -685,7 +685,12 @@
 		"errorLogDeleted": "Запись удалена",
 		"errorLogsCleared": "Лог очищен",
 		"matchdayRequired": "Укажите тур",
-		"matchScheduleIdsRequired": "Выберите хотя бы один матч"
+		"matchScheduleIdsRequired": "Выберите хотя бы один матч",
+		"externalApiMonitoringLayerRequired": "Укажите слой API",
+		"externalApiMonitoringLayerInvalid": "Некорректный слой API",
+		"externalApiMonitoringRunNotFound": "Запись мониторинга не найдена",
+		"externalApiMonitoringRunRequired": "Нет run для сохранения",
+		"externalApiMonitoringLoadFailed": "Не удалось загрузить мониторинг API"
 	},
 	"oddsDemo": {
 		"menuLink": "Кэфы (демо)",
@@ -1089,5 +1094,45 @@
 	"externalDataOddsForceMatches": "Матчи",
 	"externalDataOddsForceMatchesEmpty": "Выберите матчи",
 	"externalDataOddsForceMatchesSelected": "Выбрано: {{count}}",
-	"externalDataOddsForceSyncNow": "Обновить кэфы выбранных матчей"
+	"externalDataOddsForceSyncNow": "Обновить кэфы выбранных матчей",
+	"externalApiMonitoring": {
+		"menuLink": "Мониторинг API",
+		"title": "Мониторинг внешних API",
+		"hint": "История прогонов SCHEDULE, ODDS, LIVE и FULL_MATCH. Раскройте строку, чтобы увидеть HTTP-логи.",
+		"period": "Период",
+		"refresh": "Обновить",
+		"noRuns": "Нет прогонов за выбранный период",
+		"failedIds": "Failed match IDs",
+		"noHttpLogs": "HTTP-логов нет",
+		"layer": {
+			"SCHEDULE": "SCHEDULE",
+			"ODDS": "ODDS",
+			"LIVE": "LIVE",
+			"FULL_MATCH": "FULL_MATCH"
+		},
+		"status": {
+			"SUCCESS": "OK",
+			"PARTIAL": "Partial",
+			"FAILED": "Failed",
+			"SKIPPED": "Skipped"
+		},
+		"col": {
+			"started": "Время",
+			"trigger": "Trigger",
+			"provider": "Provider",
+			"league": "Лига",
+			"duration": "Длит.",
+			"status": "Статус",
+			"counters": "Counters",
+			"http": "HTTP"
+		},
+		"http": {
+			"type": "Type",
+			"target": "Target",
+			"status": "Status",
+			"outcome": "Outcome",
+			"duration": "Длит.",
+			"detail": "Detail"
+		}
+	}
 }
