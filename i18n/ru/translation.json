@@ -515,6 +515,7 @@
 		"invalidMatchDayForLeague": "Такой тур недоступен для выбранной лиги",
 		"noExternalMatchDataProvider": "Нет доступного источника данных о матчах",
 		"unknownLeagueCode": "Неизвестный код лиги",
+		"leagueHasNoTournamentFormat": "У лиги не назначен формат турнира",
 		"leagueNotSupportedForMatchResults": "Лига не поддерживается для синхронизации результатов",
 		"invalidGameScore": "Некорректный счёт матча",
 		"invalidClientBuildId": "Некорректный идентификатор версии клиента",

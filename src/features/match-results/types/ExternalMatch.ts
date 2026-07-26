@@ -39,13 +39,6 @@ export interface MatchdayPageData {
 	matches: ExternalMatch[];
 }
 
-export interface LeagueCompetitionOption {
-	competitionCode: string;
-	leagueCode: string;
-	/** Запасное число туров, если метаданные недоступны. */
-	matchdayCount: number;
-}
-
 export interface ExternalMatchdaySlot {
 	value: number;
 	slotId?: string;

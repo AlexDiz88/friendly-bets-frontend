@@ -20,7 +20,11 @@ import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import { formatSlotLabel } from '../../components/matchday/formatSlotLabel';
 import MatchdayNavigator from '../../components/matchday/MatchdayNavigator';
-import { matchDayStringToSlotValue } from '../../components/matchday/slotMappers';
+import {
+	externalSlotsToMatchdaySlots,
+	matchDayStringToSlotValue,
+} from '../../components/matchday/slotMappers';
+import type { MatchdaySlot } from '../../components/matchday/types';
 import { APP_HEADER_CONTENT_GAP_PX } from '../../components/header/headerLayout';
 import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
 import { selectAllCalendarNodes } from '../admin/calendars/selectors';
@@ -39,15 +43,8 @@ import Team from '../admin/teams/types/Team';
 import { selectUser } from '../auth/selectors';
 import GameScore from '../bets/types/GameScore';
 import { isSensitiveKnockoutSlot } from '../bets/knockoutBetPrivacy';
-import {
-	buildMatchdaySlotsForLeague,
-	LEAGUE_COMPETITION_OPTIONS,
-	externalSlotsToMatchdaySlots,
-	MatchdaySlot,
-} from './competitionOptions';
 import League from '../admin/leagues/types/League';
 import {
-	getCompetitionInfo,
 	getLeagueExternalCompetitionInfo,
 	getMatchdayFromCache,
 } from './matchResultsApi';
@@ -176,14 +173,6 @@ function CompactMatchRow({
 	);
 }
 
-const SUPPORTED_LEAGUE_CODES = new Set(LEAGUE_COMPETITION_OPTIONS.map((c) => c.leagueCode));
-
-function leagueCodeToCompetition(leagueCode: string): string {
-	return (
-		LEAGUE_COMPETITION_OPTIONS.find((c) => c.leagueCode === leagueCode)?.competitionCode ?? 'PL'
-	);
-}
-
 export default function MatchdayPage(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const user = useAppSelector(selectUser);
@@ -197,12 +186,12 @@ export default function MatchdayPage(): JSX.Element {
 	useFetchActiveSeason(activeSeason?.id);
 
 	const matchResultLeagues = useMemo(
-		() => activeSeason?.leagues.filter((l) => SUPPORTED_LEAGUE_CODES.has(l.leagueCode)) ?? [],
+		() => activeSeason?.leagues ?? [],
 		[activeSeason?.leagues]
 	);
 
 	const [selectedLeagueCode, setSelectedLeagueCode] = useState(
-		matchResultLeagues[0]?.leagueCode ?? LEAGUE_COMPETITION_OPTIONS[0].leagueCode
+		matchResultLeagues[0]?.leagueCode ?? ''
 	);
 
 	const effectiveLeagueCode = useMemo(() => {
@@ -222,17 +211,13 @@ export default function MatchdayPage(): JSX.Element {
 	const [matchday, setMatchday] = useState(1);
 	const [matchdayTouched, setMatchdayTouched] = useState(false);
 
-	const competitionCode = useMemo(
-		() => leagueCodeToCompetition(effectiveLeagueCode),
-		[effectiveLeagueCode]
-	);
 	const [competitionInfo, setCompetitionInfo] = useState<ExternalCompetitionInfo | null>(null);
 	const matchdaySlots = useMemo((): MatchdaySlot[] => {
 		if (competitionInfo?.matchdaySlots && competitionInfo.matchdaySlots.length > 0) {
 			return externalSlotsToMatchdaySlots(competitionInfo.matchdaySlots);
 		}
-		return buildMatchdaySlotsForLeague(effectiveLeagueCode);
-	}, [competitionInfo?.matchdaySlots, effectiveLeagueCode]);
+		return [];
+	}, [competitionInfo?.matchdaySlots]);
 
 	const externalSeason = useMemo(
 		() => resolveExternalSeasonForLeague(activeSeason, effectiveLeagueCode),
@@ -463,18 +448,21 @@ export default function MatchdayPage(): JSX.Element {
 	}, [calendarMatch]);
 
 	const reloadMatchday = useCallback(async (): Promise<void> => {
+		if (!selectedLeague?.id || !effectiveLeagueCode) {
+			return;
+		}
 		try {
 			const page = await getMatchdayFromCache(
-				competitionCode,
+				effectiveLeagueCode,
 				effectiveMatchday,
 				externalSeason,
-				selectedLeague?.id
+				selectedLeague.id
 			);
 			setData(page);
 		} catch {
 			// тихий refresh: оставляем текущие данные на экране
 		}
-	}, [competitionCode, effectiveMatchday, externalSeason, selectedLeague?.id]);
+	}, [effectiveLeagueCode, effectiveMatchday, externalSeason, selectedLeague?.id]);
 
 	const hasLiveMatches = useMemo(
 		() =>
@@ -571,7 +559,7 @@ export default function MatchdayPage(): JSX.Element {
 	}, [competitionInfoLoading, matchdaySlots, effectiveLeagueCode]);
 
 	useEffect(() => {
-		if (!effectiveLeagueCode) {
+		if (!effectiveLeagueCode || !selectedLeague?.id) {
 			setCompetitionInfoLoading(false);
 			setCompetitionInfo(null);
 			return;
@@ -583,12 +571,7 @@ export default function MatchdayPage(): JSX.Element {
 
 		const loadInfo = async (): Promise<void> => {
 			try {
-				if (selectedLeague?.id) {
-					const info = await getLeagueExternalCompetitionInfo(selectedLeague.id, externalSeason);
-					if (!cancelled) setCompetitionInfo(info);
-					return;
-				}
-				const info = await getCompetitionInfo(competitionCode, externalSeason);
+				const info = await getLeagueExternalCompetitionInfo(selectedLeague.id, externalSeason);
 				if (!cancelled) setCompetitionInfo(info);
 			} catch {
 				if (!cancelled) setCompetitionInfo(null);
@@ -600,13 +583,16 @@ export default function MatchdayPage(): JSX.Element {
 		return () => {
 			cancelled = true;
 		};
-	}, [competitionCode, effectiveLeagueCode, externalSeason, selectedLeague?.id]);
+	}, [effectiveLeagueCode, externalSeason, selectedLeague?.id]);
 
 	useEffect(() => {
 		if (competitionInfoLoading) {
 			return;
 		}
 		if (!matchdayTouched && !competitionInfo) {
+			return;
+		}
+		if (!selectedLeague?.id || !effectiveLeagueCode) {
 			return;
 		}
 
@@ -617,10 +603,10 @@ export default function MatchdayPage(): JSX.Element {
 			setLoading(true);
 			try {
 				const page = await getMatchdayFromCache(
-					competitionCode,
+					effectiveLeagueCode,
 					targetMatchday,
 					externalSeason,
-					selectedLeague?.id
+					selectedLeague.id
 				);
 				if (!cancelled) setData(page);
 			} catch (error) {
@@ -646,7 +632,7 @@ export default function MatchdayPage(): JSX.Element {
 		competitionInfo,
 		matchdayTouched,
 		effectiveMatchday,
-		competitionCode,
+		effectiveLeagueCode,
 		externalSeason,
 		selectedLeague?.id,
 		dispatch,

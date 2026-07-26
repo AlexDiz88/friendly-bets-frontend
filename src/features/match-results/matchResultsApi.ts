@@ -9,25 +9,9 @@ function apiUrl(path: string): string {
 	return `${import.meta.env.VITE_PRODUCT_SERVER}${path}`;
 }
 
-/** Метаданные турнира (текущий тур, число туров). */
-export async function getCompetitionInfo(
-	competitionCode: string,
-	season: string
-): Promise<ExternalCompetitionInfo> {
-	const params = new URLSearchParams({ season });
-	const result = await apiFetch(
-		apiUrl(`/api/match-results/competitions/${competitionCode}?${params}`)
-	);
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
-}
-
 /** Только чтение из MongoDB (без запроса к внешним API). */
 export async function getMatchdayFromCache(
-	competitionCode: string,
+	leagueCode: string,
 	matchday: number,
 	season: string,
 	leagueId?: string
@@ -37,7 +21,7 @@ export async function getMatchdayFromCache(
 		params.set('leagueId', leagueId);
 	}
 	const result = await apiFetch(
-		apiUrl(`/api/match-results/competitions/${competitionCode}/matchdays/${matchday}?${params}`)
+		apiUrl(`/api/match-results/competitions/${leagueCode}/matchdays/${matchday}?${params}`)
 	);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();

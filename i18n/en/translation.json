@@ -515,6 +515,7 @@
 		"invalidMatchDayForLeague": "This matchday is not valid for the selected league",
 		"noExternalMatchDataProvider": "No external match data provider is available",
 		"unknownLeagueCode": "Unknown league code",
+		"leagueHasNoTournamentFormat": "League has no tournament format assigned",
 		"leagueNotSupportedForMatchResults": "League is not supported for match result sync",
 		"invalidGameScore": "Invalid match score",
 		"invalidClientBuildId": "Invalid client version id",
