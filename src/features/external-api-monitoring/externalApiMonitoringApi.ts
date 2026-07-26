@@ -102,3 +102,16 @@ export async function fetchMonitoringRun(id: string): Promise<MonitoringRun> {
 	}
 	return result.json();
 }
+
+export async function deleteMonitoringRunsByLayer(layer: ExternalDataLayer): Promise<number> {
+	const params = new URLSearchParams({ layer });
+	const result = await apiFetch(apiUrl(`/api/admin/external-api-monitoring?${params}`), {
+		method: 'DELETE',
+	});
+	if (result.status >= 400) {
+		const { message } = await result.json();
+		throw new Error(message);
+	}
+	const body: { deleted?: number } = await result.json();
+	return body.deleted ?? 0;
+}

@@ -1,3 +1,4 @@
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
@@ -21,8 +22,10 @@ import {
 import { t } from 'i18next';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
-import { showErrorSnackbar } from '../../components/custom/snackbar/snackbarSlice';
+import CustomCalendarDialog from '../../components/custom/dialog/CustomCalendarDialog';
+import { showErrorSnackbar, showSuccessSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import {
+	deleteMonitoringRunsByLayer,
 	fetchMonitoringLatest,
 	fetchMonitoringRun,
 	fetchMonitoringRuns,
@@ -33,12 +36,16 @@ import {
 	type MonitoringStatus,
 } from './externalApiMonitoringApi';
 import {
+	monitoringDetailPanelSx,
+	monitoringDetailTableSx,
 	monitoringHintSx,
 	monitoringKpiCardSx,
 	monitoringKpiGridSx,
+	monitoringLayerTitleSx,
 	monitoringPageRootSx,
 	monitoringSectionHeaderSx,
 	monitoringSectionSx,
+	monitoringSectionTitleSx,
 	monitoringTableContainerSx,
 	monitoringTableSx,
 	monitoringTitleSx,
@@ -109,6 +116,8 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 	const [detail, setDetail] = useState<MonitoringRun | null>(null);
 	const [detailLoading, setDetailLoading] = useState(false);
+	const [deleteLayer, setDeleteLayer] = useState<ExternalDataLayer | null>(null);
+	const [deleting, setDeleting] = useState(false);
 
 	const load = useCallback(async (): Promise<void> => {
 		setLoading(true);
@@ -162,6 +171,34 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 		}
 	};
 
+	const handleDeleteLayer = async (): Promise<void> => {
+		if (!deleteLayer) return;
+		setDeleting(true);
+		try {
+			const deleted = await deleteMonitoringRunsByLayer(deleteLayer);
+			setExpandedId(null);
+			setDetail(null);
+			setDeleteLayer(null);
+			dispatch(
+				showSuccessSnackbar({
+					message: t('externalApiMonitoring.layerCleared', {
+						layer: layerTitle(deleteLayer),
+						count: deleted,
+					}),
+				})
+			);
+			await load();
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : 'externalApiMonitoringDeleteFailed',
+				})
+			);
+		} finally {
+			setDeleting(false);
+		}
+	};
+
 	return (
 		<Box sx={monitoringPageRootSx}>
 			<Typography sx={monitoringTitleSx}>{t('externalApiMonitoring.title')}</Typography>
@@ -196,10 +233,8 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 				{MONITORING_LAYERS.map((layer) => {
 					const run = latest[layer];
 					return (
-						<Box key={layer} sx={monitoringKpiCardSx(theme, run?.status)}>
-							<Typography sx={{ fontWeight: 800, fontSize: '0.85rem', mb: 0.75 }}>
-								{layerTitle(layer)}
-							</Typography>
+						<Box key={layer} sx={monitoringKpiCardSx(theme, layer, run?.status)}>
+							<Typography sx={monitoringLayerTitleSx(layer)}>{layerTitle(layer)}</Typography>
 							{run ? (
 								<>
 									<Chip
@@ -225,14 +260,26 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 			{MONITORING_LAYERS.map((layer) => {
 				const rows = runsByLayer[layer];
 				return (
-					<Box key={layer} sx={monitoringSectionSx}>
-						<Box sx={monitoringSectionHeaderSx}>
-							<Typography sx={{ fontWeight: 800, fontSize: '0.95rem' }}>
+					<Box key={layer} sx={monitoringSectionSx(theme, layer)}>
+						<Box sx={monitoringSectionHeaderSx(theme, layer)}>
+							<Typography sx={monitoringSectionTitleSx(layer)}>
 								{layerTitle(layer)}
 								<Typography component="span" color="text.secondary" sx={{ ml: 1, fontWeight: 500 }}>
 									({rows.length})
 								</Typography>
 							</Typography>
+							<Tooltip title={t('externalApiMonitoring.deleteLayer')}>
+								<span>
+									<IconButton
+										aria-label={t('externalApiMonitoring.deleteLayer')}
+										onClick={() => setDeleteLayer(layer)}
+										disabled={loading || deleting}
+										sx={{ minWidth: 40, minHeight: 40 }}
+									>
+										<DeleteOutlineIcon fontSize="small" />
+									</IconButton>
+								</span>
+							</Tooltip>
 						</Box>
 						{loading && rows.length === 0 ? (
 							<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
@@ -244,7 +291,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 							</Typography>
 						) : (
 							<TableContainer sx={monitoringTableContainerSx}>
-								<Table size="small" stickyHeader sx={monitoringTableSx}>
+								<Table size="small" stickyHeader sx={monitoringTableSx(theme, layer)}>
 									<TableHead>
 										<TableRow>
 											<TableCell />
@@ -315,9 +362,16 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 														</TableCell>
 													</TableRow>
 													<TableRow>
-														<TableCell colSpan={9} sx={{ py: 0, borderBottom: open ? undefined : 0 }}>
+														<TableCell
+															colSpan={9}
+															sx={{
+																py: 0,
+																borderBottom: open ? undefined : 0,
+																background: 'transparent',
+															}}
+														>
 															<Collapse in={open} timeout="auto" unmountOnExit>
-																<Box sx={{ py: 1.5, px: 1 }}>
+																<Box sx={monitoringDetailPanelSx(theme, layer)}>
 																	{detailLoading && expandedId === run.id ? (
 																		<CircularProgress size={18} />
 																	) : detail && detail.id === run.id ? (
@@ -350,7 +404,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																					{t('externalApiMonitoring.noHttpLogs')}
 																				</Typography>
 																			) : (
-																				<Table size="small" sx={monitoringTableSx}>
+																				<Table size="small" sx={monitoringDetailTableSx(theme, layer)}>
 																					<TableHead>
 																						<TableRow>
 																							<TableCell>{t('externalApiMonitoring.http.type')}</TableCell>
@@ -409,6 +463,26 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 					</Box>
 				);
 			})}
+
+			<CustomCalendarDialog
+				open={deleteLayer != null}
+				onClose={() => {
+					if (!deleting) setDeleteLayer(null);
+				}}
+				onSave={() => void handleDeleteLayer()}
+				title={
+					deleteLayer
+						? t('externalApiMonitoring.deleteLayerTitle', { layer: layerTitle(deleteLayer) })
+						: undefined
+				}
+				helperText={
+					deleteLayer
+						? t('externalApiMonitoring.deleteLayerHelper', { layer: layerTitle(deleteLayer) })
+						: undefined
+				}
+				buttonAcceptText={t('externalApiMonitoring.deleteLayerConfirm')}
+				submitting={deleting}
+			/>
 		</Box>
 	);
 }
