@@ -57,7 +57,7 @@ export default function ApiSandboxPage(): JSX.Element {
 	const [configLoading, setConfigLoading] = useState(true);
 
 	const [schedule, setSchedule] = useState<LayerStandState<ScheduleStandForm>>({
-		form: { provider: 'soccer365.ru', competitionId: '', leagueCode: 'EPL', round: '', limit: '1' },
+		form: { provider: 'soccer365.ru', competitionId: '', round: '', limit: '1' },
 		loading: false,
 		result: null,
 	});
@@ -131,17 +131,10 @@ export default function ApiSandboxPage(): JSX.Element {
 	}, [dispatch]);
 
 	const runSchedule = useCallback(async () => {
-		const isAiscore = schedule.form.provider === 'aiscore.com';
-		let competitionId: number | undefined;
-		let leagueCode: string | undefined;
-		if (isAiscore) {
-			leagueCode = (schedule.form.leagueCode || 'EPL').trim().toUpperCase();
-		} else {
-			competitionId = Number(schedule.form.competitionId);
-			if (!Number.isFinite(competitionId) || competitionId <= 0) {
-				dispatch(showErrorSnackbar({ message: 'sandboxCompetitionIdRequired' }));
-				return;
-			}
+		const competitionId = Number(schedule.form.competitionId);
+		if (!Number.isFinite(competitionId) || competitionId <= 0) {
+			dispatch(showErrorSnackbar({ message: 'sandboxCompetitionIdRequired' }));
+			return;
 		}
 		const roundRaw = schedule.form.round.trim();
 		let round: number | undefined;
@@ -166,7 +159,6 @@ export default function ApiSandboxPage(): JSX.Element {
 			const result = await sandboxSchedule({
 				provider: schedule.form.provider,
 				competitionId,
-				leagueCode,
 				round,
 				limit,
 			});
