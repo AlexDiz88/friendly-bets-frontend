@@ -93,8 +93,14 @@ export async function fetchExternalTeamNames(
 	return result.json();
 }
 
-export async function syncExternalSchedule(leagueCode: string): Promise<ExternalScheduleSyncResult> {
+export async function syncExternalSchedule(
+	leagueCode: string,
+	matchday?: number
+): Promise<ExternalScheduleSyncResult> {
 	const params = new URLSearchParams({ leagueCode });
+	if (matchday != null) {
+		params.set('matchday', String(matchday));
+	}
 	const result = await apiFetch(apiUrl(`/api/admin/external-data/schedule/sync?${params}`), {
 		method: 'POST',
 	});

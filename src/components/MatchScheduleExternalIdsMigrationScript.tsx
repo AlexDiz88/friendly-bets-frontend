@@ -2,14 +2,14 @@ import { Box, Dialog, DialogActions, DialogContent, Typography } from '@mui/mate
 import { t } from 'i18next';
 import { useCallback, useState } from 'react';
 import { useAppDispatch } from '../app/hooks';
+import { unsetMatchScheduleExternalIds } from '../features/admin/scripts/adminScriptsApi';
 import CustomButton from './custom/btn/CustomButton';
 import { destructiveActionHintSx } from './custom/btn/customButtonStyles';
 import CustomCancelButton from './custom/btn/CustomCancelButton';
 import CustomSuccessButton from './custom/btn/CustomSuccessButton';
 import { showErrorSnackbar, showSuccessSnackbar } from './custom/snackbar/snackbarSlice';
-import { markFinishedFullDetailsFetched } from '../features/match-results/matchScheduleAdminApi';
 
-export default function MarkFinishedFullDetailsScript({
+export default function MatchScheduleExternalIdsMigrationScript({
 	startLoading,
 	stopLoading,
 }: {
@@ -25,12 +25,12 @@ export default function MarkFinishedFullDetailsScript({
 			setOpenDialog(false);
 			startLoading();
 			try {
-				const result = await markFinishedFullDetailsFetched();
+				const result = await unsetMatchScheduleExternalIds();
 				dispatch(
 					showSuccessSnackbar({
-						message: t('markFinishedFullDetailsSuccess', {
-							matched: result.matchedCount,
-							modified: result.modifiedCount,
+						message: t('matchScheduleExternalIdsMigrationSuccess', {
+							matched: result.matched ?? 0,
+							modified: result.modified ?? 0,
 						}),
 					})
 				);
@@ -53,7 +53,7 @@ export default function MarkFinishedFullDetailsScript({
 				buttonText={t('runScript')}
 			/>
 			<Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-				{t('runScriptMarkFinishedFullDetailsHint')}
+				{t('runScriptMatchScheduleExternalIdsMigrationHint')}
 			</Typography>
 			<Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
 				<DialogContent>

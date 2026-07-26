@@ -31,12 +31,14 @@ import SandboxResultPanel from '../SandboxResultPanel';
 export type ScheduleStandForm = {
 	provider: string;
 	competitionId: string;
+	leagueCode: string;
 	round: string;
 	limit: string;
 };
 
 type ScheduleParsed = {
 	competitionId?: number;
+	tournamentPath?: string;
 	roundFilter?: number | null;
 	limit?: number | null;
 	matchesTotal?: number;
@@ -52,6 +54,7 @@ type ScheduleParsed = {
 			utcKickoff?: string;
 			status?: string;
 			soccer365GameId?: string;
+			aiscoreMatchId?: string;
 		}>;
 	}>;
 };
@@ -79,6 +82,7 @@ export default function ScheduleSandboxStand({
 	const parsed = (result?.parsed || null) as ScheduleParsed | null;
 	const providerOptions = providers.length > 0 ? providers : ['soccer365.ru'];
 	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
+	const isAiscore = safeProvider === 'aiscore.com';
 
 	const summary =
 		result?.success && parsed ? (
@@ -96,7 +100,12 @@ export default function ScheduleSandboxStand({
 					{parsed.parsedTruncated ? (
 						<Chip size="small" color="warning" variant="outlined" label={t('apiSandbox.parsedTruncated')} />
 					) : null}
-					<CopyableValue value={parsed.competitionId} label={t('apiSandbox.fields.competitionId')} />
+					{parsed.competitionId != null ? (
+						<CopyableValue value={parsed.competitionId} label={t('apiSandbox.fields.competitionId')} />
+					) : null}
+					{parsed.tournamentPath ? (
+						<CopyableValue value={parsed.tournamentPath} label={t('apiSandbox.fields.tournamentPath')} />
+					) : null}
 				</Box>
 				<TableContainer sx={{ maxHeight: 280, borderRadius: 1.5, border: '1px solid', borderColor: 'divider' }}>
 					<Table size="small" stickyHeader sx={sandboxTableSx(layer)}>
@@ -113,7 +122,9 @@ export default function ScheduleSandboxStand({
 						<TableBody>
 							{(parsed.rounds || []).flatMap((round) =>
 								(round.matches || []).map((match, idx) => (
-									<TableRow key={`${round.number}-${match.soccer365GameId || idx}`}>
+									<TableRow
+										key={`${round.number}-${match.soccer365GameId || match.aiscoreMatchId || idx}`}
+									>
 										<TableCell>{round.number}</TableCell>
 										<TableCell>
 											<CopyableValue value={match.homeName} mono={false} />
@@ -128,7 +139,7 @@ export default function ScheduleSandboxStand({
 											<Chip size="small" label={match.status || '—'} color={statusChipColor(match.status)} />
 										</TableCell>
 										<TableCell>
-											<CopyableValue value={match.soccer365GameId} />
+											<CopyableValue value={match.soccer365GameId || match.aiscoreMatchId} />
 										</TableCell>
 									</TableRow>
 								))
@@ -165,17 +176,35 @@ export default function ScheduleSandboxStand({
 					</FormControl>
 				</Box>
 
-				<Box>
-					<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.competitionId')}</Typography>
-					<TextField
-						fullWidth
-						size="small"
-						value={form.competitionId}
-						onChange={(e) => onFormChange({ ...form, competitionId: e.target.value })}
-						placeholder="12"
-						inputProps={{ inputMode: 'numeric' }}
-					/>
-				</Box>
+				{isAiscore ? (
+					<Box>
+						<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.leagueCode')}</Typography>
+						<FormControl fullWidth size="small">
+							<Select
+								value={form.leagueCode || 'EPL'}
+								onChange={(e) => onFormChange({ ...form, leagueCode: String(e.target.value) })}
+							>
+								{['EPL', 'BL', 'CL', 'LE'].map((code) => (
+									<MenuItem key={code} value={code}>
+										{code}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</Box>
+				) : (
+					<Box>
+						<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.competitionId')}</Typography>
+						<TextField
+							fullWidth
+							size="small"
+							value={form.competitionId}
+							onChange={(e) => onFormChange({ ...form, competitionId: e.target.value })}
+							placeholder="12"
+							inputProps={{ inputMode: 'numeric' }}
+						/>
+					</Box>
+				)}
 
 				<Box>
 					<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.round')}</Typography>

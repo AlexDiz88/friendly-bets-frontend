@@ -1,5 +1,6 @@
 import { parseUtcDate } from '../../shared/utcDate';
-import { wc26DateLocale } from '../world-cup-2026/wc26Time';
+import { formatUserDate, formatUserTime } from '../../shared/userDateTime';
+import { resolveUserTimeZone } from '../../shared/userTimeZones';
 import { isMatchNotStarted } from './matchStatusI18n';
 import type { ExternalMatch } from './types/ExternalMatch';
 
@@ -9,42 +10,25 @@ export interface ExternalMatchBerlinKickoff {
 	kickoffUtcMs: number;
 }
 
-function formatUtcTime(utcDate: string | null | undefined): string {
-	const d = parseUtcDate(utcDate);
-	if (!d) {
-		return '';
-	}
-	const hh = String(d.getUTCHours()).padStart(2, '0');
-	const mm = String(d.getUTCMinutes()).padStart(2, '0');
-	return `${hh}:${mm}`;
-}
-
-function formatUtcDateLabel(utcDate: string | null | undefined, language: string): string {
-	const date = parseUtcDate(utcDate);
-	if (!date) {
-		return '—';
-	}
-	return new Intl.DateTimeFormat(wc26DateLocale(language), {
-		timeZone: 'UTC',
-		day: 'numeric',
-		month: 'short',
-	}).format(date);
-}
-
-/** Kickoff UTC (ms) from stored utcDate only. */
+/** Kickoff UTC (ms) from stored utcDate Instant. */
 export function resolveExternalMatchKickoffUtcMs(match: ExternalMatch): number {
 	return parseUtcDate(match.utcDate)?.getTime() ?? 0;
 }
 
-/** Display time/date from stored utcDate (UTC+0). */
+/**
+ * Display kickoff time/date in the user's timezone (default Europe/Berlin).
+ * Name kept for call-site compatibility.
+ */
 export function resolveExternalMatchBerlinKickoff(
 	match: ExternalMatch,
 	_slotId?: string,
-	language?: string
+	language?: string,
+	timeZone?: string | null
 ): ExternalMatchBerlinKickoff {
+	const tz = resolveUserTimeZone(timeZone);
 	return {
-		kickoff: formatUtcTime(match.utcDate),
-		dateLabel: formatUtcDateLabel(match.utcDate, language ?? 'ru'),
+		kickoff: formatUserTime(match.utcDate, tz, language),
+		dateLabel: formatUserDate(match.utcDate, tz, language),
 		kickoffUtcMs: parseUtcDate(match.utcDate)?.getTime() ?? 0,
 	};
 }

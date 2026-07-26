@@ -38,22 +38,7 @@ import {
 	errorLogsToolbarSx,
 } from './errorLogsPageStyles';
 import { externalDataLayerAccent } from '../../shared/externalDataLayerColors';
-
-function formatCreatedAt(iso: string | undefined): string {
-	if (!iso) return '—';
-	try {
-		const d = new Date(iso);
-		return d.toLocaleString(undefined, {
-			day: '2-digit',
-			month: 'short',
-			hour: '2-digit',
-			minute: '2-digit',
-			second: '2-digit',
-		});
-	} catch {
-		return iso;
-	}
-}
+import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
 
 function codeLabel(code: string): string {
 	const key = `errorLogs.code.${code}`;
@@ -68,6 +53,7 @@ function layerLabel(layer: string): string {
 export default function ErrorLogsPage(): JSX.Element {
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
+	const { formatDetailed } = useFormatUserDateTime();
 	const [loading, setLoading] = useState(true);
 	const [entries, setEntries] = useState<ErrorLogEntry[]>([]);
 	const [clearOpen, setClearOpen] = useState(false);
@@ -203,7 +189,7 @@ export default function ErrorLogsPage(): JSX.Element {
 							}}
 						>
 							<Box sx={{ minWidth: 0, flex: 1 }}>
-								<Typography sx={errorLogTimeSx}>{formatCreatedAt(entry.createdAt)}</Typography>
+								<Typography sx={errorLogTimeSx}>{formatDetailed(entry.createdAt)}</Typography>
 								<Typography
 									sx={{
 										fontWeight: 700,

@@ -2,7 +2,8 @@ import { Box, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
-import MarkFinishedFullDetailsScript from '../../components/MarkFinishedFullDetailsScript';
+import MatchScheduleExternalIdsMigrationScript from '../../components/MatchScheduleExternalIdsMigrationScript';
+import UtcTimestampsMigrationScript from '../../components/UtcTimestampsMigrationScript';
 import StatsRecalculating from '../stats/StatsRecalculating';
 import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 import AdminGroupHeading from './AdminGroupHeading';
@@ -69,7 +70,11 @@ export default function AdminCabinet(): JSX.Element {
 							startLoading={handleStartLoading}
 							stopLoading={handleStopLoading}
 						/>
-						<MarkFinishedFullDetailsScript
+						<UtcTimestampsMigrationScript
+							startLoading={handleStartLoading}
+							stopLoading={handleStopLoading}
+						/>
+						<MatchScheduleExternalIdsMigrationScript
 							startLoading={handleStartLoading}
 							stopLoading={handleStopLoading}
 						/>
