@@ -24,7 +24,6 @@ import {
 import {
 	ERROR_LOG_ACCENT,
 	ERROR_LOG_ID,
-	ERROR_LOG_LAYER,
 	ERROR_LOG_LEAGUE,
 	ERROR_LOG_PROVIDER,
 	ERROR_LOG_TEAMS,
@@ -38,6 +37,7 @@ import {
 	errorLogsTitleSx,
 	errorLogsToolbarSx,
 } from './errorLogsPageStyles';
+import { externalDataLayerAccent } from '../../shared/externalDataLayerColors';
 
 function formatCreatedAt(iso: string | undefined): string {
 	if (!iso) return '—';
@@ -247,7 +247,10 @@ export default function ErrorLogsPage(): JSX.Element {
 								<Chip
 									size="small"
 									label={layerLabel(entry.layer)}
-									sx={chipSx(ERROR_LOG_LAYER, theme)}
+									sx={chipSx(
+										externalDataLayerAccent(entry.layer) ?? ERROR_LOG_ACCENT,
+										theme
+									)}
 								/>
 							) : null}
 							{entry.leagueCode ? (
@@ -285,7 +288,7 @@ export default function ErrorLogsPage(): JSX.Element {
 								<Chip
 									size="small"
 									label={entry.season}
-									sx={chipSx(ERROR_LOG_LAYER, theme)}
+									sx={chipSx(ERROR_LOG_LEAGUE, theme)}
 								/>
 							) : null}
 						</Box>

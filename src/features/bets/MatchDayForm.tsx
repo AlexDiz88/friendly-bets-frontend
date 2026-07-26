@@ -22,13 +22,12 @@ type MatchDayFormProps = {
  */
 export default function MatchDayForm({
 	matchDay,
-	leagueCode,
 	matchdaySlots,
 	onMatchDay,
 }: MatchDayFormProps): JSX.Element {
 	const gridSlots = useMemo(
-		() => resolveMatchdaySlotsForBetInput(matchdaySlots, leagueCode),
-		[matchdaySlots, leagueCode]
+		() => resolveMatchdaySlotsForBetInput(matchdaySlots),
+		[matchdaySlots]
 	);
 
 	const hasGrid = gridSlots.length > 0;

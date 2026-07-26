@@ -1,5 +1,4 @@
 import type { ExpandedMatchdaySlot } from '../../features/admin/tournament-formats/types/TournamentFormat';
-import { buildMatchdaySlotsForLeague } from '../../features/match-results/competitionOptions';
 import type { MatchdaySlot } from './types';
 
 export function externalSlotsToMatchdaySlots(
@@ -28,14 +27,10 @@ export function expandedSlotsToMatchdaySlots(slots: ExpandedMatchdaySlot[]): Mat
 }
 
 export function resolveMatchdaySlotsForBetInput(
-	matchdaySlots: ExpandedMatchdaySlot[] | undefined,
-	leagueCode: string | undefined
+	matchdaySlots: ExpandedMatchdaySlot[] | undefined
 ): MatchdaySlot[] {
 	if (matchdaySlots?.length) {
 		return expandedSlotsToMatchdaySlots(matchdaySlots);
-	}
-	if (leagueCode) {
-		return buildMatchdaySlotsForLeague(leagueCode);
 	}
 	return [];
 }

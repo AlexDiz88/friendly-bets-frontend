@@ -71,7 +71,8 @@ export default function LiveSandboxStand({
 	onRun,
 }: LiveSandboxStandProps): JSX.Element {
 	const { t } = useTranslation();
-	const accent = LAYER_ACCENT.LIVE;
+	const layer = 'LIVE' as const;
+	const accent = LAYER_ACCENT[layer];
 	const parsed = (result?.parsed || null) as LiveParsed | null;
 	const providerOptions = providers.length > 0 ? providers : ['24score.pro'];
 	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
@@ -85,7 +86,7 @@ export default function LiveSandboxStand({
 					{parsed.titleContains ? <Chip size="small" label={parsed.titleContains} variant="outlined" /> : null}
 				</Box>
 				<TableContainer sx={{ maxHeight: 300, borderRadius: 1.5, border: '1px solid', borderColor: 'divider' }}>
-					<Table size="small" stickyHeader sx={sandboxTableSx}>
+					<Table size="small" stickyHeader sx={sandboxTableSx(layer)}>
 						<TableHead>
 							<TableRow>
 								<TableCell>{t('apiSandbox.col.league')}</TableCell>
@@ -130,7 +131,7 @@ export default function LiveSandboxStand({
 		) : null;
 
 	return (
-		<Box sx={sandboxStandLayoutSx(accent)}>
+		<Box sx={sandboxStandLayoutSx(layer)}>
 			<Box sx={sandboxFormColSx}>
 				<Typography sx={{ fontFamily: '"Exo 2", sans-serif', fontWeight: 800, fontSize: '1.05rem' }}>
 					{t('apiSandbox.layer.LIVE')}

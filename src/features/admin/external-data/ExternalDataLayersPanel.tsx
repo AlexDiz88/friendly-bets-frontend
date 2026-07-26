@@ -16,7 +16,10 @@ import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessBut
 import CustomSwitch from '../../../components/custom/controls/CustomSwitch';
 import { toggleInlineRowSx } from '../../../components/custom/controls/customToggleStyles';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
-import { LAYER_ACCENT } from '../../api-sandbox/apiSandboxPageStyles';
+import {
+	EXTERNAL_DATA_LAYER_ACCENT,
+	EXTERNAL_DATA_LAYER_PALETTE,
+} from '../../../shared/externalDataLayerColors';
 import AdminSection from '../AdminSection';
 import {
 	ExternalDataLayer,
@@ -36,6 +39,34 @@ const LAYER_LABEL_KEY: Record<ExternalDataLayer, string> = {
 };
 
 const NONE = '';
+
+function layerCardSx(layer: ExternalDataLayer): SxProps<Theme> {
+	const pal = EXTERNAL_DATA_LAYER_PALETTE[layer];
+	return (theme) => {
+		const isDark = theme.palette.mode === 'dark';
+		return {
+			mb: 2,
+			p: 1.5,
+			borderRadius: 2,
+			border: `1.5px solid ${isDark ? pal.borderDark : pal.border}`,
+			background: isDark
+				? `linear-gradient(155deg, ${pal.surfaceDark} 0%, rgba(15,23,42,0.85) 70%)`
+				: `linear-gradient(155deg, ${pal.surface} 0%, #ffffff 70%)`,
+			boxShadow: isDark ? 'none' : `0 4px 14px ${pal.soft}`,
+			position: 'relative',
+			overflow: 'hidden',
+			'&::before': {
+				content: '""',
+				position: 'absolute',
+				left: 0,
+				top: 0,
+				bottom: 0,
+				width: 4,
+				background: pal.accent,
+			},
+		};
+	};
+}
 
 export default function ExternalDataLayersPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -152,13 +183,14 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 							const safePrimary = options.includes(primary) ? primary : NONE;
 							const safeSecondary = options.includes(secondary) ? secondary : NONE;
 							return (
-								<Box key={layer} sx={{ mb: 2 }}>
+								<Box key={layer} sx={layerCardSx(layer)}>
 									<Typography
 										sx={{
-											fontWeight: 700,
-											mb: 0.5,
+											fontWeight: 800,
+											mb: 0.75,
 											fontSize: '0.9rem',
-											color: LAYER_ACCENT[layer],
+											color: EXTERNAL_DATA_LAYER_ACCENT[layer],
+											letterSpacing: '0.02em',
 										}}
 									>
 										{t(LAYER_LABEL_KEY[layer])}

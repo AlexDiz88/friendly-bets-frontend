@@ -1,11 +1,13 @@
 import Season from '../admin/seasons/types/Season';
-import { DEFAULT_MATCH_RESULTS_SEASON } from './competitionOptions';
+
+/** Запасной год, если у активного сезона ещё нет дат / externalSeasonYear. */
+const FALLBACK_EXTERNAL_SEASON_YEAR = '2025';
 
 export function resolveDefaultExternalSeason(activeSeason: Season | null | undefined): string {
 	if (activeSeason?.externalSeasonYear != null) {
 		return String(activeSeason.externalSeasonYear);
 	}
-	return DEFAULT_MATCH_RESULTS_SEASON;
+	return FALLBACK_EXTERNAL_SEASON_YEAR;
 }
 
 /** {@code externalSeasonYear} активного сезона (год старта, едино для всех лиг). */
@@ -20,6 +22,6 @@ export function resolveExternalSeasonYearOptions(activeSeason: Season | null | u
 	if (activeSeason?.availableExternalYears && activeSeason.availableExternalYears.length > 0) {
 		return activeSeason.availableExternalYears.map(String);
 	}
-	const year = Number(DEFAULT_MATCH_RESULTS_SEASON);
+	const year = Number(FALLBACK_EXTERNAL_SEASON_YEAR);
 	return [String(year - 1), String(year), String(year + 1)];
 }

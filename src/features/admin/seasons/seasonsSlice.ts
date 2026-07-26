@@ -12,8 +12,6 @@ const initialState: SeasonsState = {
 	error: undefined,
 };
 
-export const dbUpdate = createAsyncThunk('seasons/dbUpdate', async () => api.dbUpdate());
-
 export const addSeason = createAsyncThunk(
 	'seasons/addSeason',
 	async ({
@@ -128,9 +126,6 @@ const seasonsSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(dbUpdate.rejected, (state, action) => {
-				state.error = action.error.message;
-			})
 			.addCase(addSeason.fulfilled, (state, action) => {
 				state.seasons.push(action.payload);
 			})
