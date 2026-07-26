@@ -73,7 +73,7 @@ function countersSummary(layer: ExternalDataLayer, counters?: MonitoringCounters
 		case 'SCHEDULE':
 			return `↑${counters.upserted ?? 0} · skip ${counters.skipped ?? 0} · rounds ${counters.roundsParsed ?? 0}`;
 		case 'ODDS':
-			return `elig ${counters.eligible ?? 0} · match ${counters.matched ?? 0} · save ${counters.saved ?? 0} · SSE ${counters.sseCalls ?? 0}`;
+			return `elig ${counters.eligible ?? 0} · match ${counters.matched ?? 0} · save ${counters.saved ?? 0} · SSE ${counters.sseCalls ?? 0} · skip ${counters.skipped ?? 0}`;
 		case 'LIVE':
 			return `upd ${counters.updated ?? 0} · fin ${counters.finishedDetected ?? 0}`;
 		case 'FULL_MATCH':
