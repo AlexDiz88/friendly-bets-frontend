@@ -20,7 +20,6 @@ import AdminSection from '../AdminSection';
 import { getActiveSeason } from '../seasons/seasonsSlice';
 import { selectActiveSeason } from '../seasons/selectors';
 import {
-	AISCORE_PROVIDER,
 	MARATHONBET_PROVIDER,
 	SOCCER365_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
@@ -32,21 +31,18 @@ import {
 
 const PROVIDERS = [
 	SOCCER365_PROVIDER,
-	AISCORE_PROVIDER,
 	MARATHONBET_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 ] as const;
 
 const PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
 	[SOCCER365_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'EC', 'WC']),
-	[AISCORE_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
 	[MARATHONBET_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'WC']),
 	[TWENTYFOUR_SCORE_PROVIDER]: new Set(['EPL', 'BL']),
 };
 
 const PROVIDER_LABEL_KEY: Record<string, string> = {
 	[SOCCER365_PROVIDER]: 'externalTeamAliasProviderSoccer365',
-	[AISCORE_PROVIDER]: 'externalTeamAliasProviderAiscore',
 	[MARATHONBET_PROVIDER]: 'externalTeamAliasProviderMarathonbet',
 	[TWENTYFOUR_SCORE_PROVIDER]: 'externalTeamAliasProvider24score',
 };

@@ -2,7 +2,6 @@ import i18n from '../../../i18n';
 import NewTeam from './types/NewTeam';
 import Team, { TeamDisplayNames, TeamExternalAlias } from './types/Team';
 import {
-	AISCORE_PROVIDER,
 	MARATHONBET_PROVIDER,
 	SOCCER365_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
@@ -14,6 +13,7 @@ const DROPPED_PROVIDERS = new Set([
 	'api-football',
 	'odds-api.io',
 	'4score.ru',
+	'aiscore.com',
 ]);
 
 /**
@@ -28,13 +28,6 @@ export const TEAM_EXTERNAL_ALIAS_FIELDS = [
 		sectionKey: 'teamSoccer365Section',
 		labelKey: 'teamSoccer365ExternalName',
 		inputId: 'soccer365-external-name',
-	},
-	{
-		provider: AISCORE_PROVIDER,
-		field: 'aiscoreExternalName',
-		sectionKey: 'teamAiscoreSection',
-		labelKey: 'teamAiscoreExternalName',
-		inputId: 'aiscore-external-name',
 	},
 	{
 		provider: TWENTYFOUR_SCORE_PROVIDER,
