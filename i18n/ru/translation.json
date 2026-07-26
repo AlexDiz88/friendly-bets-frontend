@@ -1185,6 +1185,22 @@
 			"firstTime": "HT",
 			"overTime": "OT",
 			"penalty": "PEN"
+		},
+		"fullMatch": {
+			"goalsTitle": "Голы",
+			"statsTitle": "Статистика",
+			"ownGoal": "Автогол",
+			"penalty": "Пенальти",
+			"penShootout": "Пенальти (серия)",
+			"penShootoutMinute": "Серия пенальти",
+			"miss": "Промах",
+			"stat": {
+				"xg": "xG",
+				"shots": "Удары",
+				"shotsOnTarget": "Удары в створ",
+				"possession": "Владение %",
+				"yellowCards": "Жёлтые"
+			}
 		}
 	},
 	"externalApiMonitoring": {

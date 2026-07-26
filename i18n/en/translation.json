@@ -1185,6 +1185,22 @@
 			"firstTime": "HT",
 			"overTime": "OT",
 			"penalty": "PEN"
+		},
+		"fullMatch": {
+			"goalsTitle": "Goals",
+			"statsTitle": "Stats",
+			"ownGoal": "Own goal",
+			"penalty": "Penalty",
+			"penShootout": "Pen shootout",
+			"penShootoutMinute": "Penalty shootout",
+			"miss": "Miss",
+			"stat": {
+				"xg": "xG",
+				"shots": "Shots",
+				"shotsOnTarget": "Shots on target",
+				"possession": "Possession %",
+				"yellowCards": "Yellow cards"
+			}
 		}
 	},
 	"externalApiMonitoring": {

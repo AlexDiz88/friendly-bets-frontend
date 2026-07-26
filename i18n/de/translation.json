@@ -1185,6 +1185,22 @@
 			"firstTime": "HT",
 			"overTime": "OT",
 			"penalty": "PEN"
+		},
+		"fullMatch": {
+			"goalsTitle": "Tore",
+			"statsTitle": "Statistik",
+			"ownGoal": "Eigentor",
+			"penalty": "Elfmeter",
+			"penShootout": "Elfmeterschießen",
+			"penShootoutMinute": "Elfmeterschießen",
+			"miss": "Verschossen",
+			"stat": {
+				"xg": "xG",
+				"shots": "Schüsse",
+				"shotsOnTarget": "Torschüsse",
+				"possession": "Ballbesitz %",
+				"yellowCards": "Gelbe Karten"
+			}
 		}
 	},
 	"externalApiMonitoring": {
