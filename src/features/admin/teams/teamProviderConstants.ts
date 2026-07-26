@@ -6,3 +6,6 @@ export const TWENTYFOUR_SCORE_PROVIDER = '24score.pro';
 
 /** {@link backend TeamTitleUtils.SOCCER365_PROVIDER} */
 export const SOCCER365_PROVIDER = 'soccer365.ru';
+
+/** {@link backend MatchDataProviders.AISCORE} */
+export const AISCORE_PROVIDER = 'aiscore.com';
