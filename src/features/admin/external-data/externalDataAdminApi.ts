@@ -10,6 +10,7 @@ function apiUrl(path: string): string {
 export type ExternalDataLayer = 'SCHEDULE' | 'ODDS' | 'LIVE' | 'FULL_MATCH';
 
 export type LayerAssignment = {
+	enabled?: boolean;
 	primaryProvider?: string | null;
 	secondaryProvider?: string | null;
 };
