@@ -7,7 +7,7 @@ import {
 	Select,
 	Typography,
 } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material';
+import type { SelectChangeEvent, SxProps, Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
@@ -163,7 +163,7 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 									>
 										{t(LAYER_LABEL_KEY[layer])}
 									</Typography>
-									<Box sx={[toggleInlineRowSx, { mb: 1 }]}>
+									<Box sx={[toggleInlineRowSx, { mb: 1 }] as SxProps<Theme>}>
 										<Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
 											{t('externalDataLayerEnabled')}
 										</Typography>
