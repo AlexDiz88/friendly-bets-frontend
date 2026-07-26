@@ -10,7 +10,8 @@ import {
 import type { SxProps, Theme } from '@mui/material';
 import i18n, { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { pageHasLiveMatches } from '../../shared/livePagePolling';
 import { useLivePagePolling } from '../../shared/useLivePagePolling';
 import { useVisibilityPageRefresh } from '../../shared/useVisibilityPageRefresh';
@@ -19,9 +20,14 @@ import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import { formatSlotLabel } from '../../components/matchday/formatSlotLabel';
 import MatchdayNavigator from '../../components/matchday/MatchdayNavigator';
+import { matchDayStringToSlotValue } from '../../components/matchday/slotMappers';
+import { APP_HEADER_CONTENT_GAP_PX } from '../../components/header/headerLayout';
 import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
 import { selectAllCalendarNodes } from '../admin/calendars/selectors';
 import { findLeagueMatchdayInCalendars } from '../bets/betSizeDefaults';
+import NearestGameweekBetsPlate, {
+	type NearestGameweekLeagueClick,
+} from '../gameweeks/NearestGameweekBetsPlate';
 import { resolveExternalMatchScoreView } from './externalMatchScoreView';
 import { resolveExternalMatchKickoffUtcMs } from './externalMatchKickoff';
 import { matchSideToDisplayTeam } from './externalMatchDisplay';
@@ -183,6 +189,10 @@ export default function MatchdayPage(): JSX.Element {
 	const user = useAppSelector(selectUser);
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const calendarNodes = useAppSelector(selectAllCalendarNodes);
+	const [searchParams, setSearchParams] = useSearchParams();
+	const pendingMatchDayFromQuery = useRef<string | null>(null);
+	const appliedMatchdayQueryKey = useRef('');
+	const [plateRefreshKey, setPlateRefreshKey] = useState(0);
 
 	useFetchActiveSeason(activeSeason?.id);
 
@@ -262,6 +272,7 @@ export default function MatchdayPage(): JSX.Element {
 		user?.role === 'ADMIN' || user?.role === 'MODERATOR';
 
 	const canAccessMatchBetsView = isSeasonParticipant || isAdminOrModerator;
+	const canShowNearestGameweekPlate = Boolean(user?.id) && canAccessMatchBetsView;
 
 	const betMatchDay = useMemo(() => {
 		const slot = matchdaySlots.find((s) => s.value === effectiveMatchday);
@@ -514,6 +525,51 @@ export default function MatchdayPage(): JSX.Element {
 	}, [matchResultLeagues]);
 
 	useEffect(() => {
+		const leagueParam = searchParams.get('league');
+		const matchDayParam = searchParams.get('matchDay');
+		if (!leagueParam) {
+			appliedMatchdayQueryKey.current = '';
+			return;
+		}
+		if (matchResultLeagues.length === 0) {
+			return;
+		}
+		if (!matchResultLeagues.some((l) => l.leagueCode === leagueParam)) {
+			return;
+		}
+		const queryKey = `${leagueParam}|${matchDayParam ?? ''}`;
+		if (appliedMatchdayQueryKey.current === queryKey) {
+			return;
+		}
+		appliedMatchdayQueryKey.current = queryKey;
+
+		if (matchDayParam) {
+			pendingMatchDayFromQuery.current = matchDayParam;
+		}
+		if (leagueParam !== selectedLeagueCode) {
+			setSelectedLeagueCode(leagueParam);
+			setMatchdayTouched(false);
+			setData(null);
+			setCompetitionInfo(null);
+			setCompetitionInfoLoading(true);
+			setLoading(true);
+		}
+	}, [searchParams, matchResultLeagues, selectedLeagueCode]);
+
+	useEffect(() => {
+		const pending = pendingMatchDayFromQuery.current;
+		if (!pending || competitionInfoLoading || matchdaySlots.length === 0) {
+			return;
+		}
+		const nextValue = matchDayStringToSlotValue(pending, matchdaySlots);
+		pendingMatchDayFromQuery.current = null;
+		setMatchdayTouched(true);
+		setMatchday(nextValue);
+		setData(null);
+		setLoading(true);
+	}, [competitionInfoLoading, matchdaySlots, effectiveLeagueCode]);
+
+	useEffect(() => {
 		if (!effectiveLeagueCode) {
 			setCompetitionInfoLoading(false);
 			setCompetitionInfo(null);
@@ -608,6 +664,7 @@ export default function MatchdayPage(): JSX.Element {
 		setCompetitionInfo(null);
 		setCompetitionInfoLoading(true);
 		setLoading(true);
+		setSearchParams({}, { replace: true });
 	};
 
 	const handleMatchdayChange = (md: number): void => {
@@ -615,7 +672,34 @@ export default function MatchdayPage(): JSX.Element {
 		setMatchday(md);
 		setData(null);
 		setLoading(true);
+		setSearchParams({}, { replace: true });
 	};
+
+	const handleNearestGameweekLeagueClick = useCallback(
+		({ leagueCode, matchDay }: NearestGameweekLeagueClick): void => {
+			setSearchParams({ league: leagueCode, matchDay }, { replace: true });
+			if (leagueCode === selectedLeagueCode) {
+				pendingMatchDayFromQuery.current = matchDay;
+				if (!competitionInfoLoading && matchdaySlots.length > 0) {
+					const nextValue = matchDayStringToSlotValue(matchDay, matchdaySlots);
+					pendingMatchDayFromQuery.current = null;
+					setMatchdayTouched(true);
+					setMatchday(nextValue);
+					setData(null);
+					setLoading(true);
+				}
+				return;
+			}
+			setSelectedLeagueCode(leagueCode);
+			setMatchdayTouched(false);
+			setData(null);
+			setCompetitionInfo(null);
+			setCompetitionInfoLoading(true);
+			setLoading(true);
+			pendingMatchDayFromQuery.current = matchDay;
+		},
+		[selectedLeagueCode, competitionInfoLoading, matchdaySlots, setSearchParams]
+	);
 
 	const sortedMatches = useMemo(() => {
 		if (!data?.matches) return [];
@@ -649,11 +733,20 @@ export default function MatchdayPage(): JSX.Element {
 				maxWidth: 430,
 				mx: 'auto',
 				px: 0.5,
-				mt: { xs: -1.5, sm: 0 },
+				mt: `calc(-${APP_HEADER_CONTENT_GAP_PX}px + 5px)`,
 				pb: 1,
 				overflowX: 'hidden',
 			}}
 		>
+			{canShowNearestGameweekPlate ? (
+				<NearestGameweekBetsPlate
+					enabled
+					seasonId={activeSeason?.id}
+					refreshKey={plateRefreshKey}
+					onLeagueClick={handleNearestGameweekLeagueClick}
+				/>
+			) : null}
+
 			<Box
 				sx={{
 					flexShrink: 0,
@@ -760,7 +853,10 @@ export default function MatchdayPage(): JSX.Element {
 					calendarNodeId={calendarMatch?.calendar.id}
 					betSize={oddsPickBetSize}
 					userId={user?.id}
-					onBetPlaced={() => setOddsPickMatch(null)}
+					onBetPlaced={() => {
+						setOddsPickMatch(null);
+						setPlateRefreshKey((key) => key + 1);
+					}}
 				/>
 			) : null}
 
