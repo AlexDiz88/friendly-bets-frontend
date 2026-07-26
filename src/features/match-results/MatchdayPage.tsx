@@ -48,21 +48,24 @@ import {
 import {
 	getMatchStatusChipColor,
 	isMatchNotStarted,
-	isMatchStartedOrFinished,
-	isMatchdayNotStarted,
 	translateMatchStatus,
 } from './matchStatusI18n';
 import { resolveExternalSeasonForLeague } from './seasonExternalYear';
 import {
 	ExternalCompetitionInfo,
 	ExternalMatch,
-	ExternalMatchdayPage as MatchdayPageData,
+	MatchdayPageData,
 } from './types/ExternalMatch';
 import ExternalMatchBetsDialog from './ExternalMatchBetsDialog';
 import ExternalMatchViewBetsButton from './ExternalMatchViewBetsButton';
 import WcExternalSlotPanel from './WcExternalSlotPanel';
 import { useWcSlotUserBets } from './useWcSlotUserBets';
 import { matchBetCountKey, useSlotMatchBetCounts } from './useSlotMatchBetCounts';
+import OddsPickDialog from '../../components/odds/OddsPickDialog';
+import {
+	FALLBACK_DEFAULT_BET_SIZE,
+	getNodeDefaultBetSize,
+} from '../bets/betSizeDefaults';
 
 const MATCH_ROW_AVATAR = 26;
 
@@ -175,7 +178,7 @@ function leagueCodeToCompetition(leagueCode: string): string {
 	);
 }
 
-export default function ExternalMatchdayPage(): JSX.Element {
+export default function MatchdayPage(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const user = useAppSelector(selectUser);
 	const activeSeason = useAppSelector(selectActiveSeason);
@@ -230,6 +233,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	const [loading, setLoading] = useState(true);
 	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(true);
 	const [betsMatch, setBetsMatch] = useState<ExternalMatch | null>(null);
+	const [oddsPickMatch, setOddsPickMatch] = useState<ExternalMatch | null>(null);
 	const [calendarsReady, setCalendarsReady] = useState(false);
 
 	const effectiveMatchday = useMemo(() => {
@@ -253,6 +257,11 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		}
 		return activeSeason.players.some((p) => p.id === user.id);
 	}, [user?.id, activeSeason?.players]);
+
+	const isAdminOrModerator =
+		user?.role === 'ADMIN' || user?.role === 'MODERATOR';
+
+	const canAccessMatchBetsView = isSeasonParticipant || isAdminOrModerator;
 
 	const betMatchDay = useMemo(() => {
 		const slot = matchdaySlots.find((s) => s.value === effectiveMatchday);
@@ -300,7 +309,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	);
 
 	const needsMatchBetCounts =
-		Boolean(user?.id) && isSeasonParticipant && Boolean(selectedLeague?.id) && Boolean(activeSeason?.id);
+		Boolean(user?.id) && canAccessMatchBetsView && Boolean(selectedLeague?.id) && Boolean(activeSeason?.id);
 
 	const { countsByMatch } = useSlotMatchBetCounts({
 		enabled: needsMatchBetCounts,
@@ -358,7 +367,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const canViewMatchBets = useCallback(
 		(match: ExternalMatch): boolean => {
-			if (!user || !isSeasonParticipant || !selectedLeague?.id || !activeSeason?.id) {
+			if (!user || !canAccessMatchBetsView || !selectedLeague?.id || !activeSeason?.id) {
 				return false;
 			}
 			if (!calendarMatch) {
@@ -371,7 +380,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		},
 		[
 			user,
-			isSeasonParticipant,
+			canAccessMatchBetsView,
 			selectedLeague?.id,
 			activeSeason?.id,
 			calendarMatch,
@@ -381,7 +390,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 
 	const canOpenMatchBetsDialog = useCallback(
 		(match: ExternalMatch): boolean => {
-			if (!user || !isSeasonParticipant || !selectedLeague?.id || !activeSeason?.id) {
+			if (!user || !canAccessMatchBetsView || !selectedLeague?.id || !activeSeason?.id) {
 				return false;
 			}
 			if (!calendarMatch) {
@@ -392,7 +401,20 @@ export default function ExternalMatchdayPage(): JSX.Element {
 			}
 			return true;
 		},
-		[user, isSeasonParticipant, selectedLeague?.id, activeSeason?.id, calendarMatch]
+		[user, canAccessMatchBetsView, selectedLeague?.id, activeSeason?.id, calendarMatch]
+	);
+
+	const canOpenOddsPick = useCallback(
+		(match: ExternalMatch): boolean => {
+			if (!user || !match.id || !isMatchOpenForBetting(match)) {
+				return false;
+			}
+			if (isAdminOrModerator) {
+				return true;
+			}
+			return isSeasonParticipant && Boolean(calendarMatch);
+		},
+		[user, isMatchOpenForBetting, isAdminOrModerator, isSeasonParticipant, calendarMatch]
 	);
 
 	const showViewMatchBetsButton = useCallback(
@@ -404,18 +426,29 @@ export default function ExternalMatchdayPage(): JSX.Element {
 	);
 
 	const isMatchCardClickable = useCallback(
-		(match: ExternalMatch): boolean => canViewMatchBets(match),
-		[canViewMatchBets]
+		(match: ExternalMatch): boolean => canViewMatchBets(match) || canOpenOddsPick(match),
+		[canViewMatchBets, canOpenOddsPick]
 	);
 
 	const handleMatchClick = useCallback(
 		(match: ExternalMatch): void => {
+			if (canOpenOddsPick(match)) {
+				setOddsPickMatch(match);
+				return;
+			}
 			if (canViewMatchBets(match)) {
 				setBetsMatch(match);
 			}
 		},
-		[canViewMatchBets]
+		[canOpenOddsPick, canViewMatchBets]
 	);
+
+	const oddsPickBetSize = useMemo(() => {
+		if (!calendarMatch?.node) {
+			return FALLBACK_DEFAULT_BET_SIZE;
+		}
+		return getNodeDefaultBetSize(calendarMatch.node) ?? FALLBACK_DEFAULT_BET_SIZE;
+	}, [calendarMatch]);
 
 	const reloadMatchday = useCallback(async (): Promise<void> => {
 		try {
@@ -591,52 +624,14 @@ export default function ExternalMatchdayPage(): JSX.Element {
 		);
 	}, [data?.matches]);
 
-	const syncProgressTotal = data?.sync?.expectedMatchCount ?? 0;
-
-	const syncProgressStarted = useMemo(
-		() =>
-			sortedMatches.filter((m) => {
-				if (isMatchStartedOrFinished(m.status)) {
-					return true;
-				}
-				const kickoffMs = resolveExternalMatchKickoffUtcMs(m);
-				return kickoffMs > 0 && kickoffMs <= Date.now();
-			}).length,
-		[sortedMatches]
-	);
-
-	const syncProgressFinalized = useMemo(
-		() => sortedMatches.filter((m) => m.finalized).length,
-		[sortedMatches]
-	);
-
-	const matchdayNotStarted = useMemo(
-		() => isMatchdayNotStarted(sortedMatches, syncProgressStarted),
-		[sortedMatches, syncProgressStarted]
-	);
-
-	const syncProgressAvailable = Boolean(data?.sync);
-
-	const syncChip = useMemo(() => {
-		if (!syncProgressAvailable) {
-			return null;
-		}
-		const total = syncProgressTotal;
-		const finalized = syncProgressFinalized;
-		if (total > 0 && finalized >= total) {
-			return { label: t('externalMatchSyncCompleted'), color: 'success' as const };
-		}
-		if (matchdayNotStarted) {
-			return { label: t('externalMatchSyncNotStarted'), color: 'default' as const };
-		}
-		return { label: t('externalMatchSyncPolling'), color: 'warning' as const };
-	}, [syncProgressAvailable, matchdayNotStarted, syncProgressFinalized, syncProgressTotal, t]);
-
 	const renderViewMatchBetsButton = (match: ExternalMatch): JSX.Element | null => {
 		if (!showViewMatchBetsButton(match)) {
 			return null;
 		}
 		const count = match.id ? countsByMatch.get(matchBetCountKey(match.id)) ?? 0 : 0;
+		if (count <= 0) {
+			return null;
+		}
 		return (
 			<ExternalMatchViewBetsButton
 				count={count}
@@ -680,7 +675,7 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
-						minHeight: 28,
+						minHeight: 40,
 						px: 0.25,
 					}}
 				>
@@ -734,42 +729,6 @@ export default function ExternalMatchdayPage(): JSX.Element {
 						/>
 					</Box>
 				</Box>
-
-				{isExternalPageReady && syncChip && (
-					<Box
-						sx={{
-							display: 'flex',
-							flexWrap: 'wrap',
-							gap: 0.25,
-							alignItems: 'center',
-							justifyContent: 'center',
-							px: 0.5,
-							flexShrink: 0,
-						}}
-					>
-						<Chip
-							size="medium"
-							label={syncChip.label}
-							color={syncChip.color}
-							sx={{
-								height: 22,
-								my: 0.5,
-								fontSize: '0.75rem',
-								'& .MuiChip-label': { p: 0.75 },
-							}}
-						/>
-						<Typography
-							variant="caption"
-							color="text.secondary"
-							sx={{ px: 1 }}
-						>
-							{t('externalMatchSyncProgress', {
-								finished: syncProgressStarted,
-								total: syncProgressTotal,
-							})}
-						</Typography>
-					</Box>
-				)}
 			</Box>
 
 			{isBettingCalendarMissing ? (
@@ -785,6 +744,23 @@ export default function ExternalMatchdayPage(): JSX.Element {
 					match={betsMatch}
 					seasonId={activeSeason.id}
 					currentUserId={user.id}
+				/>
+			) : null}
+
+			{oddsPickMatch && oddsPickMatch.id ? (
+				<OddsPickDialog
+					open
+					onClose={() => setOddsPickMatch(null)}
+					matchScheduleId={oddsPickMatch.id}
+					match={oddsPickMatch}
+					viewOnly={isAdminOrModerator}
+					seasonId={activeSeason?.id}
+					leagueId={selectedLeague?.id}
+					matchDay={betMatchDay}
+					calendarNodeId={calendarMatch?.calendar.id}
+					betSize={oddsPickBetSize}
+					userId={user?.id}
+					onBetPlaced={() => setOddsPickMatch(null)}
 				/>
 			) : null}
 

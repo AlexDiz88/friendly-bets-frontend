@@ -1,6 +1,5 @@
 import Team from './types/Team';
 import {
-	FOURSCORE_PROVIDER,
 	MARATHONBET_PROVIDER,
 	SOCCER365_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
@@ -18,6 +17,7 @@ export const TEAM_MAPPING_SEARCH_PARAM_KEYS = [
 	'externalId',
 	'externalName',
 	'teamId',
+	'openTeamEdit',
 ] as const;
 
 export function readTeamMappingFromSearchParams(
@@ -81,13 +81,6 @@ export function buildExternalAliasPrefill(
 		const patch: Partial<TeamFormValues> = {};
 		if (externalName) {
 			patch.marathonbetExternalName = externalName;
-		}
-		return patch;
-	}
-	if (provider === FOURSCORE_PROVIDER) {
-		const patch: Partial<TeamFormValues> = {};
-		if (externalName) {
-			patch.fourscoreExternalName = externalName;
 		}
 		return patch;
 	}

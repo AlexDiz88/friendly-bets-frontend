@@ -66,22 +66,25 @@ import {
 type Props = {
 	open: boolean;
 	onClose: () => void;
-	gameResultId: string;
+	matchScheduleId: string;
 	match: ExternalMatch;
-	seasonId: string;
-	leagueId: string;
-	matchDay: string;
-	calendarNodeId: string;
-	betSize: number;
-	userId: string;
-	onBetPlaced: () => void;
+	/** Staff can browse markets without placing a bet. */
+	viewOnly?: boolean;
+	seasonId?: string;
+	leagueId?: string;
+	matchDay?: string;
+	calendarNodeId?: string;
+	betSize?: number;
+	userId?: string;
+	onBetPlaced?: () => void;
 };
 
 export default function OddsPickDialog({
 	open,
 	onClose,
-	gameResultId,
+	matchScheduleId,
 	match,
+	viewOnly = false,
 	seasonId,
 	leagueId,
 	matchDay,
@@ -105,41 +108,51 @@ export default function OddsPickDialog({
 	const awayTeam = matchSideToDisplayTeam(match, 'away');
 
 	const loadMarkets = useCallback(async () => {
-		if (!open || !gameResultId) {
+		if (!open || !matchScheduleId) {
 			return;
 		}
 		setLoading(true);
 		setMarkets(null);
 		setSelection(null);
 		try {
-			const data = await getOddsEventMarkets(gameResultId);
+			const data = await getOddsEventMarkets(matchScheduleId);
 			setMarkets(data);
 		} catch (e) {
-			dispatch(
-				showErrorSnackbar({
-					message: e instanceof Error ? e.message : 'unknownError',
-				})
-			);
+			const message = e instanceof Error ? e.message : 'unknownError';
+			// Empty state in the dialog is enough; no toast for missing odds.
+			if (message !== 'oddsNotAvailable') {
+				dispatch(showErrorSnackbar({ message }));
+			}
 		} finally {
 			setLoading(false);
 		}
-	}, [open, gameResultId, dispatch]);
+	}, [open, matchScheduleId, dispatch]);
 
 	useEffect(() => {
 		void loadMarkets();
 	}, [loadMarkets]);
 
 	const handleSelect = (row: OddsRowSelection) => {
+		if (viewOnly) {
+			return;
+		}
 		setSelection(row);
 		setConfirmOpen(true);
 	};
 
 	const handleConfirm = async () => {
+		if (viewOnly) {
+			return;
+		}
 		if (!selection?.betTitle) {
 			return;
 		}
 		if (!match.id) {
 			dispatch(showErrorSnackbar({ message: 'matchScheduleNotFound' }));
+			return;
+		}
+		if (!seasonId || !leagueId || !matchDay || !calendarNodeId || !userId || betSize == null) {
+			dispatch(showErrorSnackbar({ message: 'unknownError' }));
 			return;
 		}
 		setSubmitting(true);
@@ -166,13 +179,13 @@ export default function OddsPickDialog({
 			}
 			dispatch(showSuccessSnackbar({ message: t('wc26.oddsPick.success') }));
 			setConfirmOpen(false);
-			onBetPlaced();
+			onBetPlaced?.();
 			onClose();
 		} catch (e) {
 			const message = e instanceof Error ? e.message : 'unknownError';
 			dispatch(showErrorSnackbar({ message }));
 			if (message === 'betAlreadyAdded') {
-				onBetPlaced();
+				onBetPlaced?.();
 			}
 		} finally {
 			setSubmitting(false);
@@ -200,7 +213,7 @@ export default function OddsPickDialog({
 					<Box sx={oddsPickDialogHeaderSx}>
 						<Box sx={oddsPickDialogTitleRowSx}>
 							<Typography component="h2" sx={oddsPickDialogTitleSx}>
-								{t('wc26.oddsPick.title')}
+								{t(viewOnly ? 'wc26.oddsPick.viewTitle' : 'wc26.oddsPick.title')}
 							</Typography>
 							<Box sx={oddsPickDialogHeaderActionsSx}>
 								<ThemeModeToggle iconButtonSx={oddsPickDialogThemeToggleSx} />
@@ -249,8 +262,8 @@ export default function OddsPickDialog({
 										bookmakers={markets.bookmakers}
 										displayMode="best"
 										pickMode
-										selectable
-										onSelect={handleSelect}
+										selectable={!viewOnly}
+										onSelect={viewOnly ? undefined : handleSelect}
 									/>
 								) : (
 									<OddsMarketGroupAccordion
@@ -259,8 +272,8 @@ export default function OddsPickDialog({
 										bookmakers={markets.bookmakers}
 										displayMode="best"
 										pickMode
-										selectable
-										onSelect={handleSelect}
+										selectable={!viewOnly}
+										onSelect={viewOnly ? undefined : handleSelect}
 									/>
 								)
 							)
@@ -271,6 +284,7 @@ export default function OddsPickDialog({
 				</Box>
 			</Dialog>
 
+			{!viewOnly ? (
 			<CustomCalendarDialog
 				open={confirmOpen}
 				onClose={() => !submitting && setConfirmOpen(false)}
@@ -340,6 +354,7 @@ export default function OddsPickDialog({
 					) : undefined
 				}
 			/>
+			) : null}
 		</>
 	);
 }

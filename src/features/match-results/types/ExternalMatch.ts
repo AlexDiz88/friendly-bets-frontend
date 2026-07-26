@@ -1,19 +1,6 @@
 import GameScore from '../../bets/types/GameScore';
 import { TeamDisplayNames } from '../../admin/teams/types/Team';
 
-export type ExternalMatchdaySyncStatus = 'POLLING' | 'COMPLETED';
-
-export interface ExternalMatchdaySync {
-	leagueCode: string;
-	matchday: number;
-	season: string;
-	syncStatus: ExternalMatchdaySyncStatus;
-	expectedMatchCount: number;
-	finishedMatchCount: number;
-	lastFetchedAt?: string;
-	completedAt?: string;
-}
-
 export interface ExternalMatch {
 	id?: string;
 	externalMatchId: number;
@@ -41,15 +28,14 @@ export interface ExternalMatch {
 	finalizedAt?: string;
 	finalizedSource?: string;
 	adminCorrected?: boolean;
-	/** Текущая минута live с 4score (напр. 72'). */
+	/** Текущая минута live (напр. 72'). */
 	liveMinuteLabel?: string | null;
 	fetchedAt?: string;
 	/** Id в wc26_schedule (1–104), если связан в БД. */
 	wc26ScheduleId?: number | null;
 }
 
-export interface ExternalMatchdayPage {
-	sync: ExternalMatchdaySync | null;
+export interface MatchdayPageData {
 	matches: ExternalMatch[];
 }
 

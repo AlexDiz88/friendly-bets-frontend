@@ -88,20 +88,6 @@ export default function TeamFormFields({
 				/>
 			</Box>
 
-			<Typography sx={sectionSx}>{t('teamFourScoreSection')}</Typography>
-			<Box sx={sectionContentSx}>
-				<TextField
-					fullWidth
-					size="small"
-					sx={fieldSx}
-					id="fourscore-external-name"
-					label={t('teamFourScoreExternalName')}
-					variant="outlined"
-					value={values.fourscoreExternalName}
-					onChange={(e) => onChange({ fourscoreExternalName: e.target.value })}
-				/>
-			</Box>
-
 			<Typography sx={sectionSx}>{t('teamTwentyFourScoreSection')}</Typography>
 			<Box sx={sectionContentSx}>
 				<TextField

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { apiFetch } from '../../shared/apiClient';
-import { ExternalCompetitionInfo, ExternalMatchdayPage } from './types/ExternalMatch';
+import { ExternalCompetitionInfo, MatchdayPageData } from './types/ExternalMatch';
 
 function apiUrl(path: string): string {
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
@@ -31,7 +31,7 @@ export async function getMatchdayFromCache(
 	matchday: number,
 	season: string,
 	leagueId?: string
-): Promise<ExternalMatchdayPage> {
+): Promise<MatchdayPageData> {
 	const params = new URLSearchParams({ season });
 	if (leagueId) {
 		params.set('leagueId', leagueId);

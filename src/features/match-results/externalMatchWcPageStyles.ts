@@ -482,7 +482,6 @@ function wc26ToolbarIconButton(role: 'gold' | 'green' | 'burgundy'): SxProps<The
 }
 
 export const externalMatchWcOddsSyncButtonSx = wc26ToolbarIconButton('gold');
-export const externalMatchWcMarathonbetSyncButtonSx = wc26ToolbarIconButton('burgundy');
 export const externalMatchWcRefreshSyncButtonSx = wc26ToolbarIconButton('green');
 
 export function externalMatchWcCardRowSx(
@@ -513,19 +512,67 @@ export function externalMatchWcCardRowSx(
 	};
 }
 
-export const externalMatchViewBetsIconSx: SxProps<Theme> = (theme) => ({
-	color: theme.palette.mode === 'dark' ? '#9de8c4' : '#0a5c38',
-});
-
-export const externalMatchViewBetsBadgeSx: SxProps<Theme> = (theme) => {
+/** Glass chip: bet count only (variant A). */
+export const externalMatchViewBetsChipSx: SxProps<Theme> = (theme) => {
 	const isDark = theme.palette.mode === 'dark';
 	return {
-		'& .MuiBadge-badge': {
-			background: isDark
-				? 'linear-gradient(135deg, #ffd700 0%, #c9a000 100%)'
-				: 'linear-gradient(135deg, #8b6914 0%, #a16207 100%)',
-			color: isDark ? '#0b1424' : '#fff',
-			border: `1px solid ${isDark ? 'rgba(255, 214, 0, 0.45)' : 'rgba(255, 255, 255, 0.65)'}`,
+		display: 'inline-flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		height: 18,
+		width: 18,
+		minHeight: 18,
+		minWidth: 18,
+		p: 0,
+		borderRadius: 999,
+		position: 'relative',
+		overflow: 'hidden',
+		isolation: 'isolate',
+		backdropFilter: 'blur(14px) saturate(1.35)',
+		WebkitBackdropFilter: 'blur(14px) saturate(1.35)',
+		background: isDark
+			? 'linear-gradient(145deg, rgba(157, 232, 196, 0.18) 0%, rgba(255, 255, 255, 0.07) 42%, rgba(255, 214, 0, 0.08) 100%)'
+			: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(232, 244, 239, 0.88) 50%, rgba(255, 248, 220, 0.7) 100%)',
+		border: '1px solid',
+		borderColor: isDark ? 'rgba(157, 232, 196, 0.48)' : 'rgba(4, 106, 61, 0.32)',
+		boxShadow: isDark
+			? [
+					'inset 0 1px 0 rgba(255, 255, 255, 0.22)',
+					'inset 0 -1px 0 rgba(0, 0, 0, 0.25)',
+					'0 2px 8px rgba(0, 0, 0, 0.35)',
+					'0 0 14px rgba(157, 232, 196, 0.16)',
+				].join(', ')
+			: [
+					'inset 0 1px 0 rgba(255, 255, 255, 0.95)',
+					'0 1px 3px rgba(4, 90, 55, 0.12)',
+					'0 0 10px rgba(4, 106, 61, 0.08)',
+				].join(', '),
+		transition: 'border-color 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease',
+		'&::before': {
+			content: '""',
+			position: 'absolute',
+			inset: 0,
+			borderRadius: 'inherit',
+			background:
+				'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.04) 46%, transparent 100%)',
+			pointerEvents: 'none',
+			zIndex: 0,
+		},
+		'& > *': { position: 'relative', zIndex: 1 },
+		'&:hover': {
+			borderColor: isDark ? 'rgba(157, 232, 196, 0.72)' : 'rgba(4, 106, 61, 0.48)',
+			boxShadow: isDark
+				? [
+						'inset 0 1px 0 rgba(255, 255, 255, 0.28)',
+						'inset 0 -1px 0 rgba(0, 0, 0, 0.25)',
+						'0 3px 10px rgba(0, 0, 0, 0.4)',
+						'0 0 18px rgba(157, 232, 196, 0.28)',
+					].join(', ')
+				: [
+						'inset 0 1px 0 rgba(255, 255, 255, 1)',
+						'0 2px 6px rgba(4, 90, 55, 0.16)',
+						'0 0 12px rgba(4, 106, 61, 0.12)',
+					].join(', '),
 		},
 	};
 };

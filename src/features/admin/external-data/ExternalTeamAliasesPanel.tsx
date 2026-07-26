@@ -1,4 +1,13 @@
-import { Box, Chip, CircularProgress, Typography } from '@mui/material';
+import {
+	Box,
+	Chip,
+	CircularProgress,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	Typography,
+} from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
@@ -6,27 +15,46 @@ import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import LeagueSelect from '../../../components/selectors/LeagueSelect';
-import { showErrorSnackbar, showSuccessSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
+import { showErrorSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
 import AdminSection from '../AdminSection';
 import { getActiveSeason } from '../seasons/seasonsSlice';
 import { selectActiveSeason } from '../seasons/selectors';
-import { SOCCER365_PROVIDER } from '../teams/teamProviderConstants';
 import {
-	fetchSoccer365TeamNames,
-	Soccer365TeamNameChip,
-	syncSoccer365Schedule,
-} from './soccer365AdminApi';
+	MARATHONBET_PROVIDER,
+	SOCCER365_PROVIDER,
+	TWENTYFOUR_SCORE_PROVIDER,
+} from '../teams/teamProviderConstants';
+import {
+	ExternalTeamNameChip,
+	fetchExternalTeamNames,
+} from '../external-data/externalDataAdminApi';
 
-const SOCCER365_LEAGUE_CODES = new Set(['EPL', 'BL', 'CL', 'LE', 'EC', 'WC']);
+const PROVIDERS = [
+	SOCCER365_PROVIDER,
+	MARATHONBET_PROVIDER,
+	TWENTYFOUR_SCORE_PROVIDER,
+] as const;
 
-export default function Soccer365TeamNamesPanel(): JSX.Element {
+const PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
+	[SOCCER365_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'EC', 'WC']),
+	[MARATHONBET_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'WC']),
+	[TWENTYFOUR_SCORE_PROVIDER]: new Set(['EPL', 'BL']),
+};
+
+const PROVIDER_LABEL_KEY: Record<string, string> = {
+	[SOCCER365_PROVIDER]: 'externalTeamAliasProviderSoccer365',
+	[MARATHONBET_PROVIDER]: 'externalTeamAliasProviderMarathonbet',
+	[TWENTYFOUR_SCORE_PROVIDER]: 'externalTeamAliasProvider24score',
+};
+
+export default function ExternalTeamAliasesPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const [, setSearchParams] = useSearchParams();
+	const [provider, setProvider] = useState<string>(SOCCER365_PROVIDER);
 	const [leagueCode, setLeagueCode] = useState('EPL');
 	const [loadingNames, setLoadingNames] = useState(false);
-	const [syncing, setSyncing] = useState(false);
-	const [chips, setChips] = useState<Soccer365TeamNameChip[]>([]);
+	const [chips, setChips] = useState<ExternalTeamNameChip[]>([]);
 	const [namesLoaded, setNamesLoaded] = useState(false);
 
 	useEffect(() => {
@@ -35,10 +63,10 @@ export default function Soccer365TeamNamesPanel(): JSX.Element {
 		}
 	}, [activeSeason, dispatch]);
 
-	const leagues = useMemo(
-		() => activeSeason?.leagues?.filter((l) => SOCCER365_LEAGUE_CODES.has(l.leagueCode)) ?? [],
-		[activeSeason?.leagues]
-	);
+	const leagues = useMemo(() => {
+		const allowed = PROVIDER_LEAGUE_CODES[provider] ?? new Set<string>();
+		return activeSeason?.leagues?.filter((l) => allowed.has(l.leagueCode)) ?? [];
+	}, [activeSeason?.leagues, provider]);
 
 	const effectiveLeagueCode = useMemo(() => {
 		if (leagues.some((l) => l.leagueCode === leagueCode)) {
@@ -47,49 +75,35 @@ export default function Soccer365TeamNamesPanel(): JSX.Element {
 		return leagues[0]?.leagueCode ?? '';
 	}, [leagues, leagueCode]);
 
+	const handleProviderChange = (next: string): void => {
+		setProvider(next);
+		setChips([]);
+		setNamesLoaded(false);
+	};
+
+	const handleLeagueChange = (next: string): void => {
+		setLeagueCode(next);
+		setChips([]);
+		setNamesLoaded(false);
+	};
+
 	const handleLoadNames = async (): Promise<void> => {
-		if (!effectiveLeagueCode) {
+		if (!effectiveLeagueCode || !provider) {
 			return;
 		}
 		setLoadingNames(true);
 		try {
-			const names = await fetchSoccer365TeamNames(effectiveLeagueCode);
+			const names = await fetchExternalTeamNames(provider, effectiveLeagueCode);
 			setChips(names.filter((c) => !c.alreadyMapped));
 			setNamesLoaded(true);
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
-					message: error instanceof Error ? error.message : 'soccer365FetchFailed',
+					message: error instanceof Error ? error.message : 'externalTeamNamesFetchFailed',
 				})
 			);
 		} finally {
 			setLoadingNames(false);
-		}
-	};
-
-	const handleSyncSchedule = async (): Promise<void> => {
-		if (!effectiveLeagueCode) {
-			return;
-		}
-		setSyncing(true);
-		try {
-			const result = await syncSoccer365Schedule(effectiveLeagueCode);
-			dispatch(
-				showSuccessSnackbar({
-					message: t('soccer365SyncScheduleSuccess', {
-						upserted: result.upserted,
-						skipped: result.skippedUnmapped,
-					}),
-				})
-			);
-		} catch (error) {
-			dispatch(
-				showErrorSnackbar({
-					message: error instanceof Error ? error.message : 'soccer365FetchFailed',
-				})
-			);
-		} finally {
-			setSyncing(false);
 		}
 	};
 
@@ -98,7 +112,7 @@ export default function Soccer365TeamNamesPanel(): JSX.Element {
 			(prev) => {
 				const next = new URLSearchParams(prev);
 				next.set('openTeamEdit', '1');
-				next.set('provider', SOCCER365_PROVIDER);
+				next.set('provider', provider);
 				next.set('externalName', externalName);
 				next.delete('externalId');
 				next.delete('teamId');
@@ -110,12 +124,27 @@ export default function Soccer365TeamNamesPanel(): JSX.Element {
 	};
 
 	return (
-		<AdminSection title={t('soccer365TeamNamesTitle')} hint={t('soccer365TeamNamesHint')}>
+		<AdminSection title={t('externalTeamAliasesTitle')} hint={t('externalTeamAliasesHint')}>
 			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+				<FormControl fullWidth size="small">
+					<InputLabel id="external-alias-provider">{t('externalTeamAliasProvider')}</InputLabel>
+					<Select
+						labelId="external-alias-provider"
+						label={t('externalTeamAliasProvider')}
+						value={provider}
+						onChange={(e: SelectChangeEvent) => handleProviderChange(e.target.value)}
+					>
+						{PROVIDERS.map((id) => (
+							<MenuItem key={id} value={id}>
+								{t(PROVIDER_LABEL_KEY[id])}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
 				{leagues.length > 0 ? (
 					<LeagueSelect
 						value={effectiveLeagueCode}
-						onChange={(e: SelectChangeEvent<string>) => setLeagueCode(e.target.value)}
+						onChange={(e: SelectChangeEvent<string>) => handleLeagueChange(e.target.value)}
 						leagues={leagues}
 						withoutAll
 						compact
@@ -124,29 +153,22 @@ export default function Soccer365TeamNamesPanel(): JSX.Element {
 				<span>
 					<CustomSuccessButton
 						buttonText={
-							loadingNames ? t('btnText.processing') : t('soccer365TeamNamesLoad')
+							loadingNames ? t('btnText.processing') : t('externalTeamAliasesLoad')
 						}
 						onClick={() => void handleLoadNames()}
 						disabled={loadingNames || !effectiveLeagueCode}
-					/>
-				</span>
-				<span>
-					<CustomSuccessButton
-						buttonText={syncing ? t('btnText.processing') : t('soccer365SyncSchedule')}
-						onClick={() => void handleSyncSchedule()}
-						disabled={syncing || !effectiveLeagueCode}
 					/>
 				</span>
 				{loadingNames ? (
 					<CircularProgress size={24} />
 				) : namesLoaded && chips.length === 0 ? (
 					<Typography variant="body2" color="text.secondary">
-						{t('soccer365TeamNamesEmpty')}
+						{t('externalTeamAliasesEmpty')}
 					</Typography>
 				) : chips.length > 0 ? (
 					<>
 						<Typography variant="body2" color="text.secondary">
-							{t('soccer365TeamNamesUnmappedHint')}
+							{t('externalTeamAliasesUnmappedHint')}
 						</Typography>
 						<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
 							{chips.map((chip) => (

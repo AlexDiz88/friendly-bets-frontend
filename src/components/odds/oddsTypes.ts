@@ -23,7 +23,7 @@ export type OddsMarketGroup = {
 };
 
 export type OddsEventMarkets = {
-	gameResultId: string;
+	matchScheduleId: string;
 	homeTeamId: string;
 	awayTeamId: string;
 	status: string;

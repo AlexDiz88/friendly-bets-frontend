@@ -193,13 +193,12 @@ export const externalMatchBetsDialogTeamSideAwaySx: SxProps<Theme> = {
 };
 
 export const externalMatchBetsDialogTeamLogoSx: SxProps<Theme> = {
-	width: 24,
-	height: 24,
+	width: 36,
+	height: 36,
 	flexShrink: 0,
-	borderRadius: 0.5,
-	border: '1px solid',
-	borderColor: 'divider',
-	bgcolor: 'background.paper',
+	borderRadius: 0,
+	border: 'none',
+	bgcolor: 'transparent',
 };
 
 export const externalMatchBetsDialogTeamNameSx: SxProps<Theme> = (theme) => ({
