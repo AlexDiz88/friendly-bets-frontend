@@ -1,6 +1,6 @@
 import { FormControl, TextField, Typography, Box } from '@mui/material';
 import { t } from 'i18next';
-import { TeamFormValues } from './teamFormUtils';
+import { TEAM_EXTERNAL_ALIAS_FIELDS, TeamFormValues } from './teamFormUtils';
 
 type TeamFormFieldsProps = {
 	values: TeamFormValues;
@@ -74,47 +74,23 @@ export default function TeamFormFields({
 				onChange={(e) => onChange({ nameRu: e.target.value })}
 			/>
 
-			<Typography sx={sectionSx}>{t('teamSoccer365Section')}</Typography>
-			<Box sx={sectionContentSx}>
-				<TextField
-					fullWidth
-					size="small"
-					sx={fieldSx}
-					id="soccer365-external-name"
-					label={t('teamSoccer365ExternalName')}
-					variant="outlined"
-					value={values.soccer365ExternalName}
-					onChange={(e) => onChange({ soccer365ExternalName: e.target.value })}
-				/>
-			</Box>
-
-			<Typography sx={sectionSx}>{t('teamTwentyFourScoreSection')}</Typography>
-			<Box sx={sectionContentSx}>
-				<TextField
-					fullWidth
-					size="small"
-					sx={fieldSx}
-					id="twentyfourscore-external-name"
-					label={t('teamTwentyFourScoreExternalName')}
-					variant="outlined"
-					value={values.twentyFourScoreExternalName}
-					onChange={(e) => onChange({ twentyFourScoreExternalName: e.target.value })}
-				/>
-			</Box>
-
-			<Typography sx={sectionSx}>{t('teamMarathonbetSection')}</Typography>
-			<Box sx={sectionContentSx}>
-				<TextField
-					fullWidth
-					size="small"
-					sx={fieldSx}
-					id="marathonbet-external-name"
-					label={t('teamMarathonbetExternalName')}
-					variant="outlined"
-					value={values.marathonbetExternalName}
-					onChange={(e) => onChange({ marathonbetExternalName: e.target.value })}
-				/>
-			</Box>
+			{TEAM_EXTERNAL_ALIAS_FIELDS.map(({ field, sectionKey, labelKey, inputId }) => (
+				<Box key={field}>
+					<Typography sx={sectionSx}>{t(sectionKey)}</Typography>
+					<Box sx={sectionContentSx}>
+						<TextField
+							fullWidth
+							size="small"
+							sx={fieldSx}
+							id={inputId}
+							label={t(labelKey)}
+							variant="outlined"
+							value={values[field]}
+							onChange={(e) => onChange({ [field]: e.target.value })}
+						/>
+					</Box>
+				</Box>
+			))}
 		</FormControl>
 	);
 }

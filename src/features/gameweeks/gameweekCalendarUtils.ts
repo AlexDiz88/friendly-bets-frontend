@@ -18,6 +18,14 @@ export function sortGameweekBetsByLeagueCode(bets: Bet[]): Bet[] {
 	);
 }
 
+export function sortLeagueMatchdayNodesByLeagueCode<T extends { leagueCode?: string }>(
+	nodes: T[]
+): T[] {
+	return [...nodes].sort(
+		(a, b) => gameweekLeagueSortIndex(a.leagueCode) - gameweekLeagueSortIndex(b.leagueCode)
+	);
+}
+
 /**
  * Тур по умолчанию при открытии «По турам»:
  * 1) текущий по датам start/end (с учётом «вчера»);

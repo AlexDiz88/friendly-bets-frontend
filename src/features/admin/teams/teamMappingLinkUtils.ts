@@ -1,10 +1,5 @@
 import Team from './types/Team';
-import {
-	MARATHONBET_PROVIDER,
-	SOCCER365_PROVIDER,
-	TWENTYFOUR_SCORE_PROVIDER,
-} from './teamProviderConstants';
-import { TeamFormValues } from './teamFormUtils';
+import { TEAM_EXTERNAL_ALIAS_FIELDS, TeamFormValues } from './teamFormUtils';
 
 export type TeamMappingRef = {
 	provider: string;
@@ -74,29 +69,15 @@ export function findTeamByExternalAlias(
 
 export function buildExternalAliasPrefill(
 	provider: string,
-	externalId?: string,
+	_externalId?: string,
 	externalName?: string
 ): Partial<TeamFormValues> {
-	if (provider === MARATHONBET_PROVIDER) {
-		const patch: Partial<TeamFormValues> = {};
-		if (externalName) {
-			patch.marathonbetExternalName = externalName;
-		}
-		return patch;
+	if (!externalName) {
+		return {};
 	}
-	if (provider === TWENTYFOUR_SCORE_PROVIDER) {
-		const patch: Partial<TeamFormValues> = {};
-		if (externalName) {
-			patch.twentyFourScoreExternalName = externalName;
-		}
-		return patch;
+	const entry = TEAM_EXTERNAL_ALIAS_FIELDS.find((e) => e.provider === provider);
+	if (!entry) {
+		return {};
 	}
-	if (provider === SOCCER365_PROVIDER) {
-		const patch: Partial<TeamFormValues> = {};
-		if (externalName) {
-			patch.soccer365ExternalName = externalName;
-		}
-		return patch;
-	}
-	return {};
+	return { [entry.field]: externalName };
 }

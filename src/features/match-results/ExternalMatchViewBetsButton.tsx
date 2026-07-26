@@ -18,7 +18,7 @@ export default function ExternalMatchViewBetsButton({
 
 	return (
 		<Tooltip title={tooltip}>
-			<span style={{ display: 'inline-flex', alignItems: 'center', lineHeight: 0 }}>
+			<span style={{ display: 'inline-flex', alignItems: 'center' }}>
 				<ButtonBase
 					onClick={(e) => {
 						e.stopPropagation();
@@ -33,11 +33,11 @@ export default function ExternalMatchViewBetsButton({
 							fontFamily: "'Exo 2', sans-serif",
 							fontSize: '0.7rem',
 							fontWeight: 800,
-							lineHeight: 1,
+							lineHeight: 0,
 							fontVariantNumeric: 'tabular-nums',
 							letterSpacing: '-0.03em',
 							color: (theme) =>
-								theme.palette.mode === 'dark' ? '#9de8c4' : '#046a3d',
+								theme.palette.mode === 'dark' ? '#9de8c4' : '#ecfdf5',
 						}}
 					>
 						{displayCount}

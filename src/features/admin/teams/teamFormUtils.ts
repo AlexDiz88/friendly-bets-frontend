@@ -15,16 +15,53 @@ const DROPPED_PROVIDERS = new Set([
 	'4score.ru',
 ]);
 
+/**
+ * Single source of truth for external API alias fields in the team admin form.
+ * When adding a new provider alias: append an entry here (and i18n keys).
+ * Completeness check, load, save, and form fields all derive from this list.
+ */
+export const TEAM_EXTERNAL_ALIAS_FIELDS = [
+	{
+		provider: SOCCER365_PROVIDER,
+		field: 'soccer365ExternalName',
+		sectionKey: 'teamSoccer365Section',
+		labelKey: 'teamSoccer365ExternalName',
+		inputId: 'soccer365-external-name',
+	},
+	{
+		provider: TWENTYFOUR_SCORE_PROVIDER,
+		field: 'twentyFourScoreExternalName',
+		sectionKey: 'teamTwentyFourScoreSection',
+		labelKey: 'teamTwentyFourScoreExternalName',
+		inputId: 'twentyfourscore-external-name',
+	},
+	{
+		provider: MARATHONBET_PROVIDER,
+		field: 'marathonbetExternalName',
+		sectionKey: 'teamMarathonbetSection',
+		labelKey: 'teamMarathonbetExternalName',
+		inputId: 'marathonbet-external-name',
+	},
+] as const;
+
+export type TeamExternalAliasFormField =
+	(typeof TEAM_EXTERNAL_ALIAS_FIELDS)[number]['field'];
+
 export type TeamFormValues = {
 	title: string;
 	country: string;
 	nameEn: string;
 	nameRu: string;
 	nameDe: string;
-	marathonbetExternalName: string;
-	twentyFourScoreExternalName: string;
-	soccer365ExternalName: string;
-};
+} & Record<TeamExternalAliasFormField, string>;
+
+function emptyExternalAliasFormFields(): Record<TeamExternalAliasFormField, string> {
+	const result = {} as Record<TeamExternalAliasFormField, string>;
+	for (const { field } of TEAM_EXTERNAL_ALIAS_FIELDS) {
+		result[field] = '';
+	}
+	return result;
+}
 
 export function emptyTeamFormValues(): TeamFormValues {
 	return {
@@ -33,14 +70,8 @@ export function emptyTeamFormValues(): TeamFormValues {
 		nameEn: '',
 		nameRu: '',
 		nameDe: '',
-		marathonbetExternalName: '',
-		twentyFourScoreExternalName: '',
-		soccer365ExternalName: '',
+		...emptyExternalAliasFormFields(),
 	};
-}
-
-export function hasTwentyFourScoreApiMapping(values: TeamFormValues): boolean {
-	return values.twentyFourScoreExternalName.trim() !== '';
 }
 
 function formFieldFilled(value: string): boolean {
@@ -109,23 +140,16 @@ export function mergeTeamFormPatch(
 	return next;
 }
 
-export function hasMarathonbetApiMapping(values: TeamFormValues): boolean {
-	return values.marathonbetExternalName.trim() !== '';
-}
-
-export function hasSoccer365ApiMapping(values: TeamFormValues): boolean {
-	return values.soccer365ExternalName.trim() !== '';
-}
-
 export function isTeamFormComplete(values: TeamFormValues): boolean {
-	return (
-		formFieldFilled(values.country) &&
-		formFieldFilled(values.nameEn) &&
-		formFieldFilled(values.nameRu) &&
-		formFieldFilled(values.nameDe) &&
-		hasTwentyFourScoreApiMapping(values) &&
-		hasMarathonbetApiMapping(values)
-	);
+	if (
+		!formFieldFilled(values.country) ||
+		!formFieldFilled(values.nameEn) ||
+		!formFieldFilled(values.nameRu) ||
+		!formFieldFilled(values.nameDe)
+	) {
+		return false;
+	}
+	return TEAM_EXTERNAL_ALIAS_FIELDS.every(({ field }) => formFieldFilled(values[field]));
 }
 
 export function isTeamComplete(team: Team): boolean {
@@ -133,11 +157,11 @@ export function isTeamComplete(team: Team): boolean {
 }
 
 export function teamToFormValues(team: Team): TeamFormValues {
-	const marathonAlias = team.externalAliases?.find((a) => a.provider === MARATHONBET_PROVIDER);
-	const twentyFourScoreAlias = team.externalAliases?.find(
-		(a) => a.provider === TWENTYFOUR_SCORE_PROVIDER
-	);
-	const soccer365Alias = team.externalAliases?.find((a) => a.provider === SOCCER365_PROVIDER);
+	const aliasValues = emptyExternalAliasFormFields();
+	for (const { provider, field } of TEAM_EXTERNAL_ALIAS_FIELDS) {
+		const alias = team.externalAliases?.find((a) => a.provider === provider);
+		aliasValues[field] = alias?.externalName ?? '';
+	}
 	return applyI18nDisplayNamesToFormValues(
 		{
 			title: team.title ?? '',
@@ -145,9 +169,7 @@ export function teamToFormValues(team: Team): TeamFormValues {
 			nameEn: team.displayNames?.en ?? '',
 			nameRu: team.displayNames?.ru ?? '',
 			nameDe: team.displayNames?.de ?? '',
-			marathonbetExternalName: marathonAlias?.externalName ?? '',
-			twentyFourScoreExternalName: twentyFourScoreAlias?.externalName ?? '',
-			soccer365ExternalName: soccer365Alias?.externalName ?? '',
+			...aliasValues,
 		},
 		true
 	);
@@ -168,39 +190,6 @@ function buildDisplayNames(
 	};
 }
 
-function buildTwentyFourScoreAlias(values: TeamFormValues): TeamExternalAlias | undefined {
-	const name = values.twentyFourScoreExternalName.trim();
-	if (!name) {
-		return undefined;
-	}
-	return {
-		provider: TWENTYFOUR_SCORE_PROVIDER,
-		externalName: name,
-	};
-}
-
-function buildMarathonbetAlias(values: TeamFormValues): TeamExternalAlias | undefined {
-	const name = values.marathonbetExternalName.trim();
-	if (!name) {
-		return undefined;
-	}
-	return {
-		provider: MARATHONBET_PROVIDER,
-		externalName: name,
-	};
-}
-
-function buildSoccer365Alias(values: TeamFormValues): TeamExternalAlias | undefined {
-	const name = values.soccer365ExternalName.trim();
-	if (!name) {
-		return undefined;
-	}
-	return {
-		provider: SOCCER365_PROVIDER,
-		externalName: name,
-	};
-}
-
 /** Merge form aliases; legacy providers (incl. odds-api.io / 4score.ru) are dropped on save. */
 export function buildExternalAliases(
 	values: TeamFormValues,
@@ -214,23 +203,13 @@ export function buildExternalAliases(
 	}
 	byProvider.delete('odds-api.io');
 	byProvider.delete('4score.ru');
-	const marathon = buildMarathonbetAlias(values);
-	if (marathon) {
-		byProvider.set(MARATHONBET_PROVIDER, marathon);
-	} else {
-		byProvider.delete(MARATHONBET_PROVIDER);
-	}
-	const twentyFourScore = buildTwentyFourScoreAlias(values);
-	if (twentyFourScore) {
-		byProvider.set(TWENTYFOUR_SCORE_PROVIDER, twentyFourScore);
-	} else {
-		byProvider.delete(TWENTYFOUR_SCORE_PROVIDER);
-	}
-	const soccer365 = buildSoccer365Alias(values);
-	if (soccer365) {
-		byProvider.set(SOCCER365_PROVIDER, soccer365);
-	} else {
-		byProvider.delete(SOCCER365_PROVIDER);
+	for (const { provider, field } of TEAM_EXTERNAL_ALIAS_FIELDS) {
+		const name = values[field].trim();
+		if (name) {
+			byProvider.set(provider, { provider, externalName: name });
+		} else {
+			byProvider.delete(provider);
+		}
 	}
 	return [...byProvider.values()];
 }

@@ -13,7 +13,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
 import CustomButton from '../../../components/custom/btn/CustomButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
+import CustomSwitch from '../../../components/custom/controls/CustomSwitch';
+import { toggleInlineRowSx } from '../../../components/custom/controls/customToggleStyles';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
+import { LAYER_ACCENT } from '../../api-sandbox/apiSandboxPageStyles';
 import AdminSection from '../AdminSection';
 import {
 	ExternalDataLayer,
@@ -68,6 +71,16 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 	const optionsFor = (layer: ExternalDataLayer): string[] => {
 		const fromCaps = config?.capabilities?.[layer] ?? [];
 		return fromCaps;
+	};
+
+	const handleEnabled = (layer: ExternalDataLayer, enabled: boolean): void => {
+		setDraft((prev) => ({
+			...prev,
+			[layer]: {
+				...(prev[layer] ?? {}),
+				enabled,
+			},
+		}));
 	};
 
 	const handlePrimary = (layer: ExternalDataLayer, value: string): void => {
@@ -133,15 +146,33 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 						{LAYERS.map((layer) => {
 							const options = optionsFor(layer);
 							const assignment = draft[layer] ?? {};
+							const enabled = assignment.enabled !== false;
 							const primary = assignment.primaryProvider ?? NONE;
 							const secondary = assignment.secondaryProvider ?? NONE;
 							const safePrimary = options.includes(primary) ? primary : NONE;
 							const safeSecondary = options.includes(secondary) ? secondary : NONE;
 							return (
 								<Box key={layer} sx={{ mb: 2 }}>
-									<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
+									<Typography
+										sx={{
+											fontWeight: 700,
+											mb: 0.5,
+											fontSize: '0.9rem',
+											color: LAYER_ACCENT[layer],
+										}}
+									>
 										{t(LAYER_LABEL_KEY[layer])}
 									</Typography>
+									<Box sx={[toggleInlineRowSx, { mb: 1 }]}>
+										<Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+											{t('externalDataLayerEnabled')}
+										</Typography>
+										<CustomSwitch
+											checked={enabled}
+											onChange={(e) => handleEnabled(layer, e.target.checked)}
+											inputProps={{ 'aria-label': t('externalDataLayerEnabled') }}
+										/>
+									</Box>
 									<FormControl fullWidth size="small" sx={{ mb: 1 }}>
 										<InputLabel id={`${layer}-primary`}>{t('externalDataPrimary')}</InputLabel>
 										<Select

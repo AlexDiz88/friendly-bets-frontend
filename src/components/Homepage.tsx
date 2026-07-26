@@ -1,7 +1,16 @@
 import { Box } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { selectActiveSeasonId } from '../features/admin/seasons/selectors';
+import {
+	selectActiveSeason,
+	selectActiveSeasonId,
+} from '../features/admin/seasons/selectors';
+import { getActiveSeason } from '../features/admin/seasons/seasonsSlice';
+import { selectUser } from '../features/auth/selectors';
+import NearestGameweekBetsPlate, {
+	matchResultsPathForLeagueMatchday,
+} from '../features/gameweeks/NearestGameweekBetsPlate';
 import PlayersStats from '../features/stats/PlayersStats';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
@@ -13,14 +22,39 @@ import { homepageContentLayoutSx } from './layoutMainStyles';
 
 export default function Homepage(): JSX.Element {
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
+	const activeSeason = useAppSelector(selectActiveSeason);
+	const user = useAppSelector(selectUser);
 	const playersStats = useAppSelector(selectPlayersStats);
 	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 
 	const sortedPlayersStats = [...playersStats].sort((a, b) => b.actualBalance - a.actualBalance);
 
 	useFetchActiveSeason(activeSeasonId || '');
+
+	const hasWcLeague = useMemo(
+		() => Boolean(activeSeason?.leagues?.some((l) => l.leagueCode === 'WC')),
+		[activeSeason?.leagues]
+	);
+
+	const isSeasonParticipant = useMemo(() => {
+		if (!user?.id || !activeSeason?.players) {
+			return false;
+		}
+		return activeSeason.players.some((p) => p.id === user.id);
+	}, [user?.id, activeSeason?.players]);
+
+	const isAdminOrModerator = user?.role === 'ADMIN' || user?.role === 'MODERATOR';
+	const canShowNearestGameweekPlate =
+		Boolean(user?.id) && (isSeasonParticipant || isAdminOrModerator);
+
+	useEffect(() => {
+		if (!activeSeason && activeSeasonId) {
+			void dispatch(getActiveSeason());
+		}
+	}, [activeSeason, activeSeasonId, dispatch]);
 
 	useEffect(() => {
 		if (activeSeasonId) {
@@ -33,7 +67,7 @@ export default function Homepage(): JSX.Element {
 					setLoading(false);
 				});
 		}
-	}, [activeSeasonId]);
+	}, [activeSeasonId, dispatch]);
 
 	return (
 		<Box>
@@ -45,7 +79,17 @@ export default function Homepage(): JSX.Element {
 						<CustomLoadingError />
 					) : (
 						<Box sx={homepageContentLayoutSx}>
-							<Wc26QuickLink />
+							{hasWcLeague ? <Wc26QuickLink /> : null}
+							{canShowNearestGameweekPlate ? (
+								<NearestGameweekBetsPlate
+									enabled
+									seasonId={activeSeasonId}
+									compact
+									onLeagueClick={({ leagueCode, matchDay }) => {
+										navigate(matchResultsPathForLeagueMatchday(leagueCode, matchDay));
+									}}
+								/>
+							) : null}
 							<PlayersStats playersStats={sortedPlayersStats} />
 						</Box>
 					)}
