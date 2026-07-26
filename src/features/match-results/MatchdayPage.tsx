@@ -41,6 +41,7 @@ import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
 import Team from '../admin/teams/types/Team';
 import { selectUser } from '../auth/selectors';
+import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
 import GameScore from '../bets/types/GameScore';
 import { isSensitiveKnockoutSlot } from '../bets/knockoutBetPrivacy';
 import League from '../admin/leagues/types/League';
@@ -176,6 +177,7 @@ function CompactMatchRow({
 export default function MatchdayPage(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const user = useAppSelector(selectUser);
+	const { formatDateTime } = useFormatUserDateTime();
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const calendarNodes = useAppSelector(selectAllCalendarNodes);
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -901,14 +903,7 @@ export default function MatchdayPage(): JSX.Element {
 								? 'success'
 								: getMatchStatusChipColor(match.status);
 							const matchDate =
-								kickoffUtcMs > 0
-									? new Date(kickoffUtcMs).toLocaleString(undefined, {
-											day: '2-digit',
-											month: '2-digit',
-											hour: '2-digit',
-											minute: '2-digit',
-										})
-									: '';
+								kickoffUtcMs > 0 ? formatDateTime(kickoffUtcMs) : '';
 							const betEnabled = isMatchCardClickable(match);
 
 							return (

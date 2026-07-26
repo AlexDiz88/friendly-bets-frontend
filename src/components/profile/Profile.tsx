@@ -9,6 +9,7 @@ import ProfileEmailVerification from './ProfileEmailVerification';
 import ProfileLanguage from './ProfileLanguage';
 import ProfilePassword from './ProfilePassword';
 import ProfileTheme from './ProfileTheme';
+import ProfileTimezone from './ProfileTimezone';
 import ProfileUsername from './ProfileUsername';
 import {
 	profileAccountBlockSx,
@@ -69,6 +70,7 @@ export default function Profile(): JSX.Element {
 			</Typography>
 			<Box sx={profileSectionGroupSx}>
 				<ProfileLanguage lng={user?.language} />
+				<ProfileTimezone timezone={user?.timezone} />
 				<ProfileTheme
 					themePreference={user?.themePreference}
 					showThemeToggle={user?.showThemeToggle}

@@ -83,6 +83,9 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const [scheduleLeagueCode, setScheduleLeagueCode] = useState('EPL');
+	const [scheduleMatchday, setScheduleMatchday] = useState(1);
+	const [scheduleSlots, setScheduleSlots] = useState<MatchdaySlot[]>([]);
+	const [scheduleMetaLoading, setScheduleMetaLoading] = useState(false);
 	const [oddsLeagueCode, setOddsLeagueCode] = useState('EPL');
 	const [liveLeagueCode, setLiveLeagueCode] = useState('EPL');
 	const [syncingSchedule, setSyncingSchedule] = useState(false);
@@ -113,6 +116,24 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		}
 		return scheduleLeagues[0]?.leagueCode ?? '';
 	}, [scheduleLeagues, scheduleLeagueCode]);
+
+	const scheduleLeague = useMemo(
+		() => scheduleLeagues.find((l) => l.leagueCode === effectiveScheduleLeague),
+		[scheduleLeagues, effectiveScheduleLeague]
+	);
+
+	const scheduleExternalSeason = useMemo(
+		() => resolveExternalSeasonForLeague(activeSeason, effectiveScheduleLeague),
+		[activeSeason, effectiveScheduleLeague]
+	);
+
+	const scheduleSlotValues = useMemo(() => scheduleSlots.map((s) => s.value), [scheduleSlots]);
+	const effectiveScheduleMatchday = useMemo(() => {
+		if (scheduleSlotValues.includes(scheduleMatchday)) {
+			return scheduleMatchday;
+		}
+		return scheduleSlotValues[0] ?? scheduleMatchday;
+	}, [scheduleMatchday, scheduleSlotValues]);
 
 	const effectiveOddsLeague = useMemo(() => {
 		if (allLeagues.some((l) => l.leagueCode === oddsLeagueCode)) {
@@ -145,6 +166,52 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		}
 		return forceSlotValues[0] ?? forceMatchday;
 	}, [forceMatchday, forceSlotValues]);
+
+	useEffect(() => {
+		if (!scheduleLeague?.id) {
+			setScheduleSlots([]);
+			return;
+		}
+		let cancelled = false;
+		setScheduleMetaLoading(true);
+		void (async () => {
+			try {
+				const info = await getLeagueExternalCompetitionInfo(scheduleLeague.id, scheduleExternalSeason);
+				if (cancelled) {
+					return;
+				}
+				const slots =
+					info.matchdaySlots && info.matchdaySlots.length > 0
+						? externalSlotsToMatchdaySlots(info.matchdaySlots)
+						: Array.from({ length: Math.max(1, info.matchdayCount) }, (_, i) => ({
+								value: i + 1,
+								label: String(i + 1),
+								kind: 'REGULAR' as const,
+							}));
+				setScheduleSlots(slots);
+				const current = slots.some((s) => s.value === info.currentMatchday)
+					? info.currentMatchday
+					: (slots[0]?.value ?? 1);
+				setScheduleMatchday(current);
+			} catch (error) {
+				if (!cancelled) {
+					dispatch(
+						showErrorSnackbar({
+							message: error instanceof Error ? error.message : 'currentMatchdayUnresolved',
+						})
+					);
+					setScheduleSlots([]);
+				}
+			} finally {
+				if (!cancelled) {
+					setScheduleMetaLoading(false);
+				}
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [scheduleLeague?.id, scheduleExternalSeason, dispatch]);
 
 	useEffect(() => {
 		if (!forceOddsUpdate || !oddsLeague?.id) {
@@ -249,7 +316,10 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		}
 		setSyncingSchedule(true);
 		try {
-			const result = await syncExternalSchedule(effectiveScheduleLeague);
+			const result = await syncExternalSchedule(
+				effectiveScheduleLeague,
+				effectiveScheduleMatchday
+			);
 			dispatch(
 				showSuccessSnackbar({
 					message: t('soccer365SyncScheduleSuccess', {
@@ -345,7 +415,15 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 				{t('externalDataScheduleSyncTitle')}
 			</Typography>
 			{scheduleLeagues.length > 0 ? (
-				<Box sx={{ mb: 1 }}>
+				<Box
+					sx={{
+						mb: 1.5,
+						display: 'flex',
+						alignItems: 'center',
+						gap: 1,
+						minWidth: 0,
+					}}
+				>
 					<LeagueSelect
 						leagues={scheduleLeagues}
 						value={effectiveScheduleLeague}
@@ -353,11 +431,28 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 						withoutAll
 						compact
 					/>
+					{scheduleMetaLoading && scheduleSlots.length === 0 ? (
+						<CircularProgress size={22} sx={{ flexShrink: 0 }} />
+					) : scheduleSlots.length > 0 ? (
+						<MatchdayGridSelect
+							value={effectiveScheduleMatchday}
+							matchdayCount={scheduleSlots.length || 1}
+							slots={scheduleSlots}
+							onChange={setScheduleMatchday}
+							disabled={scheduleMetaLoading || syncingSchedule}
+							aria-label={t('externalDataScheduleMatchday')}
+						/>
+					) : null}
 				</Box>
 			) : null}
 			<CustomSuccessButton
 				onClick={() => void handleScheduleSync()}
-				disabled={syncingSchedule || !effectiveScheduleLeague}
+				disabled={
+					syncingSchedule ||
+					!effectiveScheduleLeague ||
+					scheduleMetaLoading ||
+					scheduleSlots.length === 0
+				}
 				loading={syncingSchedule}
 				buttonText={t('soccer365SyncSchedule')}
 				sx={{ width: '100%', mb: 2.5, mr: 0 }}

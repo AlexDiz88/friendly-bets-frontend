@@ -13,12 +13,6 @@ export interface MatchdaySettleResult {
 	gameweekStatsRecalculated: boolean;
 }
 
-export interface MarkFinishedFullDetailsResult {
-	matchedCount: number;
-	modifiedCount: number;
-	fullDetailsFetchedAt: string;
-}
-
 export async function settleMatchdayAndRecalculateStats(body: {
 	seasonId: string;
 	leagueCode: string;
@@ -30,18 +24,6 @@ export async function settleMatchdayAndRecalculateStats(body: {
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(body),
 	});
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
-}
-
-export async function markFinishedFullDetailsFetched(): Promise<MarkFinishedFullDetailsResult> {
-	const result = await apiFetch(
-		apiUrl('/api/admin/match-schedules/scripts/mark-finished-full-details-fetched'),
-		{ method: 'POST' }
-	);
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);

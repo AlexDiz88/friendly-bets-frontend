@@ -8,4 +8,5 @@ export default interface User {
 	language?: string;
 	themePreference?: string;
 	showThemeToggle?: boolean;
+	timezone?: string;
 }

@@ -24,6 +24,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import CustomCalendarDialog from '../../components/custom/dialog/CustomCalendarDialog';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../components/custom/snackbar/snackbarSlice';
+import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
 import {
 	deleteMonitoringRunsByLayer,
 	fetchMonitoringLatest,
@@ -52,21 +53,6 @@ import {
 	monitoringToolbarSx,
 	statusChipSx,
 } from './externalApiMonitoringPageStyles';
-
-function formatTime(iso?: string | null): string {
-	if (!iso) return '—';
-	try {
-		return new Date(iso).toLocaleString(undefined, {
-			day: '2-digit',
-			month: 'short',
-			hour: '2-digit',
-			minute: '2-digit',
-			second: '2-digit',
-		});
-	} catch {
-		return iso;
-	}
-}
 
 function formatDuration(ms?: number | null): string {
 	if (ms == null) return '—';
@@ -104,6 +90,7 @@ function layerTitle(layer: ExternalDataLayer): string {
 export default function ExternalApiMonitoringPage(): JSX.Element {
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
+	const { formatDetailed } = useFormatUserDateTime();
 	const [hours, setHours] = useState(24);
 	const [loading, setLoading] = useState(true);
 	const [runsByLayer, setRunsByLayer] = useState<Record<ExternalDataLayer, MonitoringRun[]>>({
@@ -244,7 +231,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 										sx={statusChipSx(run.status)}
 									/>
 									<Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.75 }}>
-										{run.provider ?? '—'} · {formatTime(run.startedAt)}
+										{run.provider ?? '—'} · {formatDetailed(run.startedAt)}
 									</Typography>
 								</>
 							) : (
@@ -332,7 +319,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																}}
 															/>
 														</TableCell>
-														<TableCell>{formatTime(run.startedAt)}</TableCell>
+														<TableCell>{formatDetailed(run.startedAt)}</TableCell>
 														<TableCell>{run.trigger ?? '—'}</TableCell>
 														<TableCell>{run.provider ?? '—'}</TableCell>
 														<TableCell>{run.leagueCode ?? '—'}</TableCell>

@@ -6,7 +6,7 @@ import Wc26MatchCenterStatus from './Wc26MatchCenterStatus';
 import Wc26TeamFlag from './Wc26TeamFlag';
 import type { Wc26BracketMatch } from './wc26ArchiveApi';
 import { bracketPlaceholderLabel, bracketScoreLabel, resolveWc26TeamId } from './wc26Display';
-import { parseUtcDate } from '../../shared/utcDate';
+import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
 import { wc26MatchMetaSx, wc26KickoffTimeSx } from './wc26PageStyles';
 
 function translatePlaceholder(code: string, t: TFunction): string {
@@ -39,6 +39,7 @@ export default function Wc26BracketMatchNode({
 	showConnector = false,
 }: Wc26BracketMatchNodeProps): JSX.Element {
 	const { t } = useTranslation();
+	const { formatTime } = useFormatUserDateTime();
 	const homeTeam = resolveWc26TeamId(match.homeFifaCode);
 	const awayTeam = resolveWc26TeamId(match.awayFifaCode);
 	const scoreView = bracketScoreLabel(
@@ -47,18 +48,7 @@ export default function Wc26BracketMatchNode({
 		match.homePenaltyScore,
 		match.awayPenaltyScore
 	);
-	const kickoffTime = useMemo(() => {
-		const date = parseUtcDate(match.utcDate);
-		if (!date) {
-			return '—';
-		}
-		return new Intl.DateTimeFormat('de-DE', {
-			timeZone: 'Europe/Berlin',
-			hour: '2-digit',
-			minute: '2-digit',
-			hourCycle: 'h23',
-		}).format(date);
-	}, [match.utcDate]);
+	const kickoffTime = useMemo(() => formatTime(match.utcDate), [formatTime, match.utcDate]);
 	const winnerHome =
 		Boolean(match.winnerFifaCode && match.homeFifaCode && match.winnerFifaCode === match.homeFifaCode);
 	const winnerAway =

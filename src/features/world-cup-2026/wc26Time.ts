@@ -1,4 +1,5 @@
 import { parseUtcDate } from '../../shared/utcDate';
+import { formatUserDate } from '../../shared/userDateTime';
 import { WC26_VENUE_TIMEZONE } from './wc26Venues';
 
 const BERLIN = 'Europe/Berlin';
@@ -73,17 +74,13 @@ export function kickoffToGerman(
 	return { date: dateBerlin, time };
 }
 
-/** Короткая дата по Berlin из UTC (для карточек результатов). */
-export function formatBerlinDateFromUtc(utcDate: string | undefined, language: string): string {
-	const date = parseUtcDate(utcDate);
-	if (!date) {
-		return '—';
-	}
-	return new Intl.DateTimeFormat(wc26DateLocale(language), {
-		timeZone: BERLIN,
-		day: 'numeric',
-		month: 'short',
-	}).format(date);
+/** Короткая дата в поясе пользователя (default Berlin) из UTC Instant. */
+export function formatBerlinDateFromUtc(
+	utcDate: string | undefined,
+	language: string,
+	timeZone: string = BERLIN
+): string {
+	return formatUserDate(utcDate, timeZone, language);
 }
 
 /** Короткая дата по Berlin из ISO-даты (YYYY-MM-DD). */
