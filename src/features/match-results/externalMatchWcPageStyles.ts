@@ -528,13 +528,13 @@ export const externalMatchViewBetsChipSx: SxProps<Theme> = (theme) => {
 		position: 'relative',
 		overflow: 'hidden',
 		isolation: 'isolate',
-		backdropFilter: 'blur(14px) saturate(1.35)',
-		WebkitBackdropFilter: 'blur(14px) saturate(1.35)',
+		backdropFilter: isDark ? 'blur(14px) saturate(1.35)' : 'none',
+		WebkitBackdropFilter: isDark ? 'blur(14px) saturate(1.35)' : 'none',
 		background: isDark
 			? 'linear-gradient(145deg, rgba(157, 232, 196, 0.18) 0%, rgba(255, 255, 255, 0.07) 42%, rgba(255, 214, 0, 0.08) 100%)'
-			: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(232, 244, 239, 0.88) 50%, rgba(255, 248, 220, 0.7) 100%)',
+			: 'linear-gradient(145deg, #059669 0%, #047857 55%, #065f46 100%)',
 		border: '1px solid',
-		borderColor: isDark ? 'rgba(157, 232, 196, 0.48)' : 'rgba(4, 106, 61, 0.32)',
+		borderColor: isDark ? 'rgba(157, 232, 196, 0.48)' : 'rgba(4, 120, 87, 0.85)',
 		boxShadow: isDark
 			? [
 					'inset 0 1px 0 rgba(255, 255, 255, 0.22)',
@@ -543,9 +543,9 @@ export const externalMatchViewBetsChipSx: SxProps<Theme> = (theme) => {
 					'0 0 14px rgba(157, 232, 196, 0.16)',
 				].join(', ')
 			: [
-					'inset 0 1px 0 rgba(255, 255, 255, 0.95)',
-					'0 1px 3px rgba(4, 90, 55, 0.12)',
-					'0 0 10px rgba(4, 106, 61, 0.08)',
+					'inset 0 1px 0 rgba(255, 255, 255, 0.35)',
+					'0 1px 3px rgba(4, 90, 55, 0.28)',
+					'0 0 0 1px rgba(4, 120, 87, 0.12)',
 				].join(', '),
 		transition: 'border-color 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease',
 		'&::before': {
@@ -553,14 +553,15 @@ export const externalMatchViewBetsChipSx: SxProps<Theme> = (theme) => {
 			position: 'absolute',
 			inset: 0,
 			borderRadius: 'inherit',
-			background:
-				'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.04) 46%, transparent 100%)',
+			background: isDark
+				? 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.04) 46%, transparent 100%)'
+				: 'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.06) 42%, transparent 100%)',
 			pointerEvents: 'none',
 			zIndex: 0,
 		},
 		'& > *': { position: 'relative', zIndex: 1 },
 		'&:hover': {
-			borderColor: isDark ? 'rgba(157, 232, 196, 0.72)' : 'rgba(4, 106, 61, 0.48)',
+			borderColor: isDark ? 'rgba(157, 232, 196, 0.72)' : 'rgba(6, 95, 70, 1)',
 			boxShadow: isDark
 				? [
 						'inset 0 1px 0 rgba(255, 255, 255, 0.28)',
@@ -569,10 +570,11 @@ export const externalMatchViewBetsChipSx: SxProps<Theme> = (theme) => {
 						'0 0 18px rgba(157, 232, 196, 0.28)',
 					].join(', ')
 				: [
-						'inset 0 1px 0 rgba(255, 255, 255, 1)',
-						'0 2px 6px rgba(4, 90, 55, 0.16)',
-						'0 0 12px rgba(4, 106, 61, 0.12)',
+						'inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+						'0 2px 6px rgba(4, 90, 55, 0.35)',
+						'0 0 0 1px rgba(4, 120, 87, 0.2)',
 					].join(', '),
+			filter: isDark ? undefined : 'brightness(1.06)',
 		},
 	};
 };

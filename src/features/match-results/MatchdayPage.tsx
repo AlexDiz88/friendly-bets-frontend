@@ -420,10 +420,11 @@ export default function MatchdayPage(): JSX.Element {
 			if (!user || !match.id || !isMatchOpenForBetting(match)) {
 				return false;
 			}
-			if (isAdminOrModerator) {
-				return true;
+			if (isSeasonParticipant) {
+				return Boolean(calendarMatch);
 			}
-			return isSeasonParticipant && Boolean(calendarMatch);
+			// ADMIN / MODERATOR без участия — только просмотр кэфов
+			return isAdminOrModerator;
 		},
 		[user, isMatchOpenForBetting, isAdminOrModerator, isSeasonParticipant, calendarMatch]
 	);
@@ -846,7 +847,7 @@ export default function MatchdayPage(): JSX.Element {
 					onClose={() => setOddsPickMatch(null)}
 					matchScheduleId={oddsPickMatch.id}
 					match={oddsPickMatch}
-					viewOnly={isAdminOrModerator}
+					viewOnly={!isSeasonParticipant}
 					seasonId={activeSeason?.id}
 					leagueId={selectedLeague?.id}
 					matchDay={betMatchDay}
