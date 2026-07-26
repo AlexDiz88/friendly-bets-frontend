@@ -1,74 +1,19 @@
 import type { SxProps, Theme } from '@mui/material';
+import {
+	EXTERNAL_DATA_LAYER_PALETTE,
+	externalDataLayerPalette,
+	type ExternalDataLayerPalette,
+} from '../../shared/externalDataLayerColors';
 import type { ExternalDataLayer, MonitoringStatus } from './externalApiMonitoringApi';
 
-export type LayerPalette = {
-	/** Solid accent for bars, titles, borders */
-	accent: string;
-	/** Soft fill (light theme) */
-	soft: string;
-	/** Soft fill (dark theme) */
-	softDark: string;
-	/** Header gradient start */
-	header: string;
-	headerDark: string;
-	/** Card / section surface tint */
-	surface: string;
-	surfaceDark: string;
-	/** Border */
-	border: string;
-	borderDark: string;
-};
+/** @deprecated Prefer shared `EXTERNAL_DATA_LAYER_PALETTE` — re-export for local use. */
+export type LayerPalette = ExternalDataLayerPalette;
 
-/** Distinct hue per layer — vivid in both themes. */
-export const LAYER_PALETTE: Record<ExternalDataLayer, LayerPalette> = {
-	SCHEDULE: {
-		accent: '#0284c7',
-		soft: 'rgba(14,165,233,0.14)',
-		softDark: 'rgba(56,189,248,0.16)',
-		header: 'rgba(14,165,233,0.18)',
-		headerDark: 'rgba(56,189,248,0.16)',
-		surface: 'rgba(224,242,254,0.75)',
-		surfaceDark: 'rgba(12,74,110,0.35)',
-		border: 'rgba(2,132,199,0.35)',
-		borderDark: 'rgba(56,189,248,0.32)',
-	},
-	ODDS: {
-		accent: '#d97706',
-		soft: 'rgba(245,158,11,0.16)',
-		softDark: 'rgba(251,191,36,0.15)',
-		header: 'rgba(245,158,11,0.2)',
-		headerDark: 'rgba(251,191,36,0.14)',
-		surface: 'rgba(255,247,237,0.9)',
-		surfaceDark: 'rgba(120,53,15,0.35)',
-		border: 'rgba(217,119,6,0.38)',
-		borderDark: 'rgba(251,191,36,0.3)',
-	},
-	LIVE: {
-		accent: '#059669',
-		soft: 'rgba(16,185,129,0.14)',
-		softDark: 'rgba(52,211,153,0.14)',
-		header: 'rgba(16,185,129,0.18)',
-		headerDark: 'rgba(52,211,153,0.14)',
-		surface: 'rgba(236,253,245,0.9)',
-		surfaceDark: 'rgba(6,78,59,0.35)',
-		border: 'rgba(5,150,105,0.35)',
-		borderDark: 'rgba(52,211,153,0.3)',
-	},
-	FULL_MATCH: {
-		accent: '#7c3aed',
-		soft: 'rgba(139,92,246,0.14)',
-		softDark: 'rgba(167,139,250,0.16)',
-		header: 'rgba(139,92,246,0.18)',
-		headerDark: 'rgba(167,139,250,0.14)',
-		surface: 'rgba(245,243,255,0.9)',
-		surfaceDark: 'rgba(76,29,149,0.35)',
-		border: 'rgba(124,58,237,0.35)',
-		borderDark: 'rgba(167,139,250,0.32)',
-	},
-};
+/** @deprecated Prefer `EXTERNAL_DATA_LAYER_PALETTE` from shared. */
+export const LAYER_PALETTE = EXTERNAL_DATA_LAYER_PALETTE;
 
-export function layerPalette(layer: ExternalDataLayer): LayerPalette {
-	return LAYER_PALETTE[layer];
+export function layerPalette(layer: ExternalDataLayer): ExternalDataLayerPalette {
+	return externalDataLayerPalette(layer);
 }
 
 export const monitoringPageRootSx: SxProps<Theme> = {

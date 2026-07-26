@@ -74,7 +74,8 @@ export default function ScheduleSandboxStand({
 	onRun,
 }: ScheduleSandboxStandProps): JSX.Element {
 	const { t } = useTranslation();
-	const accent = LAYER_ACCENT.SCHEDULE;
+	const layer = 'SCHEDULE' as const;
+	const accent = LAYER_ACCENT[layer];
 	const parsed = (result?.parsed || null) as ScheduleParsed | null;
 	const providerOptions = providers.length > 0 ? providers : ['soccer365.ru'];
 	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
@@ -98,7 +99,7 @@ export default function ScheduleSandboxStand({
 					<CopyableValue value={parsed.competitionId} label={t('apiSandbox.fields.competitionId')} />
 				</Box>
 				<TableContainer sx={{ maxHeight: 280, borderRadius: 1.5, border: '1px solid', borderColor: 'divider' }}>
-					<Table size="small" stickyHeader sx={sandboxTableSx}>
+					<Table size="small" stickyHeader sx={sandboxTableSx(layer)}>
 						<TableHead>
 							<TableRow>
 								<TableCell>{t('apiSandbox.col.round')}</TableCell>
@@ -139,7 +140,7 @@ export default function ScheduleSandboxStand({
 		) : null;
 
 	return (
-		<Box sx={sandboxStandLayoutSx(accent)}>
+		<Box sx={sandboxStandLayoutSx(layer)}>
 			<Box sx={sandboxFormColSx}>
 				<Typography sx={{ fontFamily: '"Exo 2", sans-serif', fontWeight: 800, fontSize: '1.05rem' }}>
 					{t('apiSandbox.layer.SCHEDULE')}

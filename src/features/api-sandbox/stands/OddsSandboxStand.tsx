@@ -81,7 +81,8 @@ export default function OddsSandboxStand({
 	onRunEvent,
 }: OddsSandboxStandProps): JSX.Element {
 	const { t } = useTranslation();
-	const accent = LAYER_ACCENT.ODDS;
+	const layer = 'ODDS' as const;
+	const accent = LAYER_ACCENT[layer];
 	const providerOptions = providers.length > 0 ? providers : ['marathonbet'];
 
 	const active = activeMode === 'tournament' ? tournament : event;
@@ -113,7 +114,7 @@ export default function OddsSandboxStand({
 
 				{parsed.mode === 'tournament' ? (
 					<TableContainer sx={{ maxHeight: 280, borderRadius: 1.5, border: '1px solid', borderColor: 'divider' }}>
-						<Table size="small" stickyHeader sx={sandboxTableSx}>
+						<Table size="small" stickyHeader sx={sandboxTableSx(layer)}>
 							<TableHead>
 								<TableRow>
 									<TableCell>{t('apiSandbox.col.treeId')}</TableCell>
@@ -151,7 +152,7 @@ export default function OddsSandboxStand({
 		) : null;
 
 	return (
-		<Box sx={sandboxStandLayoutSx(accent)}>
+		<Box sx={sandboxStandLayoutSx(layer)}>
 			<Box sx={sandboxFormColSx}>
 				<Typography sx={{ fontFamily: '"Exo 2", sans-serif', fontWeight: 800, fontSize: '1.05rem' }}>
 					{t('apiSandbox.layer.ODDS')}

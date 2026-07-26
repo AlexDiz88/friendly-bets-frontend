@@ -113,7 +113,8 @@ export default function FullMatchSandboxStand({
 	onRun,
 }: FullMatchSandboxStandProps): JSX.Element {
 	const { t } = useTranslation();
-	const accent = LAYER_ACCENT.FULL_MATCH;
+	const layer = 'FULL_MATCH' as const;
+	const accent = LAYER_ACCENT[layer];
 	const parsed = (result?.parsed || null) as FullMatchParsed | null;
 	const providerOptions = providers.length > 0 ? providers : ['soccer365.ru'];
 	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
@@ -279,7 +280,7 @@ export default function FullMatchSandboxStand({
 		) : null;
 
 	return (
-		<Box sx={sandboxStandLayoutSx(accent)}>
+		<Box sx={sandboxStandLayoutSx(layer)}>
 			<Box sx={sandboxFormColSx}>
 				<Typography sx={{ fontFamily: '"Exo 2", sans-serif', fontWeight: 800, fontSize: '1.05rem' }}>
 					{t('apiSandbox.layer.FULL_MATCH')}
