@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
+import MatchScheduleExternalIdsMigrationScript from '../../components/MatchScheduleExternalIdsMigrationScript';
 import UtcTimestampsMigrationScript from '../../components/UtcTimestampsMigrationScript';
 import StatsRecalculating from '../stats/StatsRecalculating';
 import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
@@ -70,6 +71,10 @@ export default function AdminCabinet(): JSX.Element {
 							stopLoading={handleStopLoading}
 						/>
 						<UtcTimestampsMigrationScript
+							startLoading={handleStartLoading}
+							stopLoading={handleStopLoading}
+						/>
+						<MatchScheduleExternalIdsMigrationScript
 							startLoading={handleStartLoading}
 							stopLoading={handleStopLoading}
 						/>
