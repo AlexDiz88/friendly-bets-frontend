@@ -3,19 +3,6 @@ import { apiFetch } from '../../../shared/apiClient';
 import Team from '../teams/types/Team';
 import Season from './types/Season';
 
-export async function dbUpdate(): Promise<{ seasons: Season[] }> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/db-update`;
-	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = '/api/seasons/db-update';
-	}
-	const result = await apiFetch(`${url}`);
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
-}
-
 export async function addSeason(
 	title: string,
 	betCountPerMatchDay: number,
