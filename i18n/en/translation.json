@@ -713,7 +713,11 @@
 		"sandboxDateRequired": "Date is required (YYYY-MM-DD)",
 		"sandboxGameIdRequired": "Game ID is required",
 		"sandboxRoundInvalid": "Round must be a positive number",
-		"sandboxLimitInvalid": "Limit must be a positive number"
+		"sandboxLimitInvalid": "Limit must be a positive number",
+		"siteAccessProbeUrlRequired": "Site URL is required",
+		"siteAccessProbeUrlInvalid": "Invalid URL (http/https required)",
+		"siteAccessProbeUrlNotAllowed": "Internal/local addresses are not allowed",
+		"siteAccessProbeFailed": "Site access probe failed"
 	},
 	"oddsDemo": {
 		"menuLink": "Odds (demo)",
@@ -1296,5 +1300,21 @@
 			"duration": "Duration",
 			"detail": "Detail"
 		}
+	},
+	"siteAccessProbeTitle": "Site access probe",
+	"siteAccessProbeHint": "Before integrating a new source: paste the home URL (or any public page). The request runs from the app server — localhost is not equal to prod. PASS = Java can usually fetch; CLOUDFLARE_JS_CHALLENGE = same as aiscore, do not start integration.",
+	"siteAccessProbeUrl": "Site URL",
+	"siteAccessProbeRun": "Probe",
+	"siteAccessProbeVerdict": {
+		"PASS": "PASS — reachable",
+		"CLOUDFLARE_JS_CHALLENGE": "Cloudflare JS challenge",
+		"HTTP_BLOCKED": "HTTP blocked",
+		"NETWORK_ERROR": "Network / DNS / TLS"
+	},
+	"siteAccessProbeVerdictHint": {
+		"PASS": "No JS challenge. Safe to try a parser/SPI.",
+		"CLOUDFLARE_JS_CHALLENGE": "Same protection as aiscore: Java from this host will not pass. Use another source or a proxy.",
+		"HTTP_BLOCKED": "Site returned an HTTP error. Possibly geo/bot block — check status and snippet.",
+		"NETWORK_ERROR": "Request did not complete. Check URL and server network."
 	}
 }
