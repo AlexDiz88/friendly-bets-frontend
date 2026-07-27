@@ -683,6 +683,7 @@
 		"soccer365GameIdRequired": "Spiel hat keine soccer365 game id",
 		"soccer365FullMatchParseFailed": "soccer365-Spielkarte konnte nicht gelesen werden",
 		"fullMatchKickoffRequired": "Spiel hat kein utc_kickoff — FULL nicht möglich",
+		"missingUtcKickoff": "Spiel hat kein utc_kickoff — Layer hat das Match übersprungen",
 		"fullMatchNotFound": "Kein externes FULL-Spiel gefunden (Kickoff + Aliase)",
 		"fullMatchAmbiguous": "Mehrere externe FULL-Spiele passen — Aliase prüfen",
 		"twentyFourScoreFetchFailed": "24score.pro-Daten konnten nicht geladen werden",
@@ -1127,6 +1128,7 @@
 			"soccer365GameIdRequired": "soccer365 game id fehlt",
 			"soccer365FullMatchParseFailed": "soccer365: Karte nicht lesbar",
 			"fullMatchKickoffRequired": "FULL: utc_kickoff fehlt",
+			"missingUtcKickoff": "utc_kickoff fehlt",
 			"fullMatchNotFound": "FULL: Spiel nicht gefunden",
 			"fullMatchAmbiguous": "FULL: mehrdeutig",
 			"twentyFourScoreFetchFailed": "24score: Netz/HTTP",
@@ -1299,6 +1301,18 @@
 			"outcome": "Outcome",
 			"duration": "Dauer",
 			"detail": "Detail"
+		},
+		"reason": {
+			"missingUtcKickoff": "Match-utc_kickoff fehlt ({{count}}). Genaue Anstoßzeit noch unbekannt — Layer hat Matches ohne HTTP übersprungen.",
+			"alreadyFetched": "FULL-Details bereits geladen — kein erneuter Request.",
+			"farKickoffDb": "Spielplan bereits in DB und nächster Kickoff weit entfernt — HTTP zur Quelle übersprungen.",
+			"noLiveCandidates": "Keine Matches im LIVE-Fenster (nach utc_kickoff / Status) — kein HTTP.",
+			"noSlots": "Keine Spieltags-Slots für Odds-Sync.",
+			"leagueNotSupported": "Liga wird von diesem LIVE-Provider nicht unterstützt.",
+			"mappingFailures": "Matches konnten nicht auf Provider-Events gemappt werden ({{count}}).",
+			"soccer365FullMatchParseFailed": "soccer365-Matchkarte konnte nicht geparst werden.",
+			"fullMatchAmbiguous": "Mehrere FULL-Kandidaten bei Resolve über Kickoff+Aliase.",
+			"fullMatchNotFound": "Match beim FULL-Provider über Kickoff+Aliase nicht gefunden."
 		}
 	},
 	"siteAccessProbeTitle": "Site-Zugangsprüfung",
