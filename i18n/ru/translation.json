@@ -713,7 +713,11 @@
 		"sandboxDateRequired": "Укажите дату (YYYY-MM-DD)",
 		"sandboxGameIdRequired": "Укажите game ID",
 		"sandboxRoundInvalid": "Номер тура должен быть положительным числом",
-		"sandboxLimitInvalid": "Лимит должен быть положительным числом"
+		"sandboxLimitInvalid": "Лимит должен быть положительным числом",
+		"siteAccessProbeUrlRequired": "Укажите URL сайта",
+		"siteAccessProbeUrlInvalid": "Некорректный URL (нужен http/https)",
+		"siteAccessProbeUrlNotAllowed": "Внутренние/локальные адреса запрещены",
+		"siteAccessProbeFailed": "Не удалось выполнить проверку доступа"
 	},
 	"oddsDemo": {
 		"menuLink": "Кэфы (демо)",
@@ -1296,5 +1300,21 @@
 			"duration": "Длит.",
 			"detail": "Detail"
 		}
+	},
+	"siteAccessProbeTitle": "Проверка доступа к сайту",
+	"siteAccessProbeHint": "Перед интеграцией нового источника: вставь URL главной (или любой публичной страницы). Запрос идёт с сервера приложения — результат с localhost не равен проду. PASS = Java обычно может ходить; CLOUDFLARE_JS_CHALLENGE = как у aiscore, интеграцию не начинать.",
+	"siteAccessProbeUrl": "URL сайта",
+	"siteAccessProbeRun": "Проверить",
+	"siteAccessProbeVerdict": {
+		"PASS": "PASS — доступ есть",
+		"CLOUDFLARE_JS_CHALLENGE": "Cloudflare JS-challenge",
+		"HTTP_BLOCKED": "HTTP блокировка",
+		"NETWORK_ERROR": "Сеть / DNS / TLS"
+	},
+	"siteAccessProbeVerdictHint": {
+		"PASS": "Ответ без JS-challenge. Можно пробовать парсер/SPI.",
+		"CLOUDFLARE_JS_CHALLENGE": "Та же защита, что у aiscore: Java с этого хоста не пройдёт. Нужен другой источник или proxy.",
+		"HTTP_BLOCKED": "Сайт ответил ошибкой HTTP. Возможно geo/bot block — смотри статус и сниппет.",
+		"NETWORK_ERROR": "Запрос не дошёл. Проверь URL и сеть сервера."
 	}
 }

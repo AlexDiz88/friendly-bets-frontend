@@ -150,3 +150,37 @@ export async function syncMarathonbetOdds(params: {
 	}
 	return result.json();
 }
+
+export type SiteAccessProbeVerdict =
+	| 'PASS'
+	| 'CLOUDFLARE_JS_CHALLENGE'
+	| 'HTTP_BLOCKED'
+	| 'NETWORK_ERROR';
+
+export type SiteAccessProbeResult = {
+	verdict: SiteAccessProbeVerdict | string;
+	requestedUrl?: string | null;
+	finalUrl?: string | null;
+	httpStatus?: number | null;
+	durationMs?: number | null;
+	serverHeader?: string | null;
+	cfRay?: string | null;
+	cfMitigated?: string | null;
+	cloudflareDetected?: boolean;
+	jsChallengeSuspected?: boolean;
+	bodySnippet?: string | null;
+	errorDetail?: string | null;
+};
+
+export async function probeSiteAccess(url: string): Promise<SiteAccessProbeResult> {
+	const result = await apiFetch(apiUrl('/api/admin/external-data/site-access-probe'), {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ url }),
+	});
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}

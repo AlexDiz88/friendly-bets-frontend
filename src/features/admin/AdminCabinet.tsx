@@ -20,6 +20,7 @@ import SeasonsManagement from './seasons/SeasonsManagement';
 import ExternalDataLayersPanel from './external-data/ExternalDataLayersPanel';
 import ExternalTeamAliasesPanel from './external-data/ExternalTeamAliasesPanel';
 import ManualExternalSyncPanel from './external-data/ManualExternalSyncPanel';
+import SiteAccessProbePanel from './external-data/SiteAccessProbePanel';
 import TeamsManagement from './teams/TeamsManagement';
 import TournamentFormatsManagement from './tournament-formats/TournamentFormatsManagement';
 
@@ -56,6 +57,7 @@ export default function AdminCabinet(): JSX.Element {
 					<ExternalDataLayersPanel />
 					<ManualExternalSyncPanel />
 					<ExternalTeamAliasesPanel />
+					<SiteAccessProbePanel />
 
 					<AdminGroupHeading label={t('adminPanelGroupTeams')} />
 					<TeamsManagement />
