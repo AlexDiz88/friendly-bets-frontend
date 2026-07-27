@@ -2,8 +2,6 @@ import { Box, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
-import MatchScheduleExternalIdsMigrationScript from '../../components/MatchScheduleExternalIdsMigrationScript';
-import UtcTimestampsMigrationScript from '../../components/UtcTimestampsMigrationScript';
 import StatsRecalculating from '../stats/StatsRecalculating';
 import useFetchCurrentUser from '../../components/hooks/useFetchCurrentUser';
 import AdminGroupHeading from './AdminGroupHeading';
@@ -21,6 +19,7 @@ import ExternalDataLayersPanel from './external-data/ExternalDataLayersPanel';
 import ExternalTeamAliasesPanel from './external-data/ExternalTeamAliasesPanel';
 import ManualExternalSyncPanel from './external-data/ManualExternalSyncPanel';
 import SiteAccessProbePanel from './external-data/SiteAccessProbePanel';
+import AdminScriptsPanel from './scripts/AdminScriptsPanel';
 import TeamsManagement from './teams/TeamsManagement';
 import TournamentFormatsManagement from './tournament-formats/TournamentFormatsManagement';
 
@@ -73,11 +72,7 @@ export default function AdminCabinet(): JSX.Element {
 							startLoading={handleStartLoading}
 							stopLoading={handleStopLoading}
 						/>
-						<UtcTimestampsMigrationScript
-							startLoading={handleStartLoading}
-							stopLoading={handleStopLoading}
-						/>
-						<MatchScheduleExternalIdsMigrationScript
+						<AdminScriptsPanel
 							startLoading={handleStartLoading}
 							stopLoading={handleStopLoading}
 						/>
