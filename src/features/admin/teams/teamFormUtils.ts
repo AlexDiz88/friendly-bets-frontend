@@ -4,6 +4,7 @@ import Team, { TeamDisplayNames, TeamExternalAlias } from './types/Team';
 import {
 	MARATHONBET_PROVIDER,
 	SOCCER365_PROVIDER,
+	SPORTS_RU_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 } from './teamProviderConstants';
 
@@ -28,6 +29,13 @@ export const TEAM_EXTERNAL_ALIAS_FIELDS = [
 		sectionKey: 'teamSoccer365Section',
 		labelKey: 'teamSoccer365ExternalName',
 		inputId: 'soccer365-external-name',
+	},
+	{
+		provider: SPORTS_RU_PROVIDER,
+		field: 'sportsRuExternalName',
+		sectionKey: 'teamSportsRuSection',
+		labelKey: 'teamSportsRuExternalName',
+		inputId: 'sportsru-external-name',
 	},
 	{
 		provider: TWENTYFOUR_SCORE_PROVIDER,

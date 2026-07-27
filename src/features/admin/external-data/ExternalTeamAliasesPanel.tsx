@@ -22,6 +22,7 @@ import { selectActiveSeason } from '../seasons/selectors';
 import {
 	MARATHONBET_PROVIDER,
 	SOCCER365_PROVIDER,
+	SPORTS_RU_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 } from '../teams/teamProviderConstants';
 import {
@@ -31,18 +32,21 @@ import {
 
 const PROVIDERS = [
 	SOCCER365_PROVIDER,
+	SPORTS_RU_PROVIDER,
 	MARATHONBET_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 ] as const;
 
 const PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
 	[SOCCER365_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'EC', 'WC']),
+	[SPORTS_RU_PROVIDER]: new Set(['EPL', 'BL']),
 	[MARATHONBET_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'WC']),
 	[TWENTYFOUR_SCORE_PROVIDER]: new Set(['EPL', 'BL']),
 };
 
 const PROVIDER_LABEL_KEY: Record<string, string> = {
 	[SOCCER365_PROVIDER]: 'externalTeamAliasProviderSoccer365',
+	[SPORTS_RU_PROVIDER]: 'externalTeamAliasProviderSportsRu',
 	[MARATHONBET_PROVIDER]: 'externalTeamAliasProviderMarathonbet',
 	[TWENTYFOUR_SCORE_PROVIDER]: 'externalTeamAliasProvider24score',
 };
