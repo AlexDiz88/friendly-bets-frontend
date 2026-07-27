@@ -68,7 +68,7 @@ function countersSummary(layer: ExternalDataLayer, counters?: MonitoringCounters
 		case 'ODDS':
 			return `elig ${counters.eligible ?? 0} · match ${counters.matched ?? 0} · save ${counters.saved ?? 0} · SSE ${counters.sseCalls ?? 0} · skip ${counters.skipped ?? 0}`;
 		case 'LIVE':
-			return `upd ${counters.updated ?? 0} · fin ${counters.finishedDetected ?? 0}`;
+			return `upd ${counters.updated ?? 0} · fin ${counters.finishedDetected ?? 0} · skip ${counters.skipped ?? 0}`;
 		case 'FULL_MATCH':
 			return `req ${counters.requested ?? 0} · save ${counters.saved ?? 0} · skip ${counters.skipped ?? 0}`;
 		default:
@@ -85,6 +85,51 @@ function statusLabel(status?: MonitoringStatus | null): string {
 
 function layerTitle(layer: ExternalDataLayer): string {
 	return t(`externalApiMonitoring.layer.${layer}`);
+}
+
+/** Soft monitoring reasons — amber warning, not hard failure. */
+const MONITORING_WARNING_KEYS = new Set([
+	'missingUtcKickoff',
+	'alreadyFetched',
+	'farKickoffDb',
+	'noLiveCandidates',
+	'noSlots',
+	'leagueNotSupported',
+]);
+
+function parseMonitoringReasonParts(summary: string): Array<{ key: string; count?: number; raw: string }> {
+	return summary
+		.split(';')
+		.map((part) => part.trim())
+		.filter(Boolean)
+		.map((raw) => {
+			const match = /^([a-zA-Z][a-zA-Z0-9]*)(?:=(\d+))?$/.exec(raw);
+			if (!match) {
+				return { key: raw, raw };
+			}
+			return {
+				key: match[1],
+				count: match[2] != null ? Number(match[2]) : undefined,
+				raw,
+			};
+		});
+}
+
+function formatMonitoringReason(summary?: string | null): string | null {
+	if (!summary || !summary.trim()) return null;
+	return parseMonitoringReasonParts(summary)
+		.map(({ key, count, raw }) => {
+			const i18nKey = `externalApiMonitoring.reason.${key}`;
+			const translated = t(i18nKey, { count: count ?? 0 });
+			return translated !== i18nKey ? translated : raw;
+		})
+		.join(' · ');
+}
+
+function isMonitoringWarningSummary(summary?: string | null): boolean {
+	if (!summary) return false;
+	const parts = parseMonitoringReasonParts(summary);
+	return parts.length > 0 && parts.every((p) => MONITORING_WARNING_KEYS.has(p.key));
 }
 
 export default function ExternalApiMonitoringPage(): JSX.Element {
@@ -331,6 +376,21 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																label={statusLabel(run.status)}
 																sx={statusChipSx(run.status)}
 															/>
+															{run.errorSummary ? (
+																<Typography
+																	sx={{
+																		mt: 0.5,
+																		fontSize: '0.7rem',
+																		lineHeight: 1.3,
+																		color: isMonitoringWarningSummary(run.errorSummary)
+																			? '#d97706'
+																			: '#f43f5e',
+																		maxWidth: 220,
+																	}}
+																>
+																	{formatMonitoringReason(run.errorSummary)}
+																</Typography>
+															) : null}
 														</TableCell>
 														<TableCell>{countersSummary(layer, run.counters)}</TableCell>
 														<TableCell>
@@ -368,11 +428,13 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																					sx={{
 																						mb: 1,
 																						fontSize: '0.8rem',
-																						color: '#f43f5e',
+																						color: isMonitoringWarningSummary(detail.errorSummary)
+																							? '#d97706'
+																							: '#f43f5e',
 																						fontWeight: 600,
 																					}}
 																				>
-																					{detail.errorSummary}
+																					{formatMonitoringReason(detail.errorSummary)}
 																				</Typography>
 																			) : null}
 																			{(detail.failedMatchScheduleIds?.length ?? 0) > 0 ? (

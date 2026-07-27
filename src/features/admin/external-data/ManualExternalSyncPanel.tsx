@@ -322,7 +322,8 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 			);
 			dispatch(
 				showSuccessSnackbar({
-					message: t('soccer365SyncScheduleSuccess', {
+					message: t('externalScheduleSyncSuccess', {
+
 						upserted: result.upserted,
 						skipped: result.skippedUnmapped,
 					}),
@@ -454,7 +455,7 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 					scheduleSlots.length === 0
 				}
 				loading={syncingSchedule}
-				buttonText={t('soccer365SyncSchedule')}
+				buttonText={t('externalScheduleSync')}
 				sx={{ width: '100%', mb: 2.5, mr: 0 }}
 			/>
 

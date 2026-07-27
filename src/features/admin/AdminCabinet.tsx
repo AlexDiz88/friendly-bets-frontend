@@ -57,10 +57,11 @@ export default function AdminCabinet(): JSX.Element {
 					<ExternalDataLayersPanel />
 					<ManualExternalSyncPanel />
 					<ExternalTeamAliasesPanel />
-					<SiteAccessProbePanel />
 
 					<AdminGroupHeading label={t('adminPanelGroupTeams')} />
 					<TeamsManagement />
+
+					<SiteAccessProbePanel />
 
 					<AdminGroupHeading label={t('adminPanelGroupMaintenance')} />
 					<AdminSection
