@@ -2,3 +2,4 @@
 export const MARATHONBET_PROVIDER = 'marathonbet';
 export const TWENTYFOUR_SCORE_PROVIDER = '24score.pro';
 export const SOCCER365_PROVIDER = 'soccer365.ru';
+export const SPORTS_RU_PROVIDER = 'sports.ru';
