@@ -26,7 +26,9 @@ import {
 	statusChipColor,
 } from '../apiSandboxPageStyles';
 import CopyableValue from '../CopyableValue';
+import SandboxIdHints from '../SandboxIdHints';
 import SandboxResultPanel from '../SandboxResultPanel';
+import { SOCCER365_PROVIDER, SPORTS_RU_PROVIDER } from '../../admin/teams/teamProviderConstants';
 
 export type ScheduleStandForm = {
 	provider: string;
@@ -37,6 +39,7 @@ export type ScheduleStandForm = {
 
 type ScheduleParsed = {
 	competitionId?: number;
+	calendarPath?: string;
 	roundFilter?: number | null;
 	limit?: number | null;
 	matchesTotal?: number;
@@ -52,6 +55,7 @@ type ScheduleParsed = {
 			utcKickoff?: string;
 			status?: string;
 			soccer365GameId?: string;
+			matchPath?: string;
 		}>;
 	}>;
 };
@@ -77,8 +81,9 @@ export default function ScheduleSandboxStand({
 	const layer = 'SCHEDULE' as const;
 	const accent = LAYER_ACCENT[layer];
 	const parsed = (result?.parsed || null) as ScheduleParsed | null;
-	const providerOptions = providers.length > 0 ? providers : ['soccer365.ru'];
+	const providerOptions = providers.length > 0 ? providers : [SOCCER365_PROVIDER];
 	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
+	const isSportsRu = safeProvider === SPORTS_RU_PROVIDER;
 
 	const summary =
 		result?.success && parsed ? (
@@ -99,6 +104,9 @@ export default function ScheduleSandboxStand({
 					{parsed.competitionId != null ? (
 						<CopyableValue value={parsed.competitionId} label={t('apiSandbox.fields.competitionId')} />
 					) : null}
+					{parsed.calendarPath ? (
+						<CopyableValue value={parsed.calendarPath} label={t('apiSandbox.fields.calendarPath')} />
+					) : null}
 				</Box>
 				<TableContainer sx={{ maxHeight: 280, borderRadius: 1.5, border: '1px solid', borderColor: 'divider' }}>
 					<Table size="small" stickyHeader sx={sandboxTableSx(layer)}>
@@ -109,13 +117,17 @@ export default function ScheduleSandboxStand({
 								<TableCell>{t('apiSandbox.col.away')}</TableCell>
 								<TableCell>{t('apiSandbox.col.kickoff')}</TableCell>
 								<TableCell>{t('apiSandbox.col.status')}</TableCell>
-								<TableCell>{t('apiSandbox.col.gameId')}</TableCell>
+								<TableCell>
+									{isSportsRu ? t('apiSandbox.col.matchPath') : t('apiSandbox.col.gameId')}
+								</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
 							{(parsed.rounds || []).flatMap((round) =>
 								(round.matches || []).map((match, idx) => (
-									<TableRow key={`${round.number}-${match.soccer365GameId || idx}`}>
+									<TableRow
+										key={`${round.number}-${match.soccer365GameId || match.matchPath || idx}`}
+									>
 										<TableCell>{round.number}</TableCell>
 										<TableCell>
 											<CopyableValue value={match.homeName} mono={false} />
@@ -130,7 +142,7 @@ export default function ScheduleSandboxStand({
 											<Chip size="small" label={match.status || '—'} color={statusChipColor(match.status)} />
 										</TableCell>
 										<TableCell>
-											<CopyableValue value={match.soccer365GameId} />
+											<CopyableValue value={match.soccer365GameId || match.matchPath} />
 										</TableCell>
 									</TableRow>
 								))
@@ -148,7 +160,7 @@ export default function ScheduleSandboxStand({
 					{t('apiSandbox.layer.SCHEDULE')}
 				</Typography>
 				<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', mt: -1 }}>
-					{t('apiSandbox.scheduleHint')}
+					{isSportsRu ? t('apiSandbox.scheduleHintSportsRu') : t('apiSandbox.scheduleHint')}
 				</Typography>
 
 				<Box>
@@ -156,7 +168,13 @@ export default function ScheduleSandboxStand({
 					<FormControl fullWidth size="small">
 						<Select
 							value={safeProvider}
-							onChange={(e) => onFormChange({ ...form, provider: String(e.target.value) })}
+							onChange={(e) =>
+								onFormChange({
+									...form,
+									provider: String(e.target.value),
+									competitionId: '',
+								})
+							}
 						>
 							{providerOptions.map((p) => (
 								<MenuItem key={p} value={p}>
@@ -168,16 +186,24 @@ export default function ScheduleSandboxStand({
 				</Box>
 
 				<Box>
-					<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.competitionId')}</Typography>
+					<Typography sx={sandboxFieldLabelSx}>
+						{isSportsRu ? t('apiSandbox.fields.tournamentSlug') : t('apiSandbox.fields.competitionId')}
+					</Typography>
 					<TextField
 						fullWidth
 						size="small"
 						value={form.competitionId}
 						onChange={(e) => onFormChange({ ...form, competitionId: e.target.value })}
-						placeholder="12"
-						inputProps={{ inputMode: 'numeric' }}
+						placeholder={isSportsRu ? 'premier-league' : '12'}
+						inputProps={isSportsRu ? undefined : { inputMode: 'numeric' }}
 					/>
 				</Box>
+
+				<SandboxIdHints
+					layer={layer}
+					provider={safeProvider}
+					onApply={(value) => onFormChange({ ...form, provider: safeProvider, competitionId: value })}
+				/>
 
 				<Box>
 					<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.round')}</Typography>
@@ -218,7 +244,9 @@ export default function ScheduleSandboxStand({
 					result={result}
 					accent={accent}
 					summary={summary}
-					emptyHint={t('apiSandbox.scheduleEmpty')}
+					emptyHint={
+						isSportsRu ? t('apiSandbox.scheduleEmptySportsRu') : t('apiSandbox.scheduleEmpty')
+					}
 				/>
 			</Box>
 		</Box>

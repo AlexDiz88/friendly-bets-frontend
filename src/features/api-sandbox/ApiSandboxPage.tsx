@@ -26,6 +26,10 @@ import OddsSandboxStand, {
 	type OddsModeStandState,
 } from './stands/OddsSandboxStand';
 import ScheduleSandboxStand, { type ScheduleStandForm } from './stands/ScheduleSandboxStand';
+import {
+	SOCCER365_PROVIDER,
+	SPORTS_RU_PROVIDER,
+} from '../admin/teams/teamProviderConstants';
 
 function todayIsoDate(): string {
 	const d = new Date();
@@ -131,9 +135,24 @@ export default function ApiSandboxPage(): JSX.Element {
 	}, [dispatch]);
 
 	const runSchedule = useCallback(async () => {
-		const competitionId = Number(schedule.form.competitionId);
-		if (!Number.isFinite(competitionId) || competitionId <= 0) {
-			dispatch(showErrorSnackbar({ message: 'sandboxCompetitionIdRequired' }));
+		const provider = schedule.form.provider;
+		const idRaw = schedule.form.competitionId.trim();
+		let competitionId: number | undefined;
+		let calendarPath: string | undefined;
+		if (provider === SPORTS_RU_PROVIDER) {
+			if (!idRaw) {
+				dispatch(showErrorSnackbar({ message: 'sandboxCalendarPathRequired' }));
+				return;
+			}
+			calendarPath = idRaw;
+		} else if (provider === SOCCER365_PROVIDER) {
+			competitionId = Number(idRaw);
+			if (!Number.isFinite(competitionId) || competitionId <= 0) {
+				dispatch(showErrorSnackbar({ message: 'sandboxCompetitionIdRequired' }));
+				return;
+			}
+		} else {
+			dispatch(showErrorSnackbar({ message: 'sandboxUnsupportedProvider' }));
 			return;
 		}
 		const roundRaw = schedule.form.round.trim();
@@ -157,8 +176,9 @@ export default function ApiSandboxPage(): JSX.Element {
 		setSchedule((prev) => ({ ...prev, loading: true }));
 		try {
 			const result = await sandboxSchedule({
-				provider: schedule.form.provider,
+				provider,
 				competitionId,
+				calendarPath,
 				round,
 				limit,
 			});

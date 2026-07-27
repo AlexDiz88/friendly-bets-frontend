@@ -26,6 +26,7 @@ import {
 	sandboxTableSx,
 } from '../apiSandboxPageStyles';
 import CopyableValue from '../CopyableValue';
+import SandboxIdHints from '../SandboxIdHints';
 import SandboxResultPanel from '../SandboxResultPanel';
 
 export type OddsMode = 'tournament' | 'event';
@@ -205,6 +206,14 @@ export default function OddsSandboxStand({
 						inputProps={{ inputMode: 'numeric' }}
 					/>
 				</Box>
+
+				{activeMode === 'tournament' ? (
+					<SandboxIdHints
+						layer={layer}
+						provider={safeProvider}
+						onApply={(value) => onFormChange({ ...form, provider: safeProvider, treeId: value })}
+					/>
+				) : null}
 
 				<CustomSuccessButton
 					onClick={onRun}
