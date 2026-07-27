@@ -18,6 +18,7 @@ import {
 	sandboxStandLayoutSx,
 } from '../apiSandboxPageStyles';
 import CopyableValue from '../CopyableValue';
+import SandboxIdHints from '../SandboxIdHints';
 import SandboxResultPanel from '../SandboxResultPanel';
 
 export type FullMatchStandForm = {
@@ -315,6 +316,8 @@ export default function FullMatchSandboxStand({
 						placeholder="1234567"
 					/>
 				</Box>
+
+				<SandboxIdHints layer={layer} provider={safeProvider} />
 
 				<CustomSuccessButton
 					onClick={onRun}

@@ -34,6 +34,7 @@ async function postSandbox(path: string, body: unknown): Promise<SandboxResult> 
 export async function sandboxSchedule(body: {
 	provider: string;
 	competitionId?: number;
+	calendarPath?: string;
 	round?: number;
 	limit?: number;
 }): Promise<SandboxResult> {

@@ -26,6 +26,7 @@ import {
 	statusChipColor,
 } from '../apiSandboxPageStyles';
 import CopyableValue from '../CopyableValue';
+import SandboxIdHints from '../SandboxIdHints';
 import SandboxResultPanel from '../SandboxResultPanel';
 
 export type LiveStandForm = {
@@ -178,6 +179,12 @@ export default function LiveSandboxStand({
 						placeholder={t('apiSandbox.titleContainsPlaceholder')}
 					/>
 				</Box>
+
+				<SandboxIdHints
+					layer={layer}
+					provider={safeProvider}
+					onApply={(value) => onFormChange({ ...form, provider: safeProvider, titleContains: value })}
+				/>
 
 				<CustomSuccessButton
 					onClick={onRun}
