@@ -38,10 +38,23 @@ import { matchSideToDisplayTeam } from '../../match-results/externalMatchDisplay
 import {
 	syncExternalLive,
 	syncExternalSchedule,
-	syncMarathonbetOdds,
+	syncOddsProviderSlot,
 } from './externalDataAdminApi';
+import {
+	MARATHONBET_PROVIDER,
+	MELBET_PROVIDER,
+} from '../teams/teamProviderConstants';
 
 const SCHEDULE_LEAGUE_CODES = new Set(['EPL', 'BL', 'CL', 'LE', 'EC', 'WC']);
+const ODDS_PROVIDERS = [MARATHONBET_PROVIDER, MELBET_PROVIDER] as const;
+const ODDS_PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
+	[MARATHONBET_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'WC']),
+	[MELBET_PROVIDER]: new Set(['EPL', 'BL']),
+};
+const ODDS_PROVIDER_LABEL_KEY: Record<string, string> = {
+	[MARATHONBET_PROVIDER]: 'externalTeamAliasProviderMarathonbet',
+	[MELBET_PROVIDER]: 'externalTeamAliasProviderMelbet',
+};
 const MATCH_OPTION_AVATAR = 18;
 
 function MatchOptionLabel({ match }: { match: ExternalMatch }): JSX.Element {
@@ -86,6 +99,7 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	const [scheduleMatchday, setScheduleMatchday] = useState(1);
 	const [scheduleSlots, setScheduleSlots] = useState<MatchdaySlot[]>([]);
 	const [scheduleMetaLoading, setScheduleMetaLoading] = useState(false);
+	const [oddsProvider, setOddsProvider] = useState<string>(MARATHONBET_PROVIDER);
 	const [oddsLeagueCode, setOddsLeagueCode] = useState('EPL');
 	const [liveLeagueCode, setLiveLeagueCode] = useState('EPL');
 	const [syncingSchedule, setSyncingSchedule] = useState(false);
@@ -135,12 +149,17 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		return scheduleSlotValues[0] ?? scheduleMatchday;
 	}, [scheduleMatchday, scheduleSlotValues]);
 
+	const oddsLeagues = useMemo(() => {
+		const allowed = ODDS_PROVIDER_LEAGUE_CODES[oddsProvider] ?? new Set<string>();
+		return allLeagues.filter((l) => allowed.has(l.leagueCode));
+	}, [allLeagues, oddsProvider]);
+
 	const effectiveOddsLeague = useMemo(() => {
-		if (allLeagues.some((l) => l.leagueCode === oddsLeagueCode)) {
+		if (oddsLeagues.some((l) => l.leagueCode === oddsLeagueCode)) {
 			return oddsLeagueCode;
 		}
-		return allLeagues[0]?.leagueCode ?? '';
-	}, [allLeagues, oddsLeagueCode]);
+		return oddsLeagues[0]?.leagueCode ?? '';
+	}, [oddsLeagues, oddsLeagueCode]);
 
 	const effectiveLiveLeague = useMemo(() => {
 		if (allLeagues.some((l) => l.leagueCode === liveLeagueCode)) {
@@ -150,8 +169,8 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	}, [allLeagues, liveLeagueCode]);
 
 	const oddsLeague = useMemo(
-		() => allLeagues.find((l) => l.leagueCode === effectiveOddsLeague),
-		[allLeagues, effectiveOddsLeague]
+		() => oddsLeagues.find((l) => l.leagueCode === effectiveOddsLeague),
+		[oddsLeagues, effectiveOddsLeague]
 	);
 
 	const externalSeason = useMemo(
@@ -350,7 +369,8 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		}
 		setSyncingOdds(true);
 		try {
-			const result = await syncMarathonbetOdds({
+			const result = await syncOddsProviderSlot({
+				provider: oddsProvider,
 				leagueId: oddsLeague.id,
 				season: externalSeason,
 				force: forceOddsUpdate,
@@ -359,7 +379,8 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 			});
 			dispatch(
 				showSuccessSnackbar({
-					message: t('externalMatchMarathonbetSyncSuccess', {
+					message: t('externalMatchOddsProviderSyncSuccess', {
+						provider: t(ODDS_PROVIDER_LABEL_KEY[oddsProvider] ?? oddsProvider),
 						matched: result.matchesMatched,
 						eligible: result.matchesEligible,
 						saved: result.mergedSaved,
@@ -371,7 +392,7 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
-					message: error instanceof Error ? error.message : 'marathonbetFetchFailed',
+					message: error instanceof Error ? error.message : 'externalMatchOddsSyncError',
 				})
 			);
 		} finally {
@@ -462,10 +483,30 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 			<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
 				{t('externalDataOddsSyncTitle')}
 			</Typography>
-			{allLeagues.length > 0 ? (
+			<FormControl fullWidth size="small" sx={{ mb: 1 }}>
+				<InputLabel id="odds-sync-provider-label">{t('externalDataOddsProvider')}</InputLabel>
+				<Select
+					labelId="odds-sync-provider-label"
+					label={t('externalDataOddsProvider')}
+					value={ODDS_PROVIDERS.includes(oddsProvider as (typeof ODDS_PROVIDERS)[number])
+						? oddsProvider
+						: ODDS_PROVIDERS[0]}
+					onChange={(e) => {
+						setOddsProvider(String(e.target.value));
+						setForceMatchIds([]);
+					}}
+				>
+					{ODDS_PROVIDERS.map((provider) => (
+						<MenuItem key={provider} value={provider}>
+							{t(ODDS_PROVIDER_LABEL_KEY[provider])}
+						</MenuItem>
+					))}
+				</Select>
+			</FormControl>
+			{oddsLeagues.length > 0 ? (
 				<Box sx={{ mb: 1 }}>
 					<LeagueSelect
-						leagues={allLeagues}
+						leagues={oddsLeagues}
 						value={effectiveOddsLeague}
 						onChange={(e) => {
 							setOddsLeagueCode(String(e.target.value));

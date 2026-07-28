@@ -202,7 +202,15 @@ export default function OddsSandboxStand({
 						size="small"
 						value={form.treeId}
 						onChange={(e) => onFormChange({ ...form, treeId: e.target.value })}
-						placeholder={activeMode === 'tournament' ? '22433' : '29432420'}
+						placeholder={
+							activeMode === 'tournament'
+								? safeProvider === 'melbet'
+									? '4485'
+									: '21520'
+								: safeProvider === 'melbet'
+									? '38468867'
+									: '29432420'
+						}
 						inputProps={{ inputMode: 'numeric' }}
 					/>
 				</Box>
