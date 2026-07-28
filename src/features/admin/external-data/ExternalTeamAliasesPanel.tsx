@@ -25,6 +25,7 @@ import { getActiveSeason } from '../seasons/seasonsSlice';
 import { selectActiveSeason } from '../seasons/selectors';
 import {
 	MARATHONBET_PROVIDER,
+	MELBET_PROVIDER,
 	SOCCER365_PROVIDER,
 	SPORTS_RU_PROVIDER,
 	FOOTBALL24_PROVIDER,
@@ -41,6 +42,7 @@ const PROVIDERS = [
 	SPORTS_RU_PROVIDER,
 	FOOTBALL24_PROVIDER,
 	MARATHONBET_PROVIDER,
+	MELBET_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 ] as const;
 
@@ -49,6 +51,7 @@ const PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
 	[SPORTS_RU_PROVIDER]: new Set(['EPL', 'BL']),
 	[FOOTBALL24_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
 	[MARATHONBET_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'WC']),
+	[MELBET_PROVIDER]: new Set(['EPL', 'BL']),
 	[TWENTYFOUR_SCORE_PROVIDER]: new Set(['EPL', 'BL']),
 };
 
@@ -57,6 +60,7 @@ const PROVIDER_LABEL_KEY: Record<string, string> = {
 	[SPORTS_RU_PROVIDER]: 'externalTeamAliasProviderSportsRu',
 	[FOOTBALL24_PROVIDER]: 'externalTeamAliasProviderFootball24',
 	[MARATHONBET_PROVIDER]: 'externalTeamAliasProviderMarathonbet',
+	[MELBET_PROVIDER]: 'externalTeamAliasProviderMelbet',
 	[TWENTYFOUR_SCORE_PROVIDER]: 'externalTeamAliasProvider24score',
 };
 
@@ -109,9 +113,7 @@ export default function ExternalTeamAliasesPanel(): JSX.Element {
 			const result = await fetchExternalTeamNames(provider, effectiveLeagueCode);
 			setChips(result.unmapped ?? []);
 			setNamesLoaded(true);
-			if ((result.autoBoundCount ?? 0) > 0) {
-				void dispatch(getAllTeams());
-			}
+			void dispatch(getAllTeams());
 			dispatch(
 				showSuccessSnackbar({
 					message: t('externalTeamAliasesLoadResult', {

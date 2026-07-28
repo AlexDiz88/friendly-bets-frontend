@@ -119,7 +119,7 @@ export async function syncExternalSchedule(
 	return result.json();
 }
 
-export type MarathonbetOddsSyncResult = {
+export type OddsProviderSyncResult = {
 	message: string;
 	tournamentFetched: boolean;
 	matchesEligible: number;
@@ -130,14 +130,23 @@ export type MarathonbetOddsSyncResult = {
 	failedMatchScheduleIds?: string[];
 };
 
-/** Manual ODDS sync. Default: current matchday, missing odds only. Force: matchday + match ids. */
-export async function syncMarathonbetOdds(params: {
+/** Alias for existing call sites. */
+export type MarathonbetOddsSyncResult = OddsProviderSyncResult;
+
+/** Manual ODDS sync for a concrete provider (marathonbet / melbet). */
+export async function syncOddsProviderSlot(params: {
+	provider: string;
 	leagueId: string;
 	season?: string;
 	force?: boolean;
 	matchday?: number;
 	matchScheduleIds?: string[];
-}): Promise<MarathonbetOddsSyncResult> {
+}): Promise<OddsProviderSyncResult> {
+	const provider = params.provider.trim().toLowerCase();
+	const path =
+		provider === 'melbet'
+			? '/api/admin/melbet/sync-slot'
+			: '/api/admin/marathonbet/sync-slot';
 	const search = new URLSearchParams({ leagueId: params.leagueId });
 	if (params.season) {
 		search.set('season', params.season);
@@ -149,7 +158,7 @@ export async function syncMarathonbetOdds(params: {
 		}
 		params.matchScheduleIds?.forEach((id) => search.append('matchScheduleIds', id));
 	}
-	const result = await apiFetch(apiUrl(`/api/admin/marathonbet/sync-slot?${search}`), {
+	const result = await apiFetch(apiUrl(`${path}?${search}`), {
 		method: 'POST',
 	});
 	if (result.status >= 400) {
@@ -157,6 +166,17 @@ export async function syncMarathonbetOdds(params: {
 		throw new Error(message);
 	}
 	return result.json();
+}
+
+/** Manual ODDS sync. Default: current matchday, missing odds only. Force: matchday + match ids. */
+export async function syncMarathonbetOdds(params: {
+	leagueId: string;
+	season?: string;
+	force?: boolean;
+	matchday?: number;
+	matchScheduleIds?: string[];
+}): Promise<OddsProviderSyncResult> {
+	return syncOddsProviderSlot({ ...params, provider: 'marathonbet' });
 }
 
 export type SiteAccessProbeVerdict =

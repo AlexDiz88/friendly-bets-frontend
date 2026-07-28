@@ -3,6 +3,7 @@ import NewTeam from './types/NewTeam';
 import Team, { TeamDisplayNames, TeamExternalAlias } from './types/Team';
 import {
 	MARATHONBET_PROVIDER,
+	MELBET_PROVIDER,
 	SOCCER365_PROVIDER,
 	SPORTS_RU_PROVIDER,
 	FOOTBALL24_PROVIDER,
@@ -63,6 +64,13 @@ export const TEAM_EXTERNAL_ALIAS_FIELDS = [
 		sectionKey: 'teamMarathonbetSection',
 		labelKey: 'teamMarathonbetExternalName',
 		inputId: 'marathonbet-external-name',
+	},
+	{
+		provider: MELBET_PROVIDER,
+		field: 'melbetExternalName',
+		sectionKey: 'teamMelbetSection',
+		labelKey: 'teamMelbetExternalName',
+		inputId: 'melbet-external-name',
 	},
 ] as const;
 

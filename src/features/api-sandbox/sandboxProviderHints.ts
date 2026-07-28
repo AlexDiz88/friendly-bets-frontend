@@ -1,5 +1,6 @@
 import {
 	MARATHONBET_PROVIDER,
+	MELBET_PROVIDER,
 	SOCCER365_PROVIDER,
 	SPORTS_RU_PROVIDER,
 	FOOTBALL24_PROVIDER,
@@ -50,6 +51,10 @@ export const SANDBOX_ID_HINTS: Partial<
 			{ label: 'CL', value: '21255' },
 			{ label: 'LE', value: '21366' },
 			{ label: 'WC', value: '2253726' },
+		],
+		[MELBET_PROVIDER]: [
+			{ label: 'EPL', value: '4485' },
+			{ label: 'BL', value: '4261' },
 		],
 	},
 	LIVE: {
