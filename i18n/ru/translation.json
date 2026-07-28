@@ -1160,7 +1160,7 @@
 	"errorLogsEntryDeleted": "Запись удалена",
 	"errorLogsCleared": "Лог очищен",
 	"errorLogsMatchdayChip": "тур {{number}}",
-	"errorLogsTeamMappingPrefillHint": "Выберите команду для привязки {{name}} (ID {{id}})",
+	"errorLogsTeamMappingPrefillHint": "Выберите команду для привязки {{name}}",
 	"externalDataOddsSyncTitle": "Кэфы Marathonbet",
 	"externalDataOddsSyncNow": "Синхронизировать кэфы",
 	"externalDataOddsSyncMissingOnlyNote": "Будут обновлены только матчи выбранной лиги текущего тура, у которых ещё нет кэфов.",

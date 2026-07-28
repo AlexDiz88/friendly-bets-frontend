@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import CustomButton from '../../../components/custom/btn/CustomButton';
 import AdminSection from '../AdminSection';
@@ -15,14 +15,10 @@ export default function TeamsManagement(): JSX.Element {
 	const [showAddTeamToLeague, setShowAddTeamToLeague] = useState(false);
 	const [showAddNewTeam, setShowAddNewTeam] = useState(false);
 	const [showEditTeam, setShowEditTeam] = useState(openTeamEditFromUrl);
-	const teamEditRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
 		if (openTeamEditFromUrl) {
 			setShowEditTeam(true);
-			window.requestAnimationFrame(() => {
-				teamEditRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-			});
 		}
 	}, [openTeamEditFromUrl]);
 
@@ -81,7 +77,7 @@ export default function TeamsManagement(): JSX.Element {
 					buttonText={showEditTeam ? t('hideTeamEditSection') : t('showTeamEditSection')}
 				/>
 				{showEditTeam && (
-					<Box ref={teamEditRef} sx={formPanelSx}>
+					<Box sx={formPanelSx}>
 						<EditTeamPanel />
 					</Box>
 				)}
