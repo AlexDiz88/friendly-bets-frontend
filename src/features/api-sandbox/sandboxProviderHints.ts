@@ -2,6 +2,7 @@ import {
 	MARATHONBET_PROVIDER,
 	SOCCER365_PROVIDER,
 	SPORTS_RU_PROVIDER,
+	FOOTBALL24_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 } from '../admin/teams/teamProviderConstants';
 import type { ExternalDataLayer } from '../../shared/externalDataLayerColors';
@@ -34,6 +35,12 @@ export const SANDBOX_ID_HINTS: Partial<
 			{ label: 'BL', value: 'bundesliga' },
 			{ label: 'CL', value: 'ucl' },
 			{ label: 'LE', value: 'uel' },
+		],
+		[FOOTBALL24_PROVIDER]: [
+			{ label: 'EPL', value: '3' },
+			{ label: 'BL', value: '7' },
+			{ label: 'CL', value: '1' },
+			{ label: 'LE', value: '2' },
 		],
 	},
 	ODDS: {

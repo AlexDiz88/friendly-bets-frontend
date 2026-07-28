@@ -28,7 +28,7 @@ import {
 import CopyableValue from '../CopyableValue';
 import SandboxIdHints from '../SandboxIdHints';
 import SandboxResultPanel from '../SandboxResultPanel';
-import { SOCCER365_PROVIDER, SPORTS_RU_PROVIDER } from '../../admin/teams/teamProviderConstants';
+import { SOCCER365_PROVIDER, SPORTS_RU_PROVIDER, FOOTBALL24_PROVIDER } from '../../admin/teams/teamProviderConstants';
 
 export type ScheduleStandForm = {
 	provider: string;
@@ -84,6 +84,7 @@ export default function ScheduleSandboxStand({
 	const providerOptions = providers.length > 0 ? providers : [SOCCER365_PROVIDER];
 	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
 	const isSportsRu = safeProvider === SPORTS_RU_PROVIDER;
+	const isFootball24 = safeProvider === FOOTBALL24_PROVIDER;
 
 	const summary =
 		result?.success && parsed ? (
@@ -160,7 +161,11 @@ export default function ScheduleSandboxStand({
 					{t('apiSandbox.layer.SCHEDULE')}
 				</Typography>
 				<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', mt: -1 }}>
-					{isSportsRu ? t('apiSandbox.scheduleHintSportsRu') : t('apiSandbox.scheduleHint')}
+					{isSportsRu
+						? t('apiSandbox.scheduleHintSportsRu')
+						: isFootball24
+							? t('apiSandbox.scheduleHintFootball24')
+							: t('apiSandbox.scheduleHint')}
 				</Typography>
 
 				<Box>
@@ -194,7 +199,7 @@ export default function ScheduleSandboxStand({
 						size="small"
 						value={form.competitionId}
 						onChange={(e) => onFormChange({ ...form, competitionId: e.target.value })}
-						placeholder={isSportsRu ? 'premier-league' : '12'}
+						placeholder={isSportsRu ? 'premier-league' : isFootball24 ? '3' : '12'}
 						inputProps={isSportsRu ? undefined : { inputMode: 'numeric' }}
 					/>
 				</Box>
