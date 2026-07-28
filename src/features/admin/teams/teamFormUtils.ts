@@ -5,6 +5,7 @@ import {
 	MARATHONBET_PROVIDER,
 	SOCCER365_PROVIDER,
 	SPORTS_RU_PROVIDER,
+	FOOTBALL24_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 } from './teamProviderConstants';
 
@@ -36,6 +37,13 @@ export const TEAM_EXTERNAL_ALIAS_FIELDS = [
 		sectionKey: 'teamSportsRuSection',
 		labelKey: 'teamSportsRuExternalName',
 		inputId: 'sportsru-external-name',
+	},
+	{
+		provider: FOOTBALL24_PROVIDER,
+		field: 'football24ExternalName',
+		sectionKey: 'teamFootball24Section',
+		labelKey: 'teamFootball24ExternalName',
+		inputId: 'football24-external-name',
 	},
 	{
 		provider: TWENTYFOUR_SCORE_PROVIDER,

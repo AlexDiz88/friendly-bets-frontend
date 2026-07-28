@@ -29,6 +29,7 @@ import ScheduleSandboxStand, { type ScheduleStandForm } from './stands/ScheduleS
 import {
 	SOCCER365_PROVIDER,
 	SPORTS_RU_PROVIDER,
+	FOOTBALL24_PROVIDER,
 } from '../admin/teams/teamProviderConstants';
 
 function todayIsoDate(): string {
@@ -145,7 +146,7 @@ export default function ApiSandboxPage(): JSX.Element {
 				return;
 			}
 			calendarPath = idRaw;
-		} else if (provider === SOCCER365_PROVIDER) {
+		} else if (provider === SOCCER365_PROVIDER || provider === FOOTBALL24_PROVIDER) {
 			competitionId = Number(idRaw);
 			if (!Number.isFinite(competitionId) || competitionId <= 0) {
 				dispatch(showErrorSnackbar({ message: 'sandboxCompetitionIdRequired' }));
