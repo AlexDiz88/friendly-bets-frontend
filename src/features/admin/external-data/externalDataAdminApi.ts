@@ -67,6 +67,14 @@ export type ExternalTeamNameChip = {
 	alreadyMapped: boolean;
 };
 
+export type ExternalTeamNamesLoadResult = {
+	unmapped: ExternalTeamNameChip[];
+	autoBoundCount: number;
+	mismatchCount: number;
+	alreadyMappedCount: number;
+	totalNames: number;
+};
+
 export type ExternalScheduleSyncResult = {
 	leagueCode: string;
 	seasonId: string;
@@ -81,7 +89,7 @@ export type ExternalScheduleSyncResult = {
 export async function fetchExternalTeamNames(
 	provider: string,
 	leagueCode: string
-): Promise<ExternalTeamNameChip[]> {
+): Promise<ExternalTeamNamesLoadResult> {
 	const params = new URLSearchParams({ provider, leagueCode });
 	const result = await apiFetch(apiUrl(`/api/admin/external-data/team-names?${params}`), {
 		method: 'POST',

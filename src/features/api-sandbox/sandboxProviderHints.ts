@@ -53,13 +53,15 @@ export const SANDBOX_ID_HINTS: Partial<
 		],
 	},
 	LIVE: {
+		// 24score.pro date-page titles are Russian (e.g. «Англия Премьер-лига»).
+		// Substrings align with TwentyFourScoreLeagueTitles on the backend.
 		[TWENTYFOUR_SCORE_PROVIDER]: [
-			{ label: 'EPL', value: 'Premier' },
-			{ label: 'BL', value: 'Bundesliga' },
-			{ label: 'CL', value: 'Champions League' },
-			{ label: 'LE', value: 'Europa League' },
-			{ label: 'WC', value: 'World Cup' },
-			{ label: 'EC', value: 'Euro' },
+			{ label: 'EPL', value: 'Англия Премьер' },
+			{ label: 'BL', value: 'Бундеслига' },
+			{ label: 'CL', value: 'Лига чемпионов' },
+			{ label: 'LE', value: 'Лига Европы' },
+			{ label: 'WC', value: 'Чемпионат мира' },
+			{ label: 'EC', value: 'Чемпионат Европы' },
 		],
 	},
 	FULL_MATCH: {

@@ -23,6 +23,11 @@ const DROPPED_PROVIDERS = new Set([
  * When adding a new provider alias: append an entry here (and i18n keys).
  * Completeness check, load, save, and form fields all derive from this list.
  */
+/** Logo files live at `/upload/api-logos/{provider}.png` (marathonbet → marathonbet.png). */
+export function teamApiLogoSrc(provider: string): string {
+	return `/upload/api-logos/${provider}.png`;
+}
+
 export const TEAM_EXTERNAL_ALIAS_FIELDS = [
 	{
 		provider: SOCCER365_PROVIDER,
