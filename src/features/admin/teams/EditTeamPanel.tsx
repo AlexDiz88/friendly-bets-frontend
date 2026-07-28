@@ -271,7 +271,7 @@ export default function EditTeamPanel(): JSX.Element {
 
 			{selected ? (
 				<Box>
-					<Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+					<Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
 						<TeamAvatar team={selected} height={28} />
 						<TeamFormStatusIcon values={values} />
 					</Box>
@@ -279,6 +279,7 @@ export default function EditTeamPanel(): JSX.Element {
 						values={values}
 						onChange={handleChange}
 						titleReadOnly
+						forceExpandAliases={mappingSession != null}
 					/>
 					<Box sx={{ textAlign: 'center', mt: 1 }}>
 						<CustomCancelButton onClick={handleCancel} sx={{ mb: 0.75 }} />

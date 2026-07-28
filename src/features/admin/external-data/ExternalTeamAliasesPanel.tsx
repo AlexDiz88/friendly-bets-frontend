@@ -15,7 +15,10 @@ import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import LeagueSelect from '../../../components/selectors/LeagueSelect';
-import { showErrorSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
+import {
+	showErrorSnackbar,
+	showSuccessSnackbar,
+} from '../../../components/custom/snackbar/snackbarSlice';
 import AdminSection from '../AdminSection';
 import { ADMIN_EXTERNAL_TEAM_ALIASES_ID } from '../adminScroll';
 import { getActiveSeason } from '../seasons/seasonsSlice';
@@ -31,6 +34,7 @@ import {
 	ExternalTeamNameChip,
 	fetchExternalTeamNames,
 } from '../external-data/externalDataAdminApi';
+import { getAllTeams } from '../teams/teamsSlice';
 
 const PROVIDERS = [
 	SOCCER365_PROVIDER,
@@ -102,9 +106,22 @@ export default function ExternalTeamAliasesPanel(): JSX.Element {
 		}
 		setLoadingNames(true);
 		try {
-			const names = await fetchExternalTeamNames(provider, effectiveLeagueCode);
-			setChips(names.filter((c) => !c.alreadyMapped));
+			const result = await fetchExternalTeamNames(provider, effectiveLeagueCode);
+			setChips(result.unmapped ?? []);
 			setNamesLoaded(true);
+			if ((result.autoBoundCount ?? 0) > 0) {
+				void dispatch(getAllTeams());
+			}
+			dispatch(
+				showSuccessSnackbar({
+					message: t('externalTeamAliasesLoadResult', {
+						autoBound: result.autoBoundCount ?? 0,
+						remaining: (result.unmapped ?? []).length,
+						mismatches: result.mismatchCount ?? 0,
+					}),
+					duration: 4500,
+				})
+			);
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
