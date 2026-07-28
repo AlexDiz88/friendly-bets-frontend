@@ -40,6 +40,7 @@ import {
 } from './teamFormUtils';
 import Team from './types/Team';
 import { getAllTeams, updateTeam } from './teamsSlice';
+import { ADMIN_EXTERNAL_TEAM_ALIASES_ID, softScrollToId } from '../adminScroll';
 
 export default function EditTeamPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -52,12 +53,17 @@ export default function EditTeamPanel(): JSX.Element {
 	const [saving, setSaving] = useState(false);
 	const [mappingSession, setMappingSession] = useState<TeamMappingRef | null>(null);
 	const prefillTeamIdRef = useRef<string | null>(null);
+	const teamSelectInputRef = useRef<HTMLInputElement | null>(null);
+	const focusTeamSelectPendingRef = useRef(false);
+	const [teamSelectOpen, setTeamSelectOpen] = useState(false);
 
 	const prefillTeamId = searchParams.get('teamId') ?? undefined;
 
 	const exitMappingMode = useCallback((): void => {
 		setMappingSession(null);
 		prefillTeamIdRef.current = null;
+		focusTeamSelectPendingRef.current = false;
+		setTeamSelectOpen(false);
 		clearTeamMappingSearchParams(setSearchParams);
 	}, [setSearchParams]);
 
@@ -72,11 +78,24 @@ export default function EditTeamPanel(): JSX.Element {
 		if (fromUrl) {
 			setMappingSession(fromUrl);
 			prefillTeamIdRef.current = null;
+			focusTeamSelectPendingRef.current = true;
 			setSelected(null);
 			setValues(emptyTeamFormValues());
 		}
 		clearTeamMappingSearchParams(setSearchParams);
 	}, [searchParams, setSearchParams]);
+
+	useEffect(() => {
+		if (!mappingSession || loading || selected || !focusTeamSelectPendingRef.current) {
+			return;
+		}
+		focusTeamSelectPendingRef.current = false;
+		const timer = window.setTimeout(() => {
+			teamSelectInputRef.current?.focus();
+			setTeamSelectOpen(true);
+		}, 50);
+		return () => window.clearTimeout(timer);
+	}, [mappingSession, loading, selected]);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -185,18 +204,32 @@ export default function EditTeamPanel(): JSX.Element {
 		);
 		setSaving(false);
 		if (updateTeam.fulfilled.match(result)) {
+			const returnToAliases = mappingSession != null;
 			dispatch(showSuccessSnackbar({ message: t('teamWasSuccessfullyUpdated') }));
 			exitMappingMode();
 			setSelected(null);
 			setValues(emptyTeamFormValues());
+			if (returnToAliases) {
+				window.setTimeout(() => {
+					softScrollToId(ADMIN_EXTERNAL_TEAM_ALIASES_ID, 0);
+				}, 10);
+			}
 		}
 		if (updateTeam.rejected.match(result)) {
 			dispatch(showErrorSnackbar({ message: result.error.message }));
 		}
-	}, [dispatch, exitMappingMode, selected, saving, values]);
+	}, [dispatch, exitMappingMode, mappingSession, selected, saving, values]);
 
 	return (
 		<Box>
+			{mappingSession && !selected ? (
+				<Typography variant="body2" sx={{ mb: 1, opacity: 0.85, textAlign: 'left' }}>
+					{t('errorLogsTeamMappingPrefillHint', {
+						name: mappingSession.externalName ?? '—',
+					})}
+				</Typography>
+			) : null}
+
 			{loading ? (
 				<Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
 					<CircularProgress size={28} />
@@ -205,7 +238,13 @@ export default function EditTeamPanel(): JSX.Element {
 				<Autocomplete
 					options={sortedTeams}
 					value={selected}
-					onChange={(_e, team) => setSelected(team)}
+					open={teamSelectOpen}
+					onOpen={() => setTeamSelectOpen(true)}
+					onClose={() => setTeamSelectOpen(false)}
+					onChange={(_e, team) => {
+						setTeamSelectOpen(false);
+						setSelected(team);
+					}}
 					getOptionLabel={(team) => resolveTeamDisplayName(team, t, i18n.language)}
 					filterOptions={filterTeamOptions}
 					isOptionEqualToValue={(a, b) => a.id === b.id}
@@ -220,6 +259,7 @@ export default function EditTeamPanel(): JSX.Element {
 					renderInput={(params) => (
 						<TextField
 							{...params}
+							inputRef={teamSelectInputRef}
 							label={t('teamSelectToEdit')}
 							variant="outlined"
 							size="small"
@@ -228,15 +268,6 @@ export default function EditTeamPanel(): JSX.Element {
 					sx={{ mb: 1.5 }}
 				/>
 			)}
-
-			{mappingSession && !selected ? (
-				<Typography variant="body2" sx={{ mb: 1.5, opacity: 0.85, textAlign: 'left' }}>
-					{t('errorLogsTeamMappingPrefillHint', {
-						name: mappingSession.externalName ?? '—',
-						id: mappingSession.externalId ?? '—',
-					})}
-				</Typography>
-			) : null}
 
 			{selected ? (
 				<Box>

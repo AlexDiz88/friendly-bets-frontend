@@ -1160,7 +1160,7 @@
 	"errorLogsEntryDeleted": "Eintrag gelöscht",
 	"errorLogsCleared": "Log geleert",
 	"errorLogsMatchdayChip": "ST {{number}}",
-	"errorLogsTeamMappingPrefillHint": "Team für Zuordnung wählen: {{name}} (ID {{id}})",
+	"errorLogsTeamMappingPrefillHint": "Team für Zuordnung wählen: {{name}}",
 	"externalDataOddsSyncTitle": "Marathonbet-Quoten",
 	"externalDataOddsSyncNow": "Quoten synchronisieren",
 	"externalDataOddsSyncMissingOnlyNote": "Es werden nur Spiele des aktuellen Spieltags der gewählten Liga aktualisiert, für die noch keine Quoten vorliegen.",

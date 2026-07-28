@@ -1160,7 +1160,7 @@
 	"errorLogsEntryDeleted": "Entry deleted",
 	"errorLogsCleared": "Log cleared",
 	"errorLogsMatchdayChip": "MD {{number}}",
-	"errorLogsTeamMappingPrefillHint": "Select a team to map {{name}} (ID {{id}})",
+	"errorLogsTeamMappingPrefillHint": "Select a team to map {{name}}",
 	"externalDataOddsSyncTitle": "Marathonbet odds",
 	"externalDataOddsSyncNow": "Sync odds",
 	"externalDataOddsSyncMissingOnlyNote": "Only matches of the selected league’s current matchday that do not have odds yet will be updated.",

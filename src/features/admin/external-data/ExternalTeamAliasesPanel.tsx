@@ -17,6 +17,7 @@ import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessBut
 import LeagueSelect from '../../../components/selectors/LeagueSelect';
 import { showErrorSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
 import AdminSection from '../AdminSection';
+import { ADMIN_EXTERNAL_TEAM_ALIASES_ID } from '../adminScroll';
 import { getActiveSeason } from '../seasons/seasonsSlice';
 import { selectActiveSeason } from '../seasons/selectors';
 import {
@@ -129,7 +130,7 @@ export default function ExternalTeamAliasesPanel(): JSX.Element {
 
 	return (
 		<AdminSection title={t('externalTeamAliasesTitle')} hint={t('externalTeamAliasesHint')}>
-			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+			<Box id={ADMIN_EXTERNAL_TEAM_ALIASES_ID} sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
 				<FormControl fullWidth size="small">
 					<InputLabel id="external-alias-provider">{t('externalTeamAliasProvider')}</InputLabel>
 					<Select
