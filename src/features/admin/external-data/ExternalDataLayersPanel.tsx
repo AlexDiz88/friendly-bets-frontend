@@ -140,6 +140,7 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 			const next = await patchExternalDataLayerConfig({ layers: draft });
 			setConfig(next);
 			setDraft(next.layers ?? {});
+			setShowPanel(false);
 			dispatch(showSuccessSnackbar({ message: t('externalDataLayersSaved') }));
 		} catch (error) {
 			dispatch(
