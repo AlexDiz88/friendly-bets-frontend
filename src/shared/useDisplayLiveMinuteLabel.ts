@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { isLiveMatchStatus } from '../features/match-results/externalMatchScoreView';
-import { isMatchNotStarted } from '../features/match-results/matchStatusI18n';
+import { isMatchBreakStatus, isMatchNotStarted } from '../features/match-results/matchStatusI18n';
 import { getEstimatedMatchMinute } from './estimatedMatchMinute';
 import { useSyncedLiveMinuteLabel } from './useSyncedLiveMinuteLabel';
 
@@ -17,7 +17,7 @@ export type DisplayLiveMinuteParams = {
 };
 
 function isMatchStarted(params: DisplayLiveMinuteParams): boolean {
-	if (params.finalized) {
+	if (params.finalized || isMatchBreakStatus(params.matchStatus)) {
 		return false;
 	}
 	if (isLiveMatchStatus(params.matchStatus)) {
@@ -70,7 +70,7 @@ export function useDisplayLiveMinuteLabel(params: DisplayLiveMinuteParams): stri
 		return estimate.label;
 	}
 	if (estimate.kind === 'halftime') {
-		return 'HT';
+		return null;
 	}
 	return null;
 }

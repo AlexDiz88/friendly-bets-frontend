@@ -9,8 +9,8 @@ const FIRST_HALF_MIN = 45;
 const OT_FIRST_HALF_END_MINUTE = 105;
 const OT_SECOND_HALF_END_MINUTE = 120;
 const SECOND_HALF_START_ELAPSED_MIN = 60;
-const REGULATION_END_ELAPSED_MIN = 118;
-const OT_SECOND_HALF_START_ELAPSED_MIN = 141;
+const REGULATION_END_ELAPSED_MIN = 125;
+const OT_SECOND_HALF_START_ELAPSED_MIN = 148;
 const MINUTE_PATTERN = /^(\d{1,3})(?:\+(\d{1,2}))?\s*'?$/;
 
 export type LiveMinuteContext = {
@@ -54,7 +54,7 @@ export function resolveLiveMinuteLabel(
 		if (isCanonicalStoppageLabel(trimmed)) {
 			return trimmed;
 		}
-		return trimmed.endsWith("'") ? trimmed : `${trimmed}'`;
+		return stripTrailingApostrophe(trimmed);
 	}
 	const baseMinute = Number.parseInt(match[1], 10);
 	const addedPart = match[2];
@@ -90,15 +90,19 @@ function resolvePlainMinute(
 		if (elapsedMin < OT_SECOND_HALF_START_ELAPSED_MIN) {
 			return OT_FIRST_HALF_STOPPAGE_LABEL;
 		}
-		return `${apiMinute}'`;
+		return `${apiMinute}`;
 	}
 	if (apiMinute > FIRST_HALF_MIN * 2) {
 		if (!otAllowed || elapsedMin < REGULATION_END_ELAPSED_MIN) {
 			return SECOND_HALF_STOPPAGE_LABEL;
 		}
-		return `${apiMinute}'`;
+		return `${apiMinute}`;
 	}
-	return `${apiMinute}'`;
+	return `${apiMinute}`;
+}
+
+function stripTrailingApostrophe(value: string): string {
+	return value.endsWith("'") ? value.slice(0, -1) : value;
 }
 
 function isLikelyFirstHalfStoppage(apiMinute: number, elapsedMin: number): boolean {

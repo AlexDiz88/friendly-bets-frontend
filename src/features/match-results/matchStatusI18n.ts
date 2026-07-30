@@ -18,6 +18,11 @@ export function isMatchNotStarted(status: string): boolean {
 	return NOT_STARTED_STATUSES.has(normalizeMatchStatus(status));
 }
 
+/** Перерыв (тайм-аут, halftime) — минуту не показываем. */
+export function isMatchBreakStatus(status: string): boolean {
+	return normalizeMatchStatus(status) === 'PAUSED';
+}
+
 /** Статусы матча → ключ i18n `matchStatus.*` */
 export function translateMatchStatus(status: string, t: TFunction): string {
 	const normalized = normalizeMatchStatus(status);

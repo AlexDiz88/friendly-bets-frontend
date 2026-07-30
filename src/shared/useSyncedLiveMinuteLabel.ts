@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { isLiveMatchStatus } from '../features/match-results/externalMatchScoreView';
-import { normalizeMatchStatus } from '../features/match-results/matchStatusI18n';
+import { isMatchBreakStatus, normalizeMatchStatus } from '../features/match-results/matchStatusI18n';
 import {
 	formatLiveMinuteLabel,
 	isStoppageMinuteLabel,
@@ -20,7 +20,7 @@ export function useSyncedLiveMinuteLabel(
 	matchStatus: string
 ): string | null {
 	const apiLabel = liveMinuteLabel?.trim() ? liveMinuteLabel.trim() : null;
-	const isInPlay = isLiveMatchStatus(matchStatus);
+	const isInPlay = isLiveMatchStatus(matchStatus) && !isMatchBreakStatus(matchStatus);
 	const [displayMinute, setDisplayMinute] = useState<string | null>(apiLabel);
 	const anchorRef = useRef<{ label: string; fetchedAt: string | null | undefined } | null>(
 		null

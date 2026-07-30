@@ -45,7 +45,7 @@ export function getEstimatedMatchMinute(
 		return { kind: 'not_started' };
 	}
 	if (elapsed <= MATCH_FIRST_HALF_MIN) {
-		return { kind: 'minute', label: `${elapsed}'` };
+		return { kind: 'minute', label: `${elapsed}` };
 	}
 	if (elapsed <= MATCH_FIRST_HALF_MIN + MATCH_AVG_ADDED_TIME_MIN) {
 		return { kind: 'minute', label: FIRST_HALF_STOPPAGE_LABEL };
@@ -57,5 +57,5 @@ export function getEstimatedMatchMinute(
 	if (matchMinute > MATCH_FIRST_HALF_MIN * 2) {
 		return { kind: 'minute', label: SECOND_HALF_STOPPAGE_LABEL };
 	}
-	return { kind: 'minute', label: `${matchMinute}'` };
+	return { kind: 'minute', label: `${matchMinute}` };
 }
