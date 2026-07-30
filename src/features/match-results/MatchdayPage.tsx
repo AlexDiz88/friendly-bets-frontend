@@ -809,6 +809,8 @@ export default function MatchdayPage(): JSX.Element {
 										liveMinuteLabel={match.liveMinuteLabel}
 										fetchedAt={match.fetchedAt}
 										kickoffUtcMs={kickoffUtcMs}
+										leagueCode={match.leagueCode}
+										slotId={match.slotId ?? betMatchDay}
 										matchDateLabel={matchDate}
 										headerActions={renderViewMatchBetsButton(match)}
 										onClick={betEnabled ? () => handleMatchClick(match) : undefined}

@@ -112,12 +112,14 @@ export default function LiveSandboxStand({
 		if (!selectedMatch?.liveMinuteLabel) {
 			return null;
 		}
-		return resolveLiveMinuteLabel(
-			selectedMatch.liveMinuteLabel,
-			previewKickoffUtcMs,
-			previewFetchedAt ? Date.parse(previewFetchedAt) : Date.now()
-		);
-	}, [selectedMatch, previewKickoffUtcMs, previewFetchedAt]);
+		return resolveLiveMinuteLabel(selectedMatch.liveMinuteLabel, {
+			kickoffUtcMs: previewKickoffUtcMs,
+			nowMs: previewFetchedAt ? Date.parse(previewFetchedAt) : Date.now(),
+			leagueCode: form.titleContains ? 'CL' : undefined,
+			slotId: form.titleContains ? '1/4' : undefined,
+			matchStatus: selectedMatch.status,
+		});
+	}, [selectedMatch, previewKickoffUtcMs, previewFetchedAt, form.titleContains]);
 
 	const previewScoreView = useMemo(() => {
 		if (!selectedMatch) {

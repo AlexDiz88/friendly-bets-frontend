@@ -6,18 +6,29 @@ import { useSyncedLiveMinuteLabel } from './useSyncedLiveMinuteLabel';
 
 const ESTIMATE_TICK_MS = 30_000;
 
-function isMatchStarted(
-	matchStatus: string,
-	kickoffUtcMs: number,
-	finalized: boolean
-): boolean {
-	if (finalized) {
+export type DisplayLiveMinuteParams = {
+	liveMinuteLabel?: string | null;
+	fetchedAt?: string | null;
+	matchStatus: string;
+	kickoffUtcMs?: number;
+	finalized?: boolean;
+	leagueCode?: string | null;
+	slotId?: string | null;
+};
+
+function isMatchStarted(params: DisplayLiveMinuteParams): boolean {
+	if (params.finalized) {
 		return false;
 	}
-	if (isLiveMatchStatus(matchStatus)) {
+	if (isLiveMatchStatus(params.matchStatus)) {
 		return true;
 	}
-	if (kickoffUtcMs > 0 && Date.now() >= kickoffUtcMs && !isMatchNotStarted(matchStatus)) {
+	const kickoffUtcMs = params.kickoffUtcMs ?? 0;
+	if (
+		kickoffUtcMs > 0
+		&& Date.now() >= kickoffUtcMs
+		&& !isMatchNotStarted(params.matchStatus)
+	) {
 		return true;
 	}
 	return kickoffUtcMs > 0 && Date.now() >= kickoffUtcMs;
@@ -27,16 +38,14 @@ function isMatchStarted(
  * Минута для карточки матча: якорь из БД + клиентская интерполяция,
  * до первого LIVE-sync — оценка по kickoff.
  */
-export function useDisplayLiveMinuteLabel(
-	liveMinuteLabel: string | null | undefined,
-	fetchedAt: string | null | undefined,
-	matchStatus: string,
-	kickoffUtcMs: number,
-	finalized = false
-): string | null {
-	const synced = useSyncedLiveMinuteLabel(liveMinuteLabel, fetchedAt, matchStatus);
+export function useDisplayLiveMinuteLabel(params: DisplayLiveMinuteParams): string | null {
+	const synced = useSyncedLiveMinuteLabel(
+		params.liveMinuteLabel,
+		params.fetchedAt,
+		params.matchStatus
+	);
 	const [nowMs, setNowMs] = useState(() => Date.now());
-	const started = isMatchStarted(matchStatus, kickoffUtcMs, finalized);
+	const started = isMatchStarted(params);
 
 	useEffect(() => {
 		if (!started || synced) {
@@ -52,6 +61,7 @@ export function useDisplayLiveMinuteLabel(
 	if (synced) {
 		return synced;
 	}
+	const kickoffUtcMs = params.kickoffUtcMs ?? 0;
 	if (kickoffUtcMs <= 0) {
 		return null;
 	}

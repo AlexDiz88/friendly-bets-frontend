@@ -2,6 +2,7 @@ import { Avatar, Box, Chip, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import { useDisplayLiveMinuteLabel } from '../../shared/useDisplayLiveMinuteLabel';
+import { formatLiveMinuteForDisplay } from '../../shared/liveMinuteResolver';
 import Team from '../admin/teams/types/Team';
 import { getMatchStatusChipColor, translateMatchStatus } from './matchStatusI18n';
 
@@ -16,6 +17,8 @@ export type ExternalMatchResultCardProps = {
 	liveMinuteLabel?: string | null;
 	fetchedAt?: string | null;
 	kickoffUtcMs?: number;
+	leagueCode?: string | null;
+	slotId?: string | null;
 	matchDateLabel?: string;
 	headerActions?: React.ReactNode;
 	onClick?: () => void;
@@ -132,19 +135,24 @@ export default function ExternalMatchResultCard({
 	liveMinuteLabel,
 	fetchedAt,
 	kickoffUtcMs = 0,
+	leagueCode,
+	slotId,
 	matchDateLabel,
 	headerActions,
 	onClick,
 	interactive = false,
 }: ExternalMatchResultCardProps): JSX.Element {
 	const { t } = useTranslation();
-	const displayMinute = useDisplayLiveMinuteLabel(
+	const displayMinute = useDisplayLiveMinuteLabel({
 		liveMinuteLabel,
 		fetchedAt,
-		status,
+		matchStatus: status,
 		kickoffUtcMs,
-		finalized
-	);
+		finalized,
+		leagueCode,
+		slotId,
+	});
+	const minuteChipLabel = formatLiveMinuteForDisplay(displayMinute);
 	const statusLabel = finalized ? t('gameResultFinalized') : translateMatchStatus(status, t);
 	const statusColor = finalized ? 'success' : getMatchStatusChipColor(status);
 
@@ -175,10 +183,10 @@ export default function ExternalMatchResultCard({
 					{matchDateLabel ?? ''}
 				</Typography>
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
-					{displayMinute ? (
+					{minuteChipLabel ? (
 						<Chip
 							size="small"
-							label={displayMinute}
+							label={minuteChipLabel}
 							color="warning"
 							variant="outlined"
 							sx={{
