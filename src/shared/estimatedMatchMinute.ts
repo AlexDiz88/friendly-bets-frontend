@@ -1,3 +1,8 @@
+import {
+	FIRST_HALF_STOPPAGE_LABEL,
+	SECOND_HALF_STOPPAGE_LABEL,
+} from './liveMinuteResolver';
+
 export const MATCH_FIRST_HALF_MIN = 45;
 export const MATCH_AVG_ADDED_TIME_MIN = 3;
 export const MATCH_HALFTIME_BREAK_MIN = 15;
@@ -40,17 +45,17 @@ export function getEstimatedMatchMinute(
 		return { kind: 'not_started' };
 	}
 	if (elapsed <= MATCH_FIRST_HALF_MIN) {
-		return { kind: 'minute', label: `${elapsed}'` };
+		return { kind: 'minute', label: `${elapsed}` };
 	}
 	if (elapsed <= MATCH_FIRST_HALF_MIN + MATCH_AVG_ADDED_TIME_MIN) {
-		return { kind: 'minute', label: "45+'" };
+		return { kind: 'minute', label: FIRST_HALF_STOPPAGE_LABEL };
 	}
 	if (elapsed <= SECOND_HALF_START_ELAPSED) {
 		return { kind: 'halftime' };
 	}
 	const matchMinute = elapsed - SECOND_HALF_START_ELAPSED + MATCH_FIRST_HALF_MIN;
 	if (matchMinute > MATCH_FIRST_HALF_MIN * 2) {
-		return { kind: 'minute', label: "90+'" };
+		return { kind: 'minute', label: SECOND_HALF_STOPPAGE_LABEL };
 	}
-	return { kind: 'minute', label: `${matchMinute}'` };
+	return { kind: 'minute', label: `${matchMinute}` };
 }

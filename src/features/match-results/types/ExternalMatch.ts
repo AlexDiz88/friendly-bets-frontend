@@ -33,6 +33,8 @@ export interface ExternalMatch {
 	fetchedAt?: string;
 	/** Id в wc26_schedule (1–104), если связан в БД. */
 	wc26ScheduleId?: number | null;
+	/** Канонический id тура (для определения плей-офф / ОТ). */
+	slotId?: string | null;
 }
 
 export interface MatchdayPageData {
