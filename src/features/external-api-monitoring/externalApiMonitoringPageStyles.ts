@@ -162,12 +162,16 @@ export function monitoringTableSx(theme: Theme, layer: ExternalDataLayer): SxPro
 			textTransform: 'uppercase',
 			letterSpacing: '0.04em',
 			color: isDark ? theme.palette.text.secondary : pal.accent,
-			background: isDark ? 'rgba(15,23,42,0.95)' : pal.soft,
+			// Opaque sticky bg — pal.soft / rgba(*,0.95) let scrolled body text bleed through.
+			background: isDark
+				? `color-mix(in srgb, ${pal.accent} 18%, #0f172a)`
+				: `color-mix(in srgb, ${pal.accent} 12%, #ffffff)`,
 			position: 'sticky',
 			top: 0,
-			zIndex: 1,
+			zIndex: 3,
 		},
-		'& .MuiTableBody-root .MuiTableRow-root:hover': {
+		// Only clickable run rows (MUI `hover` prop → `.MuiTableRow-hover`), not detail/spacer rows.
+		'& .MuiTableBody-root .MuiTableRow-root.MuiTableRow-hover:hover': {
 			background: isDark ? pal.softDark : pal.soft,
 		},
 	};
@@ -178,12 +182,11 @@ export function monitoringDetailPanelSx(theme: Theme, layer: ExternalDataLayer):
 	const pal = layerPalette(layer);
 	const isDark = theme.palette.mode === 'dark';
 	return {
-		py: 1.5,
+		py: 1.25,
 		px: 1.5,
-		mx: 1,
-		mb: 1,
-		borderRadius: 1.5,
-		border: `1px solid ${isDark ? pal.borderDark : pal.border}`,
+		borderRadius: 0,
+		border: 'none',
+		borderTop: `1px solid ${isDark ? pal.borderDark : pal.border}`,
 		background: isDark ? pal.softDark : pal.soft,
 		boxShadow: `inset 3px 0 0 ${pal.accent}`,
 	};

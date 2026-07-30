@@ -87,45 +87,61 @@ export function formatUserDate(
 	});
 }
 
-/** day short-month, HH:mm — match kickoffs / user-facing datetimes. */
+/** Capitalize weekday from Intl (ru: "вт" → "Вт"). */
+function capitalizeLeadingLetter(value: string, localeTag: string): string {
+	if (!value || value === '—') return value;
+	return value.replace(/^(\p{L})/u, (ch) => ch.toLocaleUpperCase(localeTag));
+}
+
+/** weekday, day short-month, HH:mm — match kickoffs / user-facing datetimes. */
 export function formatUserDateTime(
 	utcInput: string | number | Date | null | undefined,
 	timeZone?: string | null,
 	locale?: string
 ): string {
-	return formatInUserTimeZone(utcInput, {
-		timeZone,
-		locale: dateLocale(locale),
-		options: {
-			timeZone: resolveUserTimeZone(timeZone),
-			day: '2-digit',
-			month: 'short',
-			hour: '2-digit',
-			minute: '2-digit',
-			hourCycle: 'h23',
-		},
-	});
+	const localeTag = dateLocale(locale);
+	return capitalizeLeadingLetter(
+		formatInUserTimeZone(utcInput, {
+			timeZone,
+			locale: localeTag,
+			options: {
+				timeZone: resolveUserTimeZone(timeZone),
+				weekday: 'short',
+				day: '2-digit',
+				month: 'short',
+				hour: '2-digit',
+				minute: '2-digit',
+				hourCycle: 'h23',
+			},
+		}),
+		localeTag
+	);
 }
 
-/** day short-month, HH:mm:ss — for monitoring / logs. */
+/** weekday, day short-month, HH:mm:ss — for monitoring / logs. */
 export function formatUserDateTimeDetailed(
 	utcInput: string | number | Date | null | undefined,
 	timeZone?: string | null,
 	locale?: string
 ): string {
-	return formatInUserTimeZone(utcInput, {
-		timeZone,
-		locale: dateLocale(locale),
-		options: {
-			timeZone: resolveUserTimeZone(timeZone),
-			day: '2-digit',
-			month: 'short',
-			hour: '2-digit',
-			minute: '2-digit',
-			second: '2-digit',
-			hourCycle: 'h23',
-		},
-	});
+	const localeTag = dateLocale(locale);
+	return capitalizeLeadingLetter(
+		formatInUserTimeZone(utcInput, {
+			timeZone,
+			locale: localeTag,
+			options: {
+				timeZone: resolveUserTimeZone(timeZone),
+				weekday: 'short',
+				day: '2-digit',
+				month: 'short',
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit',
+				hourCycle: 'h23',
+			},
+		}),
+		localeTag
+	);
 }
 
 export { resolveUserTimeZone, DEFAULT_USER_TIMEZONE };

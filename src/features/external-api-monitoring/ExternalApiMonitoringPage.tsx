@@ -2,6 +2,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
+	Avatar,
 	Box,
 	Chip,
 	CircularProgress,
@@ -18,12 +19,16 @@ import {
 	Tooltip,
 	Typography,
 	useTheme,
+	type SxProps,
+	type Theme,
 } from '@mui/material';
 import { t } from 'i18next';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
+import LeagueAvatar, { leagueLogoAvatarSx } from '../../components/custom/avatar/LeagueAvatar';
 import CustomCalendarDialog from '../../components/custom/dialog/CustomCalendarDialog';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../components/custom/snackbar/snackbarSlice';
+import { teamApiLogoSrc } from '../admin/teams/teamFormUtils';
 import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
 import {
 	deleteMonitoringRunsByLayer,
@@ -57,7 +62,73 @@ import {
 function formatDuration(ms?: number | null): string {
 	if (ms == null) return '—';
 	if (ms < 1000) return `${ms} ms`;
-	return `${(ms / 1000).toFixed(1)} s`;
+	const totalSec = Math.floor(ms / 1000);
+	if (totalSec < 60) return `${(ms / 1000).toFixed(1)} s`;
+	const hours = Math.floor(totalSec / 3600);
+	const minutes = Math.floor((totalSec % 3600) / 60);
+	const seconds = totalSec % 60;
+	if (hours > 0) return `${hours}h${minutes}m${seconds}s`;
+	return `${minutes}m${seconds}s`;
+}
+
+function formatHttpRatio(failed?: number | null, total?: number | null): string {
+	const f = failed ?? 0;
+	const tot = total ?? 0;
+	if (f === 0 && tot === 0) return '—';
+	return `${f}/${tot}`;
+}
+
+type CounterDetailKey =
+	| 'upserted'
+	| 'skipped'
+	| 'roundsParsed'
+	| 'eligible'
+	| 'matched'
+	| 'saved'
+	| 'sseCalls'
+	| 'updated'
+	| 'finishedDetected'
+	| 'requested'
+	| 'mappingFailures';
+
+function counterDetailEntries(
+	layer: ExternalDataLayer,
+	counters?: MonitoringCounters | null
+): Array<{ key: CounterDetailKey; value: number }> {
+	if (!counters) return [];
+	switch (layer) {
+		case 'SCHEDULE':
+			return [
+				{ key: 'upserted', value: counters.upserted ?? 0 },
+				{ key: 'skipped', value: counters.skipped ?? 0 },
+				{ key: 'roundsParsed', value: counters.roundsParsed ?? 0 },
+			];
+		case 'ODDS':
+			return [
+				{ key: 'eligible', value: counters.eligible ?? 0 },
+				{ key: 'matched', value: counters.matched ?? 0 },
+				{ key: 'saved', value: counters.saved ?? 0 },
+				{ key: 'sseCalls', value: counters.sseCalls ?? 0 },
+				{ key: 'skipped', value: counters.skipped ?? 0 },
+				...(counters.mappingFailures
+					? [{ key: 'mappingFailures' as const, value: counters.mappingFailures }]
+					: []),
+			];
+		case 'LIVE':
+			return [
+				{ key: 'updated', value: counters.updated ?? 0 },
+				{ key: 'finishedDetected', value: counters.finishedDetected ?? 0 },
+				{ key: 'skipped', value: counters.skipped ?? 0 },
+			];
+		case 'FULL_MATCH':
+			return [
+				{ key: 'requested', value: counters.requested ?? 0 },
+				{ key: 'saved', value: counters.saved ?? 0 },
+				{ key: 'skipped', value: counters.skipped ?? 0 },
+			];
+		default:
+			return [];
+	}
 }
 
 function countersSummary(layer: ExternalDataLayer, counters?: MonitoringCounters | null): string {
@@ -95,6 +166,7 @@ const MONITORING_WARNING_KEYS = new Set([
 	'noLiveCandidates',
 	'noSlots',
 	'leagueNotSupported',
+	'noSseEligible',
 ]);
 
 function parseMonitoringReasonParts(summary: string): Array<{ key: string; count?: number; raw: string }> {
@@ -130,6 +202,72 @@ function isMonitoringWarningSummary(summary?: string | null): boolean {
 	if (!summary) return false;
 	const parts = parseMonitoringReasonParts(summary);
 	return parts.length > 0 && parts.every((p) => MONITORING_WARNING_KEYS.has(p.key));
+}
+
+function ProviderCell({ provider }: { provider?: string | null }): JSX.Element {
+	if (!provider) {
+		return <Typography component="span">—</Typography>;
+	}
+	return (
+		<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+			<Avatar
+				variant="square"
+				alt=""
+				src={teamApiLogoSrc(provider)}
+				sx={[{ width: 18, height: 18, flexShrink: 0 }, leagueLogoAvatarSx] as SxProps<Theme>}
+			/>
+			<Typography component="span" sx={{ fontSize: 'inherit' }}>
+				{provider}
+			</Typography>
+		</Box>
+	);
+}
+
+function LeagueCell({ leagueCode }: { leagueCode?: string | null }): JSX.Element {
+	if (!leagueCode) {
+		return <Typography component="span">—</Typography>;
+	}
+	return <LeagueAvatar leagueCode={leagueCode} height={18} sx={{ mr: 0 }} />;
+}
+
+function CountersBreakdown({
+	layer,
+	counters,
+}: {
+	layer: ExternalDataLayer;
+	counters?: MonitoringCounters | null;
+}): JSX.Element | null {
+	const entries = counterDetailEntries(layer, counters);
+	if (entries.length === 0) return null;
+	return (
+		<Box sx={{ mb: 1.25 }}>
+			<Typography
+				sx={{
+					fontSize: '0.72rem',
+					fontWeight: 700,
+					textTransform: 'uppercase',
+					letterSpacing: '0.04em',
+					color: 'text.secondary',
+					mb: 0.75,
+				}}
+			>
+				{t('externalApiMonitoring.counters.title')}
+			</Typography>
+			<Box component="ul" sx={{ m: 0, pl: 2.25, display: 'flex', flexDirection: 'column', gap: 0.35 }}>
+				{entries.map(({ key, value }) => (
+					<Typography
+						component="li"
+						key={key}
+						sx={{ fontSize: '0.78rem', lineHeight: 1.35, color: 'text.primary' }}
+					>
+						<strong>{value}</strong>
+						{' — '}
+						{t(`externalApiMonitoring.counters.${layer}.${key}`)}
+					</Typography>
+				))}
+			</Box>
+		</Box>
+	);
 }
 
 export default function ExternalApiMonitoringPage(): JSX.Element {
@@ -366,8 +504,12 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 														</TableCell>
 														<TableCell>{formatDetailed(run.startedAt)}</TableCell>
 														<TableCell>{run.trigger ?? '—'}</TableCell>
-														<TableCell>{run.provider ?? '—'}</TableCell>
-														<TableCell>{run.leagueCode ?? '—'}</TableCell>
+														<TableCell>
+															<ProviderCell provider={run.provider} />
+														</TableCell>
+														<TableCell>
+															<LeagueCell leagueCode={run.leagueCode} />
+														</TableCell>
 														<TableCell>{formatDuration(run.durationMs)}</TableCell>
 														<TableCell>
 															<Chip
@@ -386,6 +528,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																			? '#d97706'
 																			: '#f43f5e',
 																		maxWidth: 220,
+																		whiteSpace: 'normal',
 																	}}
 																>
 																	{formatMonitoringReason(run.errorSummary)}
@@ -404,11 +547,16 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																	fontWeight: (run.httpRequestsFailed ?? 0) > 0 ? 700 : 500,
 																}}
 															>
-																{run.httpRequestsFailed ?? 0}/{run.httpRequestsTotal ?? 0}
+																{formatHttpRatio(run.httpRequestsFailed, run.httpRequestsTotal)}
 															</Typography>
 														</TableCell>
 													</TableRow>
-													<TableRow>
+													<TableRow
+														sx={{
+															display: open ? 'table-row' : 'none',
+															'&:hover': { background: 'transparent' },
+														}}
+													>
 														<TableCell
 															colSpan={9}
 															sx={{
@@ -432,11 +580,16 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																							? '#d97706'
 																							: '#f43f5e',
 																						fontWeight: 600,
+																						whiteSpace: 'normal',
 																					}}
 																				>
 																					{formatMonitoringReason(detail.errorSummary)}
 																				</Typography>
 																			) : null}
+																			<CountersBreakdown
+																				layer={layer}
+																				counters={detail.counters ?? run.counters}
+																			/>
 																			{(detail.failedMatchScheduleIds?.length ?? 0) > 0 ? (
 																				<Typography
 																					variant="caption"

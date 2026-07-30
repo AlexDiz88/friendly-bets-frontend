@@ -35,15 +35,24 @@ export function isStoppageMinuteLabel(label: string): boolean {
 	return isCanonicalStoppageLabel(trimmed) || trimmed.includes('+');
 }
 
-export function formatLiveMinuteLabel(totalMinutes: number): string {
-	if (totalMinutes > 120) {
-		return OT_SECOND_HALF_STOPPAGE_LABEL;
+/**
+ * Клиентский +1 мин между sync.
+ * На границе тайма → метка добавленного времени (45+/90+/105+/120+), иначе обычная минута.
+ * Важно: 106–119 не схлопывать в 105+ (это валидные минуты 2-го тайма ОТ).
+ */
+export function formatIncrementedLiveMinute(previousBase: number): string {
+	if (previousBase === 45) {
+		return FIRST_HALF_STOPPAGE_LABEL;
 	}
-	if (totalMinutes > 105) {
-		return OT_FIRST_HALF_STOPPAGE_LABEL;
-	}
-	if (totalMinutes > 90) {
+	if (previousBase === 90) {
 		return SECOND_HALF_STOPPAGE_LABEL;
 	}
-	return `${totalMinutes}'`;
+	if (previousBase === 105) {
+		return OT_FIRST_HALF_STOPPAGE_LABEL;
+	}
+	// 119' → 120+ (конец 2-го тайма ОТ / добавленное время)
+	if (previousBase >= 119) {
+		return OT_SECOND_HALF_STOPPAGE_LABEL;
+	}
+	return `${previousBase + 1}'`;
 }

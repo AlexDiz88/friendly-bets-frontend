@@ -1366,10 +1366,37 @@
 			"noLiveCandidates": "Keine Matches im LIVE-Fenster (nach utc_kickoff / Status) — kein HTTP.",
 			"noSlots": "Keine Spieltags-Slots für Odds-Sync.",
 			"leagueNotSupported": "Liga wird von diesem LIVE-Provider nicht unterstützt.",
+			"noSseEligible": "Keine Matches brauchen gerade Odds-Refresh (Odds vorhanden und Kickoff weit, oder Match finalisiert / ohne utc_kickoff) — Tournament-HTTP und SSE übersprungen.",
 			"mappingFailures": "Matches konnten nicht auf Provider-Events gemappt werden ({{count}}).",
 			"soccer365FullMatchParseFailed": "soccer365-Matchkarte konnte nicht geparst werden.",
 			"fullMatchAmbiguous": "Mehrere FULL-Kandidaten bei Resolve über Kickoff+Aliase.",
 			"fullMatchNotFound": "Match beim FULL-Provider über Kickoff+Aliase nicht gefunden."
+		},
+		"counters": {
+			"title": "Zähler-Erklärung",
+			"SCHEDULE": {
+				"upserted": "Matches in DB geschrieben/aktualisiert (match_schedules)",
+				"skipped": "übersprungen (z. B. Kickoff weit weg oder Runde unverändert)",
+				"roundsParsed": "aus der Quelle geparste Runden"
+			},
+			"ODDS": {
+				"eligible": "elig — Kandidaten-Matches für Odds-Update in den gewählten Slots",
+				"matched": "match — erfolgreich auf Buchmacher-Events gemappt",
+				"saved": "save — Odds in die odds-Collection gespeichert",
+				"sseCalls": "SSE — Event-Detail-Requests (pro Match)",
+				"skipped": "skip — übersprungen (Odds vorhanden & Kickoff weit / kein Buchmacher-Event / kein utc_kickoff)",
+				"mappingFailures": "Match konnte nicht auf ein Buchmacher-Event gemappt werden"
+			},
+			"LIVE": {
+				"updated": "Matches mit Live-Status/Stand aktualisiert",
+				"finishedDetected": "Matches als beendet erkannt",
+				"skipped": "übersprungen (keine LIVE-Kandidaten / kein utc_kickoff)"
+			},
+			"FULL_MATCH": {
+				"requested": "Anfragen vollständiger Matchkarten",
+				"saved": "Karten gespeichert (Stand, Tore, Stats)",
+				"skipped": "übersprungen (bereits geladen / kein utc_kickoff / nicht gefunden)"
+			}
 		}
 	},
 	"siteAccessProbeTitle": "Site-Zugangsprüfung",

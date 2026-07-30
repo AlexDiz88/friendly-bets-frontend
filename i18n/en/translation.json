@@ -1366,10 +1366,37 @@
 			"noLiveCandidates": "No matches in the LIVE window (by utc_kickoff / status) — no HTTP.",
 			"noSlots": "No matchday slots to sync odds for.",
 			"leagueNotSupported": "League is not supported by this LIVE provider.",
+			"noSseEligible": "No matches currently need odds refresh (odds already present and kickoff far, or match finalized / missing utc_kickoff) — tournament HTTP and SSE skipped.",
 			"mappingFailures": "Could not map matches to provider events ({{count}}).",
 			"soccer365FullMatchParseFailed": "Failed to parse soccer365 match card.",
 			"fullMatchAmbiguous": "Multiple FULL resolve candidates for kickoff+aliases.",
 			"fullMatchNotFound": "Match not found at FULL provider via kickoff+aliases."
+		},
+		"counters": {
+			"title": "Counter breakdown",
+			"SCHEDULE": {
+				"upserted": "matches written/updated in DB (match_schedules)",
+				"skipped": "skipped (e.g. far kickoff or unchanged round)",
+				"roundsParsed": "rounds parsed from the source response"
+			},
+			"ODDS": {
+				"eligible": "elig — candidate matches for odds update in selected slots",
+				"matched": "match — successfully mapped to bookmaker events",
+				"saved": "save — odds saved to the odds collection",
+				"sseCalls": "SSE — event-detail requests (per match)",
+				"skipped": "skip — skipped (odds already present & kickoff far / no bookie event / missing utc_kickoff)",
+				"mappingFailures": "could not map match to a bookmaker event"
+			},
+			"LIVE": {
+				"updated": "matches updated with live status/score",
+				"finishedDetected": "matches detected as finished",
+				"skipped": "skipped (no LIVE-window candidates / missing utc_kickoff)"
+			},
+			"FULL_MATCH": {
+				"requested": "full match-card requests",
+				"saved": "cards saved (score, goals, stats)",
+				"skipped": "skipped (already fetched / missing utc_kickoff / not found)"
+			}
 		}
 	},
 	"siteAccessProbeTitle": "Site access probe",
