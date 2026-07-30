@@ -159,7 +159,8 @@ export default function LiveSandboxStand({
 		return resolveExternalMatchScoreView({
 			gameScore,
 			matchStatus: selectedMatch.status ?? 'SCHEDULED',
-			finalized: selectedMatch.status === 'FINISHED',
+			// LIVE sandbox: FINISHED ≠ FULL finalized (нет «Итог зафиксирован»).
+			finalized: false,
 			liveMinuteLabel: previewResolvedMinute,
 			kickoffUtcMs: previewKickoffUtcMs,
 		});

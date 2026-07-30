@@ -61,15 +61,16 @@ export function getExternalMatchScoreView(
 }
 
 /**
- * Во время серии пенальти: основной счёт + счёт по пенальти в скобках, напр. {@code 0:0 [2:2]}.
+ * Основной счёт + пенальти в скобках, если есть, напр. {@code 0:0 [5:4]}.
+ * Нужно и во время серии, и после FINISHED (до/после FULL_MATCH).
  */
 export function formatLiveScoreWithPenalty(
 	fullTime: string,
 	penalty: string | null | undefined,
-	matchStatus: string
+	_matchStatus?: string
 ): string {
 	const pen = penalty?.trim();
-	if (pen && normalizeMatchStatus(matchStatus) === 'PENALTY_SHOOTOUT') {
+	if (pen) {
 		return `${fullTime} [${pen}]`;
 	}
 	return fullTime;
