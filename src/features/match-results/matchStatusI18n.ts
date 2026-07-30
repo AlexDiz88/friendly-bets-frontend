@@ -4,6 +4,7 @@ import { TFunction } from 'i18next';
 const LEGACY_STATUS_MAP: Record<string, string> = {
 	PAUSE: 'PAUSED',
 	HALFTIME: 'PAUSED',
+	LIVE: 'IN_PLAY',
 };
 
 export function normalizeMatchStatus(status: string): string {
@@ -15,6 +16,11 @@ const NOT_STARTED_STATUSES = new Set(['SCHEDULED', 'TIMED']);
 /** Матч ещё не начался (нет kick-off). */
 export function isMatchNotStarted(status: string): boolean {
 	return NOT_STARTED_STATUSES.has(normalizeMatchStatus(status));
+}
+
+/** Перерыв (тайм-аут, halftime) — минуту не показываем. */
+export function isMatchBreakStatus(status: string): boolean {
+	return normalizeMatchStatus(status) === 'PAUSED';
 }
 
 /** Статусы матча → ключ i18n `matchStatus.*` */

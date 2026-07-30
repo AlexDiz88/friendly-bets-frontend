@@ -5,7 +5,7 @@ import { isMatchNotStarted, normalizeMatchStatus } from './matchStatusI18n';
 const SCORE_UNAVAILABLE = '—';
 export const DEFAULT_LIVE_SCORE = '0:0';
 
-const LIVE_STATUSES = new Set(['IN_PLAY', 'PAUSED', 'EXTRA_TIME', 'PENALTY_SHOOTOUT']);
+const LIVE_STATUSES = new Set(['LIVE', 'IN_PLAY', 'PAUSED', 'EXTRA_TIME', 'PENALTY_SHOOTOUT']);
 
 export function isLiveMatchStatus(matchStatus: string): boolean {
 	return LIVE_STATUSES.has(normalizeMatchStatus(matchStatus));

@@ -13,8 +13,13 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import GameScore from '../../bets/types/GameScore';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
+import ExternalMatchResultCard from '../../match-results/ExternalMatchResultCard';
+import { resolveExternalMatchScoreView } from '../../match-results/externalMatchScoreView';
+import { resolveLiveMinuteLabel } from '../../../shared/liveMinuteResolver';
 import type { SandboxResult } from '../apiSandboxApi';
 import {
 	LAYER_ACCENT,
@@ -35,6 +40,15 @@ export type LiveStandForm = {
 	titleContains: string;
 };
 
+type LiveParsedMatch = {
+	externalMatchId?: string;
+	homeName?: string;
+	awayName?: string;
+	scoreText?: string;
+	liveMinuteLabel?: string;
+	status?: string;
+};
+
 type LiveParsed = {
 	date?: string;
 	titleContains?: string | null;
@@ -43,14 +57,7 @@ type LiveParsed = {
 	matchesCount?: number;
 	competitions?: Array<{
 		title?: string;
-		matches?: Array<{
-			externalMatchId?: string;
-			homeName?: string;
-			awayName?: string;
-			scoreText?: string;
-			liveMinuteLabel?: string;
-			status?: string;
-		}>;
+		matches?: LiveParsedMatch[];
 	}>;
 };
 
@@ -62,6 +69,19 @@ type LiveSandboxStandProps = {
 	result: SandboxResult | null;
 	onRun: () => void;
 };
+
+function parseScoreFromText(scoreText?: string): string {
+	if (!scoreText?.trim()) {
+		return '—';
+	}
+	const match = /(\d{1,2}\s*:\s*\d{1,2})/.exec(scoreText);
+	return match ? match[1].replace(/\s+/g, '') : '—';
+}
+
+function teamFromName(name?: string) {
+	const title = name?.trim() || '—';
+	return { id: `sandbox-${title}`, title };
+}
 
 export default function LiveSandboxStand({
 	providers,
@@ -77,10 +97,80 @@ export default function LiveSandboxStand({
 	const parsed = (result?.parsed || null) as LiveParsed | null;
 	const providerOptions = providers.length > 0 ? providers : ['24score.pro'];
 	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
+	const [selectedMatch, setSelectedMatch] = useState<LiveParsedMatch | null>(null);
+	const [previewFetchedAt, setPreviewFetchedAt] = useState<string | null>(null);
+
+	const previewKickoffUtcMs = useMemo(() => {
+		if (!form.date) {
+			return 0;
+		}
+		const base = Date.parse(`${form.date}T12:00:00.000Z`);
+		return Number.isFinite(base) ? base - 70 * 60_000 : 0;
+	}, [form.date]);
+
+	const previewResolvedMinute = useMemo(() => {
+		if (!selectedMatch?.liveMinuteLabel) {
+			return null;
+		}
+		return resolveLiveMinuteLabel(selectedMatch.liveMinuteLabel, {
+			kickoffUtcMs: previewKickoffUtcMs,
+			nowMs: previewFetchedAt ? Date.parse(previewFetchedAt) : Date.now(),
+			leagueCode: form.titleContains ? 'CL' : undefined,
+			slotId: form.titleContains ? '1/4' : undefined,
+			matchStatus: selectedMatch.status,
+		});
+	}, [selectedMatch, previewKickoffUtcMs, previewFetchedAt, form.titleContains]);
+
+	const previewScoreView = useMemo(() => {
+		if (!selectedMatch) {
+			return '—';
+		}
+		const fullTime = parseScoreFromText(selectedMatch.scoreText);
+		const gameScore: GameScore | null =
+			fullTime !== '—' ? { fullTime, firstTime: '', overTime: '', penalty: '' } : null;
+		return resolveExternalMatchScoreView({
+			gameScore,
+			matchStatus: selectedMatch.status ?? 'SCHEDULED',
+			finalized: selectedMatch.status === 'FINISHED',
+			liveMinuteLabel: previewResolvedMinute,
+			kickoffUtcMs: previewKickoffUtcMs,
+		});
+	}, [selectedMatch, previewKickoffUtcMs]);
+
+	const handleSelectMatch = (match: LiveParsedMatch): void => {
+		setSelectedMatch(match);
+		setPreviewFetchedAt(new Date().toISOString());
+	};
 
 	const summary =
 		result?.success && parsed ? (
 			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+				{selectedMatch ? (
+					<Box
+						sx={{
+							border: '1px solid',
+							borderColor: 'divider',
+							borderRadius: 2,
+							bgcolor: 'background.paper',
+							overflow: 'hidden',
+						}}
+					>
+						<Typography sx={{ px: 1, pt: 0.75, pb: 0.25, fontSize: '0.75rem', fontWeight: 700 }}>
+							{t('apiSandbox.liveCardPreview')}
+						</Typography>
+						<ExternalMatchResultCard
+							homeTeam={teamFromName(selectedMatch.homeName)}
+							awayTeam={teamFromName(selectedMatch.awayName)}
+							scoreView={previewScoreView}
+							status={selectedMatch.status ?? 'SCHEDULED'}
+							finalized={selectedMatch.status === 'FINISHED'}
+							liveMinuteLabel={previewResolvedMinute}
+							fetchedAt={previewFetchedAt}
+							kickoffUtcMs={previewKickoffUtcMs}
+							matchDateLabel={form.date}
+						/>
+					</Box>
+				) : null}
 				<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
 					<Chip size="small" label={`${t('apiSandbox.kpi.competitions')}: ${parsed.competitionsMatched ?? 0}/${parsed.competitionsTotal ?? 0}`} />
 					<Chip size="small" label={`${t('apiSandbox.kpi.matches')}: ${parsed.matchesCount ?? 0}`} />
@@ -101,29 +191,40 @@ export default function LiveSandboxStand({
 						</TableHead>
 						<TableBody>
 							{(parsed.competitions || []).flatMap((comp) =>
-								(comp.matches || []).map((match, idx) => (
-									<TableRow key={`${comp.title}-${match.externalMatchId || idx}`}>
-										<TableCell sx={{ maxWidth: 160 }}>
-											<CopyableValue value={comp.title} mono={false} />
-										</TableCell>
-										<TableCell>
-											<CopyableValue value={match.homeName} mono={false} />
-										</TableCell>
-										<TableCell>
-											<CopyableValue value={match.awayName} mono={false} />
-										</TableCell>
-										<TableCell sx={{ fontFamily: 'monospace', fontWeight: 700 }}>
-											{match.scoreText || '—'}
-										</TableCell>
-										<TableCell>{match.liveMinuteLabel || '—'}</TableCell>
-										<TableCell>
-											<Chip size="small" label={match.status || '—'} color={statusChipColor(match.status)} />
-										</TableCell>
-										<TableCell>
-											<CopyableValue value={match.externalMatchId} />
-										</TableCell>
-									</TableRow>
-								))
+								(comp.matches || []).map((match, idx) => {
+									const selected =
+										selectedMatch?.externalMatchId === match.externalMatchId
+										&& selectedMatch?.homeName === match.homeName;
+									return (
+										<TableRow
+											key={`${comp.title}-${match.externalMatchId || idx}`}
+											hover
+											selected={selected}
+											onClick={() => handleSelectMatch(match)}
+											sx={{ cursor: 'pointer' }}
+										>
+											<TableCell sx={{ maxWidth: 160 }}>
+												<CopyableValue value={comp.title} mono={false} />
+											</TableCell>
+											<TableCell>
+												<CopyableValue value={match.homeName} mono={false} />
+											</TableCell>
+											<TableCell>
+												<CopyableValue value={match.awayName} mono={false} />
+											</TableCell>
+											<TableCell sx={{ fontFamily: 'monospace', fontWeight: 700 }}>
+												{match.scoreText || '—'}
+											</TableCell>
+											<TableCell>{match.liveMinuteLabel || '—'}</TableCell>
+											<TableCell>
+												<Chip size="small" label={match.status || '—'} color={statusChipColor(match.status)} />
+											</TableCell>
+											<TableCell>
+												<CopyableValue value={match.externalMatchId} />
+											</TableCell>
+										</TableRow>
+									);
+								})
 							)}
 						</TableBody>
 					</Table>
