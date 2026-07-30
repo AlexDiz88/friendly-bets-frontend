@@ -15,6 +15,7 @@ import {
 import {
 	getMatchStatusChipColor,
 	isMatchBreakStatus,
+	isPenaltyShootoutStatus,
 	normalizeMatchStatus,
 	translateMatchStatus,
 } from './matchStatusI18n';
@@ -98,7 +99,7 @@ function CompactMatchRow({
 				sx={{
 					flex: '0 0 auto',
 					px: 0.5,
-					minWidth: '3.25rem',
+					minWidth: liveStacked ? '4.5rem' : '3.25rem',
 					display: 'flex',
 					flexDirection: 'column',
 					alignItems: 'center',
@@ -193,9 +194,13 @@ export default function ExternalMatchResultCard({
 	const statusLabel = finalized ? t('gameResultFinalized') : translateMatchStatus(status, t);
 	const statusColor = finalized ? 'success' : getMatchStatusChipColor(status);
 	const isPaused = isMatchBreakStatus(status);
+	const isPenalty = isPenaltyShootoutStatus(status);
 	const liveStacked =
 		!finalized && (isLiveMatchStatus(status) || Boolean(minuteDisplay));
-	const showLiveBadge = liveStacked && !isPaused && normalizeMatchStatus(status) !== 'FINISHED';
+	const showLiveBadge =
+		liveStacked && !isPaused && !isPenalty && normalizeMatchStatus(status) !== 'FINISHED';
+	/** Над счётом: минута, либо «Пенальти» вместо времени. */
+	const liveMinuteDisplay = isPenalty && liveStacked ? statusLabel : minuteDisplay;
 
 	return (
 		<Box
@@ -226,7 +231,7 @@ export default function ExternalMatchResultCard({
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
 					{showLiveBadge ? (
 						<LiveMatchBadge />
-					) : isPaused && liveStacked ? (
+					) : (isPaused || isPenalty) && liveStacked ? (
 						<Box component="span" sx={liveMatchHalftimeBadgeSx}>
 							{statusLabel}
 						</Box>
@@ -245,7 +250,7 @@ export default function ExternalMatchResultCard({
 				homeTeam={homeTeam}
 				awayTeam={awayTeam}
 				scoreView={scoreView}
-				liveMinuteDisplay={minuteDisplay}
+				liveMinuteDisplay={liveMinuteDisplay}
 				liveStacked={liveStacked}
 			/>
 		</Box>

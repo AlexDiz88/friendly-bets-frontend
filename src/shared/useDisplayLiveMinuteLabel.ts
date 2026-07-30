@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { isLiveMatchStatus } from '../features/match-results/externalMatchScoreView';
-import { isMatchBreakStatus, isMatchNotStarted } from '../features/match-results/matchStatusI18n';
+import { isMatchBreakStatus, isMatchNotStarted, isPenaltyShootoutStatus } from '../features/match-results/matchStatusI18n';
 import { getEstimatedMatchMinute } from './estimatedMatchMinute';
 import { useSyncedLiveMinuteLabel } from './useSyncedLiveMinuteLabel';
 
@@ -17,7 +17,7 @@ export type DisplayLiveMinuteParams = {
 };
 
 function isMatchStarted(params: DisplayLiveMinuteParams): boolean {
-	if (params.finalized || isMatchBreakStatus(params.matchStatus)) {
+	if (params.finalized || isMatchBreakStatus(params.matchStatus) || isPenaltyShootoutStatus(params.matchStatus)) {
 		return false;
 	}
 	if (isLiveMatchStatus(params.matchStatus)) {

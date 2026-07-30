@@ -196,8 +196,9 @@ export function sandboxTableSx(layer?: ExternalDataLayer): SxProps<Theme> {
 
 export function statusChipColor(status?: string | null): 'default' | 'success' | 'warning' | 'error' | 'info' {
 	const s = (status || '').toUpperCase();
-	if (s === 'LIVE' || s === 'IN_PLAY' || s === 'PAUSED') return 'warning';
+	if (s === 'LIVE' || s === 'IN_PLAY' || s === 'PAUSED' || s === 'EXTRA_TIME' || s === 'PENALTY_SHOOTOUT') return 'warning';
 	if (s === 'FINISHED' || s === 'FT') return 'success';
 	if (s === 'SCHEDULED' || s === 'NS') return 'info';
+	if (s === 'CANCELED' || s === 'CANCELLED') return 'error';
 	return 'default';
 }

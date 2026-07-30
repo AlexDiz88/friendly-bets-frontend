@@ -57,6 +57,8 @@ type LiveParsedMatch = {
 	homeTeam?: LiveParsedTeam | null;
 	awayTeam?: LiveParsedTeam | null;
 	scoreText?: string;
+	fullTimeScore?: string;
+	penaltyScore?: string;
 	liveMinuteLabel?: string;
 	status?: string;
 };
@@ -146,9 +148,14 @@ export default function LiveSandboxStand({
 		if (!selectedMatch) {
 			return '—';
 		}
-		const fullTime = parseScoreFromText(selectedMatch.scoreText);
+		const fullTime =
+			selectedMatch.fullTimeScore?.replace(/\s+/g, '')
+			|| parseScoreFromText(selectedMatch.scoreText);
+		const penalty = selectedMatch.penaltyScore?.replace(/\s+/g, '') || '';
 		const gameScore: GameScore | null =
-			fullTime !== '—' ? { fullTime, firstTime: '', overTime: '', penalty: '' } : null;
+			fullTime && fullTime !== '—'
+				? { fullTime, firstTime: '', overTime: '', penalty }
+				: null;
 		return resolveExternalMatchScoreView({
 			gameScore,
 			matchStatus: selectedMatch.status ?? 'SCHEDULED',

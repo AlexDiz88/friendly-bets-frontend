@@ -5,6 +5,7 @@ import {
 	SPORTS_RU_PROVIDER,
 	FOOTBALL24_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
+	CHAMPIONAT_PROVIDER,
 } from '../admin/teams/teamProviderConstants';
 import type { ExternalDataLayer } from '../../shared/externalDataLayerColors';
 
@@ -67,6 +68,10 @@ export const SANDBOX_ID_HINTS: Partial<
 			{ label: 'LE', value: 'Лига Европы' },
 			{ label: 'WC', value: 'Чемпионат мира' },
 			{ label: 'EC', value: 'Чемпионат Европы' },
+		],
+		[CHAMPIONAT_PROVIDER]: [
+			{ label: 'EPL', value: 'Премьер-лига' },
+			{ label: 'BL', value: 'Бундеслига' },
 		],
 	},
 	FULL_MATCH: {
