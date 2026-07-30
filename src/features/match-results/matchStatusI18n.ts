@@ -5,6 +5,7 @@ const LEGACY_STATUS_MAP: Record<string, string> = {
 	PAUSE: 'PAUSED',
 	HALFTIME: 'PAUSED',
 	LIVE: 'IN_PLAY',
+	CANCELLED: 'CANCELED',
 };
 
 export function normalizeMatchStatus(status: string): string {
@@ -21,6 +22,11 @@ export function isMatchNotStarted(status: string): boolean {
 /** Перерыв (тайм-аут, halftime) — минуту не показываем. */
 export function isMatchBreakStatus(status: string): boolean {
 	return normalizeMatchStatus(status) === 'PAUSED';
+}
+
+/** Серия пенальти — вместо минуты показываем статус. */
+export function isPenaltyShootoutStatus(status: string): boolean {
+	return normalizeMatchStatus(status) === 'PENALTY_SHOOTOUT';
 }
 
 /** Статусы матча → ключ i18n `matchStatus.*` */
@@ -44,6 +50,7 @@ export function getMatchStatusChipColor(status: string): MatchStatusChipColor {
 		case 'PENALTY_SHOOTOUT':
 			return 'warning';
 		case 'CANCELLED':
+		case 'CANCELED':
 			return 'error';
 		default:
 			return 'default';

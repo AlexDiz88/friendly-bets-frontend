@@ -47,6 +47,7 @@
 		"PENALTY_SHOOTOUT": "Пенальти",
 		"FINISHED": "Завершён",
 		"AWARDED": "Присуждён",
+		"CANCELED": "Отменён",
 		"CANCELLED": "Отменён",
 		"POSTPONED": "Перенесён",
 		"SUSPENDED": "Приостановлен",
@@ -310,6 +311,9 @@
 	"teamTwentyFourScoreSection": "24score.pro",
 	"teamTwentyFourScoreExternalName": "Название на 24score.pro",
 	"teamTwentyFourScoreExternalNameHint": "Точная строка с сайта, если отличается от названия команды",
+	"teamChampionatSection": "championat.com",
+	"teamChampionatExternalName": "Название на championat.com",
+	"teamChampionatExternalNameHint": "Точная строка с сайта, если отличается от названия команды",
 	"teamMarathonbetSection": "Marathonbet (new.marathonbet.ru)",
 	"teamMarathonbetExternalName": "Название в линии Marathonbet",
 	"teamMarathonbetExternalNameHint": "Точная строка с сайта, напр. Республика Корея или Мексика (без «(победа)»)",
@@ -345,6 +349,7 @@
 	"externalTeamAliasProviderMarathonbet": "Marathonbet",
 	"externalTeamAliasProviderMelbet": "Melbet",
 	"externalTeamAliasProvider24score": "24score.pro",
+	"externalTeamAliasProviderChampionat": "championat.com",
 	"manualExternalSyncTitle": "Ручная синхронизация",
 	"manualExternalSyncHint": "Разовые sync расписания (SCHEDULE), кэфов ODDS (Marathonbet / Melbet) и live-счётов по выбранной лиге.",
 	"externalDataScheduleSyncTitle": "Расписание сейчас",
@@ -726,6 +731,10 @@
 		"fullMatchNotFound": "Внешний матч для FULL не найден (kickoff + алиасы)",
 		"fullMatchAmbiguous": "Несколько внешних матчей подходят для FULL — уточните алиасы",
 		"twentyFourScoreFetchFailed": "Не удалось загрузить данные 24score.pro",
+		"championatFetchFailed": "Не удалось загрузить данные championat.com",
+		"championatTournamentNotConfigured": "Турнир championat.com не настроен для лиги",
+		"championatTeamNamesEmpty": "Не найдены названия команд на championat.com",
+		"championatLeagueNotSupported": "Лига не поддерживается для championat.com",
 		"twentyFourScoreStandingsNotConfigured": "Для лиги не настроен URL таблицы 24score.pro",
 		"twentyFourScoreTeamNamesEmpty": "24score.pro: в таблице нет команд (проверьте сезон/лигу)",
 		"externalTeamNamesProviderRequired": "Укажите источник алиасов",
@@ -1178,6 +1187,7 @@
 			"fullMatchNotFound": "FULL: матч не найден",
 			"fullMatchAmbiguous": "FULL: неоднозначный матч",
 			"twentyFourScoreFetchFailed": "24score: сеть/HTTP",
+			"championatFetchFailed": "championat.com: сеть/HTTP",
 			"marathonbetFetchFailed": "Marathonbet: ошибка загрузки"
 		}
 	},
@@ -1366,10 +1376,37 @@
 			"noLiveCandidates": "Нет матчей в окне LIVE (по utc_kickoff / статусу) — HTTP не выполнялся.",
 			"noSlots": "Нет слотов тура для синхронизации кэфов.",
 			"leagueNotSupported": "Лига не поддерживается этим LIVE-провайдером.",
+			"noSseEligible": "Нет матчей, которым сейчас нужны кэфы (уже есть и kickoff далеко, или матч финализирован / без utc_kickoff) — запрос к турниру и SSE пропущены.",
 			"mappingFailures": "Не удалось сопоставить матчи с событиями провайдера ({{count}}).",
 			"soccer365FullMatchParseFailed": "Не удалось разобрать карточку матча soccer365.",
 			"fullMatchAmbiguous": "Несколько кандидатов при resolve FULL по kickoff+алиасам.",
 			"fullMatchNotFound": "Матч не найден у FULL-провайдера по kickoff+алиасам."
+		},
+		"counters": {
+			"title": "Расшифровка счётчиков",
+			"SCHEDULE": {
+				"upserted": "матчей записано/обновлено в БД (match_schedules)",
+				"skipped": "пропущено (например, kickoff далеко или тур без изменений)",
+				"roundsParsed": "туров/раундов разобрано из ответа источника"
+			},
+			"ODDS": {
+				"eligible": "elig — матчей-кандидатов на обновление кэфов в выбранных слотах",
+				"matched": "match — успешно сопоставлено с событиями букмекера",
+				"saved": "save — кэфы сохранены в коллекцию odds",
+				"sseCalls": "SSE — запросов деталей события (по матчам)",
+				"skipped": "skip — пропущено (кэфы уже есть и kickoff далеко / нет события у букмекера / нет utc_kickoff)",
+				"mappingFailures": "не удалось сопоставить матч с событием букмекера"
+			},
+			"LIVE": {
+				"updated": "матчей обновлено live-статусом/счётом",
+				"finishedDetected": "матчей, у которых зафиксирован финиш",
+				"skipped": "пропущено (нет кандидатов в окне LIVE / нет utc_kickoff)"
+			},
+			"FULL_MATCH": {
+				"requested": "запросов полной карточки матча",
+				"saved": "карточек сохранено (счёт, голы, статистика)",
+				"skipped": "пропущено (уже загружено / нет utc_kickoff / не найдено)"
+			}
 		}
 	},
 	"siteAccessProbeTitle": "Проверка доступа к сайту",

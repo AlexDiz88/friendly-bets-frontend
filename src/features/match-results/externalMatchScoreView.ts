@@ -44,7 +44,7 @@ export function getExternalMatchScoreView(
 
 	if (trustLiveScore && !finalized) {
 		if (gameScore?.fullTime) {
-			return gameScore.fullTime;
+			return formatLiveScoreWithPenalty(gameScore.fullTime, gameScore.penalty, matchStatus);
 		}
 		return DEFAULT_LIVE_SCORE;
 	}
@@ -57,7 +57,22 @@ export function getExternalMatchScoreView(
 		return getGameScoreView(gameScore, false);
 	}
 
-	return gameScore.fullTime;
+	return formatLiveScoreWithPenalty(gameScore.fullTime, gameScore.penalty, matchStatus);
+}
+
+/**
+ * Во время серии пенальти: основной счёт + счёт по пенальти в скобках, напр. {@code 0:0 [2:2]}.
+ */
+export function formatLiveScoreWithPenalty(
+	fullTime: string,
+	penalty: string | null | undefined,
+	matchStatus: string
+): string {
+	const pen = penalty?.trim();
+	if (pen && normalizeMatchStatus(matchStatus) === 'PENALTY_SHOOTOUT') {
+		return `${fullTime} [${pen}]`;
+	}
+	return fullTime;
 }
 
 export function hasExternalMatchScore(scoreView?: string | null): boolean {

@@ -20,6 +20,7 @@ import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessBut
 import ExternalMatchResultCard from '../../match-results/ExternalMatchResultCard';
 import { resolveExternalMatchScoreView } from '../../match-results/externalMatchScoreView';
 import { resolveLiveMinuteLabel } from '../../../shared/liveMinuteResolver';
+import { useFormatUserDateTime } from '../../../shared/useFormatUserDateTime';
 import type { SandboxResult } from '../apiSandboxApi';
 import {
 	LAYER_ACCENT,
@@ -34,17 +35,30 @@ import CopyableValue from '../CopyableValue';
 import SandboxIdHints from '../SandboxIdHints';
 import SandboxResultPanel from '../SandboxResultPanel';
 
+/** Same content width as MatchdayPage («Результаты»). */
+const RESULTS_CARD_MAX_WIDTH = 430;
+
 export type LiveStandForm = {
 	provider: string;
 	date: string;
 	titleContains: string;
 };
 
+type LiveParsedTeam = {
+	id?: string;
+	title?: string;
+	logoKey?: string | null;
+};
+
 type LiveParsedMatch = {
 	externalMatchId?: string;
 	homeName?: string;
 	awayName?: string;
+	homeTeam?: LiveParsedTeam | null;
+	awayTeam?: LiveParsedTeam | null;
 	scoreText?: string;
+	fullTimeScore?: string;
+	penaltyScore?: string;
 	liveMinuteLabel?: string;
 	status?: string;
 };
@@ -78,9 +92,17 @@ function parseScoreFromText(scoreText?: string): string {
 	return match ? match[1].replace(/\s+/g, '') : '—';
 }
 
-function teamFromName(name?: string) {
-	const title = name?.trim() || '—';
-	return { id: `sandbox-${title}`, title };
+function teamFromParsed(resolved: LiveParsedTeam | null | undefined, fallbackName?: string) {
+	const title = resolved?.title?.trim() || fallbackName?.trim() || '—';
+	// Unresolved alias → explicit default logo (avoid Cyrillic title as logo file key).
+	const logoKey = resolved
+		? resolved.logoKey?.trim() || resolved.title || 'no_image'
+		: 'no_image';
+	return {
+		id: resolved?.id || `sandbox-${title}`,
+		title,
+		logoKey,
+	};
 }
 
 export default function LiveSandboxStand({
@@ -92,6 +114,7 @@ export default function LiveSandboxStand({
 	onRun,
 }: LiveSandboxStandProps): JSX.Element {
 	const { t } = useTranslation();
+	const { formatDateTime } = useFormatUserDateTime();
 	const layer = 'LIVE' as const;
 	const accent = LAYER_ACCENT[layer];
 	const parsed = (result?.parsed || null) as LiveParsed | null;
@@ -125,9 +148,14 @@ export default function LiveSandboxStand({
 		if (!selectedMatch) {
 			return '—';
 		}
-		const fullTime = parseScoreFromText(selectedMatch.scoreText);
+		const fullTime =
+			selectedMatch.fullTimeScore?.replace(/\s+/g, '')
+			|| parseScoreFromText(selectedMatch.scoreText);
+		const penalty = selectedMatch.penaltyScore?.replace(/\s+/g, '') || '';
 		const gameScore: GameScore | null =
-			fullTime !== '—' ? { fullTime, firstTime: '', overTime: '', penalty: '' } : null;
+			fullTime && fullTime !== '—'
+				? { fullTime, firstTime: '', overTime: '', penalty }
+				: null;
 		return resolveExternalMatchScoreView({
 			gameScore,
 			matchStatus: selectedMatch.status ?? 'SCHEDULED',
@@ -135,7 +163,10 @@ export default function LiveSandboxStand({
 			liveMinuteLabel: previewResolvedMinute,
 			kickoffUtcMs: previewKickoffUtcMs,
 		});
-	}, [selectedMatch, previewKickoffUtcMs]);
+	}, [selectedMatch, previewKickoffUtcMs, previewResolvedMinute]);
+
+	const previewDateLabel =
+		previewKickoffUtcMs > 0 ? formatDateTime(previewKickoffUtcMs) : form.date || '';
 
 	const handleSelectMatch = (match: LiveParsedMatch): void => {
 		setSelectedMatch(match);
@@ -146,29 +177,32 @@ export default function LiveSandboxStand({
 		result?.success && parsed ? (
 			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
 				{selectedMatch ? (
-					<Box
-						sx={{
-							border: '1px solid',
-							borderColor: 'divider',
-							borderRadius: 2,
-							bgcolor: 'background.paper',
-							overflow: 'hidden',
-						}}
-					>
-						<Typography sx={{ px: 1, pt: 0.75, pb: 0.25, fontSize: '0.75rem', fontWeight: 700 }}>
+					<Box sx={{ maxWidth: RESULTS_CARD_MAX_WIDTH, width: '100%' }}>
+						<Typography sx={{ px: 0.25, pb: 0.5, fontSize: '0.75rem', fontWeight: 700 }}>
 							{t('apiSandbox.liveCardPreview')}
 						</Typography>
-						<ExternalMatchResultCard
-							homeTeam={teamFromName(selectedMatch.homeName)}
-							awayTeam={teamFromName(selectedMatch.awayName)}
-							scoreView={previewScoreView}
-							status={selectedMatch.status ?? 'SCHEDULED'}
-							finalized={selectedMatch.status === 'FINISHED'}
-							liveMinuteLabel={previewResolvedMinute}
-							fetchedAt={previewFetchedAt}
-							kickoffUtcMs={previewKickoffUtcMs}
-							matchDateLabel={form.date}
-						/>
+						<Box
+							sx={{
+								border: '1px solid',
+								borderColor: 'divider',
+								borderRadius: 2,
+								bgcolor: 'background.paper',
+								overflow: 'hidden',
+								boxShadow: 2,
+							}}
+						>
+							<ExternalMatchResultCard
+								homeTeam={teamFromParsed(selectedMatch.homeTeam, selectedMatch.homeName)}
+								awayTeam={teamFromParsed(selectedMatch.awayTeam, selectedMatch.awayName)}
+								scoreView={previewScoreView}
+								status={selectedMatch.status ?? 'SCHEDULED'}
+								finalized={selectedMatch.status === 'FINISHED'}
+								liveMinuteLabel={previewResolvedMinute}
+								fetchedAt={previewFetchedAt}
+								kickoffUtcMs={previewKickoffUtcMs}
+								matchDateLabel={previewDateLabel}
+							/>
+						</Box>
 					</Box>
 				) : null}
 				<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>

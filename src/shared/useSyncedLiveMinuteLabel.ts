@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { isLiveMatchStatus } from '../features/match-results/externalMatchScoreView';
-import { isMatchBreakStatus, normalizeMatchStatus } from '../features/match-results/matchStatusI18n';
+import { isMatchBreakStatus, isPenaltyShootoutStatus } from '../features/match-results/matchStatusI18n';
 import {
-	formatLiveMinuteLabel,
+	formatIncrementedLiveMinute,
 	isStoppageMinuteLabel,
 	parseLiveMinuteBase,
 } from './liveMinuteLabel';
@@ -20,7 +20,10 @@ export function useSyncedLiveMinuteLabel(
 	matchStatus: string
 ): string | null {
 	const apiLabel = liveMinuteLabel?.trim() ? liveMinuteLabel.trim() : null;
-	const isInPlay = isLiveMatchStatus(matchStatus) && !isMatchBreakStatus(matchStatus);
+	const isInPlay =
+		isLiveMatchStatus(matchStatus)
+		&& !isMatchBreakStatus(matchStatus)
+		&& !isPenaltyShootoutStatus(matchStatus);
 	const [displayMinute, setDisplayMinute] = useState<string | null>(apiLabel);
 	const anchorRef = useRef<{ label: string; fetchedAt: string | null | undefined } | null>(
 		null
@@ -54,7 +57,7 @@ export function useSyncedLiveMinuteLabel(
 				if (base == null) {
 					return current;
 				}
-				return formatLiveMinuteLabel(base + 1);
+				return formatIncrementedLiveMinute(base);
 			});
 		}, CLIENT_MINUTE_TICK_MS);
 		return () => window.clearInterval(intervalId);

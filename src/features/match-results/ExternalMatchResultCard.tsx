@@ -4,7 +4,21 @@ import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/uti
 import { useDisplayLiveMinuteLabel } from '../../shared/useDisplayLiveMinuteLabel';
 import { formatLiveMinuteForDisplay } from '../../shared/liveMinuteResolver';
 import Team from '../admin/teams/types/Team';
-import { getMatchStatusChipColor, translateMatchStatus } from './matchStatusI18n';
+import { isLiveMatchStatus } from './externalMatchScoreView';
+import LiveMatchBadge from './LiveMatchBadge';
+import {
+	liveMatchHalftimeBadgeSx,
+	liveMatchMinuteSx,
+	liveMatchScoreSx,
+	matchResultStatusChipSx,
+} from './liveMatchBadgeStyles';
+import {
+	getMatchStatusChipColor,
+	isMatchBreakStatus,
+	isPenaltyShootoutStatus,
+	normalizeMatchStatus,
+	translateMatchStatus,
+} from './matchStatusI18n';
 
 const MATCH_ROW_AVATAR = 26;
 
@@ -29,10 +43,14 @@ function CompactMatchRow({
 	homeTeam,
 	awayTeam,
 	scoreView,
+	liveMinuteDisplay,
+	liveStacked,
 }: {
 	homeTeam: Team;
 	awayTeam: Team;
 	scoreView: string;
+	liveMinuteDisplay?: string | null;
+	liveStacked?: boolean;
 }): JSX.Element {
 	const { t, i18n } = useTranslation();
 
@@ -77,19 +95,39 @@ function CompactMatchRow({
 				/>
 			</Box>
 
-			<Typography
+			<Box
 				sx={{
 					flex: '0 0 auto',
 					px: 0.5,
-					fontWeight: 700,
-					fontSize: '0.85rem',
-					lineHeight: 1.2,
-					textAlign: 'center',
-					whiteSpace: 'pre-line',
+					minWidth: liveStacked ? '4.5rem' : '3.25rem',
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					justifyContent: 'center',
+					gap: 0.12,
 				}}
 			>
-				{scoreView}
-			</Typography>
+				{liveStacked && liveMinuteDisplay ? (
+					<Typography component="span" sx={liveMatchMinuteSx}>
+						{liveMinuteDisplay}
+					</Typography>
+				) : null}
+				<Typography
+					sx={
+						liveStacked
+							? liveMatchScoreSx
+							: {
+									fontWeight: 700,
+									fontSize: '0.85rem',
+									lineHeight: 1.2,
+									textAlign: 'center',
+									whiteSpace: 'pre-line',
+								}
+					}
+				>
+					{scoreView}
+				</Typography>
+			</Box>
 
 			<Box
 				sx={{
@@ -152,9 +190,17 @@ export default function ExternalMatchResultCard({
 		leagueCode,
 		slotId,
 	});
-	const minuteChipLabel = formatLiveMinuteForDisplay(displayMinute);
+	const minuteDisplay = formatLiveMinuteForDisplay(displayMinute);
 	const statusLabel = finalized ? t('gameResultFinalized') : translateMatchStatus(status, t);
 	const statusColor = finalized ? 'success' : getMatchStatusChipColor(status);
+	const isPaused = isMatchBreakStatus(status);
+	const isPenalty = isPenaltyShootoutStatus(status);
+	const liveStacked =
+		!finalized && (isLiveMatchStatus(status) || Boolean(minuteDisplay));
+	const showLiveBadge =
+		liveStacked && !isPaused && !isPenalty && normalizeMatchStatus(status) !== 'FINISHED';
+	/** Над счётом: минута, либо «Пенальти» вместо времени. */
+	const liveMinuteDisplay = isPenalty && liveStacked ? statusLabel : minuteDisplay;
 
 	return (
 		<Box
@@ -183,34 +229,30 @@ export default function ExternalMatchResultCard({
 					{matchDateLabel ?? ''}
 				</Typography>
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
-					{minuteChipLabel ? (
+					{showLiveBadge ? (
+						<LiveMatchBadge />
+					) : (isPaused || isPenalty) && liveStacked ? (
+						<Box component="span" sx={liveMatchHalftimeBadgeSx}>
+							{statusLabel}
+						</Box>
+					) : (
 						<Chip
 							size="small"
-							label={minuteChipLabel}
-							color="warning"
-							variant="outlined"
-							sx={{
-								height: 18,
-								fontSize: '0.58rem',
-								fontWeight: 700,
-								'& .MuiChip-label': { px: 0.5, py: 0 },
-							}}
+							label={statusLabel}
+							color={statusColor}
+							sx={matchResultStatusChipSx}
 						/>
-					) : null}
-					<Chip
-						size="small"
-						label={statusLabel}
-						color={statusColor}
-						sx={{
-							height: 18,
-							fontSize: '0.58rem',
-							'& .MuiChip-label': { px: 0.5, py: 0 },
-						}}
-					/>
+					)}
 					{headerActions}
 				</Box>
 			</Box>
-			<CompactMatchRow homeTeam={homeTeam} awayTeam={awayTeam} scoreView={scoreView} />
+			<CompactMatchRow
+				homeTeam={homeTeam}
+				awayTeam={awayTeam}
+				scoreView={scoreView}
+				liveMinuteDisplay={liveMinuteDisplay}
+				liveStacked={liveStacked}
+			/>
 		</Box>
 	);
 }
