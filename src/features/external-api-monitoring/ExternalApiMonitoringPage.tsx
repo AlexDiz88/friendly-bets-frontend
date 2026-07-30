@@ -1,5 +1,7 @@
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
 	Avatar,
@@ -30,6 +32,7 @@ import CustomCalendarDialog from '../../components/custom/dialog/CustomCalendarD
 import { showErrorSnackbar, showSuccessSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import { teamApiLogoSrc } from '../admin/teams/teamFormUtils';
 import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
+import { externalDataLayerAccent } from '../../shared/externalDataLayerColors';
 import {
 	deleteMonitoringRunsByLayer,
 	fetchMonitoringLatest,
@@ -40,6 +43,7 @@ import {
 	type MonitoringCounters,
 	type MonitoringRun,
 	type MonitoringStatus,
+	type MonitoringTrigger,
 } from './externalApiMonitoringApi';
 import {
 	monitoringDetailPanelSx,
@@ -218,6 +222,39 @@ function ProviderCell({ provider }: { provider?: string | null }): JSX.Element {
 			/>
 			<Typography component="span" sx={{ fontSize: 'inherit' }}>
 				{provider}
+			</Typography>
+		</Box>
+	);
+}
+
+const TRIGGER_ICON_SX = { fontSize: 16, opacity: 0.75, flexShrink: 0 } as const;
+
+function TriggerCell({
+	trigger,
+	layer,
+}: {
+	trigger?: MonitoringTrigger | null;
+	layer: ExternalDataLayer;
+}): JSX.Element {
+	if (!trigger) {
+		return <Typography component="span">—</Typography>;
+	}
+	const icon =
+		trigger === 'ADMIN' ? (
+			<PersonOutlineIcon
+				sx={{ ...TRIGGER_ICON_SX, opacity: 1, color: externalDataLayerAccent(layer) }}
+			/>
+		) : trigger === 'CRON' ? (
+			<AccessTimeIcon sx={TRIGGER_ICON_SX} />
+		) : null;
+	if (!icon) {
+		return <Typography component="span">{trigger}</Typography>;
+	}
+	return (
+		<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+			{icon}
+			<Typography component="span" sx={{ fontSize: 'inherit' }}>
+				{trigger}
 			</Typography>
 		</Box>
 	);
@@ -503,7 +540,9 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 															/>
 														</TableCell>
 														<TableCell>{formatDetailed(run.startedAt)}</TableCell>
-														<TableCell>{run.trigger ?? '—'}</TableCell>
+														<TableCell>
+															<TriggerCell trigger={run.trigger} layer={layer} />
+														</TableCell>
 														<TableCell>
 															<ProviderCell provider={run.provider} />
 														</TableCell>
