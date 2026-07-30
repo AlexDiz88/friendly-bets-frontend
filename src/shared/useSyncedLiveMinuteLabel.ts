@@ -12,7 +12,7 @@ const CLIENT_MINUTE_TICK_MS = 60_000;
 /**
  * Минута live: якорь с последнего sync (liveMinuteLabel + fetchedAt из БД),
  * между sync — +1 мин на клиенте каждые 60 с. Новый sync перезаписывает якорь.
- * Метки добавленного времени (45+', 90+') не интерполируются.
+ * Метки добавленного времени (45+, 90+) не интерполируются.
  */
 export function useSyncedLiveMinuteLabel(
 	liveMinuteLabel: string | null | undefined,
