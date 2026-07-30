@@ -44,14 +44,15 @@ export async function patchExternalDataLayerConfig(
 	return result.json();
 }
 
-export async function syncExternalLive(leagueCode: string): Promise<{
-	leagueCode: string;
+export async function syncExternalLive(): Promise<{
+	httpRequests: number;
+	trackedCount: number;
 	updated: number;
 	finishedDetected: number;
 	message?: string;
+	datesSynced?: string[];
 }> {
-	const params = new URLSearchParams({ leagueCode });
-	const result = await apiFetch(apiUrl(`/api/admin/external-data/live/sync?${params}`), {
+	const result = await apiFetch(apiUrl('/api/admin/external-data/live/sync'), {
 		method: 'POST',
 	});
 	if (result.status >= 400) {

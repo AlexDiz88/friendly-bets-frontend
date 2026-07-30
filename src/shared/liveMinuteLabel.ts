@@ -10,8 +10,12 @@ export function parseLiveMinuteBase(label: string): number | null {
 	return base + added;
 }
 
+export function isStoppageMinuteLabel(label: string): boolean {
+	return label.includes('+');
+}
+
 export function formatLiveMinuteLabel(totalMinutes: number): string {
-	if (totalMinutes >= 90) {
+	if (totalMinutes > 90) {
 		return "90+'";
 	}
 	return `${totalMinutes}'`;

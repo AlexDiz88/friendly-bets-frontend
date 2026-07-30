@@ -4,6 +4,7 @@ import { TFunction } from 'i18next';
 const LEGACY_STATUS_MAP: Record<string, string> = {
 	PAUSE: 'PAUSED',
 	HALFTIME: 'PAUSED',
+	LIVE: 'IN_PLAY',
 };
 
 export function normalizeMatchStatus(status: string): string {

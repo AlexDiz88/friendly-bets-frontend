@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
+import { isLiveMatchStatus } from '../features/match-results/externalMatchScoreView';
 import { normalizeMatchStatus } from '../features/match-results/matchStatusI18n';
-import { formatLiveMinuteLabel, parseLiveMinuteBase } from './liveMinuteLabel';
+import {
+	formatLiveMinuteLabel,
+	isStoppageMinuteLabel,
+	parseLiveMinuteBase,
+} from './liveMinuteLabel';
 
 const CLIENT_MINUTE_TICK_MS = 60_000;
 
 /**
  * Минута live: якорь с последнего sync (liveMinuteLabel + fetchedAt из БД),
  * между sync — +1 мин на клиенте каждые 60 с. Новый sync перезаписывает якорь.
+ * Метки добавленного времени (45+', 90+') не интерполируются.
  */
 export function useSyncedLiveMinuteLabel(
 	liveMinuteLabel: string | null | undefined,
@@ -14,7 +20,7 @@ export function useSyncedLiveMinuteLabel(
 	matchStatus: string
 ): string | null {
 	const apiLabel = liveMinuteLabel?.trim() ? liveMinuteLabel.trim() : null;
-	const isInPlay = normalizeMatchStatus(matchStatus) === 'IN_PLAY';
+	const isInPlay = isLiveMatchStatus(matchStatus);
 	const [displayMinute, setDisplayMinute] = useState<string | null>(apiLabel);
 	const anchorRef = useRef<{ label: string; fetchedAt: string | null | undefined } | null>(
 		null
@@ -36,12 +42,12 @@ export function useSyncedLiveMinuteLabel(
 	}, [apiLabel, fetchedAt]);
 
 	useEffect(() => {
-		if (!apiLabel || !isInPlay) {
+		if (!apiLabel || !isInPlay || isStoppageMinuteLabel(apiLabel)) {
 			return;
 		}
 		const intervalId = window.setInterval(() => {
 			setDisplayMinute((current) => {
-				if (!current) {
+				if (!current || isStoppageMinuteLabel(current)) {
 					return current;
 				}
 				const base = parseLiveMinuteBase(current);

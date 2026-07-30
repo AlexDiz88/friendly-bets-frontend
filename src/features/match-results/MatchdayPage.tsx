@@ -1,8 +1,6 @@
 import {
-	Avatar,
 	Alert,
 	Box,
-	Chip,
 	CircularProgress,
 	SelectChangeEvent,
 	Typography,
@@ -35,11 +33,9 @@ import NearestGameweekBetsPlate, {
 import { resolveExternalMatchScoreView } from './externalMatchScoreView';
 import { resolveExternalMatchKickoffUtcMs } from './externalMatchKickoff';
 import { matchSideToDisplayTeam } from './externalMatchDisplay';
-import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason } from '../admin/seasons/selectors';
-import Team from '../admin/teams/types/Team';
 import { selectUser } from '../auth/selectors';
 import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
 import GameScore from '../bets/types/GameScore';
@@ -50,9 +46,7 @@ import {
 	getMatchdayFromCache,
 } from './matchResultsApi';
 import {
-	getMatchStatusChipColor,
 	isMatchNotStarted,
-	translateMatchStatus,
 } from './matchStatusI18n';
 import { resolveExternalSeasonForLeague } from './seasonExternalYear';
 import {
@@ -61,6 +55,7 @@ import {
 	MatchdayPageData,
 } from './types/ExternalMatch';
 import ExternalMatchBetsDialog from './ExternalMatchBetsDialog';
+import ExternalMatchResultCard from './ExternalMatchResultCard';
 import ExternalMatchViewBetsButton from './ExternalMatchViewBetsButton';
 import WcExternalSlotPanel from './WcExternalSlotPanel';
 import { useWcSlotUserBets } from './useWcSlotUserBets';
@@ -70,109 +65,6 @@ import {
 	FALLBACK_DEFAULT_BET_SIZE,
 	getNodeDefaultBetSize,
 } from '../bets/betSizeDefaults';
-
-const MATCH_ROW_AVATAR = 26;
-
-function CompactMatchRow({
-	homeTeam,
-	awayTeam,
-	scoreView,
-}: {
-	homeTeam: Team;
-	awayTeam: Team;
-	scoreView: string;
-}): JSX.Element {
-	const { t, i18n } = useTranslation();
-
-	return (
-		<Box
-			sx={{
-				display: 'flex',
-				alignItems: 'center',
-				gap: 0.5,
-				minHeight: MATCH_ROW_AVATAR,
-			}}
-		>
-			<Box
-				sx={{
-					flex: 1,
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'flex-end',
-					gap: 0.4,
-					minWidth: 0,
-				}}
-			>
-				<Typography
-					variant="body2"
-					sx={{
-						fontSize: '0.78rem',
-						fontWeight: 600,
-						lineHeight: 1.2,
-						textAlign: 'right',
-						overflow: 'hidden',
-						textOverflow: 'ellipsis',
-						whiteSpace: 'nowrap',
-					}}
-				>
-					{resolveTeamDisplayName(homeTeam, t, i18n.language)}
-				</Typography>
-				<Avatar
-					variant="square"
-					src={resolveTeamLogoUrl(homeTeam)}
-					alt=""
-					sx={{ width: MATCH_ROW_AVATAR, height: MATCH_ROW_AVATAR, flexShrink: 0 }}
-				/>
-			</Box>
-
-			<Typography
-				sx={{
-					flex: '0 0 auto',
-					px: 0.5,
-					fontWeight: 700,
-					fontSize: '0.85rem',
-					lineHeight: 1.2,
-					textAlign: 'center',
-					whiteSpace: 'pre-line',
-				}}
-			>
-				{scoreView}
-			</Typography>
-
-			<Box
-				sx={{
-					flex: 1,
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'flex-start',
-					gap: 0.4,
-					minWidth: 0,
-				}}
-			>
-				<Avatar
-					variant="square"
-					src={resolveTeamLogoUrl(awayTeam)}
-					alt=""
-					sx={{ width: MATCH_ROW_AVATAR, height: MATCH_ROW_AVATAR, flexShrink: 0 }}
-				/>
-				<Typography
-					variant="body2"
-					sx={{
-						fontSize: '0.78rem',
-						fontWeight: 600,
-						lineHeight: 1.2,
-						textAlign: 'left',
-						overflow: 'hidden',
-						textOverflow: 'ellipsis',
-						whiteSpace: 'nowrap',
-					}}
-				>
-					{resolveTeamDisplayName(awayTeam, t, i18n.language)}
-				</Typography>
-			</Box>
-		</Box>
-	);
-}
 
 export default function MatchdayPage(): JSX.Element {
 	const dispatch = useAppDispatch();
@@ -896,12 +788,6 @@ export default function MatchdayPage(): JSX.Element {
 								liveMinuteLabel: match.liveMinuteLabel,
 								kickoffUtcMs,
 							});
-							const statusLabel = match.finalized
-								? t('gameResultFinalized')
-								: translateMatchStatus(match.status, t);
-							const statusColor = match.finalized
-								? 'success'
-								: getMatchStatusChipColor(match.status);
 							const matchDate =
 								kickoffUtcMs > 0 ? formatDateTime(kickoffUtcMs) : '';
 							const betEnabled = isMatchCardClickable(match);
@@ -909,50 +795,24 @@ export default function MatchdayPage(): JSX.Element {
 							return (
 								<Box
 									key={match.wc26ScheduleId ?? match.id ?? match.externalMatchId}
-									onClick={betEnabled ? () => handleMatchClick(match) : undefined}
 									sx={{
-										px: 1,
-										py: 0.45,
 										borderBottom: index < sortedMatches.length - 1 ? 1 : 0,
 										borderColor: 'divider',
-										cursor: betEnabled ? 'pointer' : 'default',
-										'&:hover': betEnabled ? { bgcolor: 'action.hover' } : undefined,
 									}}
 								>
-									<Box
-										sx={{
-											display: 'flex',
-											justifyContent: 'space-between',
-											alignItems: 'center',
-											mb: 0.25,
-											gap: 0.5,
-										}}
-									>
-										<Typography
-											variant="caption"
-											color="text.secondary"
-											sx={{ fontSize: '0.68rem', lineHeight: 1.2 }}
-										>
-											{matchDate}
-										</Typography>
-										<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
-											<Chip
-												size="small"
-												label={statusLabel}
-												color={statusColor}
-												sx={{
-													height: 18,
-													fontSize: '0.58rem',
-													'& .MuiChip-label': { px: 0.5, py: 0 },
-												}}
-											/>
-											{renderViewMatchBetsButton(match)}
-										</Box>
-									</Box>
-									<CompactMatchRow
+									<ExternalMatchResultCard
 										homeTeam={homeTeam}
 										awayTeam={awayTeam}
 										scoreView={scoreView}
+										status={match.status}
+										finalized={Boolean(match.finalized)}
+										liveMinuteLabel={match.liveMinuteLabel}
+										fetchedAt={match.fetchedAt}
+										kickoffUtcMs={kickoffUtcMs}
+										matchDateLabel={matchDate}
+										headerActions={renderViewMatchBetsButton(match)}
+										onClick={betEnabled ? () => handleMatchClick(match) : undefined}
+										interactive={betEnabled}
 									/>
 								</Box>
 							);

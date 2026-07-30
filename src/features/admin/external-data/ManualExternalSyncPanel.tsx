@@ -101,7 +101,6 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	const [scheduleMetaLoading, setScheduleMetaLoading] = useState(false);
 	const [oddsProvider, setOddsProvider] = useState<string>(MARATHONBET_PROVIDER);
 	const [oddsLeagueCode, setOddsLeagueCode] = useState('EPL');
-	const [liveLeagueCode, setLiveLeagueCode] = useState('EPL');
 	const [syncingSchedule, setSyncingSchedule] = useState(false);
 	const [syncingOdds, setSyncingOdds] = useState(false);
 	const [syncingLive, setSyncingLive] = useState(false);
@@ -160,13 +159,6 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		}
 		return oddsLeagues[0]?.leagueCode ?? '';
 	}, [oddsLeagues, oddsLeagueCode]);
-
-	const effectiveLiveLeague = useMemo(() => {
-		if (allLeagues.some((l) => l.leagueCode === liveLeagueCode)) {
-			return liveLeagueCode;
-		}
-		return allLeagues[0]?.leagueCode ?? '';
-	}, [allLeagues, liveLeagueCode]);
 
 	const oddsLeague = useMemo(
 		() => oddsLeagues.find((l) => l.leagueCode === effectiveOddsLeague),
@@ -401,17 +393,16 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	};
 
 	const handleLiveSync = async (): Promise<void> => {
-		if (!effectiveLiveLeague) {
-			return;
-		}
 		setSyncingLive(true);
 		try {
-			const result = await syncExternalLive(effectiveLiveLeague);
+			const result = await syncExternalLive();
 			dispatch(
 				showSuccessSnackbar({
 					message: t('externalDataLiveSyncSuccess', {
 						updated: result.updated,
 						finished: result.finishedDetected,
+						http: result.httpRequests,
+						tracked: result.trackedCount,
 					}),
 				})
 			);
@@ -634,20 +625,12 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 			<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
 				{t('externalDataLiveSyncTitle')}
 			</Typography>
-			{allLeagues.length > 0 ? (
-				<Box sx={{ mb: 1 }}>
-					<LeagueSelect
-						leagues={allLeagues}
-						value={effectiveLiveLeague}
-						onChange={(e) => setLiveLeagueCode(String(e.target.value))}
-						withoutAll
-						fullLeagueNames
-					/>
-				</Box>
-			) : null}
+			<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', mb: 1 }}>
+				{t('externalDataLiveSyncHint')}
+			</Typography>
 			<CustomSuccessButton
 				onClick={() => void handleLiveSync()}
-				disabled={syncingLive || !effectiveLiveLeague}
+				disabled={syncingLive}
 				loading={syncingLive}
 				buttonText={t('externalDataLiveSyncNow')}
 				sx={{ width: '100%', mr: 0 }}
