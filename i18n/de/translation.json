@@ -1394,8 +1394,11 @@
 				"matched": "match — erfolgreich auf Buchmacher-Events gemappt",
 				"saved": "save — Odds in die odds-Collection gespeichert",
 				"sseCalls": "SSE — Event-Detail-Requests (pro Match)",
-				"skipped": "skip — übersprungen (Odds vorhanden & Kickoff weit / kein Buchmacher-Event / kein utc_kickoff)",
-				"mappingFailures": "Match konnte nicht auf ein Buchmacher-Event gemappt werden"
+				"skipped": "skip — übersprungen (älterer Lauf ohne Ursachen-Aufschlüsselung)",
+				"skippedFar": "far — Odds vorhanden und Kickoff außerhalb des Refresh-Fensters",
+				"skippedNoBookieEvent": "noBk — kein eindeutiges Buchmacher-Event (noch nicht gelistet / nicht zuordenbar)",
+				"skippedMissingKickoff": "missKo — Match ohne utc_kickoff",
+				"mappingFailures": "Match konnte nicht gemappt werden (Aliase / Mehrdeutigkeit)"
 			},
 			"LIVE": {
 				"updated": "Matches mit Live-Status/Stand aktualisiert",
