@@ -85,6 +85,9 @@ function formatHttpRatio(failed?: number | null, total?: number | null): string 
 type CounterDetailKey =
 	| 'upserted'
 	| 'skipped'
+	| 'skippedFar'
+	| 'skippedNoBookieEvent'
+	| 'skippedMissingKickoff'
 	| 'roundsParsed'
 	| 'eligible'
 	| 'matched'
@@ -107,17 +110,31 @@ function counterDetailEntries(
 				{ key: 'skipped', value: counters.skipped ?? 0 },
 				{ key: 'roundsParsed', value: counters.roundsParsed ?? 0 },
 			];
-		case 'ODDS':
-			return [
+		case 'ODDS': {
+			const hasSplit =
+				counters.skippedFar != null ||
+				counters.skippedNoBookieEvent != null ||
+				counters.skippedMissingKickoff != null;
+			const entries: Array<{ key: CounterDetailKey; value: number }> = [
 				{ key: 'eligible', value: counters.eligible ?? 0 },
 				{ key: 'matched', value: counters.matched ?? 0 },
 				{ key: 'saved', value: counters.saved ?? 0 },
 				{ key: 'sseCalls', value: counters.sseCalls ?? 0 },
-				{ key: 'skipped', value: counters.skipped ?? 0 },
-				...(counters.mappingFailures
-					? [{ key: 'mappingFailures' as const, value: counters.mappingFailures }]
-					: []),
 			];
+			if (hasSplit) {
+				entries.push(
+					{ key: 'skippedFar', value: counters.skippedFar ?? 0 },
+					{ key: 'skippedNoBookieEvent', value: counters.skippedNoBookieEvent ?? 0 },
+					{ key: 'skippedMissingKickoff', value: counters.skippedMissingKickoff ?? 0 }
+				);
+			} else {
+				entries.push({ key: 'skipped', value: counters.skipped ?? 0 });
+			}
+			if (counters.mappingFailures) {
+				entries.push({ key: 'mappingFailures', value: counters.mappingFailures });
+			}
+			return entries;
+		}
 		case 'LIVE':
 			return [
 				{ key: 'updated', value: counters.updated ?? 0 },
@@ -135,13 +152,31 @@ function counterDetailEntries(
 	}
 }
 
+function oddsSkipSummary(counters: MonitoringCounters): string {
+	const hasSplit =
+		counters.skippedFar != null ||
+		counters.skippedNoBookieEvent != null ||
+		counters.skippedMissingKickoff != null;
+	if (!hasSplit) {
+		return `skip ${counters.skipped ?? 0}`;
+	}
+	const far = counters.skippedFar ?? 0;
+	const noBk = counters.skippedNoBookieEvent ?? 0;
+	const missKo = counters.skippedMissingKickoff ?? 0;
+	let s = `far ${far} · noBk ${noBk}`;
+	if (missKo > 0) {
+		s += ` · missKo ${missKo}`;
+	}
+	return s;
+}
+
 function countersSummary(layer: ExternalDataLayer, counters?: MonitoringCounters | null): string {
 	if (!counters) return '—';
 	switch (layer) {
 		case 'SCHEDULE':
 			return `↑${counters.upserted ?? 0} · skip ${counters.skipped ?? 0} · rounds ${counters.roundsParsed ?? 0}`;
 		case 'ODDS':
-			return `elig ${counters.eligible ?? 0} · match ${counters.matched ?? 0} · save ${counters.saved ?? 0} · SSE ${counters.sseCalls ?? 0} · skip ${counters.skipped ?? 0}`;
+			return `elig ${counters.eligible ?? 0} · match ${counters.matched ?? 0} · save ${counters.saved ?? 0} · SSE ${counters.sseCalls ?? 0} · ${oddsSkipSummary(counters)}`;
 		case 'LIVE':
 			return `upd ${counters.updated ?? 0} · fin ${counters.finishedDetected ?? 0} · skip ${counters.skipped ?? 0}`;
 		case 'FULL_MATCH':

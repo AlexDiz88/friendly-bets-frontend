@@ -17,6 +17,9 @@ export type MonitoringCounters = {
 	matched?: number | null;
 	saved?: number | null;
 	skipped?: number | null;
+	skippedFar?: number | null;
+	skippedNoBookieEvent?: number | null;
+	skippedMissingKickoff?: number | null;
 	mappingFailures?: number | null;
 	sseCalls?: number | null;
 	roundsParsed?: number | null;

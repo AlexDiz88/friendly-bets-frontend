@@ -1394,8 +1394,11 @@
 				"matched": "match — successfully mapped to bookmaker events",
 				"saved": "save — odds saved to the odds collection",
 				"sseCalls": "SSE — event-detail requests (per match)",
-				"skipped": "skip — skipped (odds already present & kickoff far / no bookie event / missing utc_kickoff)",
-				"mappingFailures": "could not map match to a bookmaker event"
+				"skipped": "skip — skipped (legacy run without reason split)",
+				"skippedFar": "far — odds already present and kickoff outside refresh window",
+				"skippedNoBookieEvent": "noBk — no uniquely matchable bookmaker event (not listed yet / unresolved)",
+				"skippedMissingKickoff": "missKo — match has no utc_kickoff",
+				"mappingFailures": "could not map match to a bookmaker event (aliases / ambiguity)"
 			},
 			"LIVE": {
 				"updated": "matches updated with live status/score",
