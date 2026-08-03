@@ -206,7 +206,31 @@ const MONITORING_WARNING_KEYS = new Set([
 	'noSlots',
 	'leagueNotSupported',
 	'noSseEligible',
+	'noCurrentMatches',
+	'farBothComplete',
+	'farCurrentCompleteNoNext',
+	'currentExhaustedNoNext',
+	'currentExhaustedNextComplete',
+	'invalidInput',
+	'currentMissingKickoff',
 ]);
+
+function formatOddsMatchday(run: MonitoringRun): string {
+	if (run.slotOrders != null && run.slotOrders.length > 0) {
+		return run.slotOrders.join(', ');
+	}
+	if (run.matchday != null) {
+		return String(run.matchday);
+	}
+	return '—';
+}
+
+function formatOddsSlotScope(scope?: string | null): string | null {
+	if (!scope) return null;
+	const key = `externalApiMonitoring.slotScope.${scope}`;
+	const translated = t(key);
+	return translated !== key ? translated : scope;
+}
 
 function parseMonitoringReasonParts(summary: string): Array<{ key: string; count?: number; raw: string }> {
 	return summary
@@ -541,6 +565,9 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 											<TableCell>{t('externalApiMonitoring.col.trigger')}</TableCell>
 											<TableCell>{t('externalApiMonitoring.col.provider')}</TableCell>
 											<TableCell>{t('externalApiMonitoring.col.league')}</TableCell>
+											{layer === 'ODDS' ? (
+												<TableCell>{t('externalApiMonitoring.col.matchday')}</TableCell>
+											) : null}
 											<TableCell>{t('externalApiMonitoring.col.duration')}</TableCell>
 											<TableCell>{t('externalApiMonitoring.col.status')}</TableCell>
 											<TableCell>{t('externalApiMonitoring.col.counters')}</TableCell>
@@ -550,6 +577,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 									<TableBody>
 										{rows.map((run) => {
 											const open = expandedId === run.id;
+											const colSpan = layer === 'ODDS' ? 10 : 9;
 											return (
 												<Fragment key={run.id}>
 													<TableRow
@@ -584,6 +612,27 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 														<TableCell>
 															<LeagueCell leagueCode={run.leagueCode} />
 														</TableCell>
+														{layer === 'ODDS' ? (
+															<TableCell>
+																<Typography component="span" sx={{ fontWeight: 700 }}>
+																	{formatOddsMatchday(run)}
+																</Typography>
+																{formatOddsSlotScope(run.slotScope) ? (
+																	<Typography
+																		component="span"
+																		display="block"
+																		sx={{
+																			fontSize: '0.68rem',
+																			color: 'text.secondary',
+																			lineHeight: 1.2,
+																			mt: 0.25,
+																		}}
+																	>
+																		{formatOddsSlotScope(run.slotScope)}
+																	</Typography>
+																) : null}
+															</TableCell>
+														) : null}
 														<TableCell>{formatDuration(run.durationMs)}</TableCell>
 														<TableCell>
 															<Chip
@@ -632,7 +681,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 														}}
 													>
 														<TableCell
-															colSpan={9}
+															colSpan={colSpan}
 															sx={{
 																py: 0,
 																borderBottom: open ? undefined : 0,
@@ -645,6 +694,21 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																		<CircularProgress size={18} />
 																	) : detail && detail.id === run.id ? (
 																		<Box>
+																			{layer === 'ODDS' ? (
+																				<Typography
+																					variant="caption"
+																					color="text.secondary"
+																					display="block"
+																					sx={{ mb: 1 }}
+																				>
+																					{t('externalApiMonitoring.oddsSlotDetail', {
+																						matchday: formatOddsMatchday(detail),
+																						scope:
+																							formatOddsSlotScope(detail.slotScope) ??
+																							'—',
+																					})}
+																				</Typography>
+																			) : null}
 																			{detail.errorSummary ? (
 																				<Typography
 																					sx={{
