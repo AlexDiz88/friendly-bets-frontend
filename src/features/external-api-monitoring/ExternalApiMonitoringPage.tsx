@@ -48,10 +48,13 @@ import {
 import {
 	monitoringDetailPanelSx,
 	monitoringDetailTableSx,
+	monitoringDurationColSx,
 	monitoringHintSx,
 	monitoringKpiCardSx,
 	monitoringKpiGridSx,
 	monitoringLayerTitleSx,
+	monitoringLeagueColSx,
+	monitoringMatchdayColSx,
 	monitoringPageRootSx,
 	monitoringSectionHeaderSx,
 	monitoringSectionSx,
@@ -323,7 +326,64 @@ function LeagueCell({ leagueCode }: { leagueCode?: string | null }): JSX.Element
 	if (!leagueCode) {
 		return <Typography component="span">—</Typography>;
 	}
-	return <LeagueAvatar leagueCode={leagueCode} height={18} sx={{ mr: 0 }} />;
+	return (
+		<Box
+			sx={{
+				display: 'inline-flex',
+				alignItems: 'center',
+				gap: 0.85,
+				minHeight: 28,
+			}}
+		>
+			<LeagueAvatar leagueCode={leagueCode} height={18} sx={{ mr: 0 }} avasx={{ mr: 0.75 }} />
+		</Box>
+	);
+}
+
+function OddsMatchdayCell({ run }: { run: MonitoringRun }): JSX.Element {
+	const matchday = formatOddsMatchday(run);
+	const scope = formatOddsSlotScope(run.slotScope);
+	return (
+		<Box
+			sx={{
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'flex-start',
+				justifyContent: 'center',
+				gap: 0.4,
+				minHeight: 28,
+			}}
+		>
+			<Typography
+				component="span"
+				sx={{
+					fontWeight: 700,
+					fontSize: '0.84rem',
+					lineHeight: 1.15,
+					fontVariantNumeric: 'tabular-nums',
+					letterSpacing: '0.03em',
+				}}
+			>
+				{matchday}
+			</Typography>
+			{scope ? (
+				<Typography
+					component="span"
+					sx={{
+						fontSize: '0.62rem',
+						fontWeight: 700,
+						lineHeight: 1,
+						letterSpacing: '0.08em',
+						textTransform: 'uppercase',
+						color: 'text.secondary',
+						opacity: 0.9,
+					}}
+				>
+					{scope}
+				</Typography>
+			) : null}
+		</Box>
+	);
 }
 
 function CountersBreakdown({
@@ -370,7 +430,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
 	const { formatDetailed } = useFormatUserDateTime();
-	const [hours, setHours] = useState(24);
+	const [hours, setHours] = useState(72);
 	const [loading, setLoading] = useState(true);
 	const [runsByLayer, setRunsByLayer] = useState<Record<ExternalDataLayer, MonitoringRun[]>>({
 		SCHEDULE: [],
@@ -564,11 +624,17 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 											<TableCell>{t('externalApiMonitoring.col.started')}</TableCell>
 											<TableCell>{t('externalApiMonitoring.col.trigger')}</TableCell>
 											<TableCell>{t('externalApiMonitoring.col.provider')}</TableCell>
-											<TableCell>{t('externalApiMonitoring.col.league')}</TableCell>
+											<TableCell sx={monitoringLeagueColSx}>
+												{t('externalApiMonitoring.col.league')}
+											</TableCell>
 											{layer === 'ODDS' ? (
-												<TableCell>{t('externalApiMonitoring.col.matchday')}</TableCell>
+												<TableCell sx={monitoringMatchdayColSx}>
+													{t('externalApiMonitoring.col.matchday')}
+												</TableCell>
 											) : null}
-											<TableCell>{t('externalApiMonitoring.col.duration')}</TableCell>
+											<TableCell sx={monitoringDurationColSx}>
+												{t('externalApiMonitoring.col.duration')}
+											</TableCell>
 											<TableCell>{t('externalApiMonitoring.col.status')}</TableCell>
 											<TableCell>{t('externalApiMonitoring.col.counters')}</TableCell>
 											<TableCell>{t('externalApiMonitoring.col.http')}</TableCell>
@@ -609,31 +675,17 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 														<TableCell>
 															<ProviderCell provider={run.provider} />
 														</TableCell>
-														<TableCell>
+														<TableCell sx={monitoringLeagueColSx}>
 															<LeagueCell leagueCode={run.leagueCode} />
 														</TableCell>
 														{layer === 'ODDS' ? (
-															<TableCell>
-																<Typography component="span" sx={{ fontWeight: 700 }}>
-																	{formatOddsMatchday(run)}
-																</Typography>
-																{formatOddsSlotScope(run.slotScope) ? (
-																	<Typography
-																		component="span"
-																		display="block"
-																		sx={{
-																			fontSize: '0.68rem',
-																			color: 'text.secondary',
-																			lineHeight: 1.2,
-																			mt: 0.25,
-																		}}
-																	>
-																		{formatOddsSlotScope(run.slotScope)}
-																	</Typography>
-																) : null}
+															<TableCell sx={monitoringMatchdayColSx}>
+																<OddsMatchdayCell run={run} />
 															</TableCell>
 														) : null}
-														<TableCell>{formatDuration(run.durationMs)}</TableCell>
+														<TableCell sx={monitoringDurationColSx}>
+															{formatDuration(run.durationMs)}
+														</TableCell>
 														<TableCell>
 															<Chip
 																size="small"
