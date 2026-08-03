@@ -17,8 +17,8 @@ export function layerPalette(layer: ExternalDataLayer): ExternalDataLayerPalette
 }
 
 export const monitoringPageRootSx: SxProps<Theme> = {
-	minWidth: 1100,
-	maxWidth: 1400,
+	minWidth: 1180,
+	maxWidth: 1480,
 	mx: 'auto',
 	px: 2.5,
 	py: 2.5,
@@ -150,11 +150,14 @@ export function monitoringTableSx(theme: Theme, layer: ExternalDataLayer): SxPro
 	const pal = layerPalette(layer);
 	const isDark = theme.palette.mode === 'dark';
 	return {
+		tableLayout: 'auto',
 		'& .MuiTableCell-root': {
 			borderColor: isDark ? 'rgba(148,163,184,0.12)' : `${pal.accent}22`,
-			py: 0.85,
+			py: 1.1,
+			px: 1.75,
 			fontSize: '0.8rem',
 			whiteSpace: 'nowrap',
+			verticalAlign: 'middle',
 		},
 		'& .MuiTableHead-root .MuiTableCell-root': {
 			fontWeight: 700,
@@ -169,6 +172,8 @@ export function monitoringTableSx(theme: Theme, layer: ExternalDataLayer): SxPro
 			position: 'sticky',
 			top: 0,
 			zIndex: 3,
+			py: 1.15,
+			px: 1.75,
 		},
 		// Only clickable run rows (MUI `hover` prop → `.MuiTableRow-hover`), not detail/spacer rows.
 		'& .MuiTableBody-root .MuiTableRow-root.MuiTableRow-hover:hover': {
@@ -176,6 +181,28 @@ export function monitoringTableSx(theme: Theme, layer: ExternalDataLayer): SxPro
 		},
 	};
 }
+
+/** Compact identity columns (league / matchday) — fixed rhythm, no cramped neighbors. */
+export const monitoringLeagueColSx: SxProps<Theme> = {
+	minWidth: 92,
+	width: 92,
+	pl: 2,
+	pr: 2.25,
+};
+
+export const monitoringMatchdayColSx: SxProps<Theme> = {
+	minWidth: 108,
+	width: 108,
+	pl: 2,
+	pr: 2.5,
+};
+
+export const monitoringDurationColSx: SxProps<Theme> = {
+	minWidth: 72,
+	pl: 2,
+	pr: 1.75,
+	fontVariantNumeric: 'tabular-nums',
+};
 
 /** Expanded HTTP-detail panel under a monitoring run row. */
 export function monitoringDetailPanelSx(theme: Theme, layer: ExternalDataLayer): SxProps<Theme> {
