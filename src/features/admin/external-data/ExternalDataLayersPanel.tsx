@@ -5,6 +5,7 @@ import {
 	InputLabel,
 	MenuItem,
 	Select,
+	TextField,
 	Typography,
 } from '@mui/material';
 import type { SelectChangeEvent, SxProps, Theme } from '@mui/material';
@@ -39,6 +40,7 @@ const LAYER_LABEL_KEY: Record<ExternalDataLayer, string> = {
 };
 
 const NONE = '';
+const DEFAULT_ODDS_REFRESH_WITHIN_HOURS = 36;
 
 function layerCardSx(layer: ExternalDataLayer): SxProps<Theme> {
 	const pal = EXTERNAL_DATA_LAYER_PALETTE[layer];
@@ -75,6 +77,7 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 	const [saving, setSaving] = useState(false);
 	const [config, setConfig] = useState<ExternalDataLayerConfig | null>(null);
 	const [draft, setDraft] = useState<Partial<Record<ExternalDataLayer, LayerAssignment>>>({});
+	const [oddsRefreshWithinHours, setOddsRefreshWithinHours] = useState(DEFAULT_ODDS_REFRESH_WITHIN_HOURS);
 
 	const load = useCallback(async () => {
 		setLoading(true);
@@ -82,6 +85,11 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 			const next = await fetchExternalDataLayerConfig();
 			setConfig(next);
 			setDraft(next.layers ?? {});
+			setOddsRefreshWithinHours(
+				next.oddsRefreshWithinHours != null && next.oddsRefreshWithinHours > 0
+					? next.oddsRefreshWithinHours
+					: DEFAULT_ODDS_REFRESH_WITHIN_HOURS
+			);
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
@@ -137,9 +145,17 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 	const handleSave = async (): Promise<void> => {
 		setSaving(true);
 		try {
-			const next = await patchExternalDataLayerConfig({ layers: draft });
+			const next = await patchExternalDataLayerConfig({
+				layers: draft,
+				oddsRefreshWithinHours,
+			});
 			setConfig(next);
 			setDraft(next.layers ?? {});
+			setOddsRefreshWithinHours(
+				next.oddsRefreshWithinHours != null && next.oddsRefreshWithinHours > 0
+					? next.oddsRefreshWithinHours
+					: DEFAULT_ODDS_REFRESH_WITHIN_HOURS
+			);
 			setShowPanel(false);
 			dispatch(showSuccessSnackbar({ message: t('externalDataLayersSaved') }));
 		} catch (error) {
@@ -222,7 +238,7 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 											))}
 										</Select>
 									</FormControl>
-									<FormControl fullWidth size="small">
+									<FormControl fullWidth size="small" sx={{ mb: layer === 'ODDS' ? 1 : 0 }}>
 										<InputLabel id={`${layer}-secondary`}>{t('externalDataSecondary')}</InputLabel>
 										<Select
 											labelId={`${layer}-secondary`}
@@ -238,6 +254,24 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 											))}
 										</Select>
 									</FormControl>
+									{layer === 'ODDS' && (
+										<TextField
+											fullWidth
+											size="small"
+											type="number"
+											label={t('externalDataOddsRefreshWithinHours')}
+											helperText={t('externalDataOddsRefreshWithinHoursHint')}
+											value={oddsRefreshWithinHours}
+											onChange={(e) => {
+												const raw = Number(e.target.value);
+												if (!Number.isFinite(raw)) {
+													return;
+												}
+												setOddsRefreshWithinHours(Math.trunc(raw));
+											}}
+											inputProps={{ min: 1, max: 168, step: 1 }}
+										/>
+									)}
 								</Box>
 							);
 						})}
