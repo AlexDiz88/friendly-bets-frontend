@@ -1361,11 +1361,19 @@
 			"trigger": "Trigger",
 			"provider": "Provider",
 			"league": "Liga",
+			"matchday": "Spieltag",
 			"duration": "Dauer",
 			"status": "Status",
 			"counters": "Counters",
 			"http": "HTTP"
 		},
+		"slotScope": {
+			"CURRENT": "current",
+			"NEXT": "next",
+			"BOTH": "current+next",
+			"SKIP": "skip"
+		},
+		"oddsSlotDetail": "Spieltag: {{matchday}} · Slot: {{scope}}",
 		"http": {
 			"type": "Type",
 			"target": "Target",
@@ -1381,7 +1389,14 @@
 			"noLiveCandidates": "Keine Matches im LIVE-Fenster (nach utc_kickoff / Status) — kein HTTP.",
 			"noSlots": "Keine Spieltags-Slots für Odds-Sync.",
 			"leagueNotSupported": "Liga wird von diesem LIVE-Provider nicht unterstützt.",
-			"noSseEligible": "Keine Matches brauchen gerade Odds-Refresh (Odds vorhanden und Kickoff weit, oder Match finalisiert / ohne utc_kickoff) — Tournament-HTTP und SSE übersprungen.",
+			"noSseEligible": "Keine Matches brauchen Odds-Abruf — Buchmacher-HTTP übersprungen.",
+			"noCurrentMatches": "Keine Matches in match_schedules für current — Odds-Cron übersprungen.",
+			"farBothComplete": "Odds für current und next bereits vorhanden, Kickoff weit — Cron-Skip ohne HTTP.",
+			"farCurrentCompleteNoNext": "Current-Odds vollständig, kein next-Slot — Cron-Skip.",
+			"currentExhaustedNoNext": "Current ohne pending Matches und kein next — Cron-Skip.",
+			"currentExhaustedNextComplete": "Current erschöpft, next-Odds bereits vorhanden — Cron-Skip.",
+			"currentMissingKickoff": "Current-pending ohne utc_kickoff — nur fehlende Odds, next übersprungen.",
+			"invalidInput": "Ungültiger ODDS-Cron-Kontext (Liga/Saison) — Skip.",
 			"mappingFailures": "Matches konnten nicht auf Provider-Events gemappt werden ({{count}}).",
 			"soccer365FullMatchParseFailed": "soccer365-Matchkarte konnte nicht geparst werden.",
 			"fullMatchAmbiguous": "Mehrere FULL-Kandidaten bei Resolve über Kickoff+Aliase.",
@@ -1395,7 +1410,7 @@
 				"roundsParsed": "aus der Quelle geparste Runden"
 			},
 			"ODDS": {
-				"eligible": "elig — Kandidaten-Matches für Odds-Update in den gewählten Slots",
+				"eligible": "elig — Kandidaten-Matches für Odds-Update im gewählten Spieltag",
 				"matched": "match — erfolgreich auf Buchmacher-Events gemappt",
 				"saved": "save — Odds in die odds-Collection gespeichert",
 				"sseCalls": "SSE — Event-Detail-Requests (pro Match)",

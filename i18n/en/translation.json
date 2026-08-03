@@ -1361,11 +1361,19 @@
 			"trigger": "Trigger",
 			"provider": "Provider",
 			"league": "League",
+			"matchday": "Matchday",
 			"duration": "Duration",
 			"status": "Status",
 			"counters": "Counters",
 			"http": "HTTP"
 		},
+		"slotScope": {
+			"CURRENT": "current",
+			"NEXT": "next",
+			"BOTH": "current+next",
+			"SKIP": "skip"
+		},
+		"oddsSlotDetail": "Matchday: {{matchday}} · slot: {{scope}}",
 		"http": {
 			"type": "Type",
 			"target": "Target",
@@ -1381,7 +1389,14 @@
 			"noLiveCandidates": "No matches in the LIVE window (by utc_kickoff / status) — no HTTP.",
 			"noSlots": "No matchday slots to sync odds for.",
 			"leagueNotSupported": "League is not supported by this LIVE provider.",
-			"noSseEligible": "No matches currently need odds refresh (odds already present and kickoff far, or match finalized / missing utc_kickoff) — tournament HTTP and SSE skipped.",
+			"noSseEligible": "No matches need odds fetch — bookmaker HTTP skipped.",
+			"noCurrentMatches": "No matches in match_schedules for current slot — odds cron skipped.",
+			"farBothComplete": "Odds already present for current and next, kickoff far — cron skip, no HTTP.",
+			"farCurrentCompleteNoNext": "Current odds complete and no next slot — cron skip.",
+			"currentExhaustedNoNext": "Current has no pending matches and no next slot — cron skip.",
+			"currentExhaustedNextComplete": "Current exhausted and next odds already present — cron skip.",
+			"currentMissingKickoff": "Current pending matches lack utc_kickoff — fill missing only, next skipped.",
+			"invalidInput": "Invalid ODDS cron context (league/season) — skip.",
 			"mappingFailures": "Could not map matches to provider events ({{count}}).",
 			"soccer365FullMatchParseFailed": "Failed to parse soccer365 match card.",
 			"fullMatchAmbiguous": "Multiple FULL resolve candidates for kickoff+aliases.",
@@ -1395,7 +1410,7 @@
 				"roundsParsed": "rounds parsed from the source response"
 			},
 			"ODDS": {
-				"eligible": "elig — candidate matches for odds update in selected slots",
+				"eligible": "elig — candidate matches for odds update in the selected matchday",
 				"matched": "match — successfully mapped to bookmaker events",
 				"saved": "save — odds saved to the odds collection",
 				"sseCalls": "SSE — event-detail requests (per match)",

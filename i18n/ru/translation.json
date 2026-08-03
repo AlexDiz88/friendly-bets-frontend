@@ -1361,11 +1361,19 @@
 			"trigger": "Trigger",
 			"provider": "Provider",
 			"league": "Лига",
+			"matchday": "Тур",
 			"duration": "Длит.",
 			"status": "Статус",
 			"counters": "Counters",
 			"http": "HTTP"
 		},
+		"slotScope": {
+			"CURRENT": "current",
+			"NEXT": "next",
+			"BOTH": "current+next",
+			"SKIP": "skip"
+		},
+		"oddsSlotDetail": "Тур: {{matchday}} · слот: {{scope}}",
 		"http": {
 			"type": "Type",
 			"target": "Target",
@@ -1381,7 +1389,14 @@
 			"noLiveCandidates": "Нет матчей в окне LIVE (по utc_kickoff / статусу) — HTTP не выполнялся.",
 			"noSlots": "Нет слотов тура для синхронизации кэфов.",
 			"leagueNotSupported": "Лига не поддерживается этим LIVE-провайдером.",
-			"noSseEligible": "Нет матчей, которым сейчас нужны кэфы (уже есть и kickoff далеко, или матч финализирован / без utc_kickoff) — запрос к турниру и SSE пропущены.",
+			"noSseEligible": "Нет матчей для запроса кэфов — HTTP к букмекеру пропущен.",
+			"noCurrentMatches": "В current-туре нет матчей в match_schedules — запрос кэфов пропущен.",
+			"farBothComplete": "Кэфы на current и next уже есть, kickoff далеко — cron skip без HTTP.",
+			"farCurrentCompleteNoNext": "Кэфы на current полные, next-слота нет — cron skip.",
+			"currentExhaustedNoNext": "Current-тур уже без pending-матчей, next нет — cron skip.",
+			"currentExhaustedNextComplete": "Current исчерпан, на next кэфы уже есть — cron skip.",
+			"currentMissingKickoff": "У pending-матчей current нет utc_kickoff — только дозаполнение без next.",
+			"invalidInput": "Некорректный контекст ODDS cron (лига/сезон) — skip.",
 			"mappingFailures": "Не удалось сопоставить матчи с событиями провайдера ({{count}}).",
 			"soccer365FullMatchParseFailed": "Не удалось разобрать карточку матча soccer365.",
 			"fullMatchAmbiguous": "Несколько кандидатов при resolve FULL по kickoff+алиасам.",
@@ -1395,7 +1410,7 @@
 				"roundsParsed": "туров/раундов разобрано из ответа источника"
 			},
 			"ODDS": {
-				"eligible": "elig — матчей-кандидатов на обновление кэфов в выбранных слотах",
+				"eligible": "elig — матчей-кандидатов на обновление кэфов в выбранном туре",
 				"matched": "match — успешно сопоставлено с событиями букмекера",
 				"saved": "save — кэфы сохранены в коллекцию odds",
 				"sseCalls": "SSE — запросов деталей события (по матчам)",
