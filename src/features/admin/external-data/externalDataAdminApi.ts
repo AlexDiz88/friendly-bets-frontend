@@ -18,6 +18,8 @@ export type LayerAssignment = {
 export type ExternalDataLayerConfig = {
 	layers: Partial<Record<ExternalDataLayer, LayerAssignment>>;
 	capabilities: Record<string, string[]>;
+	/** ODDS: hours before kickoff for force-refresh / existing-odds window. */
+	oddsRefreshWithinHours?: number | null;
 };
 
 export async function fetchExternalDataLayerConfig(): Promise<ExternalDataLayerConfig> {
@@ -30,7 +32,7 @@ export async function fetchExternalDataLayerConfig(): Promise<ExternalDataLayerC
 }
 
 export async function patchExternalDataLayerConfig(
-	body: Pick<ExternalDataLayerConfig, 'layers'>
+	body: Pick<ExternalDataLayerConfig, 'layers' | 'oddsRefreshWithinHours'>
 ): Promise<ExternalDataLayerConfig> {
 	const result = await apiFetch(apiUrl('/api/admin/external-data/layers'), {
 		method: 'PATCH',
