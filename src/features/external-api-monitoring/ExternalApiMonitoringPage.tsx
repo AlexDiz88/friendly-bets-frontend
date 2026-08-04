@@ -78,11 +78,20 @@ function formatDuration(ms?: number | null): string {
 	return `${minutes}m${seconds}s`;
 }
 
-function formatHttpRatio(failed?: number | null, total?: number | null): string {
-	const f = failed ?? 0;
+function httpSuccessCount(failed?: number | null, total?: number | null): number {
 	const tot = total ?? 0;
-	if (f === 0 && tot === 0) return '—';
-	return `${f}/${tot}`;
+	const failedCount = failed ?? 0;
+	return Math.max(0, tot - failedCount);
+}
+
+function formatHttpRatio(failed?: number | null, total?: number | null): string {
+	const tot = total ?? 0;
+	if (tot === 0) return '—';
+	return `${httpSuccessCount(failed, tot)}/${tot}`;
+}
+
+function hasHttpFailures(failed?: number | null): boolean {
+	return (failed ?? 0) > 0;
 }
 
 type CounterDetailKey =
@@ -715,11 +724,10 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 															<Typography
 																component="span"
 																sx={{
-																	color:
-																		(run.httpRequestsFailed ?? 0) > 0
-																			? '#f43f5e'
-																			: 'text.secondary',
-																	fontWeight: (run.httpRequestsFailed ?? 0) > 0 ? 700 : 500,
+																	color: hasHttpFailures(run.httpRequestsFailed)
+																		? '#f43f5e'
+																		: 'text.secondary',
+																	fontWeight: hasHttpFailures(run.httpRequestsFailed) ? 700 : 500,
 																}}
 															>
 																{formatHttpRatio(run.httpRequestsFailed, run.httpRequestsTotal)}
