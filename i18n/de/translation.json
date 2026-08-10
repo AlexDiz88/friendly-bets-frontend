@@ -30,6 +30,31 @@
 		"halftime": "Halbzeit",
 		"live": "Live"
 	},
+	"matchEvents": {
+		"title": "Spielereignisse",
+		"empty": "Noch keine Ereignisse",
+		"addedTime": "+{{minutes}}′",
+		"penMark": "ELF",
+		"period": {
+			"h1": "1. Halbzeit",
+			"h2": "2. Halbzeit",
+			"ot": "Verlängerung",
+			"pen": "Elfmeter"
+		},
+		"badge": {
+			"goal": "Tor",
+			"goalShort": "T",
+			"pen": "Elfmeter",
+			"penShort": "Elf",
+			"own": "Eigentor",
+			"ownShort": "ET",
+			"miss": "Verschossen",
+			"missShort": "Fehl",
+			"red": "Rot",
+			"secondYellow": "Gelb-Rot",
+			"secondYellowShort": "GR"
+		}
+	},
 	"gameResultEditScore": "Ergebnis korrigieren",
 	"gameResultEditScoreTitle": "Spielstand",
 	"gameResultAdminOptions": "Admin-Optionen",
@@ -314,6 +339,9 @@
 	"teamChampionatSection": "championat.com",
 	"teamChampionatExternalName": "Name auf championat.com",
 	"teamChampionatExternalNameHint": "Exakter Text von der Seite, wenn er vom Teamnamen abweicht",
+	"teamRuscoreSection": "ruscore.ru",
+	"teamRuscoreExternalName": "Name auf ruscore.ru",
+	"teamRuscoreExternalNameHint": "Exakter Text von der Seite, wenn er vom Teamnamen abweicht",
 	"teamMarathonbetSection": "Marathonbet (new.marathonbet.ru)",
 	"teamMarathonbetExternalName": "Name in der Marathonbet-Linie",
 	"teamMarathonbetExternalNameHint": "Exakter Text von der Seite, z. B. Korea Republic oder Mexiko (ohne „(Sieg)“)",
@@ -350,6 +378,7 @@
 	"externalTeamAliasProviderMelbet": "Melbet",
 	"externalTeamAliasProvider24score": "24score.pro",
 	"externalTeamAliasProviderChampionat": "championat.com",
+	"externalTeamAliasProviderRuscore": "ruscore.ru",
 	"manualExternalSyncTitle": "Manuelle Synchronisation",
 	"manualExternalSyncHint": "Einmalige SCHEDULE-, ODDS- (Marathonbet / Melbet) und LIVE-Sync für eine ausgewählte Liga.",
 	"externalDataScheduleSyncTitle": "Spielplan jetzt",
@@ -703,6 +732,12 @@
 		"melbetNetworkError": "Melbet: Netzwerkfehler",
 		"melbetParseFailed": "Melbet: Antwort konnte nicht verarbeitet werden",
 		"soccer365FetchFailed": "Seite von soccer365.ru konnte nicht geladen werden",
+		"ruscoreFetchFailed": "Seite von ruscore.ru konnte nicht geladen werden",
+		"ruscoreParseFailed": "Antwort von ruscore.ru konnte nicht geparst werden",
+		"ruscoreGameIdRequired": "ruscore Game-ID als slug/eventId angeben",
+		"ruscoreTournamentNotConfigured": "ruscore Season-ID / Slug für diese Liga nicht konfiguriert",
+		"ruscoreTeamNamesEmpty": "Auf ruscore keine Teamnamen gefunden",
+		"ruscoreFullMatchParseFailed": "ruscore-Spielkarte konnte nicht geparst werden",
 		"soccer365CompetitionNotConfigured": "soccer365 competitionId ist für diese Liga nicht konfiguriert",
 		"soccer365MatchdayOneTeamNamesEmpty": "soccer365-Spielplan hat keine Spiele des 1. Spieltags — Teamnamen nicht verfügbar",
 		"sportsRuFetchFailed": "Seite von sports.ru konnte nicht geladen werden",
@@ -1181,6 +1216,9 @@
 			"externalDataLayerPrimaryMissing": "Primary nicht gesetzt",
 			"externalDataProviderUnavailable": "Provider nicht verfügbar",
 			"soccer365FetchFailed": "soccer365: Netz/HTTP",
+			"ruscoreFetchFailed": "ruscore: Netz/HTTP",
+			"ruscoreParseFailed": "ruscore: HTML-Parse",
+			"ruscoreFullMatchParseFailed": "ruscore: Spielkarte",
 			"soccer365GameIdRequired": "soccer365 game id fehlt",
 			"soccer365FullMatchParseFailed": "soccer365: Karte nicht lesbar",
 			"sportsRuFetchFailed": "sports.ru: Netz/HTTP",
@@ -1254,8 +1292,12 @@
 		"liveHint": "24score-Fußballseite für ein Datum. Title-Filter = Ligennamen-Teilstring. Klick auf Spiel = Karten-Vorschau.",
 		"liveCardPreview": "Spielkarten-Vorschau",
 		"liveEmpty": "Datum wählen und Anfragen klicken",
+		"fullMatchCardPreview": "Karten-Vorschau nach FULL",
+		"fullMatchCardPreviewBetsHint": "Teilnehmer-Tipps erscheinen hier (wie im Dialog nach Finalisierung)",
 		"fullMatchHint": "soccer365-Spielkarte nach Game-ID (aus SCHEDULE).",
+		"fullMatchHintRuscore": "Tag /football/{date} oder Karte slug/eventId (Bot-Prerender).",
 		"fullMatchEmpty": "Game-ID einfügen und Anfragen klicken",
+		"fullMatchEmptyRuscore": "Datum (Spiel-Liste) oder slug/eventId für die Karte angeben",
 		"titleContainsPlaceholder": "z. B. Kasachstan",
 		"layer": {
 			"SCHEDULE": "SCHEDULE",
@@ -1315,19 +1357,28 @@
 		},
 		"fullMatch": {
 			"goalsTitle": "Tore",
+			"eventsTitle": "Ereignisse",
 			"statsTitle": "Statistik",
 			"ownGoal": "Eigentor",
 			"penalty": "Elfmeter",
 			"penShootout": "Elfmeterschießen",
 			"penShootoutMinute": "Elfmeterschießen",
 			"miss": "Verschossen",
+			"redCard": "Rot",
+			"secondYellowRed": "Gelb-Rot",
 			"stat": {
 				"xg": "xG",
 				"shots": "Schüsse",
 				"shotsOnTarget": "Torschüsse",
 				"possession": "Ballbesitz %",
-				"yellowCards": "Gelbe Karten"
-			}
+				"yellowCards": "Gelbe Karten",
+				"redCards": "Rote Karten",
+				"corners": "Ecken",
+				"offsides": "Abseits",
+				"saves": "Paraden"
+			},
+			"addedTime": "Nachspielzeit",
+			"ruscoreGameIdHint": "Format: slug/eventId (oder Spiel in der Tagesliste anklicken)"
 		}
 	},
 	"externalApiMonitoring": {

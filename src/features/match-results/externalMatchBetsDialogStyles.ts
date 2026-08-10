@@ -102,7 +102,7 @@ export const externalMatchBetsDialogPaperSx: SxProps<Theme> = (theme) => {
 		mx: 1,
 		display: 'flex',
 		flexDirection: 'column',
-		maxHeight: 'min(90vh, 560px)',
+		maxHeight: 'min(90vh, 720px)',
 		bgcolor: isDark ? '#0b1424' : '#e8f4ef',
 		backgroundImage: isDark
 			? 'radial-gradient(ellipse 100% 70% at 50% -10%, rgba(0, 107, 66, 0.24) 0%, transparent 55%)'
