@@ -59,7 +59,9 @@ export async function sandboxLive(body: {
 
 export async function sandboxFullMatch(body: {
 	provider: string;
-	gameId: string;
+	gameId?: string;
+	date?: string;
+	titleContains?: string;
 }): Promise<SandboxResult> {
 	return postSandbox('/api/admin/external-data/sandbox/full-match', body);
 }

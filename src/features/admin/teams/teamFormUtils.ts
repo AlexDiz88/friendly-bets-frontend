@@ -9,6 +9,7 @@ import {
 	FOOTBALL24_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 	CHAMPIONAT_PROVIDER,
+	RUSCORE_PROVIDER,
 } from './teamProviderConstants';
 
 const DROPPED_PROVIDERS = new Set([
@@ -65,6 +66,13 @@ export const TEAM_EXTERNAL_ALIAS_FIELDS = [
 		sectionKey: 'teamChampionatSection',
 		labelKey: 'teamChampionatExternalName',
 		inputId: 'championat-external-name',
+	},
+	{
+		provider: RUSCORE_PROVIDER,
+		field: 'ruscoreExternalName',
+		sectionKey: 'teamRuscoreSection',
+		labelKey: 'teamRuscoreExternalName',
+		inputId: 'ruscore-external-name',
 	},
 	{
 		provider: MARATHONBET_PROVIDER,

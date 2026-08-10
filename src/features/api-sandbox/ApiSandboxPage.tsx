@@ -75,7 +75,7 @@ export default function ApiSandboxPage(): JSX.Element {
 		result: null,
 	});
 	const [fullMatch, setFullMatch] = useState<LayerStandState<FullMatchStandForm>>({
-		form: { provider: 'soccer365.ru', gameId: '' },
+		form: { provider: 'soccer365.ru', gameId: '', date: todayIsoDate(), titleContains: '' },
 		loading: false,
 		result: null,
 	});
@@ -233,15 +233,25 @@ export default function ApiSandboxPage(): JSX.Element {
 	}, [dispatch, live.form]);
 
 	const runFullMatch = useCallback(async () => {
-		if (!fullMatch.form.gameId.trim()) {
+		const provider = fullMatch.form.provider;
+		const gameId = fullMatch.form.gameId.trim();
+		const date = fullMatch.form.date.trim();
+		if (provider === 'ruscore.ru') {
+			if (!gameId && !date) {
+				dispatch(showErrorSnackbar({ message: 'sandboxDateRequired' }));
+				return;
+			}
+		} else if (!gameId) {
 			dispatch(showErrorSnackbar({ message: 'sandboxGameIdRequired' }));
 			return;
 		}
 		setFullMatch((prev) => ({ ...prev, loading: true }));
 		try {
 			const result = await sandboxFullMatch({
-				provider: fullMatch.form.provider,
-				gameId: fullMatch.form.gameId.trim(),
+				provider,
+				gameId: gameId || undefined,
+				date: !gameId && date ? date : undefined,
+				titleContains: fullMatch.form.titleContains.trim() || undefined,
 			});
 			setFullMatch((prev) => ({ ...prev, result, loading: false }));
 		} catch (err) {
@@ -249,6 +259,30 @@ export default function ApiSandboxPage(): JSX.Element {
 			dispatch(showErrorSnackbar({ message: (err as Error).message }));
 		}
 	}, [dispatch, fullMatch.form]);
+
+	const openFullMatchCard = useCallback(
+		async (gameId: string) => {
+			if (!gameId.trim()) {
+				return;
+			}
+			setFullMatch((prev) => ({
+				...prev,
+				form: { ...prev.form, gameId: gameId.trim() },
+				loading: true,
+			}));
+			try {
+				const result = await sandboxFullMatch({
+					provider: fullMatch.form.provider,
+					gameId: gameId.trim(),
+				});
+				setFullMatch((prev) => ({ ...prev, result, loading: false }));
+			} catch (err) {
+				setFullMatch((prev) => ({ ...prev, loading: false }));
+				dispatch(showErrorSnackbar({ message: (err as Error).message }));
+			}
+		},
+		[dispatch, fullMatch.form.provider]
+	);
 
 	return (
 		<Box sx={sandboxPageRootSx}>
@@ -308,6 +342,7 @@ export default function ApiSandboxPage(): JSX.Element {
 							loading={fullMatch.loading}
 							result={fullMatch.result}
 							onRun={() => void runFullMatch()}
+							onOpenMatch={(gameId) => void openFullMatchCard(gameId)}
 						/>
 					) : null}
 				</>
