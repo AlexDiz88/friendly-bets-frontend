@@ -30,6 +30,31 @@
 		"halftime": "Half-time",
 		"live": "Live"
 	},
+	"matchEvents": {
+		"title": "Match events",
+		"empty": "No events yet",
+		"addedTime": "+{{minutes}}′",
+		"penMark": "PEN",
+		"period": {
+			"h1": "1st half",
+			"h2": "2nd half",
+			"ot": "Extra time",
+			"pen": "Penalties"
+		},
+		"badge": {
+			"goal": "Goal",
+			"goalShort": "G",
+			"pen": "Penalty",
+			"penShort": "Pen",
+			"own": "Own goal",
+			"ownShort": "OG",
+			"miss": "Missed penalty",
+			"missShort": "Miss",
+			"red": "Red card",
+			"secondYellow": "Second yellow",
+			"secondYellowShort": "2Y"
+		}
+	},
 	"gameResultEditScore": "Edit score",
 	"gameResultEditScoreTitle": "Match score",
 	"gameResultAdminOptions": "Admin options",
@@ -1267,6 +1292,8 @@
 		"liveHint": "24score football page for a date. Title filter matches league name substring. Click a match for card preview.",
 		"liveCardPreview": "Match card preview",
 		"liveEmpty": "Pick a date and click Request",
+		"fullMatchCardPreview": "Finished card preview (after FULL)",
+		"fullMatchCardPreviewBetsHint": "Participant bets will appear here (same as the post-finalization dialog)",
 		"fullMatchHint": "soccer365 match card by game ID (from SCHEDULE).",
 		"fullMatchHintRuscore": "Day /football/{date} or card slug/eventId (bot prerender).",
 		"fullMatchEmpty": "Paste a game ID and click Request",

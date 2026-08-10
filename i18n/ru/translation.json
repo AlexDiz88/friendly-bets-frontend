@@ -30,6 +30,31 @@
 		"halftime": "Перерыв",
 		"live": "Live"
 	},
+	"matchEvents": {
+		"title": "События матча",
+		"empty": "Событий пока нет",
+		"addedTime": "+{{minutes}}′",
+		"penMark": "PEN",
+		"period": {
+			"h1": "1-й тайм",
+			"h2": "2-й тайм",
+			"ot": "Овертайм",
+			"pen": "Пенальти"
+		},
+		"badge": {
+			"goal": "Гол",
+			"goalShort": "Г",
+			"pen": "Пенальти",
+			"penShort": "Пен",
+			"own": "Автогол",
+			"ownShort": "АГ",
+			"miss": "Незабитый пенальти",
+			"missShort": "Мис",
+			"red": "Красная",
+			"secondYellow": "Вторая жёлтая",
+			"secondYellowShort": "2Ж"
+		}
+	},
 	"gameResultEditScore": "Исправить счёт",
 	"gameResultEditScoreTitle": "Счёт матча",
 	"gameResultAdminOptions": "Админ опции",
@@ -1267,6 +1292,8 @@
 		"liveHint": "Страница футбола 24score на дату. Фильтр title — подстрока названия лиги. Клик по матчу — превью карточки.",
 		"liveCardPreview": "Превью карточки матча",
 		"liveEmpty": "Выберите дату и нажмите «Запросить»",
+		"fullMatchCardPreview": "Превью карточки после FULL",
+		"fullMatchCardPreviewBetsHint": "Здесь будут ставки участников (как в диалоге после финализации)",
 		"fullMatchHint": "Карточка матча soccer365 по game ID (из SCHEDULE).",
 		"fullMatchHintRuscore": "День /football/{date} или карточка slug/eventId (bot-prerender).",
 		"fullMatchEmpty": "Вставьте game ID и нажмите «Запросить»",

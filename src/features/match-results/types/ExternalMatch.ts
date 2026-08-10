@@ -1,5 +1,6 @@
 import GameScore from '../../bets/types/GameScore';
 import { TeamDisplayNames } from '../../admin/teams/types/Team';
+import type MatchGoalEvent from './MatchGoalEvent';
 
 export interface ExternalMatch {
 	id?: string;
@@ -35,6 +36,10 @@ export interface ExternalMatch {
 	wc26ScheduleId?: number | null;
 	/** Канонический id тура (для определения плей-офф / ОТ). */
 	slotId?: string | null;
+	/** FULL_MATCH events (goals, reds, misses). */
+	goals?: MatchGoalEvent[] | null;
+	addedTimeFirstHalf?: number | null;
+	addedTimeSecondHalf?: number | null;
 }
 
 export interface MatchdayPageData {

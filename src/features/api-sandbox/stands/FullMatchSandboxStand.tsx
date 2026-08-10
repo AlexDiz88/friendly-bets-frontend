@@ -17,6 +17,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import { useFormatUserDateTime } from '../../../shared/useFormatUserDateTime';
+import { getGameScoreView } from '../../../components/utils/gameScoreValidation';
+import ExternalMatchFinishedPreview from '../../match-results/ExternalMatchFinishedPreview';
 import type { SandboxResult } from '../apiSandboxApi';
 import {
 	LAYER_ACCENT,
@@ -71,11 +73,19 @@ type FullMatchStats = {
 	xgAway?: number | null;
 };
 
+type FullMatchParsedTeam = {
+	id?: string;
+	title?: string;
+	logoKey?: string | null;
+};
+
 type FullMatchCardParsed = {
 	gameId?: string;
 	statusText?: string;
 	homeTeamName?: string;
 	awayTeamName?: string;
+	homeTeam?: FullMatchParsedTeam | null;
+	awayTeam?: FullMatchParsedTeam | null;
 	competitionName?: string;
 	goalsCount?: number;
 	goals?: FullMatchGoal[];
@@ -162,6 +172,20 @@ function isDayBrowse(parsed: unknown): parsed is DayBrowseParsed {
 function isCardParsed(parsed: unknown): parsed is FullMatchCardParsed {
 	return !!parsed && typeof parsed === 'object' && ('gameScore' in (parsed as object) || 'goals' in (parsed as object) || 'statusText' in (parsed as object));
 }
+
+function teamFromParsed(resolved: FullMatchParsedTeam | null | undefined, fallbackName?: string) {
+	const title = resolved?.title?.trim() || fallbackName?.trim() || '—';
+	const logoKey = resolved
+		? resolved.logoKey?.trim() || resolved.title || 'no_image'
+		: 'no_image';
+	return {
+		id: resolved?.id || `sandbox-${title}`,
+		title,
+		logoKey,
+	};
+}
+
+const FINISHED_CARD_MAX_WIDTH = 400;
 
 export default function FullMatchSandboxStand({
 	providers,
@@ -258,6 +282,32 @@ export default function FullMatchSandboxStand({
 	const cardSummary =
 		result?.success && cardParsed ? (
 			<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+				<Box sx={{ maxWidth: FINISHED_CARD_MAX_WIDTH, width: '100%' }}>
+					<Typography sx={{ px: 0.25, pb: 0.5, fontSize: '0.75rem', fontWeight: 700 }}>
+						{t('apiSandbox.fullMatchCardPreview')}
+					</Typography>
+					<ExternalMatchFinishedPreview
+						homeTeam={teamFromParsed(cardParsed.homeTeam, cardParsed.homeTeamName)}
+						awayTeam={teamFromParsed(cardParsed.awayTeam, cardParsed.awayTeamName)}
+						scoreView={
+							cardParsed.gameScore?.fullTime && cardParsed.gameScore?.firstTime
+								? getGameScoreView(
+										{
+											fullTime: cardParsed.gameScore.fullTime ?? null,
+											firstTime: cardParsed.gameScore.firstTime ?? null,
+											overTime: cardParsed.gameScore.overTime ?? null,
+											penalty: cardParsed.gameScore.penalty ?? null,
+										},
+										false
+									)
+								: cardParsed.gameScore?.fullTime || '—'
+						}
+						events={cardParsed.goals}
+						addedTimeFirstHalf={cardParsed.addedTimeFirstHalf}
+						addedTimeSecondHalf={cardParsed.addedTimeSecondHalf}
+					/>
+				</Box>
+
 				<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
 					<CopyableValue value={cardParsed.gameId} label={t('apiSandbox.fields.gameId')} />
 					{cardParsed.competitionName ? (

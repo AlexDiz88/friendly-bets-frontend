@@ -30,6 +30,7 @@ import { resolveExternalMatchScoreView } from './externalMatchScoreView';
 import { parseUtcDate } from '../../shared/utcDate';
 import type { ExternalMatch } from './types/ExternalMatch';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
+import MatchEventsTimeline from './MatchEventsTimeline';
 import {
 	externalMatchBetsDialogBodySx,
 	externalMatchBetsDialogCountSx,
@@ -243,6 +244,18 @@ export default function ExternalMatchBetsDialog({
 					</Typography>
 				) : null}
 			</Box>
+
+			{(match.goals && match.goals.length > 0)
+				|| match.addedTimeFirstHalf
+				|| match.addedTimeSecondHalf ? (
+				<Box sx={{ px: 1.25, pt: 0.85, pb: 0.35, flexShrink: 0 }}>
+					<MatchEventsTimeline
+						events={match.goals}
+						addedTimeFirstHalf={match.addedTimeFirstHalf}
+						addedTimeSecondHalf={match.addedTimeSecondHalf}
+					/>
+				</Box>
+			) : null}
 
 			<Box sx={externalMatchBetsDialogBodySx}>
 				{loading ? (
