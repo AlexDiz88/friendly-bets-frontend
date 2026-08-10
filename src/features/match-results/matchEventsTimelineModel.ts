@@ -3,7 +3,7 @@ import type MatchGoalEvent from './types/MatchGoalEvent';
 export type MatchEventsPeriod = 'H1' | 'H2' | 'OT' | 'PEN';
 
 export type MatchTimelineItem =
-	| { kind: 'event'; event: MatchGoalEvent; sortKey: number }
+	| { kind: 'event'; event: MatchGoalEvent; sortKey: number; scoreAfter?: string }
 	| { kind: 'addedTime'; minutes: number; sortKey: number };
 
 export type MatchEventsPeriodBlock = {
@@ -98,14 +98,50 @@ export function buildMatchEventsPeriods(
 
 	const order: MatchEventsPeriod[] = ['H1', 'H2', 'OT', 'PEN'];
 	const result: MatchEventsPeriodBlock[] = [];
+	const score = { home: 0, away: 0, penHome: 0, penAway: 0 };
 	for (const period of order) {
 		const items = buckets[period].slice().sort((a, b) => a.sortKey - b.sortKey);
 		if (items.length === 0) {
 			continue;
 		}
-		result.push({ period, items });
+		const withScores: MatchTimelineItem[] = items.map((item) => {
+			if (item.kind !== 'event') {
+				return item;
+			}
+			const scoreAfter = advanceRunningScore(item.event, score);
+			return scoreAfter != null ? { ...item, scoreAfter } : item;
+		});
+		result.push({ period, items: withScores });
 	}
 	return result;
+}
+
+/**
+ * Advances running score for a scoring event (same rules as GameScoreFromGoals:
+ * skip red/miss; shootout uses its own counters; teamSide is the benefiting side).
+ */
+function advanceRunningScore(
+	event: MatchGoalEvent,
+	score: { home: number; away: number; penHome: number; penAway: number }
+): string | undefined {
+	if (Boolean(event.redCard) || Boolean(event.missed)) {
+		return undefined;
+	}
+	const isHome = event.teamSide?.toUpperCase() === 'HOME';
+	if (Boolean(event.penaltyShootout)) {
+		if (isHome) {
+			score.penHome += 1;
+		} else {
+			score.penAway += 1;
+		}
+		return `${score.penHome}:${score.penAway}`;
+	}
+	if (isHome) {
+		score.home += 1;
+	} else {
+		score.away += 1;
+	}
+	return `${score.home}:${score.away}`;
 }
 
 export function formatMatchEventMinute(event: MatchGoalEvent): string {

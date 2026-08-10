@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, type SxProps, type Theme } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -68,7 +68,11 @@ function EventIcon({
 			src={src}
 			alt=""
 			aria-hidden
-			sx={framed ? [matchEventsBallIconSx, matchEventsFramedIconSx] : matchEventsBallIconSx}
+			sx={
+				(framed
+					? [matchEventsBallIconSx, matchEventsFramedIconSx]
+					: matchEventsBallIconSx) as SxProps<Theme>
+			}
 		/>
 	);
 }
