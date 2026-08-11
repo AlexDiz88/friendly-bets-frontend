@@ -10,6 +10,7 @@ import {
 	TWENTYFOUR_SCORE_PROVIDER,
 	CHAMPIONAT_PROVIDER,
 	RUSCORE_PROVIDER,
+	FLASHSCORE_PROVIDER,
 } from './teamProviderConstants';
 
 const DROPPED_PROVIDERS = new Set([
@@ -73,6 +74,13 @@ export const TEAM_EXTERNAL_ALIAS_FIELDS = [
 		sectionKey: 'teamRuscoreSection',
 		labelKey: 'teamRuscoreExternalName',
 		inputId: 'ruscore-external-name',
+	},
+	{
+		provider: FLASHSCORE_PROVIDER,
+		field: 'flashscoreExternalName',
+		sectionKey: 'teamFlashscoreSection',
+		labelKey: 'teamFlashscoreExternalName',
+		inputId: 'flashscore-external-name',
 	},
 	{
 		provider: MARATHONBET_PROVIDER,

@@ -342,6 +342,9 @@
 	"teamRuscoreSection": "ruscore.ru",
 	"teamRuscoreExternalName": "Name auf ruscore.ru",
 	"teamRuscoreExternalNameHint": "Exakter Text von der Seite, wenn er vom Teamnamen abweicht",
+	"teamFlashscoreSection": "flashscorekz.com",
+	"teamFlashscoreExternalName": "Name auf flashscorekz.com",
+	"teamFlashscoreExternalNameHint": "Exakter Text von der Seite, wenn er vom Teamnamen abweicht",
 	"teamMarathonbetSection": "Marathonbet (new.marathonbet.ru)",
 	"teamMarathonbetExternalName": "Name in der Marathonbet-Linie",
 	"teamMarathonbetExternalNameHint": "Exakter Text von der Seite, z. B. Korea Republic oder Mexiko (ohne „(Sieg)“)",
@@ -379,6 +382,7 @@
 	"externalTeamAliasProvider24score": "24score.pro",
 	"externalTeamAliasProviderChampionat": "championat.com",
 	"externalTeamAliasProviderRuscore": "ruscore.ru",
+	"externalTeamAliasProviderFlashscore": "flashscorekz.com",
 	"manualExternalSyncTitle": "Manuelle Synchronisation",
 	"manualExternalSyncHint": "Einmalige SCHEDULE-, ODDS- (Marathonbet / Melbet) und LIVE-Sync für eine ausgewählte Liga.",
 	"externalDataScheduleSyncTitle": "Spielplan jetzt",
@@ -738,6 +742,12 @@
 		"ruscoreTournamentNotConfigured": "ruscore Season-ID / Slug für diese Liga nicht konfiguriert",
 		"ruscoreTeamNamesEmpty": "Auf ruscore keine Teamnamen gefunden",
 		"ruscoreFullMatchParseFailed": "ruscore-Spielkarte konnte nicht geparst werden",
+		"flashscoreFetchFailed": "flashscorekz.com-Feed konnte nicht geladen werden",
+		"flashscoreParseFailed": "Antwort von flashscorekz.com konnte nicht geparst werden",
+		"flashscoreGameIdRequired": "flashscore Event-ID angeben",
+		"flashscoreTournamentNotConfigured": "flashscore-Turnierpfad für diese Liga nicht konfiguriert",
+		"flashscoreTeamNamesEmpty": "Auf flashscore keine Teamnamen gefunden",
+		"flashscoreFullMatchParseFailed": "flashscore-Spielkarte konnte nicht geparst werden",
 		"soccer365CompetitionNotConfigured": "soccer365 competitionId ist für diese Liga nicht konfiguriert",
 		"soccer365MatchdayOneTeamNamesEmpty": "soccer365-Spielplan hat keine Spiele des 1. Spieltags — Teamnamen nicht verfügbar",
 		"sportsRuFetchFailed": "Seite von sports.ru konnte nicht geladen werden",
@@ -1219,6 +1229,9 @@
 			"ruscoreFetchFailed": "ruscore: Netz/HTTP",
 			"ruscoreParseFailed": "ruscore: HTML-Parse",
 			"ruscoreFullMatchParseFailed": "ruscore: Spielkarte",
+			"flashscoreFetchFailed": "flashscore: Netz/HTTP",
+			"flashscoreParseFailed": "flashscore: Feed-Parse",
+			"flashscoreFullMatchParseFailed": "flashscore: Spielkarte",
 			"soccer365GameIdRequired": "soccer365 game id fehlt",
 			"soccer365FullMatchParseFailed": "soccer365: Karte nicht lesbar",
 			"sportsRuFetchFailed": "sports.ru: Netz/HTTP",
@@ -1378,7 +1391,8 @@
 				"saves": "Paraden"
 			},
 			"addedTime": "Nachspielzeit",
-			"ruscoreGameIdHint": "Format: slug/eventId (oder Spiel in der Tagesliste anklicken)"
+			"ruscoreGameIdHint": "Format: slug/eventId (oder Spiel in der Tagesliste anklicken)",
+			"flashscoreGameIdHint": "Format: eventId (8 Zeichen, oder Spiel in der Tagesliste anklicken)"
 		}
 	},
 	"externalApiMonitoring": {

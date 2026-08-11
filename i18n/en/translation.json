@@ -342,6 +342,9 @@
 	"teamRuscoreSection": "ruscore.ru",
 	"teamRuscoreExternalName": "Name on ruscore.ru",
 	"teamRuscoreExternalNameHint": "Exact label from the site when it differs from the team title",
+	"teamFlashscoreSection": "flashscorekz.com",
+	"teamFlashscoreExternalName": "Name on flashscorekz.com",
+	"teamFlashscoreExternalNameHint": "Exact label from the site when it differs from the team title",
 	"teamMarathonbetSection": "Marathonbet (new.marathonbet.ru)",
 	"teamMarathonbetExternalName": "Name on Marathonbet line",
 	"teamMarathonbetExternalNameHint": "Exact label from site, e.g. Korea Republic or Mexico (no “(win)” suffix)",
@@ -379,6 +382,7 @@
 	"externalTeamAliasProvider24score": "24score.pro",
 	"externalTeamAliasProviderChampionat": "championat.com",
 	"externalTeamAliasProviderRuscore": "ruscore.ru",
+	"externalTeamAliasProviderFlashscore": "flashscorekz.com",
 	"manualExternalSyncTitle": "Manual sync",
 	"manualExternalSyncHint": "One-off SCHEDULE, ODDS (Marathonbet / Melbet), and LIVE sync for a selected league.",
 	"externalDataScheduleSyncTitle": "Schedule now",
@@ -738,6 +742,12 @@
 		"ruscoreTournamentNotConfigured": "ruscore season id / slug is not configured for this league",
 		"ruscoreTeamNamesEmpty": "No team names found on ruscore",
 		"ruscoreFullMatchParseFailed": "Failed to parse ruscore match card",
+		"flashscoreFetchFailed": "Failed to load flashscorekz.com feed",
+		"flashscoreParseFailed": "Failed to parse flashscorekz.com response",
+		"flashscoreGameIdRequired": "Provide flashscore match event id",
+		"flashscoreTournamentNotConfigured": "flashscore tournament path is not configured for this league",
+		"flashscoreTeamNamesEmpty": "No team names found on flashscore",
+		"flashscoreFullMatchParseFailed": "Failed to parse flashscore match card",
 		"soccer365CompetitionNotConfigured": "soccer365 competitionId is not configured for this league",
 		"soccer365MatchdayOneTeamNamesEmpty": "soccer365 schedule has no matchday 1 fixtures — team names unavailable",
 		"sportsRuFetchFailed": "Failed to load sports.ru page",
@@ -1219,6 +1229,9 @@
 			"ruscoreFetchFailed": "ruscore: network/HTTP",
 			"ruscoreParseFailed": "ruscore: HTML parse",
 			"ruscoreFullMatchParseFailed": "ruscore: match card",
+			"flashscoreFetchFailed": "flashscore: network/HTTP",
+			"flashscoreParseFailed": "flashscore: feed parse",
+			"flashscoreFullMatchParseFailed": "flashscore: match card",
 			"soccer365GameIdRequired": "Missing soccer365 game id",
 			"soccer365FullMatchParseFailed": "soccer365: card parse failed",
 			"sportsRuFetchFailed": "sports.ru: network/HTTP",
@@ -1378,7 +1391,8 @@
 				"saves": "Saves"
 			},
 			"addedTime": "Added time",
-			"ruscoreGameIdHint": "Format: slug/eventId (or click a match in the day table)"
+			"ruscoreGameIdHint": "Format: slug/eventId (or click a match in the day table)",
+			"flashscoreGameIdHint": "Format: eventId (8 chars, or click a match in the day table)"
 		}
 	},
 	"externalApiMonitoring": {
