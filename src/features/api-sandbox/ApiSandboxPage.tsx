@@ -236,7 +236,7 @@ export default function ApiSandboxPage(): JSX.Element {
 		const provider = fullMatch.form.provider;
 		const gameId = fullMatch.form.gameId.trim();
 		const date = fullMatch.form.date.trim();
-		if (provider === 'ruscore.ru') {
+		if (provider === 'ruscore.ru' || provider === 'flashscorekz.com') {
 			if (!gameId && !date) {
 				dispatch(showErrorSnackbar({ message: 'sandboxDateRequired' }));
 				return;

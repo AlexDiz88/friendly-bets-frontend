@@ -342,6 +342,9 @@
 	"teamRuscoreSection": "ruscore.ru",
 	"teamRuscoreExternalName": "Название на ruscore.ru",
 	"teamRuscoreExternalNameHint": "Точная строка с сайта, если отличается от названия команды",
+	"teamFlashscoreSection": "flashscorekz.com",
+	"teamFlashscoreExternalName": "Название на flashscorekz.com",
+	"teamFlashscoreExternalNameHint": "Точная строка с сайта, если отличается от названия команды",
 	"teamMarathonbetSection": "Marathonbet (new.marathonbet.ru)",
 	"teamMarathonbetExternalName": "Название в линии Marathonbet",
 	"teamMarathonbetExternalNameHint": "Точная строка с сайта, напр. Республика Корея или Мексика (без «(победа)»)",
@@ -379,6 +382,7 @@
 	"externalTeamAliasProvider24score": "24score.pro",
 	"externalTeamAliasProviderChampionat": "championat.com",
 	"externalTeamAliasProviderRuscore": "ruscore.ru",
+	"externalTeamAliasProviderFlashscore": "flashscorekz.com",
 	"manualExternalSyncTitle": "Ручная синхронизация",
 	"manualExternalSyncHint": "Разовые sync расписания (SCHEDULE), кэфов ODDS (Marathonbet / Melbet) и live-счётов по выбранной лиге.",
 	"externalDataScheduleSyncTitle": "Расписание сейчас",
@@ -738,6 +742,12 @@
 		"ruscoreTournamentNotConfigured": "Для лиги не задан season id / slug ruscore",
 		"ruscoreTeamNamesEmpty": "На ruscore не найдены названия команд",
 		"ruscoreFullMatchParseFailed": "Не удалось разобрать карточку матча ruscore",
+		"flashscoreFetchFailed": "Не удалось загрузить feed flashscorekz.com",
+		"flashscoreParseFailed": "Не удалось разобрать ответ flashscorekz.com",
+		"flashscoreGameIdRequired": "Укажите event id матча flashscore",
+		"flashscoreTournamentNotConfigured": "Для лиги не задан путь турнира flashscore",
+		"flashscoreTeamNamesEmpty": "На flashscore не найдены названия команд",
+		"flashscoreFullMatchParseFailed": "Не удалось разобрать карточку матча flashscore",
 		"soccer365CompetitionNotConfigured": "Для лиги не настроен competitionId soccer365",
 		"soccer365MatchdayOneTeamNamesEmpty": "В расписании soccer365 нет матчей 1-го тура — названия команд недоступны",
 		"sportsRuFetchFailed": "Не удалось загрузить страницу sports.ru",
@@ -1219,6 +1229,9 @@
 			"ruscoreFetchFailed": "ruscore: сеть/HTTP",
 			"ruscoreParseFailed": "ruscore: разбор HTML",
 			"ruscoreFullMatchParseFailed": "ruscore: карточка матча",
+			"flashscoreFetchFailed": "flashscore: сеть/HTTP",
+			"flashscoreParseFailed": "flashscore: разбор feed",
+			"flashscoreFullMatchParseFailed": "flashscore: карточка матча",
 			"soccer365GameIdRequired": "Нет soccer365 game id",
 			"soccer365FullMatchParseFailed": "soccer365: разбор карточки",
 			"sportsRuFetchFailed": "sports.ru: сеть/HTTP",
@@ -1378,7 +1391,8 @@
 				"saves": "Сэйвы"
 			},
 			"addedTime": "Добавленное время",
-			"ruscoreGameIdHint": "Формат: slug/eventId (или клик по матчу в таблице дня)"
+			"ruscoreGameIdHint": "Формат: slug/eventId (или клик по матчу в таблице дня)",
+			"flashscoreGameIdHint": "Формат: eventId (8 символов, или клик по матчу в таблице дня)"
 		}
 	},
 	"externalApiMonitoring": {

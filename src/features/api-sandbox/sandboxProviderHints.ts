@@ -7,6 +7,7 @@ import {
 	TWENTYFOUR_SCORE_PROVIDER,
 	CHAMPIONAT_PROVIDER,
 	RUSCORE_PROVIDER,
+	FLASHSCORE_PROVIDER,
 } from '../admin/teams/teamProviderConstants';
 import type { ExternalDataLayer } from '../../shared/externalDataLayerColors';
 
@@ -91,6 +92,12 @@ export const SANDBOX_ID_HINTS: Partial<
 			{ label: 'LE', value: '5360' },
 			{ label: '2.BL', value: 'Вторая Бундеслига' },
 			{ label: 'EPL name', value: 'england-premier-league' },
+		],
+		[FLASHSCORE_PROVIDER]: [
+			{ label: 'EPL', value: 'Premier League' },
+			{ label: 'BL', value: 'Bundesliga' },
+			{ label: 'EPL stage', value: 'CfoA8Dmm' },
+			{ label: 'BL stage', value: 'jg0MwVuC' },
 		],
 	},
 };

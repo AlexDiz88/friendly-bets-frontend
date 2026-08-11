@@ -32,6 +32,7 @@ import {
 	TWENTYFOUR_SCORE_PROVIDER,
 	CHAMPIONAT_PROVIDER,
 	RUSCORE_PROVIDER,
+	FLASHSCORE_PROVIDER,
 } from '../teams/teamProviderConstants';
 import {
 	ExternalTeamNameChip,
@@ -48,6 +49,7 @@ const PROVIDERS = [
 	TWENTYFOUR_SCORE_PROVIDER,
 	CHAMPIONAT_PROVIDER,
 	RUSCORE_PROVIDER,
+	FLASHSCORE_PROVIDER,
 ] as const;
 
 const PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
@@ -59,6 +61,7 @@ const PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
 	[TWENTYFOUR_SCORE_PROVIDER]: new Set(['EPL', 'BL']),
 	[CHAMPIONAT_PROVIDER]: new Set(['EPL', 'BL']),
 	[RUSCORE_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
+	[FLASHSCORE_PROVIDER]: new Set(['EPL', 'BL']),
 };
 
 const PROVIDER_LABEL_KEY: Record<string, string> = {
@@ -70,6 +73,7 @@ const PROVIDER_LABEL_KEY: Record<string, string> = {
 	[TWENTYFOUR_SCORE_PROVIDER]: 'externalTeamAliasProvider24score',
 	[CHAMPIONAT_PROVIDER]: 'externalTeamAliasProviderChampionat',
 	[RUSCORE_PROVIDER]: 'externalTeamAliasProviderRuscore',
+	[FLASHSCORE_PROVIDER]: 'externalTeamAliasProviderFlashscore',
 };
 
 export default function ExternalTeamAliasesPanel(): JSX.Element {

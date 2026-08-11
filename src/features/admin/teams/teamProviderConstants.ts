@@ -7,3 +7,4 @@ export const SOCCER365_PROVIDER = 'soccer365.ru';
 export const SPORTS_RU_PROVIDER = 'sports.ru';
 export const FOOTBALL24_PROVIDER = 'football24.ua';
 export const RUSCORE_PROVIDER = 'ruscore.ru';
+export const FLASHSCORE_PROVIDER = 'flashscorekz.com';

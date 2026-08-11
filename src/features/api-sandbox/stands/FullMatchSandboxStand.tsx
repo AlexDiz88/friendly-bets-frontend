@@ -120,7 +120,9 @@ type DayBrowseParsed = {
 	competitions?: Array<{
 		title?: string;
 		seasonId?: number | null;
+		stageId?: string | null;
 		tournamentSlug?: string | null;
+		tournamentPath?: string | null;
 		matches?: DayMatchRow[];
 	}>;
 };
@@ -203,6 +205,8 @@ export default function FullMatchSandboxStand({
 	const providerOptions = providers.length > 0 ? providers : ['soccer365.ru'];
 	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
 	const isRuscore = safeProvider === 'ruscore.ru';
+	const isFlashscore = safeProvider === 'flashscorekz.com';
+	const isDayBrowseProvider = isRuscore || isFlashscore;
 	const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
 
 	const parsed = result?.parsed ?? null;
@@ -221,7 +225,11 @@ export default function FullMatchSandboxStand({
 					<Box key={`${comp.seasonId || comp.title}-${cIdx}`}>
 						<Typography sx={{ fontWeight: 700, fontSize: '0.85rem', mb: 0.5 }}>
 							{comp.title || '—'}
-							{comp.seasonId != null ? ` · ${comp.seasonId}` : ''}
+							{comp.seasonId != null
+								? ` · ${comp.seasonId}`
+								: comp.stageId
+									? ` · ${comp.stageId}`
+									: ''}
 						</Typography>
 						<TableContainer>
 							<Table size="small" sx={sandboxTableSx(layer)}>
@@ -498,7 +506,9 @@ export default function FullMatchSandboxStand({
 					{t('apiSandbox.layer.FULL_MATCH')}
 				</Typography>
 				<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', mt: -1 }}>
-					{isRuscore ? t('apiSandbox.fullMatchHintRuscore') : t('apiSandbox.fullMatchHint')}
+					{isDayBrowseProvider
+						? t('apiSandbox.fullMatchHintRuscore')
+						: t('apiSandbox.fullMatchHint')}
 				</Typography>
 
 				<Box>
@@ -523,7 +533,7 @@ export default function FullMatchSandboxStand({
 					</FormControl>
 				</Box>
 
-				{isRuscore ? (
+				{isDayBrowseProvider ? (
 					<>
 						<Box>
 							<Typography sx={sandboxFieldLabelSx}>{t('apiSandbox.fields.date')}</Typography>
@@ -553,8 +563,12 @@ export default function FullMatchSandboxStand({
 								size="small"
 								value={form.gameId}
 								onChange={(e) => onFormChange({ ...form, gameId: e.target.value })}
-								placeholder="slug/563678"
-								helperText={t('apiSandbox.fullMatch.ruscoreGameIdHint')}
+								placeholder={isFlashscore ? 'nNUWaFf5' : 'slug/563678'}
+								helperText={
+									isFlashscore
+										? t('apiSandbox.fullMatch.flashscoreGameIdHint')
+										: t('apiSandbox.fullMatch.ruscoreGameIdHint')
+								}
 							/>
 						</Box>
 					</>
@@ -575,7 +589,7 @@ export default function FullMatchSandboxStand({
 					layer={layer}
 					provider={safeProvider}
 					onApply={
-						isRuscore
+						isDayBrowseProvider
 							? (value) => onFormChange({ ...form, titleContains: value })
 							: undefined
 					}
@@ -596,7 +610,11 @@ export default function FullMatchSandboxStand({
 					result={result}
 					accent={accent}
 					summary={daySummary || cardSummary}
-					emptyHint={isRuscore ? t('apiSandbox.fullMatchEmptyRuscore') : t('apiSandbox.fullMatchEmpty')}
+					emptyHint={
+						isDayBrowseProvider
+							? t('apiSandbox.fullMatchEmptyRuscore')
+							: t('apiSandbox.fullMatchEmpty')
+					}
 				/>
 			</Box>
 		</Box>
