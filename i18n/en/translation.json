@@ -1377,6 +1377,7 @@
 			"penShootout": "Pen shootout",
 			"penShootoutMinute": "Penalty shootout",
 			"miss": "Miss",
+			"varDisallowed": "VAR: goal disallowed",
 			"redCard": "Red card",
 			"secondYellowRed": "Second yellow",
 			"stat": {

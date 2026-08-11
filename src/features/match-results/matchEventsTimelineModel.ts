@@ -41,7 +41,7 @@ export function isMatchTimelineEvent(event: MatchGoalEvent | null | undefined): 
 	if (!event) {
 		return false;
 	}
-	if (Boolean(event.redCard) || Boolean(event.missed) || Boolean(event.penaltyShootout)) {
+	if (Boolean(event.redCard) || Boolean(event.missed) || Boolean(event.varDisallowed) || Boolean(event.penaltyShootout)) {
 		return true;
 	}
 	// Regular / pen / own goal — anything with a player that is not a pure skip
@@ -124,7 +124,7 @@ function advanceRunningScore(
 	event: MatchGoalEvent,
 	score: { home: number; away: number; penHome: number; penAway: number }
 ): string | undefined {
-	if (Boolean(event.redCard) || Boolean(event.missed)) {
+	if (Boolean(event.redCard) || Boolean(event.missed) || Boolean(event.varDisallowed)) {
 		return undefined;
 	}
 	const isHome = event.teamSide?.toUpperCase() === 'HOME';

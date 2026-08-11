@@ -1377,6 +1377,7 @@
 			"penShootout": "Пенальти (серия)",
 			"penShootoutMinute": "Серия пенальти",
 			"miss": "Промах",
+			"varDisallowed": "VAR: гол отменён",
 			"redCard": "Красная",
 			"secondYellowRed": "Вторая жёлтая",
 			"stat": {
