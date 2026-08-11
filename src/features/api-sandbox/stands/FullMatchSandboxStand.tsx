@@ -19,6 +19,8 @@ import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessBut
 import { useFormatUserDateTime } from '../../../shared/useFormatUserDateTime';
 import { getGameScoreView } from '../../../components/utils/gameScoreValidation';
 import ExternalMatchFinishedPreview from '../../match-results/ExternalMatchFinishedPreview';
+import MatchStatsSection from '../../match-results/MatchStatsSection';
+import type MatchTeamStats from '../../match-results/types/MatchTeamStats';
 import type { SandboxResult } from '../apiSandboxApi';
 import {
 	LAYER_ACCENT,
@@ -53,27 +55,6 @@ type FullMatchGoal = {
 	secondYellow?: boolean;
 };
 
-type FullMatchStats = {
-	possessionHome?: number | null;
-	possessionAway?: number | null;
-	shotsHome?: number | null;
-	shotsAway?: number | null;
-	shotsOnTargetHome?: number | null;
-	shotsOnTargetAway?: number | null;
-	yellowCardsHome?: number | null;
-	yellowCardsAway?: number | null;
-	redCardsHome?: number | null;
-	redCardsAway?: number | null;
-	cornersHome?: number | null;
-	cornersAway?: number | null;
-	offsidesHome?: number | null;
-	offsidesAway?: number | null;
-	savesHome?: number | null;
-	savesAway?: number | null;
-	xgHome?: number | null;
-	xgAway?: number | null;
-};
-
 type FullMatchParsedTeam = {
 	id?: string;
 	title?: string;
@@ -90,7 +71,7 @@ type FullMatchCardParsed = {
 	competitionName?: string;
 	goalsCount?: number;
 	goals?: FullMatchGoal[];
-	stats?: FullMatchStats | null;
+	stats?: MatchTeamStats | null;
 	addedTimeFirstHalf?: number | null;
 	addedTimeSecondHalf?: number | null;
 	gameScore?: {
@@ -138,36 +119,6 @@ type FullMatchSandboxStandProps = {
 	onOpenMatch: (gameId: string) => void;
 };
 
-function StatCard({
-	label,
-	home,
-	away,
-	accent,
-}: {
-	label: string;
-	home: string | number | null | undefined;
-	away: string | number | null | undefined;
-	accent: string;
-}): JSX.Element {
-	return (
-		<Box
-			sx={{
-				p: 1.25,
-				borderRadius: 1.5,
-				border: `1px solid ${accent}44`,
-				background: `linear-gradient(135deg, ${accent}18 0%, transparent 70%)`,
-			}}
-		>
-			<Typography sx={{ fontSize: '0.68rem', fontWeight: 700, color: 'text.secondary', mb: 0.5 }}>
-				{label}
-			</Typography>
-			<Typography sx={{ fontFamily: 'monospace', fontWeight: 800, fontSize: '1.05rem' }}>
-				{home ?? '—'} : {away ?? '—'}
-			</Typography>
-		</Box>
-	);
-}
-
 function isDayBrowse(parsed: unknown): parsed is DayBrowseParsed {
 	return !!parsed && typeof parsed === 'object' && Array.isArray((parsed as DayBrowseParsed).competitions);
 }
@@ -213,7 +164,6 @@ export default function FullMatchSandboxStand({
 	const parsed = result?.parsed ?? null;
 	const dayParsed = isDayBrowse(parsed) ? parsed : null;
 	const cardParsed = !dayParsed && isCardParsed(parsed) ? parsed : null;
-	const stats = cardParsed?.stats;
 
 	const daySummary =
 		result?.success && dayParsed ? (
@@ -315,6 +265,7 @@ export default function FullMatchSandboxStand({
 						addedTimeFirstHalf={cardParsed.addedTimeFirstHalf}
 						addedTimeSecondHalf={cardParsed.addedTimeSecondHalf}
 					/>
+					<MatchStatsSection stats={cardParsed.stats} />
 				</Box>
 
 				<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -442,61 +393,6 @@ export default function FullMatchSandboxStand({
 									) : null}
 								</Box>
 							))}
-						</Box>
-					</Box>
-				) : null}
-
-				{stats ? (
-					<Box>
-						<Typography sx={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.05em', mb: 0.75, color: 'text.secondary' }}>
-							{t('apiSandbox.fullMatch.statsTitle')}
-						</Typography>
-						<Box
-							sx={{
-								display: 'grid',
-								gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-								gap: 1,
-							}}
-						>
-							<StatCard label={t('apiSandbox.fullMatch.stat.xg')} home={stats.xgHome} away={stats.xgAway} accent="#14b8a6" />
-							<StatCard label={t('apiSandbox.fullMatch.stat.shots')} home={stats.shotsHome} away={stats.shotsAway} accent="#0ea5e9" />
-							<StatCard
-								label={t('apiSandbox.fullMatch.stat.shotsOnTarget')}
-								home={stats.shotsOnTargetHome}
-								away={stats.shotsOnTargetAway}
-								accent="#22c55e"
-							/>
-							<StatCard
-								label={t('apiSandbox.fullMatch.stat.possession')}
-								home={stats.possessionHome}
-								away={stats.possessionAway}
-								accent="#f59e0b"
-							/>
-							<StatCard
-								label={t('apiSandbox.fullMatch.stat.corners')}
-								home={stats.cornersHome}
-								away={stats.cornersAway}
-								accent="#a855f7"
-							/>
-							<StatCard
-								label={t('apiSandbox.fullMatch.stat.offsides')}
-								home={stats.offsidesHome}
-								away={stats.offsidesAway}
-								accent="#64748b"
-							/>
-							<StatCard label={t('apiSandbox.fullMatch.stat.saves')} home={stats.savesHome} away={stats.savesAway} accent="#06b6d4" />
-							<StatCard
-								label={t('apiSandbox.fullMatch.stat.yellowCards')}
-								home={stats.yellowCardsHome}
-								away={stats.yellowCardsAway}
-								accent="#eab308"
-							/>
-							<StatCard
-								label={t('apiSandbox.fullMatch.stat.redCards')}
-								home={stats.redCardsHome}
-								away={stats.redCardsAway}
-								accent="#ef4444"
-							/>
 						</Box>
 					</Box>
 				) : null}
