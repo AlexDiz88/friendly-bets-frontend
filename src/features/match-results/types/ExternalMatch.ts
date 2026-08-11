@@ -1,6 +1,7 @@
 import GameScore from '../../bets/types/GameScore';
 import { TeamDisplayNames } from '../../admin/teams/types/Team';
 import type MatchGoalEvent from './MatchGoalEvent';
+import type MatchTeamStats from './MatchTeamStats';
 
 export interface ExternalMatch {
 	id?: string;
@@ -40,6 +41,8 @@ export interface ExternalMatch {
 	goals?: MatchGoalEvent[] | null;
 	addedTimeFirstHalf?: number | null;
 	addedTimeSecondHalf?: number | null;
+	/** FULL_MATCH team stats (null until finalized with stats). */
+	stats?: MatchTeamStats | null;
 }
 
 export interface MatchdayPageData {

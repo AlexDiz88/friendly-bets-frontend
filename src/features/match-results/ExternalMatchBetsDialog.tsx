@@ -31,6 +31,7 @@ import { parseUtcDate } from '../../shared/utcDate';
 import type { ExternalMatch } from './types/ExternalMatch';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import MatchEventsTimeline from './MatchEventsTimeline';
+import MatchStatsSection from './MatchStatsSection';
 import {
 	externalMatchBetsDialogBodySx,
 	externalMatchBetsDialogCountSx,
@@ -256,6 +257,8 @@ export default function ExternalMatchBetsDialog({
 					/>
 				</Box>
 			) : null}
+
+			<MatchStatsSection stats={match.stats} />
 
 			<Box sx={externalMatchBetsDialogBodySx}>
 				{loading ? (

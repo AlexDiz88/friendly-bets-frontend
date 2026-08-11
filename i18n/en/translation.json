@@ -1064,6 +1064,18 @@
 				"empty": "No participant placed a bet on this match",
 				"viewTooltip": "Participants' bets ({{count}})",
 				"viewAria": "View participants' bets on this match, {{count}} total"
+			},
+			"matchStats": {
+				"title": "Statistics",
+				"xg": "xG",
+				"shots": "Shots",
+				"shotsOnTarget": "Shots on target",
+				"saves": "Saves",
+				"possession": "Possession",
+				"corners": "Corners",
+				"offsides": "Offsides",
+				"yellowCards": "Yellow cards",
+				"redCards": "Red cards"
 			}
 		},
 		"oddsPick": {

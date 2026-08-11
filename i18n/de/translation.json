@@ -1064,6 +1064,18 @@
 				"empty": "Kein Teilnehmer hat auf dieses Spiel gewettet",
 				"viewTooltip": "Teilnehmerwetten ({{count}})",
 				"viewAria": "Teilnehmerwetten auf dieses Spiel ansehen, {{count}} insgesamt"
+			},
+			"matchStats": {
+				"title": "Statistik",
+				"xg": "xG",
+				"shots": "Schüsse",
+				"shotsOnTarget": "Schüsse aufs Tor",
+				"saves": "Paraden",
+				"possession": "Ballbesitz",
+				"corners": "Ecken",
+				"offsides": "Abseits",
+				"yellowCards": "Gelbe Karten",
+				"redCards": "Rote Karten"
 			}
 		},
 		"oddsPick": {
