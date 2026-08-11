@@ -19,7 +19,6 @@ import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessBut
 import { useFormatUserDateTime } from '../../../shared/useFormatUserDateTime';
 import { getGameScoreView } from '../../../components/utils/gameScoreValidation';
 import ExternalMatchFinishedPreview from '../../match-results/ExternalMatchFinishedPreview';
-import MatchStatsSection from '../../match-results/MatchStatsSection';
 import type MatchTeamStats from '../../match-results/types/MatchTeamStats';
 import type { SandboxResult } from '../apiSandboxApi';
 import {
@@ -264,8 +263,8 @@ export default function FullMatchSandboxStand({
 						events={cardParsed.goals}
 						addedTimeFirstHalf={cardParsed.addedTimeFirstHalf}
 						addedTimeSecondHalf={cardParsed.addedTimeSecondHalf}
+						stats={cardParsed.stats}
 					/>
-					<MatchStatsSection stats={cardParsed.stats} />
 				</Box>
 
 				<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
