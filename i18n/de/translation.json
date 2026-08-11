@@ -1377,6 +1377,7 @@
 			"penShootout": "Elfmeterschießen",
 			"penShootoutMinute": "Elfmeterschießen",
 			"miss": "Verschossen",
+			"varDisallowed": "VAR: Tor aberkannt",
 			"redCard": "Rot",
 			"secondYellowRed": "Gelb-Rot",
 			"stat": {

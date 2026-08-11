@@ -8,6 +8,7 @@ export default interface MatchGoalEvent {
 	penaltyShootout?: boolean | null;
 	ownGoal?: boolean | null;
 	missed?: boolean | null;
+	varDisallowed?: boolean | null;
 	redCard?: boolean | null;
 	secondYellow?: boolean | null;
 }
