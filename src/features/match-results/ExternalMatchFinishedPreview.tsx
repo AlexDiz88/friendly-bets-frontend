@@ -18,7 +18,9 @@ import {
 	externalMatchBetsDialogTeamsRowSx,
 } from './externalMatchBetsDialogStyles';
 import MatchEventsTimeline from './MatchEventsTimeline';
+import MatchStatsSection from './MatchStatsSection';
 import type MatchGoalEvent from './types/MatchGoalEvent';
+import type MatchTeamStats from './types/MatchTeamStats';
 
 type Props = {
 	homeTeam: Team;
@@ -27,6 +29,8 @@ type Props = {
 	events?: MatchGoalEvent[] | null;
 	addedTimeFirstHalf?: number | null;
 	addedTimeSecondHalf?: number | null;
+	/** FULL_MATCH stats (sandbox: from fetch; production: from match_schedules). */
+	stats?: MatchTeamStats | null;
 	/** Optional caption under score (e.g. bets count preview). */
 	footerHint?: string;
 };
@@ -42,6 +46,7 @@ export default function ExternalMatchFinishedPreview({
 	events,
 	addedTimeFirstHalf,
 	addedTimeSecondHalf,
+	stats,
 	footerHint,
 }: Props): JSX.Element {
 	const { t, i18n } = useTranslation();
@@ -117,14 +122,19 @@ export default function ExternalMatchFinishedPreview({
 				) : null}
 			</Box>
 
-			<Box sx={{ px: 1.25, pt: 0.85, pb: 0.5 }}>
-				<MatchEventsTimeline
-					events={events}
-					addedTimeFirstHalf={addedTimeFirstHalf}
-					addedTimeSecondHalf={addedTimeSecondHalf}
-					hideWhenEmpty
-				/>
-			</Box>
+			{(events && events.length > 0)
+				|| addedTimeFirstHalf != null
+				|| addedTimeSecondHalf != null ? (
+				<Box sx={{ px: 1.25, pt: 0.85, pb: 0.35, flexShrink: 0 }}>
+					<MatchEventsTimeline
+						events={events}
+						addedTimeFirstHalf={addedTimeFirstHalf}
+						addedTimeSecondHalf={addedTimeSecondHalf}
+					/>
+				</Box>
+			) : null}
+
+			<MatchStatsSection stats={stats} />
 
 			<Box sx={{ px: 1.25, pb: 1.25 }}>
 				<Typography sx={externalMatchBetsDialogEmptySx}>
