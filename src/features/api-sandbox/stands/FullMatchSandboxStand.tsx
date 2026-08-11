@@ -58,6 +58,11 @@ type FullMatchParsedTeam = {
 	id?: string;
 	title?: string;
 	logoKey?: string | null;
+	displayNames?: {
+		en?: string;
+		ru?: string;
+		de?: string;
+	};
 };
 
 type FullMatchCardParsed = {
@@ -135,6 +140,7 @@ function teamFromParsed(resolved: FullMatchParsedTeam | null | undefined, fallba
 		id: resolved?.id || `sandbox-${title}`,
 		title,
 		logoKey,
+		displayNames: resolved?.displayNames,
 	};
 }
 

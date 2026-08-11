@@ -48,6 +48,11 @@ type LiveParsedTeam = {
 	id?: string;
 	title?: string;
 	logoKey?: string | null;
+	displayNames?: {
+		en?: string;
+		ru?: string;
+		de?: string;
+	};
 };
 
 type LiveParsedMatch = {
@@ -102,6 +107,7 @@ function teamFromParsed(resolved: LiveParsedTeam | null | undefined, fallbackNam
 		id: resolved?.id || `sandbox-${title}`,
 		title,
 		logoKey,
+		displayNames: resolved?.displayNames,
 	};
 }
 
