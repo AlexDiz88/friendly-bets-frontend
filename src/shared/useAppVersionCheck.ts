@@ -14,7 +14,8 @@ const apiFetchAdapter: typeof fetch = (input, init) => apiFetch(input, init);
 
 /**
  * В production сверяет вшитый buildId с version.json (статика, сразу после деплоя)
- * и /api/client-version (бэкенд). Более новый клиент регистрирует версию;
+ * и /api/client-version (бэкенд). Проверка сразу при возврате на вкладку, затем
+ * каждые 5 минут пока вкладка видима. Более новый клиент регистрирует версию;
  * более старый — принудительный reload.
  */
 export function useAppVersionCheck(): void {
@@ -77,11 +78,13 @@ export function useAppVersionCheck(): void {
 
 		document.addEventListener('visibilitychange', onWake);
 		window.addEventListener('focus', onWake);
+		window.addEventListener('pageshow', onWake);
 
 		return () => {
 			window.clearInterval(intervalId);
 			document.removeEventListener('visibilitychange', onWake);
 			window.removeEventListener('focus', onWake);
+			window.removeEventListener('pageshow', onWake);
 		};
 	}, []);
 }

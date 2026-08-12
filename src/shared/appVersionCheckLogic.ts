@@ -89,9 +89,10 @@ export function reloadForBuildId(remoteBuildId: string, localBuildId: string): v
 }
 
 export function staticVersionUrl(): string {
-	const base = import.meta.env.BASE_URL ?? '/';
-	const normalizedBase = base.endsWith('/') ? base : `${base}/`;
-	return `${normalizedBase}version.json`;
+	if (typeof window !== 'undefined' && window.location?.origin) {
+		return `${window.location.origin}/version.json`;
+	}
+	return '/version.json';
 }
 
 export function clientVersionUrl(path: string): string {
