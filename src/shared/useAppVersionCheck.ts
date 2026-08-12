@@ -4,19 +4,15 @@ import {
 	VERSION_CHECK_INTERVAL_MS,
 	clearReloadAttempt,
 	fetchApiBuildId,
-	fetchStaticBuildId,
-	registerBuildId,
 	reloadForBuildId,
-	resolveVersionCheckOutcome,
+	shouldReload,
 } from './appVersionCheckLogic';
 
 const apiFetchAdapter: typeof fetch = (input, init) => apiFetch(input, init);
 
 /**
- * В production сверяет вшитый buildId с version.json (статика, сразу после деплоя)
- * и /api/client-version (бэкенд). Проверка сразу при возврате на вкладку, затем
- * каждые 5 минут пока вкладка видима. Более новый клиент регистрирует версию;
- * более старый — принудительный reload.
+ * В production сверяет вшитый buildId с /api/client-version (единственный источник правды).
+ * Проверка сразу при возврате на вкладку, затем каждые 5 минут пока вкладка видима.
  */
 export function useAppVersionCheck(): void {
 	const checkingRef = useRef(false);
@@ -37,23 +33,9 @@ export function useAppVersionCheck(): void {
 			}
 			checkingRef.current = true;
 			try {
-				const [staticId, apiId] = await Promise.all([
-					fetchStaticBuildId(),
-					fetchApiBuildId(apiFetchAdapter),
-				]);
-
-				let outcome = resolveVersionCheckOutcome(localId, staticId, apiId, null);
-				if (outcome.type === 'register') {
-					const registeredId = await registerBuildId(outcome.buildId, apiFetchAdapter);
-					outcome = resolveVersionCheckOutcome(localId, staticId, apiId, registeredId);
-				}
-
-				if (outcome.type === 'register') {
-					await registerBuildId(outcome.buildId, apiFetchAdapter);
-					return;
-				}
-				if (outcome.type === 'reload') {
-					reloadForBuildId(outcome.remoteBuildId, localId);
+				const remoteId = await fetchApiBuildId(apiFetchAdapter);
+				if (shouldReload(localId, remoteId)) {
+					reloadForBuildId(remoteId!, localId);
 					return;
 				}
 				clearReloadAttempt(localId);

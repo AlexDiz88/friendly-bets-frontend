@@ -8,6 +8,7 @@
 		"dev": "vite",
 		"start": "vite",
 		"build": "tsc && vite build",
+		"register-version": "bash scripts/register-client-version.sh",
 		"preview": "vite preview",
 		"test": "vitest",
 		"type-check": "tsc",
