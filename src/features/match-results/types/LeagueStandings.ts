@@ -1,3 +1,5 @@
+import type { TeamDisplayNames } from '../../admin/teams/types/Team';
+
 export type StandingZoneRule = {
 	code: string;
 	label: string;
@@ -8,6 +10,7 @@ export type LeagueStandingRow = {
 	rank: number;
 	teamId: string;
 	teamTitle: string;
+	displayNames?: TeamDisplayNames | null;
 	logoKey?: string | null;
 	played: number;
 	wins: number;
