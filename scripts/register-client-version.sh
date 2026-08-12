@@ -108,4 +108,13 @@ done
 
 echo "Failed to register client version after ${MAX_ATTEMPTS} attempts (last HTTP ${HTTP_CODE}):" >&2
 cat /tmp/client-version-response.json >&2
+
+# One-time unlock for DO App Platform: if frontend register fails, the whole
+# deployment fails and the new backend image never goes live (deadlock).
+# Set CLIENT_VERSION_REGISTER_OPTIONAL=true for a single redeploy, then remove it.
+if [[ "${CLIENT_VERSION_REGISTER_OPTIONAL:-}" == "true" ]]; then
+	echo "CLIENT_VERSION_REGISTER_OPTIONAL=true — continuing build without registration" >&2
+	exit 0
+fi
+
 exit 1
