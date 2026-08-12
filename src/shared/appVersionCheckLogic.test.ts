@@ -7,6 +7,7 @@ import {
 	resolveVersionCheckOutcome,
 	shouldRegisterLocal,
 	shouldReload,
+	staticVersionUrl,
 } from './appVersionCheckLogic';
 
 describe('appVersionCheckLogic', () => {
@@ -69,5 +70,12 @@ describe('appVersionCheckLogic', () => {
 		sessionStorage.setItem('appReloadAttempt:100', '300');
 		clearReloadAttempt('100');
 		expect(sessionStorage.getItem('appReloadAttempt:100')).toBeNull();
+	});
+
+	it('staticVersionUrl always points to site root version.json', () => {
+		vi.stubGlobal('window', {
+			location: { origin: 'https://friendly-bets.net' },
+		});
+		expect(staticVersionUrl()).toBe('https://friendly-bets.net/version.json');
 	});
 });

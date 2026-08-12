@@ -77,11 +77,13 @@ export function useAppVersionCheck(): void {
 
 		document.addEventListener('visibilitychange', onWake);
 		window.addEventListener('focus', onWake);
+		window.addEventListener('pageshow', onWake);
 
 		return () => {
 			window.clearInterval(intervalId);
 			document.removeEventListener('visibilitychange', onWake);
 			window.removeEventListener('focus', onWake);
+			window.removeEventListener('pageshow', onWake);
 		};
 	}, []);
 }
