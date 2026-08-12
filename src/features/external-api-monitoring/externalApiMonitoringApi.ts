@@ -6,7 +6,7 @@ function apiUrl(path: string): string {
 	return isLocalhost ? path : `${import.meta.env.VITE_PRODUCT_SERVER}${path}`;
 }
 
-export type ExternalDataLayer = 'SCHEDULE' | 'ODDS' | 'LIVE' | 'FULL_MATCH';
+export type ExternalDataLayer = 'SCHEDULE' | 'ODDS' | 'LIVE' | 'FULL_MATCH' | 'STANDINGS';
 export type MonitoringStatus = 'SUCCESS' | 'PARTIAL' | 'FAILED' | 'SKIPPED';
 export type MonitoringTrigger = 'CRON' | 'ADMIN' | 'ORCHESTRATOR';
 
@@ -68,6 +68,7 @@ export const MONITORING_LAYERS: ExternalDataLayer[] = [
 	'ODDS',
 	'LIVE',
 	'FULL_MATCH',
+	'STANDINGS',
 ];
 
 export async function fetchMonitoringRuns(

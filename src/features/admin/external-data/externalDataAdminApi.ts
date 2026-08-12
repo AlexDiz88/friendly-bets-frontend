@@ -7,7 +7,7 @@ function apiUrl(path: string): string {
 	return `${import.meta.env.VITE_PRODUCT_SERVER}${path}`;
 }
 
-export type ExternalDataLayer = 'SCHEDULE' | 'ODDS' | 'LIVE' | 'FULL_MATCH';
+export type ExternalDataLayer = 'SCHEDULE' | 'ODDS' | 'LIVE' | 'FULL_MATCH' | 'STANDINGS';
 
 export type LayerAssignment = {
 	enabled?: boolean;

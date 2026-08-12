@@ -15,6 +15,18 @@
 		"standings": "Таблица"
 	},
 	"matchResultsStandingsPlaceholder": "Турнирная таблица для выбранной лиги появится здесь позже.",
+	"matchResultsStandingsEmpty": "Для этой лиги пока нет сохранённой таблицы.",
+	"matchResultsStandingsLoadError": "Не удалось загрузить турнирную таблицу",
+	"leagueStandings": {
+		"team": "Команда",
+		"playedShort": "И",
+		"winsShort": "В",
+		"drawsShort": "Н",
+		"lossesShort": "П",
+		"goalsShort": "Г",
+		"goalDiffShort": "+/-",
+		"pointsShort": "О"
+	},
 	"language": "Язык",
 	"switchToLightTheme": "Светлая тема",
 	"switchToDarkTheme": "Тёмная тема",
@@ -789,6 +801,10 @@
 		"championatTeamNamesEmpty": "Не найдены названия команд на championat.com",
 		"championatLeagueNotSupported": "Лига не поддерживается для championat.com",
 		"twentyFourScoreStandingsNotConfigured": "Для лиги не настроен URL таблицы 24score.pro",
+		"liveresultStandingsNotConfigured": "Для лиги не настроен URL таблицы liveresult.ru",
+		"liveresultTeamNamesEmpty": "liveresult.ru: в таблице нет команд (проверьте сезон/лигу)",
+		"liveresultFetchFailed": "Не удалось получить данные с liveresult.ru",
+		"liveresultStandingsEmpty": "liveresult.ru вернул пустую таблицу",
 		"twentyFourScoreTeamNamesEmpty": "24score.pro: в таблице нет команд (проверьте сезон/лигу)",
 		"externalTeamNamesProviderRequired": "Укажите источник алиасов",
 		"externalTeamNamesProviderUnsupported": "Неподдерживаемый источник алиасов",
@@ -1211,6 +1227,7 @@
 	"externalDataLayerOdds": "Кэфы (ODDS)",
 	"externalDataLayerLive": "Live (LIVE)",
 	"externalDataLayerFullMatch": "Полный матч (FULL)",
+	"externalDataLayerStandings": "Таблица (STANDINGS)",
 	"externalDataLayerEnabled": "Автосинк слоя",
 	"externalDataPrimary": "Primary",
 	"externalDataSecondary": "Secondary (опционально)",
@@ -1432,7 +1449,8 @@
 			"SCHEDULE": "SCHEDULE",
 			"ODDS": "ODDS",
 			"LIVE": "LIVE",
-			"FULL_MATCH": "FULL_MATCH"
+			"FULL_MATCH": "FULL_MATCH",
+			"STANDINGS": "STANDINGS"
 		},
 		"status": {
 			"SUCCESS": "OK",

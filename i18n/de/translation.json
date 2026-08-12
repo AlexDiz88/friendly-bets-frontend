@@ -15,6 +15,18 @@
 		"standings": "Tabelle"
 	},
 	"matchResultsStandingsPlaceholder": "Die Ligatabelle für die gewählte Liga erscheint hier demnächst.",
+	"matchResultsStandingsEmpty": "Für diese Liga ist noch keine Tabelle gespeichert.",
+	"matchResultsStandingsLoadError": "Ligatabelle konnte nicht geladen werden",
+	"leagueStandings": {
+		"team": "Team",
+		"playedShort": "Sp",
+		"winsShort": "S",
+		"drawsShort": "U",
+		"lossesShort": "N",
+		"goalsShort": "T",
+		"goalDiffShort": "+/-",
+		"pointsShort": "Pkt"
+	},
 	"language": "Sprache",
 	"switchToLightTheme": "Helles Design",
 	"switchToDarkTheme": "Dunkles Design",
@@ -789,6 +801,10 @@
 		"championatTeamNamesEmpty": "Keine Teamnamen auf championat.com gefunden",
 		"championatLeagueNotSupported": "Liga wird für championat.com nicht unterstützt",
 		"twentyFourScoreStandingsNotConfigured": "24score.pro-Tabellen-URL für diese Liga ist nicht konfiguriert",
+		"liveresultStandingsNotConfigured": "liveresult.ru-Tabellen-URL für diese Liga ist nicht konfiguriert",
+		"liveresultTeamNamesEmpty": "liveresult.ru: keine Teams in der Tabelle (Saison/Liga prüfen)",
+		"liveresultFetchFailed": "Daten von liveresult.ru konnten nicht geladen werden",
+		"liveresultStandingsEmpty": "liveresult.ru hat eine leere Tabelle zurückgegeben",
 		"twentyFourScoreTeamNamesEmpty": "24score.pro: keine Teams in der Tabelle (Saison/Liga prüfen)",
 		"externalTeamNamesProviderRequired": "Alias-Quelle angeben",
 		"externalTeamNamesProviderUnsupported": "Nicht unterstützte Alias-Quelle",
@@ -1211,6 +1227,7 @@
 	"externalDataLayerOdds": "Quoten (ODDS)",
 	"externalDataLayerLive": "Live (LIVE)",
 	"externalDataLayerFullMatch": "Vollständiges Spiel (FULL)",
+	"externalDataLayerStandings": "Tabelle (STANDINGS)",
 	"externalDataLayerEnabled": "Schicht Auto-Sync",
 	"externalDataPrimary": "Primary",
 	"externalDataSecondary": "Secondary (optional)",
@@ -1432,7 +1449,8 @@
 			"SCHEDULE": "SCHEDULE",
 			"ODDS": "ODDS",
 			"LIVE": "LIVE",
-			"FULL_MATCH": "FULL_MATCH"
+			"FULL_MATCH": "FULL_MATCH",
+			"STANDINGS": "STANDINGS"
 		},
 		"status": {
 			"SUCCESS": "OK",

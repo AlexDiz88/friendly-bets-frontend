@@ -446,6 +446,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 		ODDS: [],
 		LIVE: [],
 		FULL_MATCH: [],
+		STANDINGS: [],
 	});
 	const [latest, setLatest] = useState<Partial<Record<ExternalDataLayer, MonitoringRun>>>({});
 	const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -467,6 +468,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 				ODDS: [],
 				LIVE: [],
 				FULL_MATCH: [],
+				STANDINGS: [],
 			};
 			MONITORING_LAYERS.forEach((layer, idx) => {
 				next[layer] = lists[idx] ?? [];

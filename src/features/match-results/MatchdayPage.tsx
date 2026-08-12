@@ -55,6 +55,9 @@ import {
 	MatchdayPageData,
 } from './types/ExternalMatch';
 import MatchResultsViewTabs, { type MatchResultsPageView } from './MatchResultsViewTabs';
+import LeagueStandingsView from './LeagueStandingsView';
+import { fetchLeagueStandings } from './leagueStandingsApi';
+import type { LeagueStandingsPage } from './types/LeagueStandings';
 import ExternalMatchBetsDialog from './ExternalMatchBetsDialog';
 import ExternalMatchResultCard from './ExternalMatchResultCard';
 import ExternalMatchViewBetsButton from './ExternalMatchViewBetsButton';
@@ -123,6 +126,9 @@ export default function MatchdayPage(): JSX.Element {
 
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [standingsData, setStandingsData] = useState<LeagueStandingsPage | null>(null);
+	const [standingsLoading, setStandingsLoading] = useState(false);
+	const [standingsError, setStandingsError] = useState<string | null>(null);
 	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(true);
 	const [betsMatch, setBetsMatch] = useState<ExternalMatch | null>(null);
 	const [oddsPickMatch, setOddsPickMatch] = useState<ExternalMatch | null>(null);
@@ -546,6 +552,39 @@ export default function MatchdayPage(): JSX.Element {
 	]);
 
 	useEffect(() => {
+		if (isMatchesView || !effectiveLeagueCode || !selectedLeague?.id) {
+			return;
+		}
+
+		let cancelled = false;
+		const loadStandings = async (): Promise<void> => {
+			setStandingsLoading(true);
+			setStandingsError(null);
+			try {
+				const page = await fetchLeagueStandings(
+					effectiveLeagueCode,
+					externalSeason,
+					selectedLeague.id
+				);
+				if (!cancelled) setStandingsData(page);
+			} catch (error) {
+				if (!cancelled) {
+					setStandingsData(null);
+					setStandingsError(
+						error instanceof Error ? error.message : 'matchResultsStandingsLoadError'
+					);
+				}
+			} finally {
+				if (!cancelled) setStandingsLoading(false);
+			}
+		};
+		loadStandings();
+		return () => {
+			cancelled = true;
+		};
+	}, [isMatchesView, effectiveLeagueCode, externalSeason, selectedLeague?.id]);
+
+	useEffect(() => {
 		if (effectiveLeagueCode && effectiveLeagueCode !== selectedLeagueCode) {
 			setSelectedLeagueCode(effectiveLeagueCode);
 		}
@@ -852,20 +891,11 @@ export default function MatchdayPage(): JSX.Element {
 			)}
 
 			{!isMatchesView ? (
-				<Box
-					sx={{
-						borderRadius: 2,
-						boxShadow: 2,
-						bgcolor: 'background.paper',
-						py: 4,
-						px: 2,
-						mx: 0.5,
-					}}
-				>
-					<Typography textAlign="center" color="text.secondary">
-						{t('matchResultsStandingsPlaceholder')}
-					</Typography>
-				</Box>
+				<LeagueStandingsView
+					data={standingsData}
+					loading={standingsLoading}
+					error={standingsError}
+				/>
 			) : null}
 		</Box>
 	);

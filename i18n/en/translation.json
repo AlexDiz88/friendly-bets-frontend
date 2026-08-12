@@ -15,6 +15,18 @@
 		"standings": "Standings"
 	},
 	"matchResultsStandingsPlaceholder": "League standings for the selected competition will appear here soon.",
+	"matchResultsStandingsEmpty": "No standings saved for this league yet.",
+	"matchResultsStandingsLoadError": "Failed to load league standings",
+	"leagueStandings": {
+		"team": "Team",
+		"playedShort": "P",
+		"winsShort": "W",
+		"drawsShort": "D",
+		"lossesShort": "L",
+		"goalsShort": "G",
+		"goalDiffShort": "+/-",
+		"pointsShort": "Pts"
+	},
 	"language": "Language",
 	"switchToLightTheme": "Light theme",
 	"switchToDarkTheme": "Dark theme",
@@ -789,6 +801,10 @@
 		"championatTeamNamesEmpty": "No team names found on championat.com",
 		"championatLeagueNotSupported": "League is not supported for championat.com",
 		"twentyFourScoreStandingsNotConfigured": "24score.pro standings URL is not configured for this league",
+		"liveresultStandingsNotConfigured": "liveresult.ru standings URL is not configured for this league",
+		"liveresultTeamNamesEmpty": "liveresult.ru: no teams in standings (check season/league)",
+		"liveresultFetchFailed": "Failed to fetch data from liveresult.ru",
+		"liveresultStandingsEmpty": "liveresult.ru returned an empty standings table",
 		"twentyFourScoreTeamNamesEmpty": "24score.pro: no teams in standings (check season/league)",
 		"externalTeamNamesProviderRequired": "Alias provider is required",
 		"externalTeamNamesProviderUnsupported": "Unsupported alias provider",
@@ -1211,6 +1227,7 @@
 	"externalDataLayerOdds": "Odds (ODDS)",
 	"externalDataLayerLive": "Live (LIVE)",
 	"externalDataLayerFullMatch": "Full match (FULL)",
+	"externalDataLayerStandings": "Standings (STANDINGS)",
 	"externalDataLayerEnabled": "Layer auto-sync",
 	"externalDataPrimary": "Primary",
 	"externalDataSecondary": "Secondary (optional)",
@@ -1432,7 +1449,8 @@
 			"SCHEDULE": "SCHEDULE",
 			"ODDS": "ODDS",
 			"LIVE": "LIVE",
-			"FULL_MATCH": "FULL_MATCH"
+			"FULL_MATCH": "FULL_MATCH",
+			"STANDINGS": "STANDINGS"
 		},
 		"status": {
 			"SUCCESS": "OK",
