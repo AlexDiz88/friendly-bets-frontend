@@ -20,6 +20,15 @@ export async function fetchLeagueStandings(
 	const result = await apiFetch(
 		apiUrl(`/api/match-results/competitions/${leagueCode}/standings?${params}`)
 	);
+	if (result.status === 404) {
+		return {
+			seasonId: '',
+			leagueId: leagueId ?? '',
+			leagueCode,
+			rows: [],
+			zoneRules: [],
+		};
+	}
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
