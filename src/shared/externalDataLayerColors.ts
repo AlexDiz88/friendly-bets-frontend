@@ -2,7 +2,7 @@
  * Canonical UI colors for external-data layers (SCHEDULE / ODDS / LIVE / FULL_MATCH).
  * Single source of truth — use everywhere (admin, sandbox, monitoring, error-logs).
  */
-export type ExternalDataLayer = 'SCHEDULE' | 'ODDS' | 'LIVE' | 'FULL_MATCH';
+export type ExternalDataLayer = 'SCHEDULE' | 'ODDS' | 'LIVE' | 'FULL_MATCH' | 'STANDINGS';
 
 export type ExternalDataLayerPalette = {
 	/** Solid accent for titles, bars, borders */
@@ -30,6 +30,7 @@ export const EXTERNAL_DATA_LAYERS: ExternalDataLayer[] = [
 	'ODDS',
 	'LIVE',
 	'FULL_MATCH',
+	'STANDINGS',
 ];
 
 /**
@@ -84,6 +85,17 @@ export const EXTERNAL_DATA_LAYER_PALETTE: Record<ExternalDataLayer, ExternalData
 		border: 'rgba(124,58,237,0.35)',
 		borderDark: 'rgba(167,139,250,0.32)',
 	},
+	STANDINGS: {
+		accent: '#0d9488',
+		soft: 'rgba(20,184,166,0.14)',
+		softDark: 'rgba(45,212,191,0.16)',
+		header: 'rgba(20,184,166,0.18)',
+		headerDark: 'rgba(45,212,191,0.14)',
+		surface: 'rgba(240,253,250,0.9)',
+		surfaceDark: 'rgba(19,78,74,0.35)',
+		border: 'rgba(13,148,136,0.35)',
+		borderDark: 'rgba(45,212,191,0.32)',
+	},
 };
 
 /** Accent-only map (tabs, titles, chips). */
@@ -92,11 +104,16 @@ export const EXTERNAL_DATA_LAYER_ACCENT: Record<ExternalDataLayer, string> = {
 	ODDS: EXTERNAL_DATA_LAYER_PALETTE.ODDS.accent,
 	LIVE: EXTERNAL_DATA_LAYER_PALETTE.LIVE.accent,
 	FULL_MATCH: EXTERNAL_DATA_LAYER_PALETTE.FULL_MATCH.accent,
+	STANDINGS: EXTERNAL_DATA_LAYER_PALETTE.STANDINGS.accent,
 };
 
 export function isExternalDataLayer(value: string | null | undefined): value is ExternalDataLayer {
 	return (
-		value === 'SCHEDULE' || value === 'ODDS' || value === 'LIVE' || value === 'FULL_MATCH'
+		value === 'SCHEDULE' ||
+		value === 'ODDS' ||
+		value === 'LIVE' ||
+		value === 'FULL_MATCH' ||
+		value === 'STANDINGS'
 	);
 }
 

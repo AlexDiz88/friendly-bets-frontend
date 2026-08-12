@@ -30,13 +30,14 @@ import {
 	patchExternalDataLayerConfig,
 } from './externalDataAdminApi';
 
-const LAYERS: ExternalDataLayer[] = ['SCHEDULE', 'ODDS', 'LIVE', 'FULL_MATCH'];
+const LAYERS: ExternalDataLayer[] = ['SCHEDULE', 'ODDS', 'LIVE', 'FULL_MATCH', 'STANDINGS'];
 
 const LAYER_LABEL_KEY: Record<ExternalDataLayer, string> = {
 	SCHEDULE: 'externalDataLayerSchedule',
 	ODDS: 'externalDataLayerOdds',
 	LIVE: 'externalDataLayerLive',
 	FULL_MATCH: 'externalDataLayerFullMatch',
+	STANDINGS: 'externalDataLayerStandings',
 };
 
 const NONE = '';

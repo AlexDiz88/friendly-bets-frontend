@@ -16,6 +16,7 @@ import type { SxProps, Theme } from '@mui/material';
 import i18n, { t } from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import CustomButton from '../../../components/custom/btn/CustomButton';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import CustomSwitch from '../../../components/custom/controls/CustomSwitch';
 import { toggleInlineRowSx } from '../../../components/custom/controls/customToggleStyles';
@@ -38,6 +39,7 @@ import { matchSideToDisplayTeam } from '../../match-results/externalMatchDisplay
 import {
 	syncExternalLive,
 	syncExternalSchedule,
+	syncExternalStandings,
 	syncOddsProviderSlot,
 } from './externalDataAdminApi';
 import {
@@ -46,6 +48,7 @@ import {
 } from '../teams/teamProviderConstants';
 
 const SCHEDULE_LEAGUE_CODES = new Set(['EPL', 'BL', 'CL', 'LE', 'EC', 'WC']);
+const STANDINGS_LEAGUE_CODES = new Set(['EPL', 'BL']);
 const ODDS_PROVIDERS = [MARATHONBET_PROVIDER, MELBET_PROVIDER] as const;
 const ODDS_PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
 	[MARATHONBET_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'WC']),
@@ -95,6 +98,7 @@ function MatchOptionLabel({ match }: { match: ExternalMatch }): JSX.Element {
 export default function ManualExternalSyncPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeason = useAppSelector(selectActiveSeason);
+	const [showPanel, setShowPanel] = useState(false);
 	const [scheduleLeagueCode, setScheduleLeagueCode] = useState('EPL');
 	const [scheduleMatchday, setScheduleMatchday] = useState(1);
 	const [scheduleSlots, setScheduleSlots] = useState<MatchdaySlot[]>([]);
@@ -104,6 +108,8 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	const [syncingSchedule, setSyncingSchedule] = useState(false);
 	const [syncingOdds, setSyncingOdds] = useState(false);
 	const [syncingLive, setSyncingLive] = useState(false);
+	const [syncingStandings, setSyncingStandings] = useState(false);
+	const [standingsLeagueCode, setStandingsLeagueCode] = useState('EPL');
 	const [forceOddsUpdate, setForceOddsUpdate] = useState(false);
 	const [forceMatchday, setForceMatchday] = useState(1);
 	const [forceMatchIds, setForceMatchIds] = useState<string[]>([]);
@@ -122,6 +128,17 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		() => allLeagues.filter((l) => SCHEDULE_LEAGUE_CODES.has(l.leagueCode)),
 		[allLeagues]
 	);
+	const standingsLeagues = useMemo(
+		() => allLeagues.filter((l) => STANDINGS_LEAGUE_CODES.has(l.leagueCode)),
+		[allLeagues]
+	);
+
+	const effectiveStandingsLeague = useMemo(() => {
+		if (standingsLeagues.some((l) => l.leagueCode === standingsLeagueCode)) {
+			return standingsLeagueCode;
+		}
+		return standingsLeagues[0]?.leagueCode ?? '';
+	}, [standingsLeagues, standingsLeagueCode]);
 
 	const effectiveScheduleLeague = useMemo(() => {
 		if (scheduleLeagues.some((l) => l.leagueCode === scheduleLeagueCode)) {
@@ -417,13 +434,52 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		}
 	};
 
+	const handleStandingsSync = async (): Promise<void> => {
+		if (!effectiveStandingsLeague) {
+			return;
+		}
+		setSyncingStandings(true);
+		try {
+			const result = await syncExternalStandings(effectiveStandingsLeague);
+			dispatch(
+				showSuccessSnackbar({
+					message: t('externalStandingsSyncSuccess', {
+						saved: result.rowsSaved,
+						skipped: result.skippedUnmapped,
+					}),
+				})
+			);
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : 'externalStandingsSyncFailed',
+				})
+			);
+		} finally {
+			setSyncingStandings(false);
+		}
+	};
+
 	const handleForceMatchIdsChange = (event: SelectChangeEvent<string[]>): void => {
 		const value = event.target.value;
 		setForceMatchIds(typeof value === 'string' ? value.split(',') : value);
 	};
 
 	return (
-		<AdminSection title={t('manualExternalSyncTitle')} hint={t('manualExternalSyncHint')}>
+		<AdminSection
+			title={t('manualExternalSyncTitle')}
+			hint={showPanel ? t('manualExternalSyncHint') : undefined}
+		>
+			<CustomButton
+				sx={{ width: '100%', mb: showPanel ? 1.5 : 0 }}
+				onClick={() => setShowPanel(!showPanel)}
+				buttonColor="info"
+				buttonVariant="outlined"
+				buttonText={showPanel ? t('hideManualExternalSync') : t('showManualExternalSync')}
+			/>
+
+			{showPanel ? (
+				<>
 			<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
 				{t('externalDataScheduleSyncTitle')}
 			</Typography>
@@ -633,8 +689,32 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 				disabled={syncingLive}
 				loading={syncingLive}
 				buttonText={t('externalDataLiveSyncNow')}
+				sx={{ width: '100%', mb: 2.5, mr: 0 }}
+			/>
+
+			<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
+				{t('externalDataStandingsSyncTitle')}
+			</Typography>
+			{standingsLeagues.length > 0 ? (
+				<Box sx={{ mb: 1.5 }}>
+					<LeagueSelect
+						leagues={standingsLeagues}
+						value={effectiveStandingsLeague}
+						onChange={(e) => setStandingsLeagueCode(String(e.target.value))}
+						withoutAll
+						fullLeagueNames
+					/>
+				</Box>
+			) : null}
+			<CustomSuccessButton
+				onClick={() => void handleStandingsSync()}
+				disabled={syncingStandings || !effectiveStandingsLeague}
+				loading={syncingStandings}
+				buttonText={t('externalDataStandingsSyncNow')}
 				sx={{ width: '100%', mr: 0 }}
 			/>
+				</>
+			) : null}
 		</AdminSection>
 	);
 }

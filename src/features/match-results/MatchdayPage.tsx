@@ -54,6 +54,10 @@ import {
 	ExternalMatch,
 	MatchdayPageData,
 } from './types/ExternalMatch';
+import MatchResultsViewTabs, { type MatchResultsPageView } from './MatchResultsViewTabs';
+import LeagueStandingsView from './LeagueStandingsView';
+import { fetchLeagueStandings } from './leagueStandingsApi';
+import type { LeagueStandingsPage } from './types/LeagueStandings';
 import ExternalMatchBetsDialog from './ExternalMatchBetsDialog';
 import ExternalMatchResultCard from './ExternalMatchResultCard';
 import ExternalMatchViewBetsButton from './ExternalMatchViewBetsButton';
@@ -76,6 +80,8 @@ export default function MatchdayPage(): JSX.Element {
 	const pendingMatchDayFromQuery = useRef<string | null>(null);
 	const appliedMatchdayQueryKey = useRef('');
 	const [plateRefreshKey, setPlateRefreshKey] = useState(0);
+	const [pageView, setPageView] = useState<MatchResultsPageView>('matches');
+	const isMatchesView = pageView === 'matches';
 
 	useFetchActiveSeason(activeSeason?.id);
 
@@ -120,6 +126,9 @@ export default function MatchdayPage(): JSX.Element {
 
 	const [data, setData] = useState<MatchdayPageData | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [standingsData, setStandingsData] = useState<LeagueStandingsPage | null>(null);
+	const [standingsLoading, setStandingsLoading] = useState(false);
+	const [standingsError, setStandingsError] = useState<string | null>(null);
 	const [competitionInfoLoading, setCompetitionInfoLoading] = useState(true);
 	const [betsMatch, setBetsMatch] = useState<ExternalMatch | null>(null);
 	const [oddsPickMatch, setOddsPickMatch] = useState<ExternalMatch | null>(null);
@@ -371,8 +380,8 @@ export default function MatchdayPage(): JSX.Element {
 		[data?.matches]
 	);
 
-	useVisibilityPageRefresh(isExternalPageReady, reloadMatchday);
-	useLivePagePolling(isExternalPageReady && hasLiveMatches, reloadMatchday);
+	useVisibilityPageRefresh(isMatchesView && isExternalPageReady, reloadMatchday);
+	useLivePagePolling(isMatchesView && isExternalPageReady && hasLiveMatches, reloadMatchday);
 
 	useEffect(() => {
 		if (!activeSeason) {
@@ -387,15 +396,19 @@ export default function MatchdayPage(): JSX.Element {
 	}, [user?.id, dispatch]);
 
 	useEffect(() => {
-		if (!activeSeason?.id) {
-			setCalendarsReady(false);
+		if (!isMatchesView || !activeSeason?.id) {
+			if (!isMatchesView) {
+				setCalendarsReady(true);
+			} else {
+				setCalendarsReady(false);
+			}
 			return;
 		}
 		setCalendarsReady(false);
 		void dispatch(getAllSeasonCalendarNodes(activeSeason.id)).finally(() => {
 			setCalendarsReady(true);
 		});
-	}, [activeSeason?.id, dispatch]);
+	}, [activeSeason?.id, dispatch, isMatchesView]);
 
 	useEffect(() => {
 		if (matchResultLeagues.length > 0) {
@@ -425,6 +438,7 @@ export default function MatchdayPage(): JSX.Element {
 			return;
 		}
 		appliedMatchdayQueryKey.current = queryKey;
+		setPageView('matches');
 
 		if (matchDayParam) {
 			pendingMatchDayFromQuery.current = matchDayParam;
@@ -453,9 +467,10 @@ export default function MatchdayPage(): JSX.Element {
 	}, [competitionInfoLoading, matchdaySlots, effectiveLeagueCode]);
 
 	useEffect(() => {
-		if (!effectiveLeagueCode || !selectedLeague?.id) {
-			setCompetitionInfoLoading(false);
-			setCompetitionInfo(null);
+		if (!isMatchesView || !effectiveLeagueCode || !selectedLeague?.id) {
+			if (!isMatchesView) {
+				setCompetitionInfoLoading(false);
+			}
 			return;
 		}
 
@@ -477,9 +492,12 @@ export default function MatchdayPage(): JSX.Element {
 		return () => {
 			cancelled = true;
 		};
-	}, [effectiveLeagueCode, externalSeason, selectedLeague?.id]);
+	}, [effectiveLeagueCode, externalSeason, selectedLeague?.id, isMatchesView]);
 
 	useEffect(() => {
+		if (!isMatchesView) {
+			return;
+		}
 		if (competitionInfoLoading) {
 			return;
 		}
@@ -530,7 +548,41 @@ export default function MatchdayPage(): JSX.Element {
 		externalSeason,
 		selectedLeague?.id,
 		dispatch,
+		isMatchesView,
 	]);
+
+	useEffect(() => {
+		if (isMatchesView || !effectiveLeagueCode || !selectedLeague?.id) {
+			return;
+		}
+
+		let cancelled = false;
+		const loadStandings = async (): Promise<void> => {
+			setStandingsLoading(true);
+			setStandingsError(null);
+			try {
+				const page = await fetchLeagueStandings(
+					effectiveLeagueCode,
+					externalSeason,
+					selectedLeague.id
+				);
+				if (!cancelled) setStandingsData(page);
+			} catch (error) {
+				if (!cancelled) {
+					setStandingsData(null);
+					setStandingsError(
+						error instanceof Error ? error.message : 'matchResultsStandingsLoadError'
+					);
+				}
+			} finally {
+				if (!cancelled) setStandingsLoading(false);
+			}
+		};
+		loadStandings();
+		return () => {
+			cancelled = true;
+		};
+	}, [isMatchesView, effectiveLeagueCode, externalSeason, selectedLeague?.id]);
 
 	useEffect(() => {
 		if (effectiveLeagueCode && effectiveLeagueCode !== selectedLeagueCode) {
@@ -558,6 +610,7 @@ export default function MatchdayPage(): JSX.Element {
 
 	const handleNearestGameweekLeagueClick = useCallback(
 		({ leagueCode, matchDay }: NearestGameweekLeagueClick): void => {
+			setPageView('matches');
 			setSearchParams({ league: leagueCode, matchDay }, { replace: true });
 			if (leagueCode === selectedLeagueCode) {
 				pendingMatchDayFromQuery.current = matchDay;
@@ -665,6 +718,10 @@ export default function MatchdayPage(): JSX.Element {
 					</Typography>
 				</Box>
 
+				<Box sx={{ px: 0.25, mb: 0.75 }}>
+					<MatchResultsViewTabs value={pageView} onChange={setPageView} />
+				</Box>
+
 				<Box
 					sx={{
 						display: 'flex',
@@ -676,7 +733,15 @@ export default function MatchdayPage(): JSX.Element {
 						overflow: 'hidden',
 					}}
 				>
-					<Box sx={{ flex: '1 1 auto', display: 'flex', justifyContent: 'flex-end', minWidth: 0 }}>
+					<Box
+						sx={{
+							flex: isMatchesView ? '1 1 auto' : '0 1 auto',
+							display: 'flex',
+							justifyContent: isMatchesView ? 'flex-end' : 'center',
+							minWidth: 0,
+							width: isMatchesView ? undefined : '100%',
+						}}
+					>
 						<LeagueSelect
 							value={effectiveLeagueCode}
 							onChange={handleLeagueChange}
@@ -685,33 +750,35 @@ export default function MatchdayPage(): JSX.Element {
 							compact
 						/>
 					</Box>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							gap: 0.25,
-							flex: '1 1 auto',
-							justifyContent: 'flex-start',
-							minWidth: 0,
-						}}
-					>
-						<MatchdayNavigator
-							value={effectiveMatchday}
-							slots={matchdaySlots}
-							onChange={(md) => handleMatchdayChange(md)}
-							disabled={!isExternalPageReady}
-						/>
-					</Box>
+					{isMatchesView ? (
+						<Box
+							sx={{
+								display: 'flex',
+								alignItems: 'center',
+								gap: 0.25,
+								flex: '1 1 auto',
+								justifyContent: 'flex-start',
+								minWidth: 0,
+							}}
+						>
+							<MatchdayNavigator
+								value={effectiveMatchday}
+								slots={matchdaySlots}
+								onChange={(md) => handleMatchdayChange(md)}
+								disabled={!isExternalPageReady}
+							/>
+						</Box>
+					) : null}
 				</Box>
 			</Box>
 
-			{isBettingCalendarMissing ? (
+			{isMatchesView && isBettingCalendarMissing ? (
 				<Alert severity="warning" role="alert" sx={{ mx: 0.5, mb: 1, flexShrink: 0 }}>
 					{t('externalMatchBettingUnavailableNoCalendar')}
 				</Alert>
 			) : null}
 
-			{betsMatch && user && activeSeason && selectedLeague ? (
+			{isMatchesView && betsMatch && user && activeSeason && selectedLeague ? (
 				<ExternalMatchBetsDialog
 					open
 					onClose={() => setBetsMatch(null)}
@@ -721,7 +788,7 @@ export default function MatchdayPage(): JSX.Element {
 				/>
 			) : null}
 
-			{oddsPickMatch && oddsPickMatch.id ? (
+			{isMatchesView && oddsPickMatch && oddsPickMatch.id ? (
 				<OddsPickDialog
 					open
 					onClose={() => setOddsPickMatch(null)}
@@ -741,13 +808,13 @@ export default function MatchdayPage(): JSX.Element {
 				/>
 			) : null}
 
-			{!isExternalPageReady && (
+			{isMatchesView && !isExternalPageReady && (
 				<Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
 					<CircularProgress size={40} />
 				</Box>
 			)}
 
-			{isExternalPageReady && data !== null && sortedMatches.length === 0 && (
+			{isMatchesView && isExternalPageReady && data !== null && sortedMatches.length === 0 && (
 				<Typography
 					textAlign="center"
 					color="text.secondary"
@@ -757,7 +824,7 @@ export default function MatchdayPage(): JSX.Element {
 				</Typography>
 			)}
 
-			{isExternalPageReady && sortedMatches.length > 0 && (
+			{isMatchesView && isExternalPageReady && sortedMatches.length > 0 && (
 				<>
 					{isWcLeague ? (
 						<WcExternalSlotPanel
@@ -822,6 +889,14 @@ export default function MatchdayPage(): JSX.Element {
 					</Box>
 				</>
 			)}
+
+			{!isMatchesView ? (
+				<LeagueStandingsView
+					data={standingsData}
+					loading={standingsLoading}
+					error={standingsError}
+				/>
+			) : null}
 		</Box>
 	);
 }

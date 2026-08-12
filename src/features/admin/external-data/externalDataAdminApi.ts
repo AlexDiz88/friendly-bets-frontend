@@ -7,7 +7,7 @@ function apiUrl(path: string): string {
 	return `${import.meta.env.VITE_PRODUCT_SERVER}${path}`;
 }
 
-export type ExternalDataLayer = 'SCHEDULE' | 'ODDS' | 'LIVE' | 'FULL_MATCH';
+export type ExternalDataLayer = 'SCHEDULE' | 'ODDS' | 'LIVE' | 'FULL_MATCH' | 'STANDINGS';
 
 export type LayerAssignment = {
 	enabled?: boolean;
@@ -90,6 +90,16 @@ export type ExternalScheduleSyncResult = {
 	unmappedNames: string[];
 };
 
+export type ExternalStandingsSyncResult = {
+	leagueCode: string;
+	seasonId: string;
+	leagueId: string;
+	provider: string;
+	rowsSaved: number;
+	skippedUnmapped: number;
+	unmappedNames: string[];
+};
+
 export async function fetchExternalTeamNames(
 	provider: string,
 	leagueCode: string,
@@ -118,6 +128,20 @@ export async function syncExternalSchedule(
 		params.set('matchday', String(matchday));
 	}
 	const result = await apiFetch(apiUrl(`/api/admin/external-data/schedule/sync?${params}`), {
+		method: 'POST',
+	});
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function syncExternalStandings(
+	leagueCode: string
+): Promise<ExternalStandingsSyncResult> {
+	const params = new URLSearchParams({ leagueCode });
+	const result = await apiFetch(apiUrl(`/api/admin/external-data/standings/sync?${params}`), {
 		method: 'POST',
 	});
 	if (result.status >= 400) {

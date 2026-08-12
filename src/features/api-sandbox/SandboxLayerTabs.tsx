@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { ExternalDataLayer } from '../admin/external-data/externalDataAdminApi';
 import { LAYER_ACCENT, sandboxLayerChipSx, sandboxTabsBarSx } from './apiSandboxPageStyles';
 
-const LAYER_ORDER: ExternalDataLayer[] = ['SCHEDULE', 'ODDS', 'LIVE', 'FULL_MATCH'];
+const LAYER_ORDER: ExternalDataLayer[] = ['SCHEDULE', 'ODDS', 'LIVE', 'FULL_MATCH', 'STANDINGS'];
 
 type SandboxLayerTabsProps = {
 	value: ExternalDataLayer;
