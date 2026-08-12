@@ -7,18 +7,30 @@ set -euo pipefail
 #   VITE_APP_BUILD_ID  — same value used for `npm run build`
 #   DEPLOY_TOKEN       — must match backend app.deploy.token / DEPLOY_TOKEN
 #
-# Optional env:
-#   BACKEND_URL        — default https://friendly-bets-9fph3.ondigitalocean.app
+# API URL resolution (DO injects BACKEND_URL for static sites — do not use it):
+#   1. CLIENT_VERSION_BACKEND_URL — explicit override
+#   2. VITE_PRODUCT_SERVER        — same as runtime API origin (DO frontend env)
+#   3. https://friendly-bets-9fph3.ondigitalocean.app
 #
-# Typical CI order:
-#   export VITE_APP_BUILD_ID=$(date +%s%3N)
-#   npm run build
-#   ./scripts/register-client-version.sh
-#   # deploy build/ to static hosting
+# Typical DO build command:
+#   export VITE_APP_BUILD_ID=$(date +%s%3N) && npm run build && npm run register-version
 
 BUILD_ID="${VITE_APP_BUILD_ID:-}"
 DEPLOY_TOKEN="${DEPLOY_TOKEN:-}"
-BACKEND_URL="${BACKEND_URL:-https://friendly-bets-9fph3.ondigitalocean.app}"
+
+resolve_api_origin() {
+	if [[ -n "${CLIENT_VERSION_BACKEND_URL:-}" ]]; then
+		echo "${CLIENT_VERSION_BACKEND_URL%/}"
+		return
+	fi
+	if [[ -n "${VITE_PRODUCT_SERVER:-}" && "${VITE_PRODUCT_SERVER}" != "localhost" ]]; then
+		echo "${VITE_PRODUCT_SERVER%/}"
+		return
+	fi
+	echo "https://friendly-bets-9fph3.ondigitalocean.app"
+}
+
+API_ORIGIN="$(resolve_api_origin)"
 
 if [[ -z "$BUILD_ID" ]]; then
 	echo "VITE_APP_BUILD_ID is required" >&2
@@ -30,7 +42,9 @@ if [[ -z "$DEPLOY_TOKEN" ]]; then
 	exit 1
 fi
 
-URL="${BACKEND_URL%/}/api/client-version"
+URL="${API_ORIGIN}/api/client-version"
+echo "Registering client version at ${URL}"
+
 HTTP_CODE=$(curl -sS -o /tmp/client-version-response.json -w "%{http_code}" \
 	-X PUT "$URL" \
 	-H "Content-Type: application/json" \
