@@ -1,23 +1,8 @@
-import { writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { defineConfig, type Plugin } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
-const rootDir = fileURLToPath(new URL('.', import.meta.url));
-
-function appVersionPlugin(buildId: string, outDir: string): Plugin {
-	return {
-		name: 'app-version',
-		closeBundle() {
-			const filePath = resolve(rootDir, outDir, 'version.json');
-			writeFileSync(filePath, JSON.stringify({ buildId }));
-		},
-	};
-}
-
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode, ssrBuild }) => {
+export default defineConfig(({ mode }) => {
 	if (mode === 'development') {
 		return {
 			plugins: [react()],
@@ -40,35 +25,33 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
 				mockReset: true,
 			},
 		};
-	} else {
-		const buildId = Date.now().toString();
-		const outDir = 'build';
+	}
 
-		// command === 'build'
-		return {
-			plugins: [react(), appVersionPlugin(buildId, outDir)],
-			define: {
-				'import.meta.env.VITE_APP_BUILD_ID': JSON.stringify(buildId),
-			},
-			server: {
-				open: true,
-				proxy: {
-					'/api': {
-						target: '/',
-					},
+	const buildId = process.env.VITE_APP_BUILD_ID ?? Date.now().toString();
+
+	return {
+		plugins: [react()],
+		define: {
+			'import.meta.env.VITE_APP_BUILD_ID': JSON.stringify(buildId),
+		},
+		server: {
+			open: true,
+			proxy: {
+				'/api': {
+					target: '/',
 				},
 			},
-			build: {
-				outDir: 'build',
-				sourcemap: true,
-			},
-			base: './',
-			test: {
-				globals: true,
-				environment: 'jsdom',
-				setupFiles: 'src/setupTests',
-				mockReset: true,
-			},
-		};
-	}
+		},
+		build: {
+			outDir: 'build',
+			sourcemap: true,
+		},
+		base: './',
+		test: {
+			globals: true,
+			environment: 'jsdom',
+			setupFiles: 'src/setupTests',
+			mockReset: true,
+		},
+	};
 });
