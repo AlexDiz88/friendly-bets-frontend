@@ -1201,7 +1201,7 @@
 	"externalDataLayersTitle": "Источники данных",
 	"showExternalDataLayers": "Показать настройки API",
 	"hideExternalDataLayers": "Скрыть настройки API",
-	"externalDataLayersHint": "Primary выполняет запрос; при HTTP/транспортной ошибке один раз Secondary (SCHEDULE, ODDS, FULL). Без dual-merge. Чекбокс включает автосинк слоя.",
+	"externalDataLayersHint": "Primary выполняет запрос; при HTTP/транспортной ошибке один раз Secondary. Без dual-merge. Чекбокс включает автосинк слоя.",
 	"externalDataLayerSchedule": "Расписание (SCHEDULE)",
 	"externalDataLayerOdds": "Кэфы (ODDS)",
 	"externalDataLayerLive": "Live (LIVE)",

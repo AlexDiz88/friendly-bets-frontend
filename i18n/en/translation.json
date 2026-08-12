@@ -1201,7 +1201,7 @@
 	"externalDataLayersTitle": "Data sources",
 	"showExternalDataLayers": "Show API settings",
 	"hideExternalDataLayers": "Hide API settings",
-	"externalDataLayersHint": "Primary runs the request; on HTTP/transport error Secondary once (SCHEDULE, ODDS, FULL). No dual-merge. Checkbox enables layer auto-sync.",
+	"externalDataLayersHint": "Primary runs the request; on HTTP/transport error Secondary once. No dual-merge. Checkbox enables layer auto-sync.",
 	"externalDataLayerSchedule": "Schedule (SCHEDULE)",
 	"externalDataLayerOdds": "Odds (ODDS)",
 	"externalDataLayerLive": "Live (LIVE)",

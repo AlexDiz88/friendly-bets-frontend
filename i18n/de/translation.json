@@ -1201,7 +1201,7 @@
 	"externalDataLayersTitle": "Datenquellen",
 	"showExternalDataLayers": "API-Einstellungen anzeigen",
 	"hideExternalDataLayers": "API-Einstellungen ausblenden",
-	"externalDataLayersHint": "Primary führt die Anfrage aus; bei HTTP-/Transportfehler einmal Secondary (SCHEDULE, ODDS, FULL). Kein Dual-Merge. Checkbox aktiviert Auto-Sync der Schicht.",
+	"externalDataLayersHint": "Primary führt die Anfrage aus; bei HTTP-/Transportfehler einmal Secondary. Kein Dual-Merge. Checkbox aktiviert Auto-Sync der Schicht.",
 	"externalDataLayerSchedule": "Spielplan (SCHEDULE)",
 	"externalDataLayerOdds": "Quoten (ODDS)",
 	"externalDataLayerLive": "Live (LIVE)",
