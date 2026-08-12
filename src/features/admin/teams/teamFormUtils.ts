@@ -11,6 +11,7 @@ import {
 	CHAMPIONAT_PROVIDER,
 	RUSCORE_PROVIDER,
 	FLASHSCORE_PROVIDER,
+	LIVERESULT_PROVIDER,
 } from './teamProviderConstants';
 
 const DROPPED_PROVIDERS = new Set([
@@ -81,6 +82,13 @@ export const TEAM_EXTERNAL_ALIAS_FIELDS = [
 		sectionKey: 'teamFlashscoreSection',
 		labelKey: 'teamFlashscoreExternalName',
 		inputId: 'flashscore-external-name',
+	},
+	{
+		provider: LIVERESULT_PROVIDER,
+		field: 'liveresultExternalName',
+		sectionKey: 'teamLiveresultSection',
+		labelKey: 'teamLiveresultExternalName',
+		inputId: 'liveresult-external-name',
 	},
 	{
 		provider: MARATHONBET_PROVIDER,
