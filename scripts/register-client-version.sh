@@ -42,11 +42,11 @@ if [[ -z "$DEPLOY_TOKEN" ]]; then
 	exit 1
 fi
 
-URL="${API_ORIGIN}/api/client-version"
+URL="${API_ORIGIN}/api/client-version/deploy"
 echo "Registering client version at ${URL}"
 
 HTTP_CODE=$(curl -sS -o /tmp/client-version-response.json -w "%{http_code}" \
-	-X PUT "$URL" \
+	-X POST "$URL" \
 	-H "Content-Type: application/json" \
 	-H "X-Deploy-Token: $DEPLOY_TOKEN" \
 	-d "{\"buildId\":\"$BUILD_ID\"}")
