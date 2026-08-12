@@ -1,6 +1,6 @@
 import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
+import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import type { LeagueStandingsPage, StandingZoneRule } from './types/LeagueStandings';
 
 const ZONE_COLOR: Record<string, string> = {
@@ -39,7 +39,7 @@ export default function LeagueStandingsView({
 	loading,
 	error,
 }: LeagueStandingsViewProps): JSX.Element {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	if (loading) {
 		return (
@@ -153,7 +153,9 @@ export default function LeagueStandingsView({
 							const team = {
 								title: row.teamTitle,
 								logoKey: row.logoKey ?? undefined,
+								displayNames: row.displayNames ?? undefined,
 							};
+							const teamLabel = resolveTeamDisplayName(team, t, i18n.language);
 							return (
 								<tr key={`${row.rank}-${row.teamId}`}>
 									<td
@@ -189,7 +191,7 @@ export default function LeagueStandingsView({
 													minWidth: 0,
 												}}
 											>
-												{row.teamTitle}
+												{teamLabel}
 											</Typography>
 										</Box>
 									</td>
