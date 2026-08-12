@@ -9,11 +9,14 @@ import {
 	Typography,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 import { t } from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
+import CustomCheckbox from '../../../components/custom/controls/CustomCheckbox';
+import { toggleInlineRowSx } from '../../../components/custom/controls/customToggleStyles';
 import LeagueSelect from '../../../components/selectors/LeagueSelect';
 import {
 	showErrorSnackbar,
@@ -83,6 +86,7 @@ export default function ExternalTeamAliasesPanel(): JSX.Element {
 	const [provider, setProvider] = useState<string>(SOCCER365_PROVIDER);
 	const [leagueCode, setLeagueCode] = useState('EPL');
 	const [loadingNames, setLoadingNames] = useState(false);
+	const [forceOverwrite, setForceOverwrite] = useState(false);
 	const [chips, setChips] = useState<ExternalTeamNameChip[]>([]);
 	const [namesLoaded, setNamesLoaded] = useState(false);
 
@@ -122,7 +126,7 @@ export default function ExternalTeamAliasesPanel(): JSX.Element {
 		}
 		setLoadingNames(true);
 		try {
-			const result = await fetchExternalTeamNames(provider, effectiveLeagueCode);
+			const result = await fetchExternalTeamNames(provider, effectiveLeagueCode, forceOverwrite);
 			setChips(result.unmapped ?? []);
 			setNamesLoaded(true);
 			void dispatch(getAllTeams());
@@ -132,6 +136,7 @@ export default function ExternalTeamAliasesPanel(): JSX.Element {
 						autoBound: result.autoBoundCount ?? 0,
 						remaining: (result.unmapped ?? []).length,
 						mismatches: result.mismatchCount ?? 0,
+						overwritten: result.overwrittenCount ?? 0,
 					}),
 					duration: 4500,
 				})
@@ -190,6 +195,17 @@ export default function ExternalTeamAliasesPanel(): JSX.Element {
 						compact
 					/>
 				) : null}
+				<Box sx={toggleInlineRowSx as SxProps<Theme>}>
+					<CustomCheckbox
+						checked={forceOverwrite}
+						onChange={(e) => setForceOverwrite(e.target.checked)}
+						disabled={loadingNames}
+						inputProps={{ 'aria-label': t('externalTeamAliasesForceOverwrite') }}
+					/>
+					<Typography component="span" sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+						{t('externalTeamAliasesForceOverwrite')}
+					</Typography>
+				</Box>
 				<span>
 					<CustomSuccessButton
 						buttonText={
