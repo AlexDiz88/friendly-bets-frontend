@@ -94,38 +94,57 @@ export default function LeagueStandingsView({
 						width: '100%',
 						tableLayout: 'fixed',
 						borderCollapse: 'collapse',
-						fontSize: '0.85rem',
+						fontSize: { xs: '0.75rem', sm: '0.85rem' },
 						'& th': {
 							fontWeight: 700,
 							color: 'text.secondary',
-							py: 0.75,
-							px: 0.5,
+							py: 0.5,
+							px: 0.25,
 							borderBottom: '1px solid',
 							borderColor: 'divider',
 							textAlign: 'center',
 							whiteSpace: 'nowrap',
 						},
 						'& td': {
-							py: 0.65,
-							px: 0.5,
+							py: 0.45,
+							px: 0.25,
 							borderBottom: '1px solid',
 							borderColor: 'divider',
 							verticalAlign: 'middle',
 						},
 						'& tr:last-of-type td': { borderBottom: 'none' },
+						'& .col-rank': {
+							width: { xs: '1.35rem', sm: '1.75rem' },
+							px: { xs: 0.1, sm: 0.25 },
+						},
+						'& .col-stat': {
+							width: { xs: '1.15rem', sm: '1.5rem' },
+							px: { xs: 0.05, sm: 0.2 },
+						},
+						'& .col-goals': {
+							display: { xs: 'none', sm: 'table-cell' },
+							width: '3.25rem',
+						},
+						'& .col-diff': {
+							width: { xs: '1.5rem', sm: '1.75rem' },
+						},
+						'& .col-points': {
+							width: { xs: '1.35rem', sm: '1.75rem' },
+							fontWeight: 800,
+						},
 					}}
 				>
 					<thead>
 						<tr>
-							<th>#</th>
-							<th style={{ textAlign: 'left' }}>{t('leagueStandings.team')}</th>
-							<th>{t('leagueStandings.playedShort')}</th>
-							<th>{t('leagueStandings.winsShort')}</th>
-							<th>{t('leagueStandings.drawsShort')}</th>
-							<th>{t('leagueStandings.lossesShort')}</th>
-							<th>{t('leagueStandings.goalsShort')}</th>
-							<th>{t('leagueStandings.goalDiffShort')}</th>
-							<th>{t('leagueStandings.pointsShort')}</th>
+							<th className="col-rank">#</th>
+							<th style={{ textAlign: 'left', width: 'auto' }}>{t('leagueStandings.team')}</th>
+							<th className="col-stat">{t('leagueStandings.playedShort')}</th>
+							<th className="col-stat">{t('leagueStandings.winsShort')}</th>
+							<th className="col-stat">{t('leagueStandings.drawsShort')}</th>
+							<th className="col-stat">{t('leagueStandings.lossesShort')}</th>
+							<th className="col-goals">{t('leagueStandings.goalsShort')}</th>
+							<th className="col-diff">{t('leagueStandings.goalDiffShort')}</th>
+							<th className="col-points">{t('leagueStandings.pointsShort')}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -138,6 +157,7 @@ export default function LeagueStandingsView({
 							return (
 								<tr key={`${row.rank}-${row.teamId}`}>
 									<td
+										className="col-rank"
 										style={{
 											textAlign: 'center',
 											fontWeight: 700,
@@ -147,30 +167,53 @@ export default function LeagueStandingsView({
 									>
 										{row.rank}
 									</td>
-									<td>
-										<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minWidth: 0 }}>
+									<td style={{ minWidth: 0 }}>
+										<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0 }}>
 											<Box
 												component="img"
 												src={resolveTeamLogoUrl(team)}
 												alt=""
-												sx={{ width: 22, height: 22, objectFit: 'contain', flexShrink: 0 }}
+												sx={{
+													width: { xs: 18, sm: 22 },
+													height: { xs: 18, sm: 22 },
+													objectFit: 'contain',
+													flexShrink: 0,
+												}}
 											/>
-											<Typography variant="body2" noWrap sx={{ fontWeight: 600 }}>
+											<Typography
+												variant="body2"
+												noWrap
+												sx={{
+													fontWeight: 600,
+													fontSize: 'inherit',
+													minWidth: 0,
+												}}
+											>
 												{row.teamTitle}
 											</Typography>
 										</Box>
 									</td>
-									<td style={{ textAlign: 'center' }}>{row.played}</td>
-									<td style={{ textAlign: 'center' }}>{row.wins}</td>
-									<td style={{ textAlign: 'center' }}>{row.draws}</td>
-									<td style={{ textAlign: 'center' }}>{row.losses}</td>
-									<td style={{ textAlign: 'center' }}>
+									<td className="col-stat" style={{ textAlign: 'center' }}>
+										{row.played}
+									</td>
+									<td className="col-stat" style={{ textAlign: 'center' }}>
+										{row.wins}
+									</td>
+									<td className="col-stat" style={{ textAlign: 'center' }}>
+										{row.draws}
+									</td>
+									<td className="col-stat" style={{ textAlign: 'center' }}>
+										{row.losses}
+									</td>
+									<td className="col-goals" style={{ textAlign: 'center' }}>
 										{formatGoals(row.goalsFor, row.goalsAgainst)}
 									</td>
-									<td style={{ textAlign: 'center' }}>
+									<td className="col-diff" style={{ textAlign: 'center' }}>
 										{formatGoalDifference(row.goalDifference)}
 									</td>
-									<td style={{ textAlign: 'center', fontWeight: 800 }}>{row.points}</td>
+									<td className="col-points" style={{ textAlign: 'center' }}>
+										{row.points}
+									</td>
 								</tr>
 							);
 						})}

@@ -696,28 +696,6 @@ export default function MatchdayPage(): JSX.Element {
 					boxShadow: 1,
 				}}
 			>
-				<Box
-					sx={{
-						position: 'relative',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						minHeight: 40,
-						px: 0.25,
-					}}
-				>
-					<Typography
-						sx={{
-							fontWeight: 700,
-							textAlign: 'center',
-							fontSize: '1rem',
-							lineHeight: 1.2,
-						}}
-					>
-						{t('externalMatchResults')}
-					</Typography>
-				</Box>
-
 				<Box sx={{ px: 0.25, mb: 0.75 }}>
 					<MatchResultsViewTabs value={pageView} onChange={setPageView} />
 				</Box>
