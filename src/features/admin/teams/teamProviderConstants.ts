@@ -8,3 +8,4 @@ export const SPORTS_RU_PROVIDER = 'sports.ru';
 export const FOOTBALL24_PROVIDER = 'football24.ua';
 export const RUSCORE_PROVIDER = 'ruscore.ru';
 export const FLASHSCORE_PROVIDER = 'flashscorekz.com';
+export const LIVERESULT_PROVIDER = 'liveresult.ru';
