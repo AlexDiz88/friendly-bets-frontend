@@ -10,6 +10,11 @@
 	"bets": "Bets",
 	"allBets": "All bets",
 	"matchResults": "Results",
+	"matchResultsTab": {
+		"matches": "Matches",
+		"standings": "Standings"
+	},
+	"matchResultsStandingsPlaceholder": "League standings for the selected competition will appear here soon.",
 	"language": "Language",
 	"switchToLightTheme": "Light theme",
 	"switchToDarkTheme": "Dark theme",

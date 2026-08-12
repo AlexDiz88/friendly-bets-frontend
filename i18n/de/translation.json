@@ -10,6 +10,11 @@
 	"bets": "Wetten",
 	"allBets": "Alle Wetten",
 	"matchResults": "Ergebnisse",
+	"matchResultsTab": {
+		"matches": "Spiele",
+		"standings": "Tabelle"
+	},
+	"matchResultsStandingsPlaceholder": "Die Ligatabelle für die gewählte Liga erscheint hier demnächst.",
 	"language": "Sprache",
 	"switchToLightTheme": "Helles Design",
 	"switchToDarkTheme": "Dunkles Design",

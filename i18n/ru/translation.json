@@ -10,6 +10,11 @@
 	"bets": "Ставки",
 	"allBets": "Все ставки",
 	"matchResults": "Результаты",
+	"matchResultsTab": {
+		"matches": "Матчи",
+		"standings": "Таблица"
+	},
+	"matchResultsStandingsPlaceholder": "Турнирная таблица для выбранной лиги появится здесь позже.",
 	"language": "Язык",
 	"switchToLightTheme": "Светлая тема",
 	"switchToDarkTheme": "Тёмная тема",
