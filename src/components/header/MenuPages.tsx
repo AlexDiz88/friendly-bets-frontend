@@ -68,6 +68,7 @@ export function isHeaderNavPageActive(
 		[t('news')]: '/news',
 		[t('byGameweeks')]: '/gameweeks',
 		[t('byBetTitles')]: '/stats/bet-titles',
+		[t('byBetValues')]: '/stats/bet-values',
 		[t('matchResults')]: '/match-results/matchday',
 		[t('byLeagues')]: '/stats/leagues',
 		[t('byTeams')]: '/stats/teams',
@@ -95,6 +96,7 @@ export function useHeaderMenu(): HeaderMenuState {
 		t('byGameweeks'),
 		t('allBets'),
 		t('byBetTitles'),
+		t('byBetValues'),
 		t('byTeams'),
 		t('byLeagues'),
 		t('news'),
@@ -127,6 +129,9 @@ export function useHeaderMenu(): HeaderMenuState {
 				break;
 			case t('byBetTitles'):
 				navigate('/stats/bet-titles');
+				break;
+			case t('byBetValues'):
+				navigate('/stats/bet-values');
 				break;
 			case t('matchResults'):
 				navigate('/match-results/matchday');

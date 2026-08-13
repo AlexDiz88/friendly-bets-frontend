@@ -2,6 +2,7 @@ import { RootState } from '../../app/store';
 import LeagueStats from './types/LeagueStats';
 import PlayerStats from './types/PlayerStats';
 import { PlayerStatsByBetTitles } from './types/PlayerStatsByBetTitles';
+import { PlayerStatsByBetValues } from './types/PlayerStatsByBetValues';
 import PlayerStatsByTeams from './types/PlayerStatsByTeams';
 
 export const selectPlayersStats = (state: RootState): PlayerStats[] =>
@@ -12,6 +13,8 @@ export const selectAllStatsByTeamsInSeason = (state: RootState): PlayerStatsByTe
 	state.playersStats.playersStatsByTeams;
 export const selectAllStatsByBetTitlesInSeason = (state: RootState): PlayerStatsByBetTitles[] =>
 	state.playersStats.playersStatsByBetTitles;
+export const selectAllStatsByBetValuesInSeason = (state: RootState): PlayerStatsByBetValues[] =>
+	state.playersStats.playersStatsByBetValues;
 export const selectStatsByTeams = (state: RootState): PlayerStatsByTeams | undefined =>
 	state.playersStats.statsByTeams;
 export const selectError = (state: RootState): string | undefined => state.playersStats.error;

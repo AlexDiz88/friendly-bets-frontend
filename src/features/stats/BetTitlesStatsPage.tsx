@@ -6,6 +6,7 @@ import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import { getSeasons } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
+import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
 import PlayerBetStatsByBetTitles from './PlayerBetStatsByBetTitles';
 import { selectAllStatsByBetTitlesInSeason } from './selectors';
 import { getAllStatsByBetTitlesInSeason } from './statsSlice';
@@ -21,6 +22,11 @@ export default function BetTitlesStatsPage(): JSX.Element {
 	/** Сезон, для которого stats уже загружены в Redux — убирает мигание старых данных. */
 	const [loadedStatsSeasonId, setLoadedStatsSeasonId] = useState<string | null>(null);
 	const [loadingError, setLoadingError] = useState(false);
+
+	const seasonsNewestFirst = useMemo(
+		() => sortSeasonsNewestFirst(allSeasons),
+		[allSeasons]
+	);
 
 	const players = useMemo(
 		() => allSeasons.find((s) => s.id === selectedSeasonId)?.players ?? [],
@@ -63,9 +69,9 @@ export default function BetTitlesStatsPage(): JSX.Element {
 		if (activeSeasonId && allSeasons.some((s) => s.id === activeSeasonId)) {
 			setSelectedSeasonId(activeSeasonId);
 		} else {
-			setSelectedSeasonId(allSeasons[allSeasons.length - 1].id);
+			setSelectedSeasonId(seasonsNewestFirst[0].id);
 		}
-	}, [seasonsReady, allSeasons, activeSeasonId, selectedSeasonId]);
+	}, [seasonsReady, allSeasons, seasonsNewestFirst, activeSeasonId, selectedSeasonId]);
 
 	useEffect(() => {
 		if (!hasValidSeason) {
@@ -106,7 +112,7 @@ export default function BetTitlesStatsPage(): JSX.Element {
 					label={t('season')}
 					onChange={(e) => setSelectedSeasonId(e.target.value)}
 				>
-					{allSeasons.map((season) => (
+					{seasonsNewestFirst.map((season) => (
 						<MenuItem key={season.id} value={season.id}>
 							{season.title}
 						</MenuItem>

@@ -3,6 +3,7 @@ import { apiFetch } from '../../shared/apiClient';
 import LeagueStats from './types/LeagueStats';
 import PlayerStats from './types/PlayerStats';
 import { PlayerStatsByBetTitles } from './types/PlayerStatsByBetTitles';
+import { PlayerStatsByBetValues } from './types/PlayerStatsByBetValues';
 import PlayerStatsByTeams from './types/PlayerStatsByTeams';
 
 export async function getAllPlayersStatsBySeason(
@@ -56,6 +57,21 @@ export async function getAllStatsByBetTitlesInSeason(
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/stats/season/${seasonId}/bet-titles`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}/bet-titles`;
+	}
+	const result = await apiFetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function getAllStatsByBetValuesInSeason(
+	seasonId: string
+): Promise<{ playersStatsByBetValues: PlayerStatsByBetValues[] }> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/stats/season/${seasonId}/bet-values`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/stats/season/${seasonId}/bet-values`;
 	}
 	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {
