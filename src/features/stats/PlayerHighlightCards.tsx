@@ -69,7 +69,7 @@ function TeamLogoName({
 	language,
 	color,
 	height = 16,
-	fontSize = '0.66rem',
+	fontSize = '0.75rem',
 }: {
 	team: HighlightTeam | null | undefined;
 	language: string;
@@ -118,12 +118,12 @@ function TeamBalanceRow({
 	return (
 		<Box sx={playerHighlightTeamRowSx}>
 			<Box sx={{ minWidth: 0, flex: 1 }}>
-				<TeamLogoName team={team} language={language} color={color} height={14} fontSize="0.58rem" />
+				<TeamLogoName team={team} language={language} color={color} height={14} />
 			</Box>
 			<Typography
 				component="span"
 				sx={{
-					fontSize: '0.58rem',
+					fontSize: '0.75rem',
 					fontWeight: 800,
 					fontVariantNumeric: 'tabular-nums',
 					color,
@@ -188,7 +188,7 @@ export default function PlayerHighlightCards({
 				{win?.homeTeam || win?.awayTeam ? (
 					<Box sx={playerHighlightInlineRowSx}>
 						<TeamLogoName team={win?.homeTeam} language={language} />
-						<Typography component="span" sx={{ fontSize: '0.66rem', fontWeight: 700 }}>
+						<Typography component="span" sx={{ fontSize: '0.75rem', fontWeight: 700 }}>
 							–
 						</Typography>
 						<TeamLogoName team={win?.awayTeam} language={language} />

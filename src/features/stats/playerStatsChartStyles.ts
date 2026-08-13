@@ -240,7 +240,7 @@ export function playerFormPillSx(bg: string, fg: string): SxProps<Theme> {
 
 export const playerHighlightsGridSx: SxProps<Theme> = {
 	display: 'grid',
-	gridTemplateColumns: '3fr 2fr',
+	gridTemplateColumns: '13fr 7fr',
 	gap: 0.75,
 	mt: 1,
 	mb: 0.25,
@@ -315,7 +315,7 @@ export const playerHighlightInlineRowSx: SxProps<Theme> = {
 	rowGap: 0.15,
 	mt: 0.2,
 	minWidth: 0,
-	fontSize: '0.66rem',
+	fontSize: '0.75rem',
 	fontWeight: 600,
 	lineHeight: 1.25,
 };
