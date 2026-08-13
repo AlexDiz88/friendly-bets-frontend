@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { SEASON_STATUS_FINISHED } from '../constants';
 import { getSeasons } from '../features/admin/seasons/seasonsSlice';
 import { selectSeasons } from '../features/admin/seasons/selectors';
+import { sortSeasonsNewestFirst } from '../features/admin/seasons/sortSeasons';
 import Season from '../features/admin/seasons/types/Season';
 import PlayersStats from '../features/stats/PlayersStats';
 import { selectPlayersStats } from '../features/stats/selectors';
@@ -39,7 +40,9 @@ export default function Archive(): JSX.Element {
 	}, []);
 
 	useEffect(() => {
-		const finishedSeasons = seasons.filter((season) => season.status === SEASON_STATUS_FINISHED);
+		const finishedSeasons = sortSeasonsNewestFirst(
+			seasons.filter((season) => season.status === SEASON_STATUS_FINISHED)
+		);
 		setFilteredSeasons(finishedSeasons);
 	}, [seasons]);
 

@@ -92,7 +92,6 @@ export function useHeaderMenu(): HeaderMenuState {
 	const [anchorElLang, setAnchorElLang] = useState<null | HTMLElement>(null);
 
 	const pages = [
-		t('wc26.menu'),
 		t('byGameweeks'),
 		t('allBets'),
 		t('byBetTitles'),
@@ -100,6 +99,7 @@ export function useHeaderMenu(): HeaderMenuState {
 		t('byLeagues'),
 		t('news'),
 		t('archive'),
+		t('wc26.menu'),
 		t('rules'),
 		t('language'),
 	];

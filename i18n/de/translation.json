@@ -326,6 +326,7 @@
 	"loadingError": "Fehler beim Laden! Bitte versuchen Sie, die Seite neu zu laden",
 	"processing": "Die Ergebnisse werden verarbeitet...",
 	"chooseLeagueForDetailedStatistik": "Wählen Sie Liga aus, um detaillierte Statistiken anzusehen",
+	"leaguesBalanceSummary": "Bilanz nach Liga",
 	"statsWasSuccessfullyRecalculated": "Statistiken wurden erfolgreich neu berechnet",
 	"seasonWasSuccessfullyCreated": "Saison wurde erfolgreich erstellt",
 	"seasonStartDate": "Turnierbeginn",

@@ -28,6 +28,7 @@ import {
 import { resolveTeamDisplayName } from '../../../components/utils/teamDisplay';
 import { addTeamToLeagueInSeason, getSeasons, removeTeamFromLeagueInSeason } from '../seasons/seasonsSlice';
 import { selectSeasons } from '../seasons/selectors';
+import { sortSeasonsNewestFirst } from '../seasons/sortSeasons';
 import Season from '../seasons/types/Season';
 import {
 	ADMIN_ACTIONS_ROW_SX,
@@ -58,7 +59,8 @@ export default function AddTeamToLeague({
 	const [teamId, setTeamId] = useState<string>('');
 	const [teamToRemove, setTeamToRemove] = useState<Team | null>(null);
 
-	const seasonTitles = useMemo(() => seasons.map((s) => s.title), [seasons]);
+	const seasonsNewestFirst = useMemo(() => sortSeasonsNewestFirst(seasons), [seasons]);
+	const seasonTitles = useMemo(() => seasonsNewestFirst.map((s) => s.title), [seasonsNewestFirst]);
 	const safeSeasonTitle = seasonTitles.includes(selectedSeasonTitle) ? selectedSeasonTitle : '';
 	const leagueNames = useMemo(
 		() => selectedSeason?.leagues?.map((l) => l.name) ?? [],
@@ -190,7 +192,7 @@ export default function AddTeamToLeague({
 					value={safeSeasonTitle}
 					onChange={handleSeasonChange}
 				>
-					{seasons.map((s) => (
+					{seasonsNewestFirst.map((s) => (
 						<MenuItem key={s.id} value={s.title}>
 							{s.title}
 						</MenuItem>

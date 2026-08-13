@@ -1,6 +1,6 @@
-import { Box, SelectChangeEvent } from '@mui/material';
+import { Box } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
@@ -8,40 +8,57 @@ import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import { getActiveSeason, getActiveSeasonId } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
-import PlayersStats from './PlayersStats';
+import LeaguesBalanceMatrix from './LeaguesBalanceMatrix';
+import LeaguesStatsLeaderboard from './LeaguesStatsLeaderboard';
+import {
+	findLeagueStats,
+	mergePlayersWithLeagueStats,
+} from './leaguePlayerStats';
+import {
+	leagueAccent,
+	leaguesStatsPageSx,
+	leaguesStatsSectionSx,
+	leaguesStatsSectionTitleSx,
+} from './leaguesStatsPageStyles';
 import { selectPlayersStatsByLeagues } from './selectors';
 import { getAllPlayersStatsByLeagues } from './statsSlice';
-import LeagueStats from './types/LeagueStats';
 
 export default function LeaguesStatsPage(): JSX.Element {
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
-	const statsByLeagues: LeagueStats[] = useAppSelector(selectPlayersStatsByLeagues);
+	const statsByLeagues = useAppSelector(selectPlayersStatsByLeagues);
 	const dispatch = useAppDispatch();
-	const [selectedLeague, setSelectedLeague] = useState<LeagueStats | undefined>(undefined);
-	const [selectedLeagueCode, setSelectedLeagueName] = useState<string>('');
+	const [selectedLeagueCode, setSelectedLeagueCode] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
 
-	const sortedPlayersStats = selectedLeague
-		? [...selectedLeague.playersStats].sort((a, b) => b.actualBalance - a.actualBalance)
-		: [];
+	const leagues = activeSeason?.leagues ?? [];
+	const players = activeSeason?.players ?? [];
+
+	const selectedLeague = leagues.find((league) => league.leagueCode === selectedLeagueCode);
+	const sortedPlayersStats = useMemo(() => {
+		if (!selectedLeague) {
+			return [];
+		}
+		return mergePlayersWithLeagueStats(
+			players,
+			findLeagueStats(statsByLeagues, selectedLeague.id)
+		).sort(
+			(a, b) => b.actualBalance - a.actualBalance || a.username.localeCompare(b.username)
+		);
+	}, [players, selectedLeague, statsByLeagues]);
 
 	useFetchActiveSeason(activeSeasonId);
 
-	const handleLeagueChange = (event: SelectChangeEvent): void => {
-		const leagueName = event.target.value;
-		const league = statsByLeagues.find((l) => l.simpleLeague.leagueCode === leagueName);
-		setSelectedLeagueName(leagueName);
-		setSelectedLeague(league || undefined);
+	const handleSelectLeague = (leagueCode: string): void => {
+		setSelectedLeagueCode(leagueCode);
 	};
 
 	useEffect(() => {
-		if (statsByLeagues.length > 0 && !selectedLeagueCode) {
-			setSelectedLeagueName(statsByLeagues[0].simpleLeague.leagueCode);
-			setSelectedLeague(statsByLeagues[0]);
+		if (leagues.length > 0 && !leagues.some((league) => league.leagueCode === selectedLeagueCode)) {
+			setSelectedLeagueCode(leagues[0].leagueCode);
 		}
-	}, [statsByLeagues, selectedLeagueCode]);
+	}, [leagues, selectedLeagueCode]);
 
 	useEffect(() => {
 		if (activeSeasonId) {
@@ -65,41 +82,42 @@ export default function LeaguesStatsPage(): JSX.Element {
 		}
 	}, []);
 
+	if (loading || (Boolean(activeSeasonId) && !activeSeason)) {
+		return <CustomLoading />;
+	}
+
+	if (loadingError) {
+		return <CustomLoadingError />;
+	}
+
 	return (
-		<Box>
-			{loading ? (
-				<CustomLoading />
-			) : (
-				<Box>
-					{loadingError ? (
-						<CustomLoadingError />
-					) : (
-						<Box
-							sx={{
-								maxWidth: '25rem',
-								margin: '0 auto',
-								mt: -1,
-								pt: 1,
-								boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
-							}}
-						>
-							<Box sx={{ textAlign: 'center', fontWeight: 600 }}>
-								{t('chooseLeagueForDetailedStatistik')}
-							</Box>
-							<Box sx={{ my: 1, mx: 1, minWidth: '18rem' }}>
-								<LeagueSelect
-									value={selectedLeagueCode}
-									onChange={handleLeagueChange}
-									leagues={activeSeason?.leagues}
-									withoutAll
-									fullLeagueNames
-								/>
-							</Box>
-							<PlayersStats playersStats={sortedPlayersStats} />
-						</Box>
-					)}
+		<Box sx={leaguesStatsPageSx}>
+			{leagues.length > 1 ? (
+				<LeaguesBalanceMatrix
+					leagues={leagues}
+					players={players}
+					statsByLeagues={statsByLeagues}
+					selectedLeagueCode={selectedLeagueCode}
+					onSelectLeague={handleSelectLeague}
+				/>
+			) : null}
+
+			<Box sx={leaguesStatsSectionSx}>
+				<Box sx={leaguesStatsSectionTitleSx}>{t('chooseLeagueForDetailedStatistik')}</Box>
+				<Box sx={{ mx: 1, mb: 1.25 }}>
+					<LeagueSelect
+						value={selectedLeagueCode}
+						onChange={(event) => handleSelectLeague(event.target.value)}
+						leagues={leagues}
+						withoutAll
+						fullLeagueNames
+					/>
 				</Box>
-			)}
+				<LeaguesStatsLeaderboard
+					playersStats={sortedPlayersStats}
+					accent={leagueAccent(selectedLeagueCode)}
+				/>
+			</Box>
 		</Box>
 	);
 }

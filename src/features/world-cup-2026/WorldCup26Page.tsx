@@ -70,7 +70,7 @@ export default function WorldCup26Page(): JSX.Element {
 	const dateLocale = wc26DateLocale(i18n.language);
 	const pageView = parsePageView(searchParams.get('view'));
 	const bracketStage = parseBracketStage(searchParams.get('stage'));
-	const [viewFilter, setViewFilter] = useState<Wc26ViewFilter>('playoffs');
+	const [viewFilter, setViewFilter] = useState<Wc26ViewFilter>('all');
 	const { matches: scheduleMatches, loading, error } = useWc26SchedulePage();
 
 	const updateSearch = useCallback(
@@ -96,7 +96,7 @@ export default function WorldCup26Page(): JSX.Element {
 	const handlePageViewChange = useCallback(
 		(view: Wc26PageView): void => {
 			if (view === 'schedule') {
-				setViewFilter('playoffs');
+				setViewFilter('all');
 				updateSearch({ view: 'schedule', stage: null });
 				return;
 			}

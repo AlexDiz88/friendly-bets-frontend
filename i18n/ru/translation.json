@@ -326,6 +326,7 @@
 	"loadingError": "Ошибка загрузки! Попробуйте обновить страницу",
 	"processing": "Идет обработка результатов...",
 	"chooseLeagueForDetailedStatistik": "Выберите лигу для просмотра детальной статистики по ней",
+	"leaguesBalanceSummary": "Сводка по лигам",
 	"statsWasSuccessfullyRecalculated": "Статистика успешно пересчитана",
 	"seasonWasSuccessfullyCreated": "Сезон был успешно создан",
 	"seasonStartDate": "Дата начала турнира",

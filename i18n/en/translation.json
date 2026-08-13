@@ -326,6 +326,7 @@
 	"loadingError": "Loading error! Try refreshing page",
 	"processing": "Results are being processed...",
 	"chooseLeagueForDetailedStatistik": "Select league to view detailed statistics",
+	"leaguesBalanceSummary": "Balance by league",
 	"statsWasSuccessfullyRecalculated": "Statistics have been successfully recalculated",
 	"seasonWasSuccessfullyCreated": "Season has been successfully created",
 	"seasonStartDate": "Tournament start date",
