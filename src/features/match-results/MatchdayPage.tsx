@@ -318,10 +318,19 @@ export default function MatchdayPage(): JSX.Element {
 	);
 
 	const showViewMatchBetsButton = useCallback(
-		(match: ExternalMatch): boolean =>
-			canOpenMatchBetsDialog(match) &&
-			isMatchOpenForBetting(match) &&
-			!isSensitiveKnockoutSlot(selectedLeague?.leagueCode, betMatchDay),
+		(match: ExternalMatch): boolean => {
+			if (!canOpenMatchBetsDialog(match)) {
+				return false;
+			}
+			// Knockout privacy: don't reveal bet activity until kickoff.
+			if (
+				isSensitiveKnockoutSlot(selectedLeague?.leagueCode, betMatchDay) &&
+				isMatchOpenForBetting(match)
+			) {
+				return false;
+			}
+			return true;
+		},
 		[canOpenMatchBetsDialog, isMatchOpenForBetting, selectedLeague?.leagueCode, betMatchDay]
 	);
 
