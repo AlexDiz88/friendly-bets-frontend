@@ -179,7 +179,7 @@ export default function PlayerHighlightCards({
 					<LeagueAvatar
 						leagueCode={win.leagueCode}
 						matchDay={win.matchDay ?? undefined}
-						height={14}
+						height={16}
 						sx={{
 							mr: 0,
 							mt: 0.25,
@@ -240,7 +240,7 @@ export default function PlayerHighlightCards({
 								sx={playerHighlightLeagueSlotSx}
 							>
 								<Avatar
-									sx={[{ height: 14, width: 14 }, leagueLogoAvatarSx] as SxProps<Theme>}
+									sx={[{ height: 16, width: 16 }, leagueLogoAvatarSx] as SxProps<Theme>}
 									variant="square"
 									alt=""
 									src={pathToLogoImage(slot.leagueCode)}
