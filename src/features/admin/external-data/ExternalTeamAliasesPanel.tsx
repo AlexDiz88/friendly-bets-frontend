@@ -36,6 +36,7 @@ import {
 	CHAMPIONAT_PROVIDER,
 	RUSCORE_PROVIDER,
 	FLASHSCORE_PROVIDER,
+	FLASHSCORE_UA_PROVIDER,
 	LIVERESULT_PROVIDER,
 } from '../teams/teamProviderConstants';
 import {
@@ -54,6 +55,7 @@ const PROVIDERS = [
 	CHAMPIONAT_PROVIDER,
 	RUSCORE_PROVIDER,
 	FLASHSCORE_PROVIDER,
+	FLASHSCORE_UA_PROVIDER,
 	LIVERESULT_PROVIDER,
 ] as const;
 
@@ -67,6 +69,7 @@ const PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
 	[CHAMPIONAT_PROVIDER]: new Set(['EPL', 'BL']),
 	[RUSCORE_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
 	[FLASHSCORE_PROVIDER]: new Set(['EPL', 'BL']),
+	[FLASHSCORE_UA_PROVIDER]: new Set(['EPL', 'BL']),
 	[LIVERESULT_PROVIDER]: new Set(['EPL', 'BL']),
 };
 
@@ -80,6 +83,7 @@ const PROVIDER_LABEL_KEY: Record<string, string> = {
 	[CHAMPIONAT_PROVIDER]: 'externalTeamAliasProviderChampionat',
 	[RUSCORE_PROVIDER]: 'externalTeamAliasProviderRuscore',
 	[FLASHSCORE_PROVIDER]: 'externalTeamAliasProviderFlashscore',
+	[FLASHSCORE_UA_PROVIDER]: 'externalTeamAliasProviderFlashscoreUa',
 	[LIVERESULT_PROVIDER]: 'externalTeamAliasProviderLiveresult',
 };
 

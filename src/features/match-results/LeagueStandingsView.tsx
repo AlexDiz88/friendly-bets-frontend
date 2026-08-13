@@ -13,10 +13,42 @@ const ZONE_COLOR: Record<string, string> = {
 function zoneColor(zoneCode: string | null | undefined, zoneRules: StandingZoneRule[]): string | undefined {
 	if (!zoneCode) return undefined;
 	const fromRule = zoneRules.find((rule) => rule.code === zoneCode);
+	const rawColor = fromRule?.color;
+	if (rawColor) {
+		return rawColor.startsWith('#') ? rawColor : `#${rawColor}`;
+	}
 	if (fromRule?.cssClass && ZONE_COLOR[fromRule.cssClass]) {
 		return ZONE_COLOR[fromRule.cssClass];
 	}
 	return ZONE_COLOR[zoneCode];
+}
+
+function zoneLegendLabel(
+	rule: StandingZoneRule,
+	leagueCode: string | undefined,
+	t: (key: string, options?: { defaultValue?: string }) => string,
+	exists: (key: string) => boolean
+): string {
+	const code = rule.code?.trim() ?? '';
+	const label = rule.label?.trim() ?? '';
+	const labelIsRawCode = !label || label === code || /^[qr]\d+$/i.test(label);
+	if (!labelIsRawCode) {
+		return label;
+	}
+	const league = (leagueCode ?? '').toUpperCase();
+	if (league === 'BL') {
+		if (code === 'r1') {
+			return t('leagueStandings.zone.playoffRelegation');
+		}
+		if (code === 'r3') {
+			return t('leagueStandings.zone.directRelegation');
+		}
+	}
+	const key = code ? `leagueStandings.zone.${code}` : '';
+	if (key && exists(key)) {
+		return t(key);
+	}
+	return label || code;
 }
 
 function formatGoals(goalsFor: number, goalsAgainst: number): string {
@@ -240,7 +272,7 @@ export default function LeagueStandingsView({
 								}}
 							/>
 							<Typography variant="caption" color="text.secondary">
-								{rule.label}
+								{zoneLegendLabel(rule, data.leagueCode, t, (key) => i18n.exists(key))}
 							</Typography>
 						</Box>
 					))}

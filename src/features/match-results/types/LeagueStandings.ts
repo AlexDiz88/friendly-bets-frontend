@@ -4,6 +4,7 @@ export type StandingZoneRule = {
 	code: string;
 	label: string;
 	cssClass: string;
+	color?: string | null;
 };
 
 export type LeagueStandingRow = {

@@ -66,6 +66,7 @@ type StandingsParsed = {
 		code: string;
 		label: string;
 		cssClass: string;
+		color?: string | null;
 	}>;
 	rows?: StandingsParsedRow[];
 };
@@ -90,6 +91,7 @@ function toPreviewPage(parsed: StandingsParsed, provider: string): LeagueStandin
 			code: rule.code,
 			label: rule.label,
 			cssClass: rule.cssClass,
+			color: rule.color ?? null,
 		})),
 		rows: (parsed.rows ?? []).map((row, index) => {
 			const team = row.team;

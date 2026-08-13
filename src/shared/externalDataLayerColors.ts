@@ -1,5 +1,5 @@
 /**
- * Canonical UI colors for external-data layers (SCHEDULE / ODDS / LIVE / FULL_MATCH).
+ * Canonical UI colors for external-data layers (SCHEDULE / ODDS / LIVE / FULL_MATCH / STANDINGS).
  * Single source of truth — use everywhere (admin, sandbox, monitoring, error-logs).
  */
 export type ExternalDataLayer = 'SCHEDULE' | 'ODDS' | 'LIVE' | 'FULL_MATCH' | 'STANDINGS';
@@ -39,6 +39,7 @@ export const EXTERNAL_DATA_LAYERS: ExternalDataLayer[] = [
  * - ODDS — amber `#d97706`
  * - LIVE — green `#059669`
  * - FULL_MATCH — violet `#7c3aed`
+ * - STANDINGS — teal `#0d9488`
  */
 export const EXTERNAL_DATA_LAYER_PALETTE: Record<ExternalDataLayer, ExternalDataLayerPalette> = {
 	SCHEDULE: {
