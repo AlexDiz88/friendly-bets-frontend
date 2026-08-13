@@ -254,6 +254,7 @@
 	"emptyBetsCount": "Ставок пропущено",
 	"winPercentage": "Процент выигранных ставок",
 	"averageCoef": "Средний кэф",
+	"averageCoefShort": "Ср.кэф",
 	"averageWinCoef": "Средний кэф(выигранных ставок)",
 	"playerName": "Имя",
 	"team": "Команда",

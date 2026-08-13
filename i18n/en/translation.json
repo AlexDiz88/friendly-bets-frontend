@@ -254,6 +254,7 @@
 	"emptyBetsCount": "Empty Bets",
 	"winPercentage": "Win percentage",
 	"averageCoef": "Average Coefficient",
+	"averageCoefShort": "Avg.odds",
 	"averageWinCoef": "Average Coefficient (Won bets)",
 	"playerName": "Player",
 	"team": "Team",

@@ -254,6 +254,7 @@
 	"emptyBetsCount": "Leere Wetten",
 	"winPercentage": "Prozentsatz des Gewinns",
 	"averageCoef": "Durchschnittskoeffizient",
+	"averageCoefShort": "Ø-Koeff",
 	"averageWinCoef": "Durchschnittskoef.(gewonnene Wetten)",
 	"playerName": "Spieler",
 	"team": "Mannschaft",

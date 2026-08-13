@@ -29,13 +29,12 @@ const seasonTitleSx: SxProps<Theme> = {
 	whiteSpace: 'nowrap',
 	fontWeight: 600,
 	fontSize: '0.8rem',
-	lineHeight: 1.2,
 };
 
 const seasonIconSx: SxProps<Theme> = {
-	fontSize: '1.05rem',
+	fontSize: '1.2rem',
 	flexShrink: 0,
-	opacity: 0.78,
+	opacity: 0.8,
 };
 
 const seasonSelectExtraSx: SxProps<Theme> = {

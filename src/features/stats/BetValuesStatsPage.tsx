@@ -184,7 +184,7 @@ export default function BetValuesStatsPage(): JSX.Element {
 						%
 					</Box>
 				</Box>
-				<Box component="span">· {t('averageCoef')}</Box>
+				<Box component="span">· {t('averageCoefShort')}</Box>
 			</Box>
 			{visibleStats.length === 0 ? (
 				<Box sx={betValuesEmptySx}>{t('noBetValuesStats')}</Box>

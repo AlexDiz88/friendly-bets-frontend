@@ -73,7 +73,7 @@ export const betValuesLegendSx: SxProps<Theme> = (theme) => ({
 	display: 'flex',
 	justifyContent: 'center',
 	alignItems: 'center',
-	flexWrap: 'wrap',
+	flexWrap: 'nowrap',
 	columnGap: 0.75,
 	rowGap: 0.35,
 	mb: 1.25,
