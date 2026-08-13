@@ -1,9 +1,10 @@
-import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { Box } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
+import SeasonSelect from '../../components/selectors/SeasonSelect';
 import { getSeasons } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
 import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
@@ -104,21 +105,13 @@ export default function BetTitlesStatsPage(): JSX.Element {
 	}
 
 	const seasonSelect = (
-		<Box sx={{ maxWidth: 300, mx: 'auto', mb: 2 }}>
-			<FormControl fullWidth size="small">
-				<InputLabel>{t('season')}</InputLabel>
-				<Select
-					value={selectedSeasonId}
-					label={t('season')}
-					onChange={(e) => setSelectedSeasonId(e.target.value)}
-				>
-					{seasonsNewestFirst.map((season) => (
-						<MenuItem key={season.id} value={season.id}>
-							{season.title}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
+		<Box sx={{ maxWidth: '25rem', mx: 'auto', mb: 2, px: { xs: 1, sm: 0 } }}>
+			<SeasonSelect
+				value={selectedSeasonId}
+				onChange={(event) => setSelectedSeasonId(event.target.value)}
+				seasons={seasonsNewestFirst}
+				sx={{ width: '100%' }}
+			/>
 		</Box>
 	);
 

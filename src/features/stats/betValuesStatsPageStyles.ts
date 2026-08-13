@@ -50,7 +50,7 @@ export const betValuesFiltersSx: SxProps<Theme> = (theme) => {
 	return {
 		display: 'flex',
 		flexDirection: 'row',
-		alignItems: 'flex-end',
+		alignItems: 'center',
 		gap: 1,
 		mb: 1.5,
 		p: 1.25,

@@ -1,10 +1,11 @@
-import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { Box } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
+import SeasonSelect from '../../components/selectors/SeasonSelect';
 import { getSeasons } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
 import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
@@ -135,20 +136,12 @@ export default function BetValuesStatsPage(): JSX.Element {
 
 	const filters = (
 		<Box sx={betValuesFiltersSx}>
-			<FormControl size="small" sx={{ flex: '1 1 auto', minWidth: 0 }}>
-				<InputLabel>{t('season')}</InputLabel>
-				<Select
-					value={selectedSeasonId}
-					label={t('season')}
-					onChange={(event) => setSelectedSeasonId(event.target.value)}
-				>
-					{seasonsNewestFirst.map((season) => (
-						<MenuItem key={season.id} value={season.id}>
-							{season.title}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
+			<SeasonSelect
+				value={selectedSeasonId}
+				onChange={(event) => setSelectedSeasonId(event.target.value)}
+				seasons={seasonsNewestFirst}
+				sx={{ flex: '1 1 auto', minWidth: 0 }}
+			/>
 			<LeagueSelect
 				value={selectedLeagueCode ?? allValue}
 				onChange={(event) => {
