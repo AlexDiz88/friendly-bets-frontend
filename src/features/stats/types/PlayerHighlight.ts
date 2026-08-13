@@ -16,6 +16,7 @@ export interface BiggestWinHighlight {
 	betSize?: number | null;
 	leagueCode?: string | null;
 	matchDay?: string | null;
+	calendarNodeId?: string | null;
 	homeTeam?: HighlightTeam | null;
 	awayTeam?: HighlightTeam | null;
 }

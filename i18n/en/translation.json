@@ -1008,11 +1008,11 @@
 	"noBetTitlesStats": "There are no statistics available at the moment",
 	"noBetValuesStats": "There are no odds statistics available at the moment",
 	"betValueRange": {
-		"SUPER_LOW": "Super low",
-		"LOW": "Low",
+		"SUPER_LOW": "Rock-solid",
+		"LOW": "Reliable",
 		"MEDIUM": "Medium",
 		"HIGH": "High",
-		"VERY_HIGH": "Very high",
+		"VERY_HIGH": "Risky",
 		"UNLIKELY": "Unlikely",
 		"COSMIC": "Adventurous",
 		"UNREALISTIC": "Lottery"

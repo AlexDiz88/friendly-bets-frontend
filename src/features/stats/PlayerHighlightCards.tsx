@@ -154,14 +154,19 @@ export default function PlayerHighlightCards({
 	const winStreak = highlight?.bestWinStreak ?? 0;
 	const loseStreak = highlight?.worstLoseStreak ?? 0;
 	const formPill = theme.palette.mode === 'dark' ? FORM_PILL.dark : FORM_PILL.light;
+	const canLinkGameweek = Boolean(seasonId && activeSeasonId && seasonId === activeSeasonId);
+	const bestBetLink =
+		canLinkGameweek && win?.calendarNodeId
+			? `/gameweeks?node=${encodeURIComponent(win.calendarNodeId)}`
+			: undefined;
 	const gameweekLink =
-		gw?.calendarNodeId && seasonId && activeSeasonId && seasonId === activeSeasonId
+		canLinkGameweek && gw?.calendarNodeId
 			? `/gameweeks?node=${encodeURIComponent(gw.calendarNodeId)}`
 			: undefined;
 
 	return (
 		<Box sx={playerHighlightsGridSx}>
-			<CardShell label={t('statsChart.bestBet')}>
+			<CardShell label={t('statsChart.bestBet')} to={bestBetLink}>
 				<Typography
 					component="div"
 					sx={
