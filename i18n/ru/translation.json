@@ -1319,7 +1319,7 @@
 	"apiSandbox": {
 		"menuLink": "API Sandbox",
 		"title": "Тестовый стенд API",
-		"hint": "Четыре независимых стенда для реальных запросов SCHEDULE, ODDS, LIVE и FULL_MATCH. Без записи в базу. Копируйте ID между вкладками.",
+		"hint": "Пять независимых стендов для реальных запросов SCHEDULE, ODDS, LIVE, FULL_MATCH и STANDINGS. Без записи в базу. Копируйте ID между вкладками.",
 		"tabsAria": "Слои API sandbox",
 		"runRequest": "Запросить",
 		"copy": "Копировать",
@@ -1356,12 +1356,16 @@
 		"fullMatchHintRuscore": "День /football/{date} или карточка slug/eventId (bot-prerender).",
 		"fullMatchEmpty": "Вставьте game ID и нажмите «Запросить»",
 		"fullMatchEmptyRuscore": "Укажите дату (список матчей) или slug/eventId карточки",
+		"standingsHint": "Турнирная таблица liveresult.ru по коду лиги (EPL, BL). Превью — как на вкладке «Таблица» в Результатах.",
+		"standingsCardPreview": "Превью таблицы (как в Результатах)",
+		"standingsEmpty": "Выберите лигу и нажмите «Запросить»",
 		"titleContainsPlaceholder": "например Казахстан",
 		"layer": {
 			"SCHEDULE": "SCHEDULE",
 			"ODDS": "ODDS",
 			"LIVE": "LIVE",
-			"FULL_MATCH": "FULL_MATCH"
+			"FULL_MATCH": "FULL_MATCH",
+			"STANDINGS": "STANDINGS"
 		},
 		"fields": {
 			"provider": "Провайдер",
@@ -1376,7 +1380,9 @@
 			"oddsMode": "Режим",
 			"date": "Дата",
 			"titleContains": "Фильтр лиги (title)",
-			"gameId": "Game ID"
+			"gameId": "Game ID",
+			"leagueCode": "Код лиги",
+			"sourceUrl": "URL источника"
 		},
 		"oddsMode": {
 			"tournament": "Tournament (события)",
@@ -1390,7 +1396,9 @@
 			"events": "События",
 			"markets": "Рынки",
 			"competitions": "Лиги",
-			"goals": "Голы"
+			"goals": "Голы",
+			"rows": "Строки",
+			"zoneRules": "Зоны"
 		},
 		"col": {
 			"round": "Тур",

@@ -1319,7 +1319,7 @@
 	"apiSandbox": {
 		"menuLink": "API Sandbox",
 		"title": "API Sandbox",
-		"hint": "Four independent stands for real SCHEDULE, ODDS, LIVE and FULL_MATCH requests. No database writes. Copy IDs between tabs.",
+		"hint": "Five independent stands for real SCHEDULE, ODDS, LIVE, FULL_MATCH and STANDINGS requests. No database writes. Copy IDs between tabs.",
 		"tabsAria": "API sandbox layers",
 		"runRequest": "Request",
 		"copy": "Copy",
@@ -1356,12 +1356,16 @@
 		"fullMatchHintRuscore": "Day /football/{date} or card slug/eventId (bot prerender).",
 		"fullMatchEmpty": "Paste a game ID and click Request",
 		"fullMatchEmptyRuscore": "Set a date (match list) or slug/eventId for a card",
+		"standingsHint": "liveresult.ru league standings by league code (EPL, BL). Preview matches the Results «Standings» tab.",
+		"standingsCardPreview": "Standings preview (as in Results)",
+		"standingsEmpty": "Select a league and click Request",
 		"titleContainsPlaceholder": "e.g. Kazakhstan",
 		"layer": {
 			"SCHEDULE": "SCHEDULE",
 			"ODDS": "ODDS",
 			"LIVE": "LIVE",
-			"FULL_MATCH": "FULL_MATCH"
+			"FULL_MATCH": "FULL_MATCH",
+			"STANDINGS": "STANDINGS"
 		},
 		"fields": {
 			"provider": "Provider",
@@ -1376,7 +1380,9 @@
 			"oddsMode": "Mode",
 			"date": "Date",
 			"titleContains": "League filter (title)",
-			"gameId": "Game ID"
+			"gameId": "Game ID",
+			"leagueCode": "League code",
+			"sourceUrl": "Source URL"
 		},
 		"oddsMode": {
 			"tournament": "Tournament (events)",
@@ -1390,7 +1396,9 @@
 			"events": "Events",
 			"markets": "Markets",
 			"competitions": "Leagues",
-			"goals": "Goals"
+			"goals": "Goals",
+			"rows": "Rows",
+			"zoneRules": "Zones"
 		},
 		"col": {
 			"round": "Round",

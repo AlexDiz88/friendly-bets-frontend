@@ -12,6 +12,7 @@ import {
 	sandboxLive,
 	sandboxOdds,
 	sandboxSchedule,
+	sandboxStandings,
 	type SandboxResult,
 } from './apiSandboxApi';
 import { sandboxHintSx, sandboxPageRootSx, sandboxTitleSx } from './apiSandboxPageStyles';
@@ -26,10 +27,12 @@ import OddsSandboxStand, {
 	type OddsModeStandState,
 } from './stands/OddsSandboxStand';
 import ScheduleSandboxStand, { type ScheduleStandForm } from './stands/ScheduleSandboxStand';
+import StandingsSandboxStand, { type StandingsStandForm } from './stands/StandingsSandboxStand';
 import {
 	SOCCER365_PROVIDER,
 	SPORTS_RU_PROVIDER,
 	FOOTBALL24_PROVIDER,
+	LIVERESULT_PROVIDER,
 } from '../admin/teams/teamProviderConstants';
 
 function todayIsoDate(): string {
@@ -79,6 +82,11 @@ export default function ApiSandboxPage(): JSX.Element {
 		loading: false,
 		result: null,
 	});
+	const [standings, setStandings] = useState<LayerStandState<StandingsStandForm>>({
+		form: { provider: LIVERESULT_PROVIDER, leagueCode: 'EPL' },
+		loading: false,
+		result: null,
+	});
 
 	useEffect(() => {
 		let cancelled = false;
@@ -91,6 +99,7 @@ export default function ApiSandboxPage(): JSX.Element {
 				const oddsProviders = config.capabilities?.ODDS || [];
 				const liveProviders = config.capabilities?.LIVE || [];
 				const fullProviders = config.capabilities?.FULL_MATCH || [];
+				const standingsProviders = config.capabilities?.STANDINGS || [];
 				const oddsProvider = oddsProviders[0] || 'marathonbet';
 				setSchedule((prev) => ({
 					...prev,
@@ -119,6 +128,13 @@ export default function ApiSandboxPage(): JSX.Element {
 					form: {
 						...prev.form,
 						provider: fullProviders[0] || prev.form.provider,
+					},
+				}));
+				setStandings((prev) => ({
+					...prev,
+					form: {
+						...prev.form,
+						provider: standingsProviders[0] || prev.form.provider,
 					},
 				}));
 			})
@@ -260,6 +276,25 @@ export default function ApiSandboxPage(): JSX.Element {
 		}
 	}, [dispatch, fullMatch.form]);
 
+	const runStandings = useCallback(async () => {
+		const leagueCode = standings.form.leagueCode.trim();
+		if (!leagueCode) {
+			dispatch(showErrorSnackbar({ message: 'leagueCodeRequired' }));
+			return;
+		}
+		setStandings((prev) => ({ ...prev, loading: true }));
+		try {
+			const result = await sandboxStandings({
+				provider: standings.form.provider,
+				leagueCode,
+			});
+			setStandings((prev) => ({ ...prev, result, loading: false }));
+		} catch (err) {
+			setStandings((prev) => ({ ...prev, loading: false }));
+			dispatch(showErrorSnackbar({ message: (err as Error).message }));
+		}
+	}, [dispatch, standings.form]);
+
 	const openFullMatchCard = useCallback(
 		async (gameId: string) => {
 			if (!gameId.trim()) {
@@ -343,6 +378,16 @@ export default function ApiSandboxPage(): JSX.Element {
 							result={fullMatch.result}
 							onRun={() => void runFullMatch()}
 							onOpenMatch={(gameId) => void openFullMatchCard(gameId)}
+						/>
+					) : null}
+					{activeLayer === 'STANDINGS' ? (
+						<StandingsSandboxStand
+							providers={capabilities.STANDINGS || []}
+							form={standings.form}
+							onFormChange={(form) => setStandings((prev) => ({ ...prev, form }))}
+							loading={standings.loading}
+							result={standings.result}
+							onRun={() => void runStandings()}
 						/>
 					) : null}
 				</>
