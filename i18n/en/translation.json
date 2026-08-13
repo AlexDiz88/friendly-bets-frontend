@@ -262,6 +262,19 @@
 	"weekChange": "This gameweek",
 	"positionChange": "Position change",
 	"afterGameweek": "After gameweek",
+	"statsChart": {
+		"chartMode": "Chart view",
+		"balanceCurve": "Curve",
+		"gameweekPnl": "Weeks",
+		"noGameweekData": "No finished gameweeks",
+		"loadError": "Could not load the chart",
+		"position": "Place",
+		"gameweek": "Gameweek {{n}}",
+		"wonShort": "Won",
+		"returnedShort": "Return",
+		"lostShort": "Lost",
+		"emptyShort": "Missed"
+	},
 	"leagueShortName": {
 		"EPL": "EPL",
 		"BL": "BL",

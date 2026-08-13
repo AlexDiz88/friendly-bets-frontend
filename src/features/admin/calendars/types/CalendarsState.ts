@@ -12,6 +12,7 @@ export default interface CalendarsState {
 	betsByCalendarNodeId: Record<string, BetsPage>;
 	gameweeksOverviewLoadedAt?: number;
 	gameweeksOverviewSeasonId?: string;
+	gameweeksOverviewLoading?: boolean;
 	gameweeksBetsLoading?: boolean;
 	error?: string;
 }

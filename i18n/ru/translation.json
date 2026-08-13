@@ -262,6 +262,19 @@
 	"weekChange": "Этот тур",
 	"positionChange": "Смена позиции",
 	"afterGameweek": "После тура",
+	"statsChart": {
+		"chartMode": "Вид графика",
+		"balanceCurve": "Кривая",
+		"gameweekPnl": "Туры",
+		"noGameweekData": "Нет завершённых туров",
+		"loadError": "Не удалось загрузить график",
+		"position": "Место",
+		"gameweek": "Тур {{n}}",
+		"wonShort": "Выигр.",
+		"returnedShort": "Возвр.",
+		"lostShort": "Проигр.",
+		"emptyShort": "Пропуск"
+	},
 	"leagueShortName": {
 		"EPL": "АПЛ",
 		"BL": "БЛ",

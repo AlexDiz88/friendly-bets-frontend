@@ -262,6 +262,19 @@
 	"weekChange": "Dieser Spieltag",
 	"positionChange": "Positions änderung",
 	"afterGameweek": "Nach Spieltag",
+	"statsChart": {
+		"chartMode": "Diagrammansicht",
+		"balanceCurve": "Kurve",
+		"gameweekPnl": "Spieltage",
+		"noGameweekData": "Keine abgeschlossenen Spieltage",
+		"loadError": "Diagramm konnte nicht geladen werden",
+		"position": "Platz",
+		"gameweek": "Spieltag {{n}}",
+		"wonShort": "Gew.",
+		"returnedShort": "Rückg.",
+		"lostShort": "Verl.",
+		"emptyShort": "Ausgel."
+	},
 	"leagueShortName": {
 		"EPL": "EPL",
 		"BL": "BL",

@@ -14,24 +14,27 @@ import {
 	type Theme,
 } from '@mui/material';
 import { t } from 'i18next';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
+import Calendar from '../admin/calendars/types/Calendar';
+import PlayerBalanceChart from './PlayerBalanceChart';
+import PlayerOutcomesBar from './PlayerOutcomesBar';
+import { buildPlayerGameweekChartPoints } from './playerGameweekChart';
+import { playerStatsExpandBodySx } from './playerStatsChartStyles';
 import StatsTableIdentityCell, { STATS_COLLAPSE_MS } from './StatsTableIdentityCell';
 import {
+	statsBalanceCellSx,
 	statsBalanceNegativeSx,
 	statsBalancePositiveSx,
-	statsBalanceCellSx,
 	statsBetsCellSx,
-	statsBodyDataCellSx,
-	statsPercentCellSx,
 	statsCollapseRowCellSx,
-	statsDetailValueSx,
-	statsExpandIconSx,
 	statsExpandableRowSx,
 	statsExpandedRingSx,
 	statsExpandedTitleSx,
+	statsExpandIconSx,
 	statsIdentityCellSx,
 	statsLeadingSx,
+	statsPercentCellSx,
 	statsPlayerNameSx,
 	statsTableBodySx,
 	statsTableContainerSx,
@@ -39,10 +42,35 @@ import {
 	statsTableHeadSx,
 } from './statsPageStyles';
 import PlayerStats from './types/PlayerStats';
+import useSeasonGameweeksOverview from './useSeasonGameweeksOverview';
 
-function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
+function Row({
+	pStats,
+	nodes,
+	chartLoading,
+	chartError,
+	onExpand,
+}: {
+	pStats: PlayerStats;
+	nodes: Calendar[];
+	chartLoading: boolean;
+	chartError: string | undefined;
+	onExpand: () => void;
+}): JSX.Element {
 	const [open, setOpen] = useState(false);
-	const toggleOpen = (): void => setOpen((prev) => !prev);
+	const points = useMemo(
+		() => buildPlayerGameweekChartPoints(nodes, pStats.userId),
+		[nodes, pStats.userId]
+	);
+
+	const toggleOpen = (): void => {
+		setOpen((prev) => {
+			if (!prev) {
+				onExpand();
+			}
+			return !prev;
+		});
+	};
 
 	return (
 		<>
@@ -97,66 +125,17 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 					style={{ paddingBottom: 0, paddingTop: 0 }}
 				>
 					<Collapse in={open} timeout={STATS_COLLAPSE_MS} unmountOnExit>
-						<Box sx={{ margin: 0, textAlign: 'center' }}>
+						<Box sx={playerStatsExpandBodySx}>
 							<Typography component="div" sx={statsExpandedTitleSx}>
 								{t('additionalStats')} ({pStats.username})
 							</Typography>
-							<Table size="small" aria-label="purchases">
-								<TableBody>
-									<TableRow>
-										<TableCell align="center">{t('totalBetsCount')}:</TableCell>
-										<TableCell align="center" sx={statsDetailValueSx('total')}>
-											<b>{pStats.totalBets}</b>
-										</TableCell>
-									</TableRow>
-									<TableRow>
-										<TableCell align="center">{t('betsWonCount')}:</TableCell>
-										<TableCell align="center" sx={statsDetailValueSx('won')}>
-											<b>{pStats.wonBetCount}</b>
-										</TableCell>
-									</TableRow>
-									<TableRow>
-										<TableCell align="center">{t('betsReturnedCount')}:</TableCell>
-										<TableCell align="center" sx={statsDetailValueSx('returned')}>
-											<b>{pStats.returnedBetCount}</b>
-										</TableCell>
-									</TableRow>
-									<TableRow>
-										<TableCell align="center">{t('betsLostCount')}:</TableCell>
-										<TableCell align="center" sx={statsDetailValueSx('lost')}>
-											<b>{pStats.lostBetCount}</b>
-										</TableCell>
-									</TableRow>
-									<TableRow>
-										<TableCell align="center">{t('emptyBetsCount')}:</TableCell>
-										<TableCell align="center" sx={statsDetailValueSx('empty')}>
-											<b>{pStats.emptyBetCount}</b>
-										</TableCell>
-									</TableRow>
-									<TableRow>
-										<TableCell align="center" sx={{ p: 0, py: 0.5 }}>
-											{t('winPercentage')}:
-										</TableCell>
-										<TableCell align="center" sx={statsDetailValueSx('winRate')}>
-											<b>{pStats.winRate.toFixed(1)}%</b>
-										</TableCell>
-									</TableRow>
-									<TableRow>
-										<TableCell align="center">{t('averageCoef')}:</TableCell>
-										<TableCell align="center" sx={statsDetailValueSx('avgOdds')}>
-											<b>{pStats.averageOdds.toFixed(2)}</b>
-										</TableCell>
-									</TableRow>
-									<TableRow>
-										<TableCell align="center" sx={{ fontSize: '0.82rem', px: 0, py: 0.5 }}>
-											{t('averageWinCoef')}:
-										</TableCell>
-										<TableCell align="center" sx={statsDetailValueSx('avgWinOdds')}>
-											<b>{pStats.averageWonBetOdds.toFixed(2)}</b>
-										</TableCell>
-									</TableRow>
-								</TableBody>
-							</Table>
+							<PlayerOutcomesBar pStats={pStats} />
+							<PlayerBalanceChart
+								points={points}
+								loading={chartLoading}
+								error={chartError}
+								userId={pStats.userId}
+							/>
 						</Box>
 					</Collapse>
 				</TableCell>
@@ -167,9 +146,14 @@ function Row({ pStats }: { pStats: PlayerStats }): JSX.Element {
 
 export default function PlayersStats({
 	playersStats,
+	seasonId,
 }: {
 	playersStats: PlayerStats[];
+	seasonId?: string;
 }): JSX.Element {
+	const [chartsRequested, setChartsRequested] = useState(false);
+	const { nodes, loading, error } = useSeasonGameweeksOverview(seasonId, chartsRequested);
+
 	return (
 		<TableContainer component={Paper} elevation={0} sx={statsTableContainerSx}>
 			<Table aria-label="collapsible table" size="small">
@@ -199,7 +183,14 @@ export default function PlayersStats({
 				</TableHead>
 				<TableBody sx={statsTableBodySx}>
 					{playersStats.map((pStats) => (
-						<Row key={pStats.username} pStats={pStats} />
+						<Row
+							key={pStats.userId || pStats.username}
+							pStats={pStats}
+							nodes={nodes}
+							chartLoading={chartsRequested && loading}
+							chartError={chartsRequested ? error : undefined}
+							onExpand={() => setChartsRequested(true)}
+						/>
 					))}
 				</TableBody>
 			</Table>

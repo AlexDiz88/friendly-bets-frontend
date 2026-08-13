@@ -110,7 +110,10 @@ export default function Archive(): JSX.Element {
 									</MenuItem>
 								))}
 							</Select>
-							<PlayersStats playersStats={sortedPlayersStats} />
+							<PlayersStats
+								playersStats={sortedPlayersStats}
+								seasonId={selectedSeason?.id}
+							/>
 						</Box>
 					)}
 				</Box>

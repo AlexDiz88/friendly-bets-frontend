@@ -90,7 +90,7 @@ export default function Homepage(): JSX.Element {
 									}}
 								/>
 							) : null}
-							<PlayersStats playersStats={sortedPlayersStats} />
+							<PlayersStats playersStats={sortedPlayersStats} seasonId={activeSeasonId} />
 						</Box>
 					)}
 				</Box>
