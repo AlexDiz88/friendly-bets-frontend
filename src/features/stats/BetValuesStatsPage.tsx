@@ -135,7 +135,7 @@ export default function BetValuesStatsPage(): JSX.Element {
 
 	const filters = (
 		<Box sx={betValuesFiltersSx}>
-			<FormControl fullWidth size="small">
+			<FormControl size="small" sx={{ flex: '1 1 auto', minWidth: 0 }}>
 				<InputLabel>{t('season')}</InputLabel>
 				<Select
 					value={selectedSeasonId}
@@ -156,7 +156,6 @@ export default function BetValuesStatsPage(): JSX.Element {
 					setSelectedLeagueCode(value === allValue ? null : value);
 				}}
 				leagues={leagues}
-				fullLeagueNames
 			/>
 		</Box>
 	);

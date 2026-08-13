@@ -49,7 +49,8 @@ export const betValuesFiltersSx: SxProps<Theme> = (theme) => {
 	const p = palette(theme);
 	return {
 		display: 'flex',
-		flexDirection: 'column',
+		flexDirection: 'row',
+		alignItems: 'flex-end',
 		gap: 1,
 		mb: 1.5,
 		p: 1.25,
