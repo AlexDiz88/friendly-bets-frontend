@@ -65,3 +65,10 @@ export async function sandboxFullMatch(body: {
 }): Promise<SandboxResult> {
 	return postSandbox('/api/admin/external-data/sandbox/full-match', body);
 }
+
+export async function sandboxStandings(body: {
+	provider: string;
+	leagueCode: string;
+}): Promise<SandboxResult> {
+	return postSandbox('/api/admin/external-data/sandbox/standings', body);
+}

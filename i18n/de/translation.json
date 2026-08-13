@@ -1319,7 +1319,7 @@
 	"apiSandbox": {
 		"menuLink": "API Sandbox",
 		"title": "API-Teststand",
-		"hint": "Vier unabhängige Stände für echte SCHEDULE-, ODDS-, LIVE- und FULL_MATCH-Anfragen. Keine DB-Schreibvorgänge. IDs zwischen Tabs kopieren.",
+		"hint": "Fünf unabhängige Stände für echte SCHEDULE-, ODDS-, LIVE-, FULL_MATCH- und STANDINGS-Anfragen. Keine DB-Schreibvorgänge. IDs zwischen Tabs kopieren.",
 		"tabsAria": "API-Sandbox-Schichten",
 		"runRequest": "Anfragen",
 		"copy": "Kopieren",
@@ -1356,12 +1356,16 @@
 		"fullMatchHintRuscore": "Tag /football/{date} oder Karte slug/eventId (Bot-Prerender).",
 		"fullMatchEmpty": "Game-ID einfügen und Anfragen klicken",
 		"fullMatchEmptyRuscore": "Datum (Spiel-Liste) oder slug/eventId für die Karte angeben",
+		"standingsHint": "liveresult.ru-Ligatabelle nach Ligacode (EPL, BL). Vorschau wie der Tab «Tabelle» unter Ergebnisse.",
+		"standingsCardPreview": "Tabellenvorschau (wie in Ergebnisse)",
+		"standingsEmpty": "Liga wählen und Anfragen klicken",
 		"titleContainsPlaceholder": "z. B. Kasachstan",
 		"layer": {
 			"SCHEDULE": "SCHEDULE",
 			"ODDS": "ODDS",
 			"LIVE": "LIVE",
-			"FULL_MATCH": "FULL_MATCH"
+			"FULL_MATCH": "FULL_MATCH",
+			"STANDINGS": "STANDINGS"
 		},
 		"fields": {
 			"provider": "Anbieter",
@@ -1376,7 +1380,9 @@
 			"oddsMode": "Modus",
 			"date": "Datum",
 			"titleContains": "Liga-Filter (title)",
-			"gameId": "Game ID"
+			"gameId": "Game ID",
+			"leagueCode": "Ligacode",
+			"sourceUrl": "Quell-URL"
 		},
 		"oddsMode": {
 			"tournament": "Tournament (Events)",
@@ -1390,7 +1396,9 @@
 			"events": "Events",
 			"markets": "Märkte",
 			"competitions": "Ligen",
-			"goals": "Tore"
+			"goals": "Tore",
+			"rows": "Zeilen",
+			"zoneRules": "Zonen"
 		},
 		"col": {
 			"round": "Runde",

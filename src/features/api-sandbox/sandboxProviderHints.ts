@@ -8,6 +8,7 @@ import {
 	CHAMPIONAT_PROVIDER,
 	RUSCORE_PROVIDER,
 	FLASHSCORE_PROVIDER,
+	LIVERESULT_PROVIDER,
 } from '../admin/teams/teamProviderConstants';
 import type { ExternalDataLayer } from '../../shared/externalDataLayerColors';
 
@@ -98,6 +99,12 @@ export const SANDBOX_ID_HINTS: Partial<
 			{ label: 'BL', value: 'Bundesliga' },
 			{ label: 'EPL stage', value: 'CfoA8Dmm' },
 			{ label: 'BL stage', value: 'jg0MwVuC' },
+		],
+	},
+	STANDINGS: {
+		[LIVERESULT_PROVIDER]: [
+			{ label: 'EPL', value: 'EPL' },
+			{ label: 'BL', value: 'BL' },
 		],
 	},
 };
