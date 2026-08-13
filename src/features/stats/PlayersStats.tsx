@@ -1,6 +1,7 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {
 	Box,
+	CircularProgress,
 	Collapse,
 	Paper,
 	Table,
@@ -18,6 +19,8 @@ import { useMemo, useState } from 'react';
 import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
 import Calendar from '../admin/calendars/types/Calendar';
 import PlayerBalanceChart from './PlayerBalanceChart';
+import PlayerFormPills from './PlayerFormPills';
+import PlayerHighlightCards from './PlayerHighlightCards';
 import PlayerOutcomesBar from './PlayerOutcomesBar';
 import { buildPlayerGameweekChartPoints } from './playerGameweekChart';
 import { playerStatsExpandBodySx } from './playerStatsChartStyles';
@@ -42,19 +45,25 @@ import {
 	statsTableHeadSx,
 } from './statsPageStyles';
 import PlayerStats from './types/PlayerStats';
+import PlayerHighlight from './types/PlayerHighlight';
 import useSeasonGameweeksOverview from './useSeasonGameweeksOverview';
+import useSeasonPlayerHighlights from './useSeasonPlayerHighlights';
 
 function Row({
 	pStats,
 	nodes,
 	chartLoading,
 	chartError,
+	highlight,
+	highlightsLoading,
 	onExpand,
 }: {
 	pStats: PlayerStats;
 	nodes: Calendar[];
 	chartLoading: boolean;
 	chartError: string | undefined;
+	highlight: PlayerHighlight | undefined;
+	highlightsLoading: boolean;
 	onExpand: () => void;
 }): JSX.Element {
 	const [open, setOpen] = useState(false);
@@ -130,6 +139,16 @@ function Row({
 								{t('additionalStats')} ({pStats.username})
 							</Typography>
 							<PlayerOutcomesBar pStats={pStats} />
+							{highlightsLoading ? (
+								<Box sx={{ display: 'flex', justifyContent: 'center', py: 1.25 }}>
+									<CircularProgress size={22} />
+								</Box>
+							) : (
+								<>
+									<PlayerFormPills form={highlight?.recentForm ?? []} />
+									<PlayerHighlightCards highlight={highlight} />
+								</>
+							)}
 							<PlayerBalanceChart
 								points={points}
 								loading={chartLoading}
@@ -153,6 +172,10 @@ export default function PlayersStats({
 }): JSX.Element {
 	const [chartsRequested, setChartsRequested] = useState(false);
 	const { nodes, loading, error } = useSeasonGameweeksOverview(seasonId, chartsRequested);
+	const { highlightsByUserId, loading: highlightsLoading } = useSeasonPlayerHighlights(
+		seasonId,
+		chartsRequested
+	);
 
 	return (
 		<TableContainer component={Paper} elevation={0} sx={statsTableContainerSx}>
@@ -189,6 +212,8 @@ export default function PlayersStats({
 							nodes={nodes}
 							chartLoading={chartsRequested && loading}
 							chartError={chartsRequested ? error : undefined}
+							highlight={highlightsByUserId[pStats.userId]}
+							highlightsLoading={chartsRequested && highlightsLoading}
 							onExpand={() => setChartsRequested(true)}
 						/>
 					))}

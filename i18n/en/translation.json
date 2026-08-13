@@ -273,7 +273,18 @@
 		"wonShort": "Won",
 		"returnedShort": "Return",
 		"lostShort": "Lost",
-		"emptyShort": "Missed"
+		"emptyShort": "Missed",
+		"form": "Form",
+		"formWon": "W",
+		"formReturned": "R",
+		"formLost": "L",
+		"formEmpty": "—",
+		"biggestWin": "Biggest win",
+		"bestStreak": "Best streak",
+		"streakWins": "{{n}} in a row",
+		"bestGameweek": "Best week",
+		"teamsPnl": "Best team",
+		"worstTeam": "Worst"
 	},
 	"leagueShortName": {
 		"EPL": "EPL",

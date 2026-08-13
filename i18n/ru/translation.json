@@ -273,7 +273,18 @@
 		"wonShort": "Выигр.",
 		"returnedShort": "Возвр.",
 		"lostShort": "Проигр.",
-		"emptyShort": "Пропуск"
+		"emptyShort": "Пропуск",
+		"form": "Форма",
+		"formWon": "В",
+		"formReturned": "Н",
+		"formLost": "П",
+		"formEmpty": "—",
+		"biggestWin": "Крупный выигрыш",
+		"bestStreak": "Лучшая серия",
+		"streakWins": "{{n}} подряд",
+		"bestGameweek": "Лучший тур",
+		"teamsPnl": "Прибыльная",
+		"worstTeam": "Убыточная"
 	},
 	"leagueShortName": {
 		"EPL": "АПЛ",

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { apiFetch } from '../../shared/apiClient';
 import LeagueStats from './types/LeagueStats';
+import PlayerHighlight from './types/PlayerHighlight';
 import PlayerStats from './types/PlayerStats';
 import { PlayerStatsByBetTitles } from './types/PlayerStatsByBetTitles';
 import { PlayerStatsByBetValues } from './types/PlayerStatsByBetValues';
@@ -91,6 +92,21 @@ export async function getStatsByTeams(
 	}/api/stats/season/${seasonId}/league/${leagueId}/user/${userId}`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = `/api/stats/season/${seasonId}/league/${leagueId}/user/${userId}`;
+	}
+	const result = await apiFetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function getPlayerHighlights(
+	seasonId: string
+): Promise<{ players: PlayerHighlight[] }> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/stats/season/${seasonId}/highlights`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/stats/season/${seasonId}/highlights`;
 	}
 	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {

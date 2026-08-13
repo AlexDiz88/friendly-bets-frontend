@@ -201,3 +201,91 @@ export function playerChartBarFillSx(positive: boolean): SxProps<Theme> {
 		};
 	};
 }
+
+export const playerFormRowSx: SxProps<Theme> = {
+	display: 'flex',
+	flexWrap: 'wrap',
+	justifyContent: 'center',
+	gap: '3px',
+	mt: 1.25,
+	mb: 0.25,
+};
+
+export const playerFormLabelSx: SxProps<Theme> = (theme) => ({
+	mt: 1.1,
+	mb: 0.35,
+	fontSize: '0.68rem',
+	fontWeight: 700,
+	letterSpacing: 0.3,
+	textTransform: 'uppercase',
+	color: statsThemePalette(theme).expandIconMuted,
+});
+
+export function playerFormPillSx(bg: string, fg: string): SxProps<Theme> {
+	return {
+		width: 22,
+		height: 22,
+		borderRadius: '50%',
+		display: 'inline-flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		fontSize: '0.62rem',
+		fontWeight: 800,
+		lineHeight: 1,
+		bgcolor: bg,
+		color: fg,
+		flexShrink: 0,
+	};
+}
+
+export const playerHighlightsGridSx: SxProps<Theme> = {
+	display: 'grid',
+	gridTemplateColumns: '1fr 1fr',
+	gap: 0.75,
+	mt: 1,
+	mb: 0.25,
+	textAlign: 'left',
+};
+
+export const playerHighlightCardSx: SxProps<Theme> = (theme) => {
+	const p = statsThemePalette(theme);
+	return {
+		px: 0.85,
+		py: 0.7,
+		borderRadius: 1.25,
+		border: '1px solid',
+		borderColor: p.surfaceBorder,
+		bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.72)',
+		minHeight: 58,
+	};
+};
+
+export const playerHighlightCardLabelSx: SxProps<Theme> = (theme) => ({
+	fontSize: '0.62rem',
+	fontWeight: 700,
+	letterSpacing: 0.2,
+	textTransform: 'uppercase',
+	color: statsThemePalette(theme).expandIconMuted,
+	lineHeight: 1.2,
+	mb: 0.25,
+});
+
+export const playerHighlightCardValueSx: SxProps<Theme> = (theme) => ({
+	fontSize: '0.82rem',
+	fontWeight: 800,
+	fontVariantNumeric: 'tabular-nums',
+	color: statsThemePalette(theme).name,
+	lineHeight: 1.25,
+	overflow: 'hidden',
+	textOverflow: 'ellipsis',
+	whiteSpace: 'nowrap',
+});
+
+export const playerHighlightCardHintSx: SxProps<Theme> = (theme) => ({
+	fontSize: '0.66rem',
+	fontWeight: 600,
+	color: statsThemePalette(theme).bodyText,
+	lineHeight: 1.3,
+	mt: 0.15,
+});
+

@@ -1,5 +1,6 @@
 import { RootState } from '../../app/store';
 import LeagueStats from './types/LeagueStats';
+import PlayerHighlight from './types/PlayerHighlight';
 import PlayerStats from './types/PlayerStats';
 import { PlayerStatsByBetTitles } from './types/PlayerStatsByBetTitles';
 import { PlayerStatsByBetValues } from './types/PlayerStatsByBetValues';
@@ -17,4 +18,8 @@ export const selectAllStatsByBetValuesInSeason = (state: RootState): PlayerStats
 	state.playersStats.playersStatsByBetValues;
 export const selectStatsByTeams = (state: RootState): PlayerStatsByTeams | undefined =>
 	state.playersStats.statsByTeams;
+export const selectPlayerHighlights = (state: RootState): PlayerHighlight[] =>
+	state.playersStats.playerHighlights;
+export const selectPlayerHighlightsSeasonId = (state: RootState): string | undefined =>
+	state.playersStats.playerHighlightsSeasonId;
 export const selectError = (state: RootState): string | undefined => state.playersStats.error;
