@@ -16,7 +16,8 @@ import {
 import {
 	selectBetsByCalendarNodeId,
 	selectCalendarNodesHasBets,
-	selectGameweeksBetsLoading,
+	selectGameweeksBetsLoadingForNode,
+	selectGameweeksOverviewSeasonId,
 } from '../admin/calendars/selectors';
 import Calendar from '../admin/calendars/types/Calendar';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
@@ -42,6 +43,7 @@ const Gameweek = (): JSX.Element => {
 	const location = useLocation();
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const calendarNodes = useAppSelector(selectCalendarNodesHasBets);
+	const overviewSeasonId = useAppSelector(selectGameweeksOverviewSeasonId);
 	const [selectedCalendarNode, setSelectedCalendarNode] = useState<Calendar | undefined>(undefined);
 	const [overviewLoading, setOverviewLoading] = useState(true);
 	const [overviewError, setOverviewError] = useState(false);
@@ -50,7 +52,11 @@ const Gameweek = (): JSX.Element => {
 	const seasonId = activeSeason?.id;
 	const selectedNodeId = selectedCalendarNode?.id;
 	const cachedBets = useAppSelector(selectBetsByCalendarNodeId(selectedNodeId));
-	const betsLoading = useAppSelector(selectGameweeksBetsLoading);
+	const betsLoading = useAppSelector(selectGameweeksBetsLoadingForNode(selectedNodeId));
+	const requestedNodeId = useMemo(
+		() => new URLSearchParams(location.search).get('node'),
+		[location.search]
+	);
 
 	useFetchActiveSeason(seasonId);
 
@@ -97,10 +103,38 @@ const Gameweek = (): JSX.Element => {
 
 		let cancelled = false;
 
+		const applyNodes = (nodes: Calendar[]): void => {
+			if (nodes.length === 0) {
+				setSelectedCalendarNode(undefined);
+				return;
+			}
+			setEmptyReason('no-calendar');
+			const requestedNode = requestedNodeId
+				? nodes.find((node) => node.id === requestedNodeId)
+				: undefined;
+			const defaultNode = requestedNode ?? pickDefaultCalendarNode(nodes);
+			if (defaultNode) {
+				setSelectedCalendarNode(defaultNode);
+				void dispatch(fetchGameweekBets(defaultNode.id));
+			} else {
+				setSelectedCalendarNode(undefined);
+			}
+		};
+
 		const loadOverview = async (): Promise<void> => {
+			if (overviewSeasonId && overviewSeasonId !== seasonId) {
+				dispatch(invalidateGameweeksBetsCache());
+			}
+
+			if (overviewSeasonId === seasonId && calendarNodes.length > 0) {
+				applyNodes(calendarNodes);
+				setOverviewLoading(false);
+				setOverviewError(false);
+				return;
+			}
+
 			setOverviewLoading(true);
 			setOverviewError(false);
-			dispatch(invalidateGameweeksBetsCache());
 
 			try {
 				const result = await dispatch(fetchGameweeksOverview({ seasonId }));
@@ -134,20 +168,7 @@ const Gameweek = (): JSX.Element => {
 					return;
 				}
 
-				setEmptyReason('no-calendar');
-
-				const requestedNodeId = new URLSearchParams(location.search).get('node');
-				const requestedNode = requestedNodeId
-					? nodes.find((node) => node.id === requestedNodeId)
-					: undefined;
-				const defaultNode = requestedNode ?? pickDefaultCalendarNode(nodes);
-
-				if (defaultNode) {
-					setSelectedCalendarNode(defaultNode);
-					void dispatch(fetchGameweekBets(defaultNode.id));
-				} else {
-					setSelectedCalendarNode(undefined);
-				}
+				applyNodes(nodes);
 			} finally {
 				if (!cancelled) {
 					setOverviewLoading(false);
@@ -160,7 +181,7 @@ const Gameweek = (): JSX.Element => {
 		return () => {
 			cancelled = true;
 		};
-	}, [seasonId, location.pathname, location.search, dispatch]);
+	}, [seasonId, location.pathname, requestedNodeId, dispatch]);
 
 	useEffect(() => {
 		if (calendarNodes.length === 0 || !selectedCalendarNode?.id) {

@@ -1,5 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs';
 import Calendar from '../admin/calendars/types/Calendar';
+import User from '../auth/types/User';
 import Bet from '../bets/types/Bet';
 
 /** Порядок лиг в сетке ставок участника на странице «По турам». */
@@ -53,6 +54,28 @@ export function pickDefaultCalendarNode(calendarNodes: Calendar[]): Calendar | u
 		const prevDiff = prev.startDate ? Math.abs(now.diff(prev.startDate)) : Infinity;
 		const currDiff = curr.startDate ? Math.abs(now.diff(curr.startDate)) : Infinity;
 		return currDiff < prevDiff ? curr : prev;
+	});
+}
+
+/** Аватар игрока на «По турам» берётся из сезона, а не из каждой ставки. */
+export function attachSeasonPlayersToBets(bets: Bet[], players: User[]): Bet[] {
+	if (bets.length === 0 || players.length === 0) {
+		return bets;
+	}
+	const byId = new Map(players.map((player) => [player.id, player]));
+	return bets.map((bet) => {
+		const player = bet.player?.id ? byId.get(bet.player.id) : undefined;
+		if (!player) {
+			return bet;
+		}
+		return {
+			...bet,
+			player: {
+				id: player.id,
+				username: player.username,
+				avatar: player.avatar,
+			},
+		};
 	});
 }
 

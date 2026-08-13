@@ -21,7 +21,7 @@ import {
 	gameweekPlayerHeaderSx,
 	gameweekPlayerRowSx,
 } from './gameweekPageStyles';
-import { sortGameweekBetsByLeagueCode } from './gameweekCalendarUtils';
+import { attachSeasonPlayersToBets, sortGameweekBetsByLeagueCode } from './gameweekCalendarUtils';
 import GameweekCompletedCard from './GameweekCompletedCard';
 import GameweekEmptyCard from './GameweekEmptyCard';
 import GameweekHiddenBetCard from './GameweekHiddenBetCard';
@@ -39,8 +39,9 @@ const GameweekPlayersContainer = ({
 }): JSX.Element => {
 	const [expandedBetId, setExpandedBetId] = useState<string | null>(null);
 
-	const visibleBets = bets.filter(
-		(bet) => bet.betStatus !== BET_STATUS_DELETED && bet.player?.id != null
+	const visibleBets = attachSeasonPlayersToBets(
+		bets.filter((bet) => bet.betStatus !== BET_STATUS_DELETED && bet.player?.id != null),
+		activeSeason.players
 	);
 
 	const betsByPlayers: { [key: string]: Bet[] } = {};

@@ -14,5 +14,7 @@ export const selectBetsByCalendarNodeId =
 export const selectGameweeksOverviewSeasonId = (state: RootState): string | undefined =>
 	state.calendars.gameweeksOverviewSeasonId;
 
-export const selectGameweeksBetsLoading = (state: RootState): boolean =>
-	state.calendars.gameweeksBetsLoading ?? false;
+export const selectGameweeksBetsLoadingForNode =
+	(nodeId: string | undefined) =>
+	(state: RootState): boolean =>
+		Boolean(nodeId && state.calendars.betsLoadingByCalendarNodeId?.[nodeId]);
