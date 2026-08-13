@@ -264,7 +264,7 @@
 	"afterGameweek": "Nach Spieltag",
 	"statsChart": {
 		"chartMode": "Diagrammansicht",
-		"balanceCurve": "Kurve",
+		"balanceCurve": "Saldo",
 		"gameweekPnl": "Spieltage",
 		"noGameweekData": "Keine abgeschlossenen Spieltage",
 		"loadError": "Diagramm konnte nicht geladen werden",
@@ -279,12 +279,14 @@
 		"formReturned": "R",
 		"formLost": "V",
 		"formEmpty": "—",
-		"biggestWin": "Größter Gewinn",
-		"bestStreak": "Beste Serie",
+		"bestBet": "Beste Wette",
+		"oddsLabel": "Quote",
+		"stakeLabel": "Einsatz",
+		"streaks": "Serien",
 		"streakWins": "{{n}} in Folge",
+		"streakLosses": "{{n}} in Folge",
 		"bestGameweek": "Bester Spieltag",
-		"teamsPnl": "Bestes Team",
-		"worstTeam": "Schwächstes"
+		"teams": "Teams"
 	},
 	"leagueShortName": {
 		"EPL": "EPL",

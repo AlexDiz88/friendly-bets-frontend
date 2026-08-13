@@ -57,6 +57,7 @@ function Row({
 	highlight,
 	highlightsLoading,
 	onExpand,
+	seasonId,
 }: {
 	pStats: PlayerStats;
 	nodes: Calendar[];
@@ -65,6 +66,7 @@ function Row({
 	highlight: PlayerHighlight | undefined;
 	highlightsLoading: boolean;
 	onExpand: () => void;
+	seasonId?: string;
 }): JSX.Element {
 	const [open, setOpen] = useState(false);
 	const points = useMemo(
@@ -146,7 +148,7 @@ function Row({
 							) : (
 								<>
 									<PlayerFormPills form={highlight?.recentForm ?? []} />
-									<PlayerHighlightCards highlight={highlight} />
+									<PlayerHighlightCards highlight={highlight} seasonId={seasonId} />
 								</>
 							)}
 							<PlayerBalanceChart
@@ -215,6 +217,7 @@ export default function PlayersStats({
 							highlight={highlightsByUserId[pStats.userId]}
 							highlightsLoading={chartsRequested && highlightsLoading}
 							onExpand={() => setChartsRequested(true)}
+							seasonId={seasonId}
 						/>
 					))}
 				</TableBody>

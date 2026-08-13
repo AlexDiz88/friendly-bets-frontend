@@ -264,7 +264,7 @@
 	"afterGameweek": "После тура",
 	"statsChart": {
 		"chartMode": "Вид графика",
-		"balanceCurve": "Кривая",
+		"balanceCurve": "Баланс",
 		"gameweekPnl": "Туры",
 		"noGameweekData": "Нет завершённых туров",
 		"loadError": "Не удалось загрузить график",
@@ -279,12 +279,14 @@
 		"formReturned": "Н",
 		"formLost": "П",
 		"formEmpty": "—",
-		"biggestWin": "Крупный выигрыш",
-		"bestStreak": "Лучшая серия",
+		"bestBet": "Лучшая ставка",
+		"oddsLabel": "Кэф",
+		"stakeLabel": "Сумма",
+		"streaks": "Серии",
 		"streakWins": "{{n}} подряд",
+		"streakLosses": "{{n}} подряд",
 		"bestGameweek": "Лучший тур",
-		"teamsPnl": "Прибыльная",
-		"worstTeam": "Убыточная"
+		"teams": "Команды"
 	},
 	"leagueShortName": {
 		"EPL": "АПЛ",

@@ -136,7 +136,11 @@ const Gameweek = (): JSX.Element => {
 
 				setEmptyReason('no-calendar');
 
-				const defaultNode = pickDefaultCalendarNode(nodes);
+				const requestedNodeId = new URLSearchParams(location.search).get('node');
+				const requestedNode = requestedNodeId
+					? nodes.find((node) => node.id === requestedNodeId)
+					: undefined;
+				const defaultNode = requestedNode ?? pickDefaultCalendarNode(nodes);
 
 				if (defaultNode) {
 					setSelectedCalendarNode(defaultNode);
@@ -156,7 +160,7 @@ const Gameweek = (): JSX.Element => {
 		return () => {
 			cancelled = true;
 		};
-	}, [seasonId, location.pathname, dispatch]);
+	}, [seasonId, location.pathname, location.search, dispatch]);
 
 	useEffect(() => {
 		if (calendarNodes.length === 0 || !selectedCalendarNode?.id) {

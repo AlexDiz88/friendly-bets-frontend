@@ -264,7 +264,7 @@
 	"afterGameweek": "After gameweek",
 	"statsChart": {
 		"chartMode": "Chart view",
-		"balanceCurve": "Curve",
+		"balanceCurve": "Balance",
 		"gameweekPnl": "Weeks",
 		"noGameweekData": "No finished gameweeks",
 		"loadError": "Could not load the chart",
@@ -279,12 +279,14 @@
 		"formReturned": "R",
 		"formLost": "L",
 		"formEmpty": "—",
-		"biggestWin": "Biggest win",
-		"bestStreak": "Best streak",
+		"bestBet": "Best bet",
+		"oddsLabel": "Odds",
+		"stakeLabel": "Stake",
+		"streaks": "Streaks",
 		"streakWins": "{{n}} in a row",
+		"streakLosses": "{{n}} in a row",
 		"bestGameweek": "Best week",
-		"teamsPnl": "Best team",
-		"worstTeam": "Worst"
+		"teams": "Teams"
 	},
 	"leagueShortName": {
 		"EPL": "EPL",

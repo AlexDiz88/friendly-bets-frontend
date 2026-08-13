@@ -4,7 +4,7 @@ import { t } from 'i18next';
 import { playerFormLabelSx, playerFormPillSx, playerFormRowSx } from './playerStatsChartStyles';
 import { type BetFormStatus } from './types/PlayerHighlight';
 
-const FORM_PILL = {
+export const FORM_PILL = {
 	dark: {
 		WON: { bg: '#166534', fg: '#dcfce7' },
 		RETURNED: { bg: '#854d0e', fg: '#fef9c3' },

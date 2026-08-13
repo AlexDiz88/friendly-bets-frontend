@@ -240,11 +240,12 @@ export function playerFormPillSx(bg: string, fg: string): SxProps<Theme> {
 
 export const playerHighlightsGridSx: SxProps<Theme> = {
 	display: 'grid',
-	gridTemplateColumns: '1fr 1fr',
+	gridTemplateColumns: '3fr 2fr',
 	gap: 0.75,
 	mt: 1,
 	mb: 0.25,
 	textAlign: 'left',
+	alignItems: 'stretch',
 };
 
 export const playerHighlightCardSx: SxProps<Theme> = (theme) => {
@@ -257,6 +258,7 @@ export const playerHighlightCardSx: SxProps<Theme> = (theme) => {
 		borderColor: p.surfaceBorder,
 		bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.72)',
 		minHeight: 58,
+		textAlign: 'left',
 	};
 };
 
@@ -288,4 +290,115 @@ export const playerHighlightCardHintSx: SxProps<Theme> = (theme) => ({
 	lineHeight: 1.3,
 	mt: 0.15,
 });
+
+export const playerHighlightCardClickableSx: SxProps<Theme> = (theme) => {
+	const p = statsThemePalette(theme);
+	return {
+		textDecoration: 'none',
+		color: 'inherit',
+		display: 'block',
+		cursor: 'pointer',
+		transition: 'border-color 0.15s ease, background-color 0.15s ease',
+		'&:hover': {
+			borderColor: p.name,
+			bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.07)' : 'rgba(255, 255, 255, 0.95)',
+		},
+	};
+};
+
+export const playerHighlightInlineRowSx: SxProps<Theme> = {
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'flex-start',
+	flexWrap: 'wrap',
+	columnGap: 0.4,
+	rowGap: 0.15,
+	mt: 0.2,
+	minWidth: 0,
+	fontSize: '0.66rem',
+	fontWeight: 600,
+	lineHeight: 1.25,
+};
+
+export const playerHighlightMetaSx: SxProps<Theme> = (theme) => ({
+	display: 'flex',
+	flexWrap: 'wrap',
+	columnGap: 0.75,
+	rowGap: 0.1,
+	mt: 0.2,
+	fontSize: '0.64rem',
+	fontWeight: 700,
+	fontVariantNumeric: 'tabular-nums',
+	color: statsThemePalette(theme).bodyText,
+});
+
+export const playerHighlightStreakRowSx: SxProps<Theme> = {
+	display: 'flex',
+	alignItems: 'center',
+	gap: 0.5,
+	mt: 0.35,
+	minWidth: 0,
+};
+
+export const playerHighlightLeagueSlotsSx: SxProps<Theme> = {
+	display: 'flex',
+	flexWrap: 'wrap',
+	alignItems: 'center',
+	gap: 0.45,
+	mt: 0.3,
+};
+
+export const playerHighlightLeagueSlotSx: SxProps<Theme> = (theme) => ({
+	display: 'inline-flex',
+	alignItems: 'center',
+	gap: 0.25,
+	fontSize: '0.62rem',
+	fontWeight: 700,
+	fontVariantNumeric: 'tabular-nums',
+	color: statsThemePalette(theme).bodyText,
+});
+
+export const playerHighlightTeamBlockSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'column',
+	mt: 0.15,
+	minWidth: 0,
+};
+
+export const playerHighlightLeaguePairSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		position: 'relative',
+		display: 'flex',
+		alignItems: 'center',
+		gap: 0.5,
+		py: 0.5,
+		'&:not(:last-child)::after': {
+			content: '""',
+			position: 'absolute',
+			left: 4,
+			right: 4,
+			bottom: 0,
+			height: '1px',
+			background: isDark
+				? 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.2) 80%, transparent 100%)'
+				: 'linear-gradient(90deg, transparent 0%, rgba(15, 23, 42, 0.14) 20%, rgba(15, 23, 42, 0.14) 80%, transparent 100%)',
+		},
+	};
+};
+
+export const playerHighlightTeamRowsSx: SxProps<Theme> = {
+	display: 'flex',
+	flexDirection: 'column',
+	gap: 0.15,
+	minWidth: 0,
+	flex: 1,
+};
+
+export const playerHighlightTeamRowSx: SxProps<Theme> = {
+	display: 'flex',
+	alignItems: 'center',
+	gap: 0.3,
+	minWidth: 0,
+};
 
