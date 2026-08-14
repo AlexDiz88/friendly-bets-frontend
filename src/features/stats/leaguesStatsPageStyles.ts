@@ -162,7 +162,7 @@ export const leaguesMatrixBodyCellSx: SxProps<Theme> = (theme) => ({
 	borderBottom: '1px solid',
 	borderColor: palette(theme).cardBorder,
 	fontVariantNumeric: 'tabular-nums',
-	fontSize: '0.65rem',
+	fontSize: '0.72rem',
 	fontWeight: 700,
 	whiteSpace: 'nowrap',
 });

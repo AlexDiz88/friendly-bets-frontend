@@ -43,14 +43,14 @@ const seasonSelectExtraSx: SxProps<Theme> = {
 	'& .MuiSelect-select': {
 		fontSize: '0.8rem',
 		fontWeight: 600,
+		pl: 0.5,
 	},
 };
 
-const seasonMenuItemSx: SxProps<Theme> = (theme) => ({
-	...(typeof filterSelectMenuItemSx === 'function'
-		? filterSelectMenuItemSx(theme)
-		: filterSelectMenuItemSx),
-	fontSize: '0.8rem',
+const seasonMenuItemSx = (theme: Theme) => ({
+	...(filterSelectMenuItemSx as (t: Theme) => Record<string, unknown>)(theme),
+	pl: 0.75,
+	pr: 1,
 });
 
 function SeasonValue({ title }: { title: string }): JSX.Element {
