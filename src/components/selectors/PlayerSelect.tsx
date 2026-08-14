@@ -17,14 +17,21 @@ interface PlayerSelectProps {
 	value: string;
 	onChange: ((event: SelectChangeEvent<string>) => void) | undefined;
 	players: User[] | undefined;
+	sx?: SxProps<Theme>;
 }
 
-const PlayerSelect = ({ value, onChange, players }: PlayerSelectProps): JSX.Element => {
+const PlayerSelect = ({ value, onChange, players, sx }: PlayerSelectProps): JSX.Element => {
 	const sortedPlayers = useMemo(
 		() => (players ? sortPlayersForSelect(players) : []),
 		[players]
 	);
 	const menuItemCount = 1 + sortedPlayers.length;
+	const extraSx = sx == null ? [] : Array.isArray(sx) ? sx : [sx];
+	const allValue = t('all');
+	const safeValue =
+		value === allValue || sortedPlayers.some((player) => player.username === value)
+			? value
+			: allValue;
 
 	return (
 		<Select
@@ -33,12 +40,12 @@ const PlayerSelect = ({ value, onChange, players }: PlayerSelectProps): JSX.Elem
 				[
 					filterSelectRootSx('standard'),
 					filterSelectPlayerLayoutSx,
-					{ minWidth: { xs: 0, sm: '10rem' } },
+					...(sx == null ? [{ minWidth: { xs: 0, sm: '10rem' } }] : extraSx),
 				] as SxProps<Theme>
 			}
 			labelId="player-title-label"
 			id="player-title-select"
-			value={value}
+			value={safeValue}
 			onChange={onChange}
 			MenuProps={filterSelectPlayerMenuProps(menuItemCount)}
 		>

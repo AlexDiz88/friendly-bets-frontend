@@ -4,11 +4,9 @@ import { t } from 'i18next';
 import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
-import { useAppSelector } from '../../app/hooks';
 import LeagueAvatar, { leagueLogoAvatarSx } from '../../components/custom/avatar/LeagueAvatar';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
-import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import { formatGameweekDateRange, formatSignedBalance } from './playerGameweekChart';
 import { FORM_PILL } from './PlayerFormPills';
 import {
@@ -145,7 +143,6 @@ export default function PlayerHighlightCards({
 }): JSX.Element {
 	const theme = useTheme();
 	const { i18n } = useTranslation();
-	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const p = statsThemePalette(theme);
 	const language = i18n.language;
 	const win = highlight?.biggestWin;
@@ -154,14 +151,13 @@ export default function PlayerHighlightCards({
 	const winStreak = highlight?.bestWinStreak ?? 0;
 	const loseStreak = highlight?.worstLoseStreak ?? 0;
 	const formPill = theme.palette.mode === 'dark' ? FORM_PILL.dark : FORM_PILL.light;
-	const canLinkGameweek = Boolean(seasonId && activeSeasonId && seasonId === activeSeasonId);
 	const bestBetLink =
-		canLinkGameweek && win?.calendarNodeId
-			? `/gameweeks?node=${encodeURIComponent(win.calendarNodeId)}`
+		seasonId && win?.calendarNodeId
+			? `/gameweeks?season=${encodeURIComponent(seasonId)}&node=${encodeURIComponent(win.calendarNodeId)}`
 			: undefined;
 	const gameweekLink =
-		canLinkGameweek && gw?.calendarNodeId
-			? `/gameweeks?node=${encodeURIComponent(gw.calendarNodeId)}`
+		seasonId && gw?.calendarNodeId
+			? `/gameweeks?season=${encodeURIComponent(seasonId)}&node=${encodeURIComponent(gw.calendarNodeId)}`
 			: undefined;
 
 	return (

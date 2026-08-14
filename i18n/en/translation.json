@@ -1032,7 +1032,7 @@
 	"gameweeksNoBetsYetTitle": "No bets yet",
 	"gameweeksNoBetsYetHint": "Gameweeks are already on the calendar. Once participants place their first bets, an overview of each gameweek will appear here.",
 	"gameweeksNoCalendarYetTitle": "No gameweeks yet",
-	"gameweeksNoCalendarYetHint": "There are no gameweeks in the current season calendar yet.",
+	"gameweeksNoCalendarYetHint": "There are no gameweeks in the selected season calendar yet.",
 	"nearestGameweekBetsPlateAria": "Bets for the nearest gameweek",
 	"nearestGameweekBetsLabel": "Your bets:",
 	"nearestGameweekBetsLoading": "Loading bet progress",

@@ -284,6 +284,16 @@ export const gameweekThinkingIconSx: SxProps<Theme> = (theme) => ({
 	fontSize: '2rem',
 });
 
+export const gameweekFiltersSx: SxProps<Theme> = {
+	maxWidth: '18rem',
+	width: '100%',
+	mx: 'auto',
+	mb: 1,
+	display: 'flex',
+	flexDirection: 'column',
+	gap: 0.75,
+};
+
 export const gameweekPageEmptySx: SxProps<Theme> = {
 	textAlign: 'center',
 	px: 2,

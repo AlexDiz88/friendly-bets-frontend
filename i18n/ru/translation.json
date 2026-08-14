@@ -1032,7 +1032,7 @@
 	"gameweeksNoBetsYetTitle": "Ставок пока нет",
 	"gameweeksNoBetsYetHint": "Игровые туры уже добавлены в календарь. Как только участники сделают первые ставки, здесь появится обзор по каждому туру.",
 	"gameweeksNoCalendarYetTitle": "Игровые туры отсутствуют",
-	"gameweeksNoCalendarYetHint": "В календаре текущего сезона пока нет ни одного тура.",
+	"gameweeksNoCalendarYetHint": "В календаре выбранного сезона пока нет ни одного тура.",
 	"nearestGameweekBetsPlateAria": "Ставки на ближайший игровой тур",
 	"nearestGameweekBetsLabel": "Ваши ставки:",
 	"nearestGameweekBetsLoading": "Загрузка прогресса ставок",

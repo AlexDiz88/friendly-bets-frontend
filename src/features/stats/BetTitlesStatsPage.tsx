@@ -105,7 +105,7 @@ export default function BetTitlesStatsPage(): JSX.Element {
 	}
 
 	const seasonSelect = (
-		<Box sx={{ maxWidth: '25rem', mx: 'auto', mb: 2, px: { xs: 1, sm: 0 } }}>
+		<Box sx={{ maxWidth: '25rem', mx: 'auto', mb: 1, px: { xs: 1, sm: 0 } }}>
 			<SeasonSelect
 				value={selectedSeasonId}
 				onChange={(event) => setSelectedSeasonId(event.target.value)}
@@ -128,7 +128,7 @@ export default function BetTitlesStatsPage(): JSX.Element {
 		<Box>
 			{seasonSelect}
 
-			<Box sx={{ maxWidth: '25rem', margin: '0 auto', py: 0.5 }}>
+			<Box sx={{ maxWidth: '25rem', margin: '0 auto' }}>
 				{playersStatsByBetTitles.length === 0 ? (
 					<Box
 						sx={{

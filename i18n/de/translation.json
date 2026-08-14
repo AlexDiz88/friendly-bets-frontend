@@ -1032,7 +1032,7 @@
 	"gameweeksNoBetsYetTitle": "Noch keine Wetten",
 	"gameweeksNoBetsYetHint": "Die Spieltage sind bereits im Kalender. Sobald die Teilnehmer ihre ersten Wetten platzieren, erscheint hier die Übersicht für jeden Spieltag.",
 	"gameweeksNoCalendarYetTitle": "Keine Spieltage",
-	"gameweeksNoCalendarYetHint": "Im Kalender der laufenden Saison gibt es noch keine Spieltage.",
+	"gameweeksNoCalendarYetHint": "Im Kalender der ausgewählten Saison gibt es noch keine Spieltage.",
 	"nearestGameweekBetsPlateAria": "Tipps für den nächsten Spieltag",
 	"nearestGameweekBetsLabel": "Ihre Tipps:",
 	"nearestGameweekBetsLoading": "Tippfortschritt wird geladen",

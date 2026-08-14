@@ -65,6 +65,10 @@ export const leaguesStatsPageSx: SxProps<Theme> = {
 	pb: 2,
 };
 
+export const leaguesStatsSeasonSelectSx: SxProps<Theme> = {
+	mb: 1.5,
+};
+
 export const leaguesStatsSectionSx: SxProps<Theme> = (theme) => {
 	const p = palette(theme);
 	return {

@@ -13,6 +13,7 @@ interface SeasonSelectProps {
 	onChange: (event: SelectChangeEvent<string>) => void;
 	seasons: Season[];
 	sx?: SxProps<Theme>;
+	compact?: boolean;
 }
 
 const seasonValueSx: SxProps<Theme> = {
@@ -53,10 +54,10 @@ const seasonMenuItemSx = (theme: Theme) => ({
 	pr: 1,
 });
 
-function SeasonValue({ title }: { title: string }): JSX.Element {
+function SeasonValue({ title, compact }: { title: string; compact?: boolean }): JSX.Element {
 	return (
 		<Box sx={seasonValueSx}>
-			<CalendarMonth sx={seasonIconSx} />
+			{compact ? null : <CalendarMonth sx={seasonIconSx} />}
 			<Box component="span" sx={seasonTitleSx}>
 				{title}
 			</Box>
@@ -64,7 +65,13 @@ function SeasonValue({ title }: { title: string }): JSX.Element {
 	);
 }
 
-const SeasonSelect = ({ value, onChange, seasons, sx }: SeasonSelectProps): JSX.Element => {
+const SeasonSelect = ({
+	value,
+	onChange,
+	seasons,
+	sx,
+	compact,
+}: SeasonSelectProps): JSX.Element => {
 	const seasonIds = seasons.map((season) => season.id);
 	const safeValue = seasonIds.includes(value) ? value : '';
 	const selectedSeason = seasons.find((season) => season.id === safeValue);
@@ -80,7 +87,9 @@ const SeasonSelect = ({ value, onChange, seasons, sx }: SeasonSelectProps): JSX.
 			id="season-select"
 			value={safeValue}
 			onChange={onChange}
-			renderValue={() => <SeasonValue title={selectedSeason?.title ?? t('season')} />}
+			renderValue={() => (
+				<SeasonValue compact={compact} title={selectedSeason?.title ?? t('season')} />
+			)}
 			MenuProps={filterSelectMenuProps(seasons.length)}
 		>
 			{seasons.map((season) => (
