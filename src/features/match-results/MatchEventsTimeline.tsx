@@ -1,4 +1,5 @@
 import { Box, Typography, type SxProps, type Theme } from '@mui/material';
+import type { TFunction } from 'i18next';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -23,6 +24,8 @@ import {
 	matchEventsRowSx,
 	matchEventsSideSx,
 	matchEventsTimelineRootSx,
+	matchEventsVarBadgeSx,
+	matchEventsVarCaptionSx,
 } from './matchEventsTimelineStyles';
 import type MatchGoalEvent from './types/MatchGoalEvent';
 
@@ -53,6 +56,18 @@ function periodLabelKey(period: MatchEventsPeriod): string {
 		default:
 			return 'matchEvents.period.h1';
 	}
+}
+
+function varDisallowedCaption(event: MatchGoalEvent, t: TFunction): string {
+	const player = event.playerName?.trim() || '—';
+	const reasonCode = event.varDisallowedReason?.trim().toLowerCase();
+	if (!reasonCode) {
+		return t('matchEvents.varDisallowedNoReason', { player });
+	}
+	const reasonKey = `matchEvents.varReason.${reasonCode}`;
+	const reasonLabel = t(reasonKey);
+	const reason = reasonLabel === reasonKey ? reasonCode : reasonLabel;
+	return t('matchEvents.varDisallowedCaption', { reason, player });
 }
 
 function EventIcon({
@@ -115,6 +130,16 @@ function EventMarks({
 			</Box>
 		);
 	}
+	if (event.varDisallowed) {
+		const caption = varDisallowedCaption(event, t);
+		return (
+			<Box component="span" sx={matchEventsGoalMarkSx} title={caption} aria-label={caption}>
+				<Box component="span" sx={matchEventsVarBadgeSx}>
+					VAR
+				</Box>
+			</Box>
+		);
+	}
 
 	const isOwn = Boolean(event.ownGoal);
 	const isPen = Boolean(event.penalty) || Boolean(event.penaltyShootout);
@@ -146,11 +171,20 @@ function EventSideContent({
 	side: 'home' | 'away';
 	scoreAfter?: string;
 }): JSX.Element {
+	const { t } = useTranslation();
 	const isHome = side === 'home';
+	const isVar = Boolean(event.varDisallowed);
+	const caption = isVar ? varDisallowedCaption(event, t) : event.playerName || '—';
 	const marks = <EventMarks event={event} scoreAfter={scoreAfter} />;
 	const name = (
-		<Typography sx={matchEventsPlayerSx} title={event.playerName || undefined}>
-			{event.playerName || '—'}
+		<Typography
+			sx={[
+				isVar ? matchEventsVarCaptionSx : matchEventsPlayerSx,
+				isHome ? { textAlign: 'right' } : { textAlign: 'left' },
+			]}
+			title={caption}
+		>
+			{caption}
 		</Typography>
 	);
 	return (

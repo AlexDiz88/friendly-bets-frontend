@@ -17,10 +17,9 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { t } from 'i18next';
-import { useAppSelector } from '../../app/hooks';
 import UserAvatar from '../../components/custom/avatar/UserAvatar';
 import Calendar from '../admin/calendars/types/Calendar';
-import { selectActiveSeason } from '../admin/seasons/selectors';
+import Season from '../admin/seasons/types/Season';
 import {
 	statsBalanceNegativeSx,
 	statsBalancePositiveSx,
@@ -31,11 +30,16 @@ import {
 	statsThemePalette,
 } from '../stats/statsPageStyles';
 
-const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Element => {
+const GameweekStats = ({
+	calendarNode,
+	season,
+}: {
+	calendarNode: Calendar;
+	season: Season;
+}): JSX.Element => {
 	const theme = useTheme();
 	const isDark = theme.palette.mode === 'dark';
 	const p = statsThemePalette(theme);
-	const activeSeason = useAppSelector(selectActiveSeason);
 	const sortedStats = [...calendarNode.gameweekStats].sort(
 		(a, b) => b.totalBalance - a.totalBalance
 	);
@@ -171,7 +175,7 @@ const GameweekStats = ({ calendarNode }: { calendarNode: Calendar }): JSX.Elemen
 							</TableHead>
 							<TableBody sx={isDark ? statsTableBodySx : undefined}>
 								{sortedStats.map((s) => {
-									const player = activeSeason?.players.find((p) => p.id === s.userId);
+									const player = season.players.find((p) => p.id === s.userId);
 									const weekBalance = s.balanceChange.toFixed(2);
 									const totalBalanceAfterWeek = s.totalBalance.toFixed(2);
 									const weekPositive = s.balanceChange >= 0;

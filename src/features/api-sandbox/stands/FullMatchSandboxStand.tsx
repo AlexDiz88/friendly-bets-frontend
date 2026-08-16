@@ -50,6 +50,7 @@ type FullMatchGoal = {
 	ownGoal?: boolean;
 	missed?: boolean;
 	varDisallowed?: boolean;
+	varDisallowedReason?: string;
 	redCard?: boolean;
 	secondYellow?: boolean;
 };
@@ -394,7 +395,15 @@ export default function FullMatchSandboxStand({
 										<Chip size="small" label={t('apiSandbox.fullMatch.miss')} color="error" />
 									) : null}
 									{g.varDisallowed ? (
-										<Chip size="small" label={t('apiSandbox.fullMatch.varDisallowed')} color="warning" />
+										<Chip
+											size="small"
+											label={
+												g.varDisallowedReason
+													? `${t('apiSandbox.fullMatch.varDisallowed')} — ${g.varDisallowedReason}`
+													: t('apiSandbox.fullMatch.varDisallowed')
+											}
+											color="warning"
+										/>
 									) : null}
 								</Box>
 							))}

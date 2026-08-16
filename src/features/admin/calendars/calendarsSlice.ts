@@ -11,9 +11,10 @@ const initialState: CalendarsState = {
 	calendarNode: undefined,
 	betsByCalendarNode: undefined,
 	betsByCalendarNodeId: {},
+	betsLoadingByCalendarNodeId: {},
 	gameweeksOverviewLoadedAt: undefined,
 	gameweeksOverviewSeasonId: undefined,
-	gameweeksBetsLoading: false,
+	gameweeksOverviewLoading: false,
 	error: undefined,
 };
 
@@ -40,7 +41,19 @@ export const fetchGameweeksOverview = createAsyncThunk(
 
 export const fetchGameweekBets = createAsyncThunk(
 	'calendars/fetchGameweekBets',
-	async (calendarNodeId: string) => api.getBetsByCalendarNode(calendarNodeId)
+	async (calendarNodeId: string) => api.getBetsByCalendarNode(calendarNodeId),
+	{
+		condition: (calendarNodeId, { getState }) => {
+			const { calendars } = getState() as { calendars: CalendarsState };
+			if (calendars.betsByCalendarNodeId[calendarNodeId]) {
+				return false;
+			}
+			if (calendars.betsLoadingByCalendarNodeId?.[calendarNodeId]) {
+				return false;
+			}
+			return true;
+		},
+	}
 );
 
 export const getActualCalendarNodeBets = createAsyncThunk(
@@ -72,9 +85,11 @@ const calendarsSlice = createSlice({
 		},
 		invalidateGameweeksOverview: (state) => {
 			state.gameweeksOverviewLoadedAt = undefined;
+			state.gameweeksOverviewSeasonId = undefined;
 		},
 		invalidateGameweeksBetsCache: (state) => {
 			state.betsByCalendarNodeId = {};
+			state.betsLoadingByCalendarNodeId = {};
 		},
 	},
 	extraReducers: (builder) => {
@@ -95,28 +110,31 @@ const calendarsSlice = createSlice({
 			})
 			.addCase(fetchGameweeksOverview.pending, (state) => {
 				state.error = undefined;
+				state.gameweeksOverviewLoading = true;
 			})
 			.addCase(fetchGameweeksOverview.fulfilled, (state, action) => {
 				state.calendarNodesHasBets = action.payload.calendarNodes;
 				state.gameweeksOverviewLoadedAt = Date.now();
 				state.gameweeksOverviewSeasonId = action.meta.arg.seasonId;
+				state.gameweeksOverviewLoading = false;
 				if (action.meta.arg.calendarNodeId && action.payload.bets) {
 					state.betsByCalendarNodeId[action.meta.arg.calendarNodeId] = action.payload.bets;
-					state.gameweeksBetsLoading = false;
+					delete state.betsLoadingByCalendarNodeId[action.meta.arg.calendarNodeId];
 				}
 			})
 			.addCase(fetchGameweeksOverview.rejected, (state, action) => {
 				state.error = action.error.message;
+				state.gameweeksOverviewLoading = false;
 			})
-			.addCase(fetchGameweekBets.pending, (state) => {
-				state.gameweeksBetsLoading = true;
+			.addCase(fetchGameweekBets.pending, (state, action) => {
+				state.betsLoadingByCalendarNodeId[action.meta.arg] = true;
 			})
 			.addCase(fetchGameweekBets.fulfilled, (state, action) => {
 				state.betsByCalendarNodeId[action.meta.arg] = action.payload;
-				state.gameweeksBetsLoading = false;
+				delete state.betsLoadingByCalendarNodeId[action.meta.arg];
 			})
 			.addCase(fetchGameweekBets.rejected, (state, action) => {
-				state.gameweeksBetsLoading = false;
+				delete state.betsLoadingByCalendarNodeId[action.meta.arg];
 				state.error = action.error.message;
 			})
 			.addCase(getActualCalendarNodeBets.fulfilled, (state, action) => {
@@ -131,6 +149,7 @@ const calendarsSlice = createSlice({
 					dayjs(a.startDate).isBefore(dayjs(b.startDate)) ? 1 : -1
 				);
 				state.gameweeksOverviewLoadedAt = undefined;
+				state.gameweeksOverviewSeasonId = undefined;
 			})
 			.addCase(createCalendarNode.rejected, (state, action) => {
 				state.error = action.error.message;
@@ -147,6 +166,7 @@ const calendarsSlice = createSlice({
 			.addCase(deleteCalendarNode.fulfilled, (state, action) => {
 				state.allCalendarNodes = state.allCalendarNodes.filter((n) => n.id !== action.payload.id);
 				state.gameweeksOverviewLoadedAt = undefined;
+				state.gameweeksOverviewSeasonId = undefined;
 			})
 			.addCase(deleteCalendarNode.rejected, (state, action) => {
 				state.error = action.error.message;

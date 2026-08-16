@@ -9,6 +9,7 @@ import {
 	RUSCORE_PROVIDER,
 	FLASHSCORE_PROVIDER,
 	LIVERESULT_PROVIDER,
+	FLASHSCORE_UA_PROVIDER,
 } from '../admin/teams/teamProviderConstants';
 import type { ExternalDataLayer } from '../../shared/externalDataLayerColors';
 
@@ -103,6 +104,10 @@ export const SANDBOX_ID_HINTS: Partial<
 	},
 	STANDINGS: {
 		[LIVERESULT_PROVIDER]: [
+			{ label: 'EPL', value: 'EPL' },
+			{ label: 'BL', value: 'BL' },
+		],
+		[FLASHSCORE_UA_PROVIDER]: [
 			{ label: 'EPL', value: 'EPL' },
 			{ label: 'BL', value: 'BL' },
 		],

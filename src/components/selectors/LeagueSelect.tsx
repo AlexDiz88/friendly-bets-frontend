@@ -19,6 +19,7 @@ interface LeagueSelectProps {
 	withoutAll?: boolean;
 	fullLeagueNames?: boolean;
 	compact?: boolean;
+	sx?: SxProps<Theme>;
 }
 
 const LeagueSelect = ({
@@ -28,6 +29,7 @@ const LeagueSelect = ({
 	withoutAll,
 	fullLeagueNames,
 	compact,
+	sx,
 }: LeagueSelectProps): JSX.Element => {
 	const avatarHeight = compact ? 23 : 27;
 	const menuMinWidth = compact ? '5.5rem' : '6.5rem';
@@ -40,15 +42,20 @@ const LeagueSelect = ({
 				? value
 				: '';
 
+	const extraSx = sx == null ? [] : Array.isArray(sx) ? sx : [sx];
+	const compactParts = Array.isArray(compactLeagueSelectSx)
+		? compactLeagueSelectSx
+		: [compactLeagueSelectSx];
 	const rootSx: SxProps<Theme> = (
 		compact
-			? compactLeagueSelectSx
+			? [...compactParts, ...extraSx]
 			: [
 					filterSelectRootSx('standard'),
 					filterSelectLeagueLayoutSx,
 					fullLeagueNames
 						? { minWidth: '15rem', maxWidth: '100%', flex: '1 1 auto' }
 						: { minWidth: '7rem' },
+					...extraSx,
 				]
 	) as SxProps<Theme>;
 

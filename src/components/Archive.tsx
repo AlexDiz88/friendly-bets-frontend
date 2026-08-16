@@ -1,23 +1,24 @@
-import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { SEASON_STATUS_FINISHED } from '../constants';
 import { getSeasons } from '../features/admin/seasons/seasonsSlice';
 import { selectSeasons } from '../features/admin/seasons/selectors';
+import { sortSeasonsNewestFirst } from '../features/admin/seasons/sortSeasons';
 import Season from '../features/admin/seasons/types/Season';
 import PlayersStats from '../features/stats/PlayersStats';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
 import CustomLoading from './custom/loading/CustomLoading';
 import CustomLoadingError from './custom/loading/CustomLoadingError';
+import SeasonSelect from './selectors/SeasonSelect';
 
 export default function Archive(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const playersStats = useAppSelector(selectPlayersStats);
 	const seasons: Season[] = useAppSelector(selectSeasons);
 	const [selectedSeason, setSelectedSeason] = useState<Season | undefined>(undefined);
-	const [selectedSeasonName, setSelectedSeasonName] = useState<string>('');
 	const [filteredSeasons, setFilteredSeasons] = useState<Season[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [loadingError, setLoadingError] = useState(false);
@@ -27,11 +28,8 @@ export default function Archive(): JSX.Element {
 			? []
 			: [...playersStats].sort((a, b) => b.actualBalance - a.actualBalance);
 
-	const handleSeasonChange = (event: SelectChangeEvent): void => {
-		const seasonTitle = event.target.value;
-		const season = seasons.find((s) => s.title === seasonTitle);
-		setSelectedSeasonName(seasonTitle);
-		setSelectedSeason(season || undefined);
+	const handleSeasonChange = (seasonId: string): void => {
+		setSelectedSeason(seasons.find((season) => season.id === seasonId));
 	};
 
 	useEffect(() => {
@@ -39,7 +37,9 @@ export default function Archive(): JSX.Element {
 	}, []);
 
 	useEffect(() => {
-		const finishedSeasons = seasons.filter((season) => season.status === SEASON_STATUS_FINISHED);
+		const finishedSeasons = sortSeasonsNewestFirst(
+			seasons.filter((season) => season.status === SEASON_STATUS_FINISHED)
+		);
 		setFilteredSeasons(finishedSeasons);
 	}, [seasons]);
 
@@ -87,27 +87,16 @@ export default function Archive(): JSX.Element {
 							>
 								{t('chooseFinishedSeasonForDetailedStatistik')}
 							</Box>
-							<Select
-								size="small"
-								sx={{ minWidth: '12rem', mx: 1, mb: 1 }}
-								labelId="season-stats-label"
-								id="season-stats-select"
-								value={selectedSeasonName}
-								onChange={handleSeasonChange}
-							>
-								{filteredSeasons.map((season) => (
-									<MenuItem
-										key={season.title}
-										value={season.title}
-										sx={{ ml: -0.5, minWidth: '11rem' }}
-									>
-										<Box style={{ display: 'flex', alignItems: 'center' }}>
-											<Typography sx={{ mx: 1, fontSize: '1rem' }}>{season.title}</Typography>
-										</Box>
-									</MenuItem>
-								))}
-							</Select>
-							<PlayersStats playersStats={sortedPlayersStats} />
+							<SeasonSelect
+								value={selectedSeason?.id ?? ''}
+								onChange={(event) => handleSeasonChange(event.target.value)}
+								seasons={filteredSeasons}
+								sx={{ mx: 1, mb: 1, width: 'calc(100% - 16px)' }}
+							/>
+							<PlayersStats
+								playersStats={sortedPlayersStats}
+								seasonId={selectedSeason?.id}
+							/>
 						</Box>
 					)}
 				</Box>

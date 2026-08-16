@@ -21,7 +21,7 @@ import {
 	gameweekPlayerHeaderSx,
 	gameweekPlayerRowSx,
 } from './gameweekPageStyles';
-import { sortGameweekBetsByLeagueCode } from './gameweekCalendarUtils';
+import { attachSeasonPlayersToBets, sortGameweekBetsByLeagueCode } from './gameweekCalendarUtils';
 import GameweekCompletedCard from './GameweekCompletedCard';
 import GameweekEmptyCard from './GameweekEmptyCard';
 import GameweekHiddenBetCard from './GameweekHiddenBetCard';
@@ -29,23 +29,24 @@ import GameweekNoCard from './GameweekNoCard';
 import GameweekOpenedCard from './GameweekOpenedCard';
 
 const GameweekPlayersContainer = ({
-	activeSeason,
+	season,
 	bets,
 	gameweekCardsCount,
 }: {
-	activeSeason: Season;
+	season: Season;
 	bets: Bet[];
 	gameweekCardsCount: number;
 }): JSX.Element => {
 	const [expandedBetId, setExpandedBetId] = useState<string | null>(null);
 
-	const visibleBets = bets.filter(
-		(bet) => bet.betStatus !== BET_STATUS_DELETED && bet.player?.id != null
+	const visibleBets = attachSeasonPlayersToBets(
+		bets.filter((bet) => bet.betStatus !== BET_STATUS_DELETED && bet.player?.id != null),
+		season.players
 	);
 
 	const betsByPlayers: { [key: string]: Bet[] } = {};
 
-	activeSeason.players.forEach((player) => {
+	season.players.forEach((player) => {
 		betsByPlayers[player.id] = [];
 	});
 
@@ -70,7 +71,7 @@ const GameweekPlayersContainer = ({
 		return totalBets.filter((bet) => bet.betStatus === BET_STATUS_EMPTY).length;
 	};
 
-	const sortedPlayers = [...activeSeason.players].sort((a, b) => {
+	const sortedPlayers = [...season.players].sort((a, b) => {
 		const balanceDifference =
 			calculateTotalBalanceChange(b.id) - calculateTotalBalanceChange(a.id);
 		if (balanceDifference !== 0) {

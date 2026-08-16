@@ -51,7 +51,7 @@ export const monitoringToolbarSx: SxProps<Theme> = {
 
 export const monitoringKpiGridSx: SxProps<Theme> = {
 	display: 'grid',
-	gridTemplateColumns: 'repeat(4, 1fr)',
+	gridTemplateColumns: 'repeat(5, 1fr)',
 	gap: 1.25,
 	mb: 3,
 };

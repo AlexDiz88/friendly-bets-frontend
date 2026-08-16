@@ -10,8 +10,9 @@ export default interface CalendarsState {
 	betsByCalendarNode: BetsPage | undefined;
 	/** Кэш ставок по id игровой недели (страница «По турам»). */
 	betsByCalendarNodeId: Record<string, BetsPage>;
+	betsLoadingByCalendarNodeId: Record<string, boolean>;
 	gameweeksOverviewLoadedAt?: number;
 	gameweeksOverviewSeasonId?: string;
-	gameweeksBetsLoading?: boolean;
+	gameweeksOverviewLoading?: boolean;
 	error?: string;
 }

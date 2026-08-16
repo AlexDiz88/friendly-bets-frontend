@@ -9,6 +9,8 @@ export default interface MatchGoalEvent {
 	ownGoal?: boolean | null;
 	missed?: boolean | null;
 	varDisallowed?: boolean | null;
+	/** Source reason token: offside, foul, handball, … */
+	varDisallowedReason?: string | null;
 	redCard?: boolean | null;
 	secondYellow?: boolean | null;
 }

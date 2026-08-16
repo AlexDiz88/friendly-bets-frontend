@@ -1,34 +1,95 @@
-import { Box, SelectChangeEvent } from '@mui/material';
+import { Box, CircularProgress, SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomErrorMessage from '../../components/custom/CustomErrorMessage';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
-import useFetchActiveSeason from '../../components/hooks/useFetchActiveSeason';
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import PlayerSelect from '../../components/selectors/PlayerSelect';
-import { TOTAL_STATS_BY_TEAMS_USER_ID } from '../../constants';
-import { getActiveSeason } from '../admin/seasons/seasonsSlice';
-import { selectActiveSeason } from '../admin/seasons/selectors';
+import SeasonSelect from '../../components/selectors/SeasonSelect';
+import { SEASON_STATUS_ACTIVE, TOTAL_STATS_BY_TEAMS_USER_ID } from '../../constants';
+import { getSeasons } from '../admin/seasons/seasonsSlice';
+import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
+import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
 import { selectError, selectStatsByTeams } from './selectors';
 import { getStatsByTeams } from './statsSlice';
 import TeamsStats from './TeamsStats';
 
+const teamsStatsPageSx = {
+	maxWidth: '25rem',
+	margin: '0 auto',
+	mt: -2,
+	pt: 2,
+	boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
+};
+
+const teamsStatsFiltersSx = {
+	display: 'flex',
+	flexDirection: 'column',
+	gap: 0.75,
+	px: 0.75,
+	mb: 0.5,
+};
+
+const teamsStatsLeaguePlayerRowSx = {
+	display: 'flex',
+	flexDirection: 'row',
+	flexWrap: 'nowrap',
+	justifyContent: 'center',
+	alignItems: 'center',
+};
+
 export default function TeamsStatsPage(): JSX.Element {
-	const activeSeason = useAppSelector(selectActiveSeason);
+	const dispatch = useAppDispatch();
+	const activeSeasonId = useAppSelector(selectActiveSeasonId);
+	const allSeasons = useAppSelector(selectSeasons);
 	const statsByTeams = useAppSelector(selectStatsByTeams);
 	const errorText = useAppSelector(selectError);
-	const dispatch = useAppDispatch();
-	const [selectedLeagueCode, setSelectedLeagueCode] = useState<string>('');
-	const [selectedPlayerName, setSelectedPlayerName] = useState<string>(t('all'));
-	const [loading, setLoading] = useState(true);
+
+	const [selectedSeasonId, setSelectedSeasonId] = useState('');
+	const [selectedLeagueCode, setSelectedLeagueCode] = useState('');
+	const [selectedPlayerName, setSelectedPlayerName] = useState(t('all'));
+	const [seasonsReady, setSeasonsReady] = useState(false);
+	const [loadedStatsKey, setLoadedStatsKey] = useState<string | null>(null);
 	const [loadingError, setLoadingError] = useState(false);
 
 	useFilterLanguageChange(setSelectedPlayerName);
-	// TODO: переделать систему отлова загрузки и ошибок (React Query??)
-	useFetchActiveSeason(activeSeason?.id);
+
+	const seasonsNewestFirst = useMemo(
+		() => sortSeasonsNewestFirst(allSeasons),
+		[allSeasons]
+	);
+
+	const selectedSeason = useMemo(
+		() => allSeasons.find((season) => season.id === selectedSeasonId),
+		[allSeasons, selectedSeasonId]
+	);
+	const leagues = selectedSeason?.leagues ?? [];
+	const players = selectedSeason?.players ?? [];
+	const selectedLeague = leagues.find((league) => league.leagueCode === selectedLeagueCode);
+	const allPlayersLabel = t('all');
+
+	const hasValidSeason =
+		Boolean(selectedSeasonId) && allSeasons.some((season) => season.id === selectedSeasonId);
+
+	const selectedUserId =
+		selectedPlayerName === allPlayersLabel
+			? TOTAL_STATS_BY_TEAMS_USER_ID
+			: players.find((player) => player.username === selectedPlayerName)?.id;
+
+	const statsKey =
+		hasValidSeason && selectedLeague && selectedUserId
+			? `${selectedSeasonId}-${selectedLeague.id}-${selectedUserId}`
+			: null;
+
+	const isStatsLoading =
+		!loadingError && leagues.length > 0 && (statsKey == null || loadedStatsKey !== statsKey);
+
+	const handleSeasonChange = (e: SelectChangeEvent): void => {
+		setSelectedSeasonId(e.target.value);
+	};
 
 	const handleLeagueChange = (e: SelectChangeEvent): void => {
 		setSelectedLeagueCode(e.target.value);
@@ -39,93 +100,133 @@ export default function TeamsStatsPage(): JSX.Element {
 	};
 
 	useEffect(() => {
-		if (activeSeason && statsByTeams) {
-			const league = activeSeason.leagues.find((l) => l.id === statsByTeams.leagueId);
-			setSelectedLeagueCode(league?.leagueCode || '');
-		}
-	}, [statsByTeams]);
+		let cancelled = false;
+		setSeasonsReady(false);
+
+		void dispatch(getSeasons())
+			.unwrap()
+			.finally(() => {
+				if (!cancelled) {
+					setSeasonsReady(true);
+				}
+			});
+
+		return () => {
+			cancelled = true;
+		};
+	}, [dispatch]);
 
 	useEffect(() => {
-		if (activeSeason) {
-			setSelectedLeagueCode(activeSeason.leagues[0].leagueCode || '');
+		if (!seasonsReady || allSeasons.length === 0) {
+			return;
 		}
-	}, [activeSeason]);
+
+		if (selectedSeasonId && allSeasons.some((season) => season.id === selectedSeasonId)) {
+			return;
+		}
+
+		const activeInList = allSeasons.find((season) => season.status === SEASON_STATUS_ACTIVE);
+		if (activeInList) {
+			setSelectedSeasonId(activeInList.id);
+		} else if (activeSeasonId && allSeasons.some((season) => season.id === activeSeasonId)) {
+			setSelectedSeasonId(activeSeasonId);
+		} else {
+			setSelectedSeasonId(seasonsNewestFirst[0].id);
+		}
+	}, [seasonsReady, allSeasons, seasonsNewestFirst, activeSeasonId, selectedSeasonId]);
 
 	useEffect(() => {
-		if (activeSeason) {
-			const league = activeSeason.leagues.find((l) => l.leagueCode === selectedLeagueCode);
-			let userId;
-			if (selectedPlayerName === t('all')) {
-				userId = TOTAL_STATS_BY_TEAMS_USER_ID;
-			} else {
-				const user = activeSeason.players.find((p) => p.username === selectedPlayerName);
-				userId = user?.id;
-			}
-			if (league && userId) {
-				setLoading(true);
-				dispatch(getStatsByTeams({ seasonId: activeSeason.id, leagueId: league?.id, userId }))
-					.then(() => {
-						setLoading(false);
-					})
-					.catch(() => {
-						setLoadingError(true);
-						setLoading(false);
-					});
-			}
+		if (leagues.length === 0) {
+			return;
 		}
-	}, [activeSeason, selectedLeagueCode, selectedPlayerName]);
+		if (!leagues.some((league) => league.leagueCode === selectedLeagueCode)) {
+			setSelectedLeagueCode(leagues[0].leagueCode);
+		}
+	}, [leagues, selectedLeagueCode]);
 
 	useEffect(() => {
-		if (!activeSeason) {
-			dispatch(getActiveSeason());
+		if (selectedPlayerName === allPlayersLabel) {
+			return;
 		}
-	}, []);
+		if (!players.some((player) => player.username === selectedPlayerName)) {
+			setSelectedPlayerName(allPlayersLabel);
+		}
+	}, [players, selectedPlayerName, allPlayersLabel]);
+
+	useEffect(() => {
+		if (!statsKey || !selectedLeague || !selectedUserId) {
+			return;
+		}
+
+		let cancelled = false;
+		setLoadingError(false);
+
+		void dispatch(
+			getStatsByTeams({
+				seasonId: selectedSeasonId,
+				leagueId: selectedLeague.id,
+				userId: selectedUserId,
+			})
+		)
+			.unwrap()
+			.then(() => {
+				if (!cancelled) {
+					setLoadedStatsKey(statsKey);
+				}
+			})
+			.catch(() => {
+				if (!cancelled) {
+					setLoadingError(true);
+				}
+			});
+
+		return () => {
+			cancelled = true;
+		};
+	}, [statsKey, selectedSeasonId, selectedLeague, selectedUserId, dispatch]);
+
+	if (!seasonsReady || !hasValidSeason) {
+		return <CustomLoading />;
+	}
+
+	const filters = (
+		<Box sx={teamsStatsFiltersSx}>
+			<SeasonSelect
+				value={selectedSeasonId}
+				onChange={handleSeasonChange}
+				seasons={seasonsNewestFirst}
+				sx={{ width: '100%' }}
+			/>
+			<Box sx={teamsStatsLeaguePlayerRowSx}>
+				<LeagueSelect
+					value={selectedLeagueCode}
+					onChange={handleLeagueChange}
+					leagues={leagues}
+					withoutAll
+				/>
+				<PlayerSelect
+					value={selectedPlayerName}
+					onChange={handlePlayerChange}
+					players={players}
+				/>
+			</Box>
+		</Box>
+	);
 
 	return (
-		<Box>
-			<Box>
-				{loading ? (
-					<CustomLoading />
-				) : (
-					<Box>
-						{loadingError ? (
-							<Box>
-								<CustomLoadingError />
-							</Box>
-						) : (
-							<Box
-								sx={{
-									maxWidth: '25rem',
-									margin: '0 auto',
-									mt: -2,
-									pt: 2,
-									boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1), 0px 8px 16px rgba(0, 0, 0, 0.9)',
-								}}
-							>
-								<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-									<LeagueSelect
-										value={selectedLeagueCode}
-										onChange={handleLeagueChange}
-										leagues={activeSeason?.leagues}
-										withoutAll
-									/>
-
-									<PlayerSelect
-										value={selectedPlayerName}
-										onChange={handlePlayerChange}
-										players={activeSeason?.players}
-									/>
-								</Box>
-								{statsByTeams ? (
-									<TeamsStats playersStatsByTeams={statsByTeams} />
-								) : (
-									<CustomErrorMessage message={errorText} />
-								)}
-							</Box>
-						)}
-					</Box>
-				)}
-			</Box>
+		<Box sx={teamsStatsPageSx}>
+			{filters}
+			{loadingError ? (
+				<CustomLoadingError />
+			) : isStatsLoading ? (
+				<Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+					<CircularProgress />
+				</Box>
+			) : statsByTeams ? (
+				<TeamsStats playersStatsByTeams={statsByTeams} />
+			) : (
+				<CustomErrorMessage message={errorText} />
+			)}
 		</Box>
 	);
 }

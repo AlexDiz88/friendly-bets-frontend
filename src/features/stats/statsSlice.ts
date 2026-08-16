@@ -7,7 +7,10 @@ const initialState: PlayersStatsState = {
 	playersStatsByLeague: [],
 	playersStatsByTeams: [],
 	playersStatsByBetTitles: [],
+	playersStatsByBetValues: [],
 	statsByTeams: undefined,
+	playerHighlights: [],
+	playerHighlightsSeasonId: undefined,
 	error: undefined,
 };
 
@@ -31,10 +34,20 @@ export const getAllStatsByBetTitlesInSeason = createAsyncThunk(
 	async (seasonId: string) => api.getAllStatsByBetTitlesInSeason(seasonId)
 );
 
+export const getAllStatsByBetValuesInSeason = createAsyncThunk(
+	'stats/getAllStatsByBetValuesInSeason',
+	async (seasonId: string) => api.getAllStatsByBetValuesInSeason(seasonId)
+);
+
 export const getStatsByTeams = createAsyncThunk(
 	'stats/getStatsByTeams',
 	async ({ seasonId, leagueId, userId }: { seasonId: string; leagueId: string; userId: string }) =>
 		api.getStatsByTeams(seasonId, leagueId, userId)
+);
+
+export const getPlayerHighlights = createAsyncThunk(
+	'stats/getPlayerHighlights',
+	async (seasonId: string) => api.getPlayerHighlights(seasonId)
 );
 
 export const playersStatsFullRecalculation = createAsyncThunk(
@@ -76,11 +89,24 @@ const statsSlice = createSlice({
 			.addCase(getAllStatsByBetTitlesInSeason.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
+			.addCase(getAllStatsByBetValuesInSeason.fulfilled, (state, action) => {
+				state.playersStatsByBetValues = action.payload.playersStatsByBetValues;
+			})
+			.addCase(getAllStatsByBetValuesInSeason.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
 			.addCase(getStatsByTeams.fulfilled, (state, action) => {
 				state.statsByTeams = action.payload.statsByTeams;
 			})
 			.addCase(getStatsByTeams.rejected, (state, action) => {
 				state.statsByTeams = undefined;
+				state.error = action.error.message;
+			})
+			.addCase(getPlayerHighlights.fulfilled, (state, action) => {
+				state.playerHighlights = action.payload.players;
+				state.playerHighlightsSeasonId = action.meta.arg;
+			})
+			.addCase(getPlayerHighlights.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
 			.addCase(playersStatsFullRecalculation.fulfilled, (state, action) => {

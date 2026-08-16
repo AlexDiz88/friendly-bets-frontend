@@ -31,6 +31,8 @@ export default function StatsRecalculating({
 	const [openRecalculateTeamStatsDialog, setOpenRecalculateTeamStatsDialog] = useState(false);
 	const [openRecalculateBetTitlesStatsDialog, setOpenRecalculateBetTitlesStatsDialog] =
 		useState(false);
+	const [openRecalculateBetValuesStatsDialog, setOpenRecalculateBetValuesStatsDialog] =
+		useState(false);
 	const [openRecalculateGameweekStatsDialog, setOpenRecalculateGameweekStatsDialog] =
 		useState(false);
 
@@ -118,6 +120,38 @@ export default function StatsRecalculating({
 		[activeSeasonId]
 	);
 
+	const handleSubmitBetValuesStatsRecalculation = useCallback(
+		async (event?: React.FormEvent) => {
+			setOpenRecalculateBetValuesStatsDialog(false);
+			event?.preventDefault();
+			startLoading();
+			if (activeSeasonId) {
+				try {
+					let url = `${
+						import.meta.env.VITE_PRODUCT_SERVER
+					}/api/stats/season/${activeSeasonId}/recalculation/bet-values`;
+					if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+						url = `/api/stats/season/${activeSeasonId}/recalculation/bet-values`;
+					}
+					const response = await apiFetch(`${url}`);
+
+					if (response.ok) {
+						dispatch(showSuccessSnackbar({ message: t('statsWasSuccessfullyRecalculated') }));
+					} else {
+						const { message }: { message?: string } = await response.json();
+						dispatch(
+							showErrorSnackbar({ message: message || t('errorByStatsRecalculating') })
+						);
+					}
+				} catch (error) {
+					dispatch(showErrorSnackbar({ message: t('errorByStatsRecalculating') }));
+				}
+				stopLoading();
+			}
+		},
+		[activeSeasonId]
+	);
+
 	const handleSubmitGameweekStatsRecalculation = useCallback(
 		async (event?: React.FormEvent) => {
 			setOpenRecalculateGameweekStatsDialog(false);
@@ -162,6 +196,10 @@ export default function StatsRecalculating({
 		setOpenRecalculateBetTitlesStatsDialog(!openRecalculateBetTitlesStatsDialog);
 	};
 
+	const handleRecalculateBetValuesStatsDialog = (): void => {
+		setOpenRecalculateBetValuesStatsDialog(!openRecalculateBetValuesStatsDialog);
+	};
+
 	const handleRecalculateGameweekStatsDialog = (): void => {
 		setOpenRecalculateGameweekStatsDialog(!openRecalculateGameweekStatsDialog);
 	};
@@ -170,6 +208,7 @@ export default function StatsRecalculating({
 		setOpenRecalculatePlayerStatsDialog(false);
 		setOpenRecalculateTeamStatsDialog(false);
 		setOpenRecalculateBetTitlesStatsDialog(false);
+		setOpenRecalculateBetValuesStatsDialog(false);
 		setOpenRecalculateGameweekStatsDialog(false);
 	};
 
@@ -198,6 +237,12 @@ export default function StatsRecalculating({
 				buttonVariant="outlined"
 				onClick={handleRecalculateBetTitlesStatsDialog}
 				buttonText={t('betTitlesStatsRecalculating')}
+			/>
+			<CustomButton
+				buttonColor="error"
+				buttonVariant="outlined"
+				onClick={handleRecalculateBetValuesStatsDialog}
+				buttonText={t('betValuesStatsRecalculating')}
 			/>
 			<CustomButton
 				buttonColor="error"
@@ -254,6 +299,19 @@ export default function StatsRecalculating({
 				<DialogActions>
 					<CustomCancelButton onClick={handleCloseDialog} />
 					<CustomSuccessButton onClick={handleSubmitBetTitlesStatsRecalculation} />
+				</DialogActions>
+			</Dialog>
+
+			<Dialog open={openRecalculateBetValuesStatsDialog} onClose={handleCloseDialog}>
+				<DialogContent>
+					<Box sx={{ fontWeight: '600', fontSize: '1rem' }}>
+						{t('betValuesStatsWillBeRecalculated')}
+						<Box sx={destructiveActionHintSx}>{t('thisActionCannotBeCanceled')}</Box>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<CustomCancelButton onClick={handleCloseDialog} />
+					<CustomSuccessButton onClick={handleSubmitBetValuesStatsRecalculation} />
 				</DialogActions>
 			</Dialog>
 		</Box>

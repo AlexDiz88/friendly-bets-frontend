@@ -38,6 +38,7 @@ import ExternalApiMonitoringPage from './features/external-api-monitoring/Extern
 import WorldCup26Page from './features/world-cup-2026/WorldCup26Page';
 import Gameweek from './features/gameweeks/Gameweek';
 import BetTitlesStatsPage from './features/stats/BetTitlesStatsPage';
+import BetValuesStatsPage from './features/stats/BetValuesStatsPage';
 import LeaguesStatsPage from './features/stats/LeaguesStatsPage';
 import TeamsStatsPage from './features/stats/TeamsStatsPage';
 import { useAppVersionCheck } from './shared/useAppVersionCheck';
@@ -135,6 +136,7 @@ function App(): JSX.Element {
 				<Route path="/stats/leagues" element={<LeaguesStatsPage />} />
 				<Route path="/stats/teams" element={<TeamsStatsPage />} />
 				<Route path="/stats/bet-titles" element={<BetTitlesStatsPage />} />
+				<Route path="/stats/bet-values" element={<BetValuesStatsPage />} />
 				<Route path="/match-results/matchday" element={<MatchdayPage />} />
 				<Route path="/gameweeks" element={<Gameweek />} />
 				<Route path="/news" element={<News />} />

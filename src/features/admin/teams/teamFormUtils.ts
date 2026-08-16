@@ -11,6 +11,7 @@ import {
 	CHAMPIONAT_PROVIDER,
 	RUSCORE_PROVIDER,
 	FLASHSCORE_PROVIDER,
+	FLASHSCORE_UA_PROVIDER,
 	LIVERESULT_PROVIDER,
 } from './teamProviderConstants';
 
@@ -82,6 +83,13 @@ export const TEAM_EXTERNAL_ALIAS_FIELDS = [
 		sectionKey: 'teamFlashscoreSection',
 		labelKey: 'teamFlashscoreExternalName',
 		inputId: 'flashscore-external-name',
+	},
+	{
+		provider: FLASHSCORE_UA_PROVIDER,
+		field: 'flashscoreUaExternalName',
+		sectionKey: 'teamFlashscoreUaSection',
+		labelKey: 'teamFlashscoreUaExternalName',
+		inputId: 'flashscoreua-external-name',
 	},
 	{
 		provider: LIVERESULT_PROVIDER,
