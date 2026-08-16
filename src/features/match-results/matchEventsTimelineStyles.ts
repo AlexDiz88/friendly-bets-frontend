@@ -169,6 +169,34 @@ export const matchEventsPlayerSx: SxProps<Theme> = (theme) => {
 	};
 };
 
+export const matchEventsVarCaptionSx: SxProps<Theme> = (theme) => {
+	const p = palette(theme.palette.mode);
+	return {
+		minWidth: 0,
+		fontSize: '0.62rem',
+		fontWeight: 600,
+		lineHeight: 1.2,
+		color: p.textMuted,
+		whiteSpace: 'normal',
+	};
+};
+
+export const matchEventsVarBadgeSx: SxProps<Theme> = (theme) => ({
+	flexShrink: 0,
+	display: 'inline-flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+	px: 0.4,
+	py: 0.15,
+	borderRadius: 0.5,
+	fontSize: '0.5rem',
+	fontWeight: 800,
+	letterSpacing: '0.06em',
+	lineHeight: 1,
+	color: '#fff',
+	bgcolor: theme.palette.mode === 'dark' ? '#6b7280' : '#4b5563',
+});
+
 export const matchEventsBadgeSx = (
 	kind: 'goal' | 'pen' | 'own' | 'miss' | 'red' | 'secondYellow'
 ): SxProps<Theme> => (theme) => {

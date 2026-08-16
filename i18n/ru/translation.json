@@ -83,6 +83,13 @@
 			"red": "Красная",
 			"secondYellow": "Вторая жёлтая",
 			"secondYellowShort": "2Ж"
+		},
+		"varDisallowedCaption": "Гол не засчитан - {{reason}} ({{player}})",
+		"varDisallowedNoReason": "Гол не засчитан ({{player}})",
+		"varReason": {
+			"offside": "офсайд",
+			"foul": "фол",
+			"handball": "игра рукой"
 		}
 	},
 	"gameResultEditScore": "Исправить счёт",

@@ -83,6 +83,13 @@
 			"red": "Rot",
 			"secondYellow": "Gelb-Rot",
 			"secondYellowShort": "GR"
+		},
+		"varDisallowedCaption": "Tor aberkannt - {{reason}} ({{player}})",
+		"varDisallowedNoReason": "Tor aberkannt ({{player}})",
+		"varReason": {
+			"offside": "Abseits",
+			"foul": "Foul",
+			"handball": "Handspiel"
 		}
 	},
 	"gameResultEditScore": "Ergebnis korrigieren",

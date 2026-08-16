@@ -216,6 +216,7 @@ export default function MatchdayPage(): JSX.Element {
 		seasonId: activeSeason?.id,
 		leagueId: selectedLeague?.id,
 		matchDay: betMatchDay,
+		refreshKey: plateRefreshKey,
 	});
 
 	const matchesLoading = competitionInfoLoading || loading;

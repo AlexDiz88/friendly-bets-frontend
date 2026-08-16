@@ -83,6 +83,13 @@
 			"red": "Red card",
 			"secondYellow": "Second yellow",
 			"secondYellowShort": "2Y"
+		},
+		"varDisallowedCaption": "Goal disallowed - {{reason}} ({{player}})",
+		"varDisallowedNoReason": "Goal disallowed ({{player}})",
+		"varReason": {
+			"offside": "offside",
+			"foul": "foul",
+			"handball": "handball"
 		}
 	},
 	"gameResultEditScore": "Edit score",
