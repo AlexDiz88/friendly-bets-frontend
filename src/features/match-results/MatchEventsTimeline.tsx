@@ -178,10 +178,12 @@ function EventSideContent({
 	const marks = <EventMarks event={event} scoreAfter={scoreAfter} />;
 	const name = (
 		<Typography
-			sx={[
-				isVar ? matchEventsVarCaptionSx : matchEventsPlayerSx,
-				isHome ? { textAlign: 'right' } : { textAlign: 'left' },
-			]}
+			sx={
+				[
+					isVar ? matchEventsVarCaptionSx : matchEventsPlayerSx,
+					isHome ? { textAlign: 'right' } : { textAlign: 'left' },
+				] as SxProps<Theme>
+			}
 			title={caption}
 		>
 			{caption}
