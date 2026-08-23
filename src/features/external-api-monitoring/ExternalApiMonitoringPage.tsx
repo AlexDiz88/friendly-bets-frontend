@@ -721,7 +721,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 										sx={[
 											monitoringMobileKpiLayerSx,
 											{ color: externalDataLayerAccent(layer) },
-										]}
+										] as SxProps<Theme>}
 									>
 										{LAYER_SHORT[layer]}
 									</Typography>
@@ -747,7 +747,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 											/>
 										) : null}
 										<Typography
-											sx={[monitoringMobileKpiMetaSx, { pl: 0, mt: 0, flex: 1 }]}
+											sx={[monitoringMobileKpiMetaSx, { pl: 0, mt: 0, flex: 1 }] as SxProps<Theme>}
 										>
 											{run ? formatTime(run.startedAt) : '—'}
 										</Typography>
