@@ -55,7 +55,7 @@
 	"externalMatchNoDataHint": "No data saved for this matchday yet.",
 	"externalMatchNoDataHintModerator": "No data yet. Tap «Sync matchday results».",
 	"externalMatchBettingUnavailableNoCalendar": "Betting for this matchday is currently unavailable — the matchday has not been added to the season calendar.",
-	"gameResultFinalized": "Result finalized",
+	"gameResultFinalized": "Finished",
 	"matchCenter": {
 		"halftime": "Half-time",
 		"live": "Live"
@@ -1015,6 +1015,7 @@
 	"calendarForLeagueMatchdayNotExist": "The specified matchday of selected league has not been added to calendar!",
 	"noBetTitlesStats": "There are no statistics available at the moment",
 	"noBetValuesStats": "There are no odds statistics available at the moment",
+	"noTeamStats": "Statistics are currently unavailable",
 	"betValueRange": {
 		"SUPER_LOW": "Rock-solid",
 		"LOW": "Reliable",

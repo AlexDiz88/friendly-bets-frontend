@@ -7,7 +7,7 @@ import {
 	BET_STATUS_OPENED,
 	COMPLETED_BET_STATUSES,
 } from '../../constants';
-import Season from '../admin/seasons/types/Season';
+import SeasonSummary from '../admin/seasons/types/SeasonSummary';
 import CompleteBetCard from '../bets/CompleteBetCard';
 import EmptyBetCard from '../bets/EmptyBetCard';
 import OpenedBetCard from '../bets/OpenedBetCard';
@@ -33,7 +33,7 @@ const GameweekPlayersContainer = ({
 	bets,
 	gameweekCardsCount,
 }: {
-	season: Season;
+	season: SeasonSummary;
 	bets: Bet[];
 	gameweekCardsCount: number;
 }): JSX.Element => {

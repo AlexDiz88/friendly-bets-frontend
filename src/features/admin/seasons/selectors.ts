@@ -1,7 +1,10 @@
 import { RootState } from '../../../app/store';
 import Season from './types/Season';
+import SeasonSummary from './types/SeasonSummary';
 
 export const selectSeasons = (state: RootState): Season[] => state.seasons.seasons;
+export const selectSeasonSummaries = (state: RootState): SeasonSummary[] =>
+	state.seasons.summaries;
 export const selectStatuses = (state: RootState): string[] => state.seasons.statuses;
 export const selectLeagueCodes = (state: RootState): string[] => state.seasons.leagueCodes;
 export const selectActiveSeason = (state: RootState): Season | null => state.seasons.activeSeason;

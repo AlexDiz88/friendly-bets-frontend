@@ -19,7 +19,7 @@ import { useTheme } from '@mui/material/styles';
 import { t } from 'i18next';
 import UserAvatar from '../../components/custom/avatar/UserAvatar';
 import Calendar from '../admin/calendars/types/Calendar';
-import Season from '../admin/seasons/types/Season';
+import SeasonSummary from '../admin/seasons/types/SeasonSummary';
 import {
 	statsBalanceNegativeSx,
 	statsBalancePositiveSx,
@@ -35,7 +35,7 @@ const GameweekStats = ({
 	season,
 }: {
 	calendarNode: Calendar;
-	season: Season;
+	season: SeasonSummary;
 }): JSX.Element => {
 	const theme = useTheme();
 	const isDark = theme.palette.mode === 'dark';

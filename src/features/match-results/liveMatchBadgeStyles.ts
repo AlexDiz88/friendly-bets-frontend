@@ -114,6 +114,6 @@ export const liveMatchHalftimeBadgeSx: SxProps<Theme> = (theme) => ({
 
 export const matchResultStatusChipSx: SxProps<Theme> = {
 	height: 18,
-	fontSize: '0.58rem',
-	'& .MuiChip-label': { px: 0.5, py: 0 },
+	fontSize: '0.65rem',
+	'& .MuiChip-label': { px: 0.5, py: 0, fontSize: '0.65rem' },
 };

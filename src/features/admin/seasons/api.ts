@@ -2,6 +2,7 @@
 import { apiFetch } from '../../../shared/apiClient';
 import Team from '../teams/types/Team';
 import Season from './types/Season';
+import SeasonSummary from './types/SeasonSummary';
 
 export async function addSeason(
 	title: string,
@@ -32,6 +33,19 @@ export async function getSeasons(): Promise<{ seasons: Season[] }> {
 	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons`;
 	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
 		url = '/api/seasons';
+	}
+	const result = await apiFetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function getSeasonSummaries(): Promise<{ seasons: SeasonSummary[] }> {
+	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/summaries`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = '/api/seasons/summaries';
 	}
 	const result = await apiFetch(`${url}`);
 	if (result.status >= 400) {

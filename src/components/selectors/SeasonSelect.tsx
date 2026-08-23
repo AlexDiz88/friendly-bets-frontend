@@ -1,7 +1,6 @@
 import CalendarMonth from '@mui/icons-material/CalendarMonth';
 import { Box, MenuItem, Select, SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
-import Season from '../../features/admin/seasons/types/Season';
 import {
 	filterSelectMenuItemSx,
 	filterSelectMenuProps,
@@ -11,7 +10,7 @@ import {
 interface SeasonSelectProps {
 	value: string;
 	onChange: (event: SelectChangeEvent<string>) => void;
-	seasons: Season[];
+	seasons: Array<{ id: string; title: string }>;
 	sx?: SxProps<Theme>;
 	compact?: boolean;
 }

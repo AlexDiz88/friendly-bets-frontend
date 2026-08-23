@@ -1,6 +1,7 @@
 import { Avatar, Box, MenuItem, Select, SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
 import { useMemo } from 'react';
+import SimpleUser from '../../features/auth/types/SimpleUser';
 import User from '../../features/auth/types/User';
 import UserAvatar from '../custom/avatar/UserAvatar';
 import {
@@ -16,7 +17,7 @@ import { sortPlayersForSelect } from './sortPlayersForSelect';
 interface PlayerSelectProps {
 	value: string;
 	onChange: ((event: SelectChangeEvent<string>) => void) | undefined;
-	players: User[] | undefined;
+	players: Array<User | SimpleUser> | undefined;
 	sx?: SxProps<Theme>;
 }
 

@@ -1,8 +1,8 @@
-import User from '../auth/types/User';
+import SimpleUser from '../auth/types/SimpleUser';
 import LeagueStats from './types/LeagueStats';
 import PlayerStats from './types/PlayerStats';
 
-export function emptyPlayerStats(player: User): PlayerStats {
+export function emptyPlayerStats(player: SimpleUser): PlayerStats {
 	return {
 		userId: player.id,
 		avatar: player.avatar ?? '',
@@ -28,7 +28,7 @@ export function findLeagueStats(
 }
 
 export function mergePlayersWithLeagueStats(
-	players: User[],
+	players: SimpleUser[],
 	leagueStats: LeagueStats | undefined
 ): PlayerStats[] {
 	const byUserId = new Map((leagueStats?.playersStats ?? []).map((s) => [s.userId, s]));

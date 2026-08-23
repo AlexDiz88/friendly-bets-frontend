@@ -55,7 +55,7 @@
 	"externalMatchNoDataHint": "Für diesen Spieltag sind noch keine Daten gespeichert.",
 	"externalMatchNoDataHintModerator": "Keine Daten. Tippen Sie auf «Spieltagsergebnisse synchronisieren».",
 	"externalMatchBettingUnavailableNoCalendar": "Wetten auf diesen Spieltag sind derzeit nicht möglich — der Spieltag wurde noch nicht zum Saisonkalender hinzugefügt.",
-	"gameResultFinalized": "Ergebnis fixiert",
+	"gameResultFinalized": "Beendet",
 	"matchCenter": {
 		"halftime": "Halbzeit",
 		"live": "Live"
@@ -1015,6 +1015,7 @@
 	"calendarForLeagueMatchdayNotExist": "Der angegebene Spieltag der ausgewählten Liga wurde nicht in den Kalender aufgenommen!",
 	"noBetTitlesStats": "Derzeit keine Statistiken",
 	"noBetValuesStats": "Derzeit keine Quotenstatistiken",
+	"noTeamStats": "Derzeit sind keine Statistiken verfügbar",
 	"betValueRange": {
 		"SUPER_LOW": "Bombensicher",
 		"LOW": "Zuverlässig",

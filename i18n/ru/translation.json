@@ -55,7 +55,7 @@
 	"externalMatchNoDataHint": "Данные по этому туру ещё не сохранены.",
 	"externalMatchNoDataHintModerator": "Данных нет. Нажмите «Синхронизировать результаты тура».",
 	"externalMatchBettingUnavailableNoCalendar": "Приём ставок на этот тур недоступен — тур ещё не был добавлен в календарь сезона.",
-	"gameResultFinalized": "Итог зафиксирован",
+	"gameResultFinalized": "Завершён",
 	"matchCenter": {
 		"halftime": "Перерыв",
 		"live": "Live"
@@ -1015,6 +1015,7 @@
 	"calendarForLeagueMatchdayNotExist": "Указанный тур лиги не добавлен в календарь!",
 	"noBetTitlesStats": "В данный момент статистика отсутствует",
 	"noBetValuesStats": "В данный момент статистика по кэфам отсутствует",
+	"noTeamStats": "Статистика на данный момент отсутствует",
 	"betValueRange": {
 		"SUPER_LOW": "Железобетонные",
 		"LOW": "Надёжные",

@@ -21,9 +21,8 @@ import {
 	selectGameweeksOverviewSeasonId,
 } from '../admin/calendars/selectors';
 import Calendar from '../admin/calendars/types/Calendar';
-import { getSeasons } from '../admin/seasons/seasonsSlice';
-import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
-import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
+import { selectActiveSeasonId } from '../admin/seasons/selectors';
+import useSeasonSummaries from '../admin/seasons/useSeasonSummaries';
 import GameweekCalendarSelect from './GameweekCalendarSelect';
 import GameweekPlayerContainer from './GameweekPlayersContainer';
 import GameweekStats from './GameweekStats';
@@ -46,27 +45,23 @@ const Gameweek = (): JSX.Element => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
-	const allSeasons = useAppSelector(selectSeasons);
+	const { seasonChoices, seasonsNewestFirst, summariesReady, summariesError } =
+		useSeasonSummaries();
 	const calendarNodes = useAppSelector(selectCalendarNodesHasBets);
 	const overviewSeasonId = useAppSelector(selectGameweeksOverviewSeasonId);
 
 	const [selectedSeasonId, setSelectedSeasonId] = useState('');
-	const [seasonsReady, setSeasonsReady] = useState(false);
 	const [selectedCalendarNode, setSelectedCalendarNode] = useState<Calendar | undefined>(undefined);
 	const [overviewLoading, setOverviewLoading] = useState(true);
 	const [overviewError, setOverviewError] = useState(false);
 	const [emptyReason, setEmptyReason] = useState<GameweekEmptyReason>('no-calendar');
 
-	const seasonsNewestFirst = useMemo(
-		() => sortSeasonsNewestFirst(allSeasons),
-		[allSeasons]
-	);
 	const selectedSeason = useMemo(
-		() => allSeasons.find((season) => season.id === selectedSeasonId),
-		[allSeasons, selectedSeasonId]
+		() => seasonChoices.find((season) => season.id === selectedSeasonId),
+		[seasonChoices, selectedSeasonId]
 	);
 	const hasValidSeason =
-		Boolean(selectedSeasonId) && allSeasons.some((season) => season.id === selectedSeasonId);
+		Boolean(selectedSeasonId) && seasonChoices.some((season) => season.id === selectedSeasonId);
 	const seasonId = hasValidSeason ? selectedSeasonId : undefined;
 	const selectedNodeId = selectedCalendarNode?.id;
 	const cachedBets = useAppSelector(selectBetsByCalendarNodeId(selectedNodeId));
@@ -81,50 +76,38 @@ const Gameweek = (): JSX.Element => {
 	);
 
 	useEffect(() => {
-		let cancelled = false;
-		setSeasonsReady(false);
+		if (seasonChoices.length === 0) {
+			return;
+		}
 
-		void dispatch(getSeasons())
-			.unwrap()
-			.finally(() => {
-				if (!cancelled) {
-					setSeasonsReady(true);
+		if (requestedSeasonId) {
+			if (seasonChoices.some((season) => season.id === requestedSeasonId)) {
+				if (selectedSeasonId !== requestedSeasonId) {
+					setSelectedSeasonId(requestedSeasonId);
 				}
-			});
-
-		return () => {
-			cancelled = true;
-		};
-	}, [dispatch]);
-
-	useEffect(() => {
-		if (!seasonsReady || allSeasons.length === 0) {
-			return;
-		}
-
-		if (requestedSeasonId && allSeasons.some((season) => season.id === requestedSeasonId)) {
-			if (selectedSeasonId !== requestedSeasonId) {
-				setSelectedSeasonId(requestedSeasonId);
+				return;
 			}
+			if (!summariesReady) {
+				return;
+			}
+		}
+
+		if (selectedSeasonId && seasonChoices.some((season) => season.id === selectedSeasonId)) {
 			return;
 		}
 
-		if (selectedSeasonId && allSeasons.some((season) => season.id === selectedSeasonId)) {
-			return;
-		}
-
-		const activeInList = allSeasons.find((season) => season.status === SEASON_STATUS_ACTIVE);
+		const activeInList = seasonChoices.find((season) => season.status === SEASON_STATUS_ACTIVE);
 		if (activeInList) {
 			setSelectedSeasonId(activeInList.id);
-		} else if (activeSeasonId && allSeasons.some((season) => season.id === activeSeasonId)) {
+		} else if (activeSeasonId && seasonChoices.some((season) => season.id === activeSeasonId)) {
 			setSelectedSeasonId(activeSeasonId);
 		} else {
 			setSelectedSeasonId(seasonsNewestFirst[0].id);
 		}
 	}, [
-		seasonsReady,
-		allSeasons,
+		seasonChoices,
 		seasonsNewestFirst,
+		summariesReady,
 		activeSeasonId,
 		selectedSeasonId,
 		requestedSeasonId,
@@ -315,7 +298,11 @@ const Gameweek = (): JSX.Element => {
 		return betsLoading;
 	}, [selectedCalendarNode, selectedSeason, cachedBets, betsLoading]);
 
-	if (!seasonsReady || !hasValidSeason) {
+	if (summariesError && seasonChoices.length === 0) {
+		return <CustomLoadingError />;
+	}
+
+	if (seasonChoices.length === 0 || !hasValidSeason) {
 		return <CustomLoading />;
 	}
 
