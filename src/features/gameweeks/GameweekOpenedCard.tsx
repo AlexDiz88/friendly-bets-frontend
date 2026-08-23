@@ -32,23 +32,21 @@ const GameweekOpenedCard = ({ bet, onClick }: { bet: Bet; onClick: () => void })
 			</Box>
 
 			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-				{bet.balanceChange !== undefined && (
-					<Box
-						sx={
-							[
-								gameweekCardBetTitleSx,
-								{
-									fontSize: titleLen > 16 ? '0.8rem' : '1.1rem',
-									lineHeight: titleLen > 16 ? 0.8 : 1,
-									pb: 0.5,
-									pt: 0.1,
-								},
-							] as SxProps<Theme>
-						}
-					>
-						{getFullBetTitle(bet.betTitle)}
-					</Box>
-				)}
+				<Box
+					sx={
+						[
+							gameweekCardBetTitleSx,
+							{
+								fontSize: titleLen > 16 ? '0.8rem' : '1.1rem',
+								lineHeight: titleLen > 16 ? 0.8 : 1,
+								pb: 0.5,
+								pt: 0.1,
+							},
+						] as SxProps<Theme>
+					}
+				>
+					{getFullBetTitle(bet.betTitle)}
+				</Box>
 			</Box>
 		</Box>
 	);
