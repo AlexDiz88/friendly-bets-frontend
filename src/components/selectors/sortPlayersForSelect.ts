@@ -1,16 +1,19 @@
-import User from '../../features/auth/types/User';
-
 /** Кириллица в нике — группа Ru, иначе En (если language не задан). */
 const CYRILLIC_IN_NAME = /[\u0400-\u04FF]/;
 
 type PlayerSelectGroup = 'ru' | 'en';
+
+type PlayerSelectSortable = {
+	username?: string;
+	language?: string;
+};
 
 function normalizeLanguageCode(language: string | undefined): string | undefined {
 	if (!language) return undefined;
 	return language.toLowerCase().split('-')[0];
 }
 
-function playerSelectGroup(player: User): PlayerSelectGroup {
+function playerSelectGroup(player: PlayerSelectSortable): PlayerSelectGroup {
 	const lang = normalizeLanguageCode(player.language);
 	if (lang === 'ru') return 'ru';
 	if (lang === 'en') return 'en';
@@ -24,7 +27,10 @@ function groupOrder(group: PlayerSelectGroup): number {
 }
 
 /** Участники для селекта: сначала Ru, затем En; внутри группы — по алфавиту. */
-export function comparePlayersForSelect(a: User, b: User): number {
+export function comparePlayersForSelect(
+	a: PlayerSelectSortable,
+	b: PlayerSelectSortable
+): number {
 	const ga = playerSelectGroup(a);
 	const gb = playerSelectGroup(b);
 	const byGroup = groupOrder(ga) - groupOrder(gb);
@@ -36,6 +42,6 @@ export function comparePlayersForSelect(a: User, b: User): number {
 	return na.localeCompare(nb, locale, { sensitivity: 'base' });
 }
 
-export function sortPlayersForSelect(players: User[]): User[] {
+export function sortPlayersForSelect<T extends PlayerSelectSortable>(players: T[]): T[] {
 	return [...players].sort(comparePlayersForSelect);
 }

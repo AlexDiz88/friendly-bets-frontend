@@ -9,9 +9,14 @@ import LeagueSelect from '../../components/selectors/LeagueSelect';
 import PlayerSelect from '../../components/selectors/PlayerSelect';
 import SeasonSelect from '../../components/selectors/SeasonSelect';
 import { SEASON_STATUS_ACTIVE, TOTAL_STATS_BY_TEAMS_USER_ID } from '../../constants';
-import { getSeasons } from '../admin/seasons/seasonsSlice';
-import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
+import { getSeasonSummaries } from '../admin/seasons/seasonsSlice';
+import {
+	selectActiveSeason,
+	selectActiveSeasonId,
+	selectSeasonSummaries,
+} from '../admin/seasons/selectors';
 import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
+import SeasonSummary from '../admin/seasons/types/SeasonSummary';
 import { selectStatsByTeams } from './selectors';
 import { getStatsByTeams } from './statsSlice';
 import TeamsStats from './TeamsStats';
@@ -50,44 +55,80 @@ const teamsStatsEmptySx = {
 
 export default function TeamsStatsPage(): JSX.Element {
 	const dispatch = useAppDispatch();
+	const activeSeason = useAppSelector(selectActiveSeason);
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
-	const allSeasons = useAppSelector(selectSeasons);
+	const summaries = useAppSelector(selectSeasonSummaries);
 	const statsByTeams = useAppSelector(selectStatsByTeams);
 
-	const [selectedSeasonId, setSelectedSeasonId] = useState('');
+	const [selectedSeasonId, setSelectedSeasonId] = useState(activeSeason?.id ?? '');
 	const [selectedLeagueCode, setSelectedLeagueCode] = useState('');
 	const [selectedPlayerName, setSelectedPlayerName] = useState(t('all'));
-	const [seasonsReady, setSeasonsReady] = useState(false);
 	const [loadedStatsKey, setLoadedStatsKey] = useState<string | null>(null);
 	const [loadingError, setLoadingError] = useState(false);
+	const [summariesError, setSummariesError] = useState(false);
 
 	useFilterLanguageChange(setSelectedPlayerName);
 
+	const seasonChoices = useMemo((): SeasonSummary[] => {
+		if (summaries.length > 0) {
+			return summaries;
+		}
+		if (!activeSeason) {
+			return [];
+		}
+		return [
+			{
+				id: activeSeason.id,
+				title: activeSeason.title,
+				startDate: activeSeason.startDate,
+				endDate: activeSeason.endDate,
+				status: activeSeason.status,
+				players: activeSeason.players,
+				leagues: activeSeason.leagues,
+			},
+		];
+	}, [summaries, activeSeason]);
+
 	const seasonsNewestFirst = useMemo(
-		() => sortSeasonsNewestFirst(allSeasons),
-		[allSeasons]
+		() => sortSeasonsNewestFirst(seasonChoices),
+		[seasonChoices]
 	);
 
 	const selectedSeason = useMemo(
-		() => allSeasons.find((season) => season.id === selectedSeasonId),
-		[allSeasons, selectedSeasonId]
+		() => seasonChoices.find((season) => season.id === selectedSeasonId),
+		[seasonChoices, selectedSeasonId]
 	);
 	const leagues = selectedSeason?.leagues ?? [];
-	const players = selectedSeason?.players ?? [];
-	const selectedLeague = leagues.find((league) => league.leagueCode === selectedLeagueCode);
 	const allPlayersLabel = t('all');
 
+	const players = useMemo(() => {
+		const raw = selectedSeason?.players ?? [];
+		if (!activeSeason?.players?.length) {
+			return raw;
+		}
+		const avatarsById = new Map(
+			activeSeason.players.map((player) => [player.id, player.avatar])
+		);
+		return raw.map((player) =>
+			player.avatar ? player : { ...player, avatar: avatarsById.get(player.id) }
+		);
+	}, [selectedSeason, activeSeason]);
+
 	const hasValidSeason =
-		Boolean(selectedSeasonId) && allSeasons.some((season) => season.id === selectedSeasonId);
+		Boolean(selectedSeasonId) && seasonChoices.some((season) => season.id === selectedSeasonId);
 
 	const selectedUserId =
 		selectedPlayerName === allPlayersLabel
 			? TOTAL_STATS_BY_TEAMS_USER_ID
 			: players.find((player) => player.username === selectedPlayerName)?.id;
 
+	const selectedLeagueId = leagues.find(
+		(league) => league.leagueCode === selectedLeagueCode
+	)?.id;
+
 	const statsKey =
-		hasValidSeason && selectedLeague && selectedUserId
-			? `${selectedSeasonId}-${selectedLeague.id}-${selectedUserId}`
+		hasValidSeason && selectedLeagueId && selectedUserId
+			? `${selectedSeasonId}-${selectedLeagueId}-${selectedUserId}`
 			: null;
 
 	const isStatsLoading =
@@ -106,40 +147,44 @@ export default function TeamsStatsPage(): JSX.Element {
 	};
 
 	useEffect(() => {
-		let cancelled = false;
-		setSeasonsReady(false);
+		if (summaries.length > 0) {
+			return;
+		}
 
-		void dispatch(getSeasons())
+		let cancelled = false;
+		setSummariesError(false);
+
+		void dispatch(getSeasonSummaries())
 			.unwrap()
-			.finally(() => {
+			.catch(() => {
 				if (!cancelled) {
-					setSeasonsReady(true);
+					setSummariesError(true);
 				}
 			});
 
 		return () => {
 			cancelled = true;
 		};
-	}, [dispatch]);
+	}, [dispatch, summaries.length]);
 
 	useEffect(() => {
-		if (!seasonsReady || allSeasons.length === 0) {
+		if (seasonChoices.length === 0) {
 			return;
 		}
 
-		if (selectedSeasonId && allSeasons.some((season) => season.id === selectedSeasonId)) {
+		if (selectedSeasonId && seasonChoices.some((season) => season.id === selectedSeasonId)) {
 			return;
 		}
 
-		const activeInList = allSeasons.find((season) => season.status === SEASON_STATUS_ACTIVE);
+		const activeInList = seasonChoices.find((season) => season.status === SEASON_STATUS_ACTIVE);
 		if (activeInList) {
 			setSelectedSeasonId(activeInList.id);
-		} else if (activeSeasonId && allSeasons.some((season) => season.id === activeSeasonId)) {
+		} else if (activeSeasonId && seasonChoices.some((season) => season.id === activeSeasonId)) {
 			setSelectedSeasonId(activeSeasonId);
 		} else {
 			setSelectedSeasonId(seasonsNewestFirst[0].id);
 		}
-	}, [seasonsReady, allSeasons, seasonsNewestFirst, activeSeasonId, selectedSeasonId]);
+	}, [seasonChoices, seasonsNewestFirst, activeSeasonId, selectedSeasonId]);
 
 	useEffect(() => {
 		if (leagues.length === 0) {
@@ -160,7 +205,7 @@ export default function TeamsStatsPage(): JSX.Element {
 	}, [players, selectedPlayerName, allPlayersLabel]);
 
 	useEffect(() => {
-		if (!statsKey || !selectedLeague || !selectedUserId) {
+		if (!statsKey || !selectedLeagueId || !selectedUserId) {
 			return;
 		}
 
@@ -170,7 +215,7 @@ export default function TeamsStatsPage(): JSX.Element {
 		void dispatch(
 			getStatsByTeams({
 				seasonId: selectedSeasonId,
-				leagueId: selectedLeague.id,
+				leagueId: selectedLeagueId,
 				userId: selectedUserId,
 			})
 		)
@@ -203,9 +248,13 @@ export default function TeamsStatsPage(): JSX.Element {
 		return () => {
 			cancelled = true;
 		};
-	}, [statsKey, selectedSeasonId, selectedLeague, selectedUserId, dispatch]);
+	}, [statsKey, selectedSeasonId, selectedLeagueId, selectedUserId, dispatch]);
 
-	if (!seasonsReady || !hasValidSeason) {
+	if (summariesError && seasonChoices.length === 0) {
+		return <CustomLoadingError />;
+	}
+
+	if (seasonChoices.length === 0 || !hasValidSeason) {
 		return <CustomLoading />;
 	}
 

@@ -1,6 +1,5 @@
 import { Avatar, Box, MenuItem, Select, SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
 import { t } from 'i18next';
-import League from '../../features/admin/leagues/types/League';
 import LeagueAvatar, { leagueLogoAvatarSx } from '../custom/avatar/LeagueAvatar';
 import { compactLeagueSelectSx } from './compactSelectSx';
 import {
@@ -15,7 +14,7 @@ import {
 interface LeagueSelectProps {
 	value: string;
 	onChange: ((event: SelectChangeEvent<string>) => void) | undefined;
-	leagues: League[] | undefined;
+	leagues: Array<{ id: string; leagueCode: string }> | undefined;
 	withoutAll?: boolean;
 	fullLeagueNames?: boolean;
 	compact?: boolean;

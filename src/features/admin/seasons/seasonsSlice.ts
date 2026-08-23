@@ -4,6 +4,7 @@ import SeasonsState from './types/SeasonsState';
 
 const initialState: SeasonsState = {
 	seasons: [],
+	summaries: [],
 	statuses: [],
 	leagueCodes: [],
 	activeSeasonId: undefined,
@@ -44,6 +45,10 @@ export const addSeason = createAsyncThunk(
 );
 
 export const getSeasons = createAsyncThunk('seasons/getSeasons', async () => api.getSeasons());
+
+export const getSeasonSummaries = createAsyncThunk('seasons/getSeasonSummaries', async () =>
+	api.getSeasonSummaries()
+);
 
 export const getSeasonStatusList = createAsyncThunk('seasons/getSeasonStatusList', async () =>
 	api.getSeasonStatusList()
@@ -136,6 +141,12 @@ const seasonsSlice = createSlice({
 				state.seasons = action.payload.seasons;
 			})
 			.addCase(getSeasons.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
+			.addCase(getSeasonSummaries.fulfilled, (state, action) => {
+				state.summaries = action.payload.seasons;
+			})
+			.addCase(getSeasonSummaries.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
 			.addCase(getSeasonStatusList.fulfilled, (state, action) => {

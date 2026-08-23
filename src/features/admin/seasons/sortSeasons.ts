@@ -1,6 +1,10 @@
-import Season from './types/Season';
+export type SeasonSortable = {
+	id: string;
+	startDate?: string;
+	externalSeasonYear?: number;
+};
 
-function seasonRecencyKey(season: Season): string {
+function seasonRecencyKey(season: SeasonSortable): string {
 	if (season.startDate) {
 		return season.startDate;
 	}
@@ -11,7 +15,7 @@ function seasonRecencyKey(season: Season): string {
 }
 
 /** Newest first: startDate / year desc, then original list order reversed. */
-export function sortSeasonsNewestFirst(seasons: Season[]): Season[] {
+export function sortSeasonsNewestFirst<T extends SeasonSortable>(seasons: T[]): T[] {
 	const indexById = new Map(seasons.map((season, index) => [season.id, index]));
 	return [...seasons].sort((a, b) => {
 		const aKey = seasonRecencyKey(a);
