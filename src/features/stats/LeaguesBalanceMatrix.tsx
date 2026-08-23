@@ -14,8 +14,7 @@ import { t } from 'i18next';
 import { useMemo } from 'react';
 import { leagueLogoAvatarSx } from '../../components/custom/avatar/LeagueAvatar';
 import { avatarBase64Converter, pathToLogoImage } from '../../components/utils/imgBase64Converter';
-import League from '../admin/leagues/types/League';
-import User from '../auth/types/User';
+import SimpleUser from '../auth/types/SimpleUser';
 import {
 	findLeagueStats,
 	formatLeagueBalance,
@@ -44,8 +43,8 @@ export default function LeaguesBalanceMatrix({
 	selectedLeagueCode,
 	onSelectLeague,
 }: {
-	leagues: League[];
-	players: User[];
+	leagues: Array<{ id: string; leagueCode: string }>;
+	players: SimpleUser[];
 	statsByLeagues: LeagueStats[];
 	selectedLeagueCode: string;
 	onSelectLeague: (leagueCode: string) => void;

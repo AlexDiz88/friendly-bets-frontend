@@ -1,78 +1,32 @@
 import { Box } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import SeasonSelect from '../../components/selectors/SeasonSelect';
-import { getSeasons } from '../admin/seasons/seasonsSlice';
-import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
-import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
 import PlayerBetStatsByBetTitles from './PlayerBetStatsByBetTitles';
 import { selectAllStatsByBetTitlesInSeason } from './selectors';
 import { getAllStatsByBetTitlesInSeason } from './statsSlice';
+import useSeasonSummariesForStats from './useSeasonSummariesForStats';
 
 export default function BetTitlesStatsPage(): JSX.Element {
 	const dispatch = useAppDispatch();
-	const activeSeasonId = useAppSelector(selectActiveSeasonId);
-	const allSeasons = useAppSelector(selectSeasons);
 	const playersStatsByBetTitles = useAppSelector(selectAllStatsByBetTitlesInSeason);
+	const {
+		seasonsNewestFirst,
+		selectedSeasonId,
+		setSelectedSeasonId,
+		players,
+		hasValidSeason,
+		summariesError,
+	} = useSeasonSummariesForStats();
 
-	const [selectedSeasonId, setSelectedSeasonId] = useState('');
-	const [seasonsReady, setSeasonsReady] = useState(false);
-	/** Сезон, для которого stats уже загружены в Redux — убирает мигание старых данных. */
 	const [loadedStatsSeasonId, setLoadedStatsSeasonId] = useState<string | null>(null);
 	const [loadingError, setLoadingError] = useState(false);
 
-	const seasonsNewestFirst = useMemo(
-		() => sortSeasonsNewestFirst(allSeasons),
-		[allSeasons]
-	);
-
-	const players = useMemo(
-		() => allSeasons.find((s) => s.id === selectedSeasonId)?.players ?? [],
-		[allSeasons, selectedSeasonId]
-	);
-
-	const hasValidSeason =
-		Boolean(selectedSeasonId) && allSeasons.some((s) => s.id === selectedSeasonId);
-
 	const isPageLoading =
-		!loadingError &&
-		(!seasonsReady || !hasValidSeason || loadedStatsSeasonId !== selectedSeasonId);
-
-	useEffect(() => {
-		let cancelled = false;
-		setSeasonsReady(false);
-
-		void dispatch(getSeasons())
-			.unwrap()
-			.finally(() => {
-				if (!cancelled) {
-					setSeasonsReady(true);
-				}
-			});
-
-		return () => {
-			cancelled = true;
-		};
-	}, [dispatch]);
-
-	useEffect(() => {
-		if (!seasonsReady || allSeasons.length === 0) {
-			return;
-		}
-
-		if (selectedSeasonId && allSeasons.some((s) => s.id === selectedSeasonId)) {
-			return;
-		}
-
-		if (activeSeasonId && allSeasons.some((s) => s.id === activeSeasonId)) {
-			setSelectedSeasonId(activeSeasonId);
-		} else {
-			setSelectedSeasonId(seasonsNewestFirst[0].id);
-		}
-	}, [seasonsReady, allSeasons, seasonsNewestFirst, activeSeasonId, selectedSeasonId]);
+		!loadingError && (!hasValidSeason || loadedStatsSeasonId !== selectedSeasonId);
 
 	useEffect(() => {
 		if (!hasValidSeason) {
@@ -99,6 +53,10 @@ export default function BetTitlesStatsPage(): JSX.Element {
 			cancelled = true;
 		};
 	}, [selectedSeasonId, hasValidSeason, dispatch]);
+
+	if (summariesError && seasonsNewestFirst.length === 0) {
+		return <CustomLoadingError />;
+	}
 
 	if (isPageLoading) {
 		return <CustomLoading />;

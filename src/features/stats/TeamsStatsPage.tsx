@@ -1,6 +1,6 @@
 import { Box, CircularProgress, SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
@@ -8,18 +8,11 @@ import useFilterLanguageChange from '../../components/hooks/useFilterLanguageCha
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import PlayerSelect from '../../components/selectors/PlayerSelect';
 import SeasonSelect from '../../components/selectors/SeasonSelect';
-import { SEASON_STATUS_ACTIVE, TOTAL_STATS_BY_TEAMS_USER_ID } from '../../constants';
-import { getSeasonSummaries } from '../admin/seasons/seasonsSlice';
-import {
-	selectActiveSeason,
-	selectActiveSeasonId,
-	selectSeasonSummaries,
-} from '../admin/seasons/selectors';
-import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
-import SeasonSummary from '../admin/seasons/types/SeasonSummary';
+import { TOTAL_STATS_BY_TEAMS_USER_ID } from '../../constants';
 import { selectStatsByTeams } from './selectors';
 import { getStatsByTeams } from './statsSlice';
 import TeamsStats from './TeamsStats';
+import useSeasonSummariesForStats from './useSeasonSummariesForStats';
 
 const teamsStatsPageSx = {
 	maxWidth: '25rem',
@@ -55,67 +48,25 @@ const teamsStatsEmptySx = {
 
 export default function TeamsStatsPage(): JSX.Element {
 	const dispatch = useAppDispatch();
-	const activeSeason = useAppSelector(selectActiveSeason);
-	const activeSeasonId = useAppSelector(selectActiveSeasonId);
-	const summaries = useAppSelector(selectSeasonSummaries);
 	const statsByTeams = useAppSelector(selectStatsByTeams);
+	const {
+		seasonsNewestFirst,
+		selectedSeasonId,
+		setSelectedSeasonId,
+		leagues,
+		players,
+		hasValidSeason,
+		summariesError,
+	} = useSeasonSummariesForStats();
 
-	const [selectedSeasonId, setSelectedSeasonId] = useState(activeSeason?.id ?? '');
 	const [selectedLeagueCode, setSelectedLeagueCode] = useState('');
 	const [selectedPlayerName, setSelectedPlayerName] = useState(t('all'));
 	const [loadedStatsKey, setLoadedStatsKey] = useState<string | null>(null);
 	const [loadingError, setLoadingError] = useState(false);
-	const [summariesError, setSummariesError] = useState(false);
 
 	useFilterLanguageChange(setSelectedPlayerName);
 
-	const seasonChoices = useMemo((): SeasonSummary[] => {
-		if (summaries.length > 0) {
-			return summaries;
-		}
-		if (!activeSeason) {
-			return [];
-		}
-		return [
-			{
-				id: activeSeason.id,
-				title: activeSeason.title,
-				startDate: activeSeason.startDate,
-				endDate: activeSeason.endDate,
-				status: activeSeason.status,
-				players: activeSeason.players,
-				leagues: activeSeason.leagues,
-			},
-		];
-	}, [summaries, activeSeason]);
-
-	const seasonsNewestFirst = useMemo(
-		() => sortSeasonsNewestFirst(seasonChoices),
-		[seasonChoices]
-	);
-
-	const selectedSeason = useMemo(
-		() => seasonChoices.find((season) => season.id === selectedSeasonId),
-		[seasonChoices, selectedSeasonId]
-	);
-	const leagues = selectedSeason?.leagues ?? [];
 	const allPlayersLabel = t('all');
-
-	const players = useMemo(() => {
-		const raw = selectedSeason?.players ?? [];
-		if (!activeSeason?.players?.length) {
-			return raw;
-		}
-		const avatarsById = new Map(
-			activeSeason.players.map((player) => [player.id, player.avatar])
-		);
-		return raw.map((player) =>
-			player.avatar ? player : { ...player, avatar: avatarsById.get(player.id) }
-		);
-	}, [selectedSeason, activeSeason]);
-
-	const hasValidSeason =
-		Boolean(selectedSeasonId) && seasonChoices.some((season) => season.id === selectedSeasonId);
 
 	const selectedUserId =
 		selectedPlayerName === allPlayersLabel
@@ -145,46 +96,6 @@ export default function TeamsStatsPage(): JSX.Element {
 	const handlePlayerChange = (e: SelectChangeEvent): void => {
 		setSelectedPlayerName(e.target.value);
 	};
-
-	useEffect(() => {
-		if (summaries.length > 0) {
-			return;
-		}
-
-		let cancelled = false;
-		setSummariesError(false);
-
-		void dispatch(getSeasonSummaries())
-			.unwrap()
-			.catch(() => {
-				if (!cancelled) {
-					setSummariesError(true);
-				}
-			});
-
-		return () => {
-			cancelled = true;
-		};
-	}, [dispatch, summaries.length]);
-
-	useEffect(() => {
-		if (seasonChoices.length === 0) {
-			return;
-		}
-
-		if (selectedSeasonId && seasonChoices.some((season) => season.id === selectedSeasonId)) {
-			return;
-		}
-
-		const activeInList = seasonChoices.find((season) => season.status === SEASON_STATUS_ACTIVE);
-		if (activeInList) {
-			setSelectedSeasonId(activeInList.id);
-		} else if (activeSeasonId && seasonChoices.some((season) => season.id === activeSeasonId)) {
-			setSelectedSeasonId(activeSeasonId);
-		} else {
-			setSelectedSeasonId(seasonsNewestFirst[0].id);
-		}
-	}, [seasonChoices, seasonsNewestFirst, activeSeasonId, selectedSeasonId]);
 
 	useEffect(() => {
 		if (leagues.length === 0) {
@@ -250,11 +161,11 @@ export default function TeamsStatsPage(): JSX.Element {
 		};
 	}, [statsKey, selectedSeasonId, selectedLeagueId, selectedUserId, dispatch]);
 
-	if (summariesError && seasonChoices.length === 0) {
+	if (summariesError && seasonsNewestFirst.length === 0) {
 		return <CustomLoadingError />;
 	}
 
-	if (seasonChoices.length === 0 || !hasValidSeason) {
+	if (seasonsNewestFirst.length === 0 || !hasValidSeason) {
 		return <CustomLoading />;
 	}
 

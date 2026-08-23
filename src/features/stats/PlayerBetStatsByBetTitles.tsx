@@ -12,7 +12,7 @@ import {
 import { t } from 'i18next';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
-import User from '../auth/types/User';
+import SimpleUser from '../auth/types/SimpleUser';
 import {
 	CategoryStats,
 	PlayerStatsByBetTitles,
@@ -232,7 +232,7 @@ const PlayerStatsAccordion = memo(function PlayerStatsAccordion({
 	player,
 }: {
 	playerStats: PlayerStatsByBetTitles;
-	player: User;
+	player: SimpleUser;
 }): JSX.Element {
 	const [expanded, setExpanded] = useState(false);
 
@@ -271,7 +271,7 @@ const PlayerStatsAccordion = memo(function PlayerStatsAccordion({
 
 interface Props {
 	playersStatsByBetTitles: PlayerStatsByBetTitles[];
-	players: User[];
+	players: SimpleUser[];
 }
 
 export default function PlayerBetStatsByBetTitles({

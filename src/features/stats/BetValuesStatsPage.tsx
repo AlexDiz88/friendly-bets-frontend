@@ -6,9 +6,6 @@ import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import SeasonSelect from '../../components/selectors/SeasonSelect';
-import { getSeasons } from '../admin/seasons/seasonsSlice';
-import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
-import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
 import BetValuesStatsList from './BetValuesStatsList';
 import {
 	betValuesEmptySx,
@@ -20,38 +17,29 @@ import {
 import { selectAllStatsByBetValuesInSeason } from './selectors';
 import { getAllStatsByBetValuesInSeason } from './statsSlice';
 import { TOTAL_LEAGUE_ID } from './types/PlayerStatsByBetValues';
+import useSeasonSummariesForStats from './useSeasonSummariesForStats';
 
 export default function BetValuesStatsPage(): JSX.Element {
 	const dispatch = useAppDispatch();
-	const activeSeasonId = useAppSelector(selectActiveSeasonId);
-	const allSeasons = useAppSelector(selectSeasons);
 	const playersStatsByBetValues = useAppSelector(selectAllStatsByBetValuesInSeason);
+	const {
+		seasonsNewestFirst,
+		selectedSeasonId,
+		setSelectedSeasonId,
+		leagues,
+		players,
+		hasValidSeason,
+		summariesError,
+	} = useSeasonSummariesForStats();
 
-	const [selectedSeasonId, setSelectedSeasonId] = useState('');
 	const [selectedLeagueCode, setSelectedLeagueCode] = useState<string | null>(null);
-	const [seasonsReady, setSeasonsReady] = useState(false);
 	const [loadedStatsSeasonId, setLoadedStatsSeasonId] = useState<string | null>(null);
 	const [loadingError, setLoadingError] = useState(false);
 
-	const seasonsNewestFirst = useMemo(
-		() => sortSeasonsNewestFirst(allSeasons),
-		[allSeasons]
-	);
-
-	const selectedSeason = useMemo(
-		() => allSeasons.find((season) => season.id === selectedSeasonId),
-		[allSeasons, selectedSeasonId]
-	);
-	const players = selectedSeason?.players ?? [];
-	const leagues = selectedSeason?.leagues ?? [];
 	const allValue = t('all');
 
-	const hasValidSeason =
-		Boolean(selectedSeasonId) && allSeasons.some((season) => season.id === selectedSeasonId);
-
 	const isPageLoading =
-		!loadingError &&
-		(!seasonsReady || !hasValidSeason || loadedStatsSeasonId !== selectedSeasonId);
+		!loadingError && (!hasValidSeason || loadedStatsSeasonId !== selectedSeasonId);
 
 	const selectedLeague = leagues.find((league) => league.leagueCode === selectedLeagueCode);
 	const leagueIdFilter =
@@ -64,39 +52,6 @@ export default function BetValuesStatsPage(): JSX.Element {
 			),
 		[playersStatsByBetValues, selectedSeasonId, leagueIdFilter]
 	);
-
-	useEffect(() => {
-		let cancelled = false;
-		setSeasonsReady(false);
-
-		void dispatch(getSeasons())
-			.unwrap()
-			.finally(() => {
-				if (!cancelled) {
-					setSeasonsReady(true);
-				}
-			});
-
-		return () => {
-			cancelled = true;
-		};
-	}, [dispatch]);
-
-	useEffect(() => {
-		if (!seasonsReady || allSeasons.length === 0) {
-			return;
-		}
-
-		if (selectedSeasonId && allSeasons.some((season) => season.id === selectedSeasonId)) {
-			return;
-		}
-
-		if (activeSeasonId && allSeasons.some((season) => season.id === activeSeasonId)) {
-			setSelectedSeasonId(activeSeasonId);
-		} else {
-			setSelectedSeasonId(seasonsNewestFirst[0].id);
-		}
-	}, [seasonsReady, allSeasons, seasonsNewestFirst, activeSeasonId, selectedSeasonId]);
 
 	useEffect(() => {
 		if (selectedLeagueCode && !leagues.some((league) => league.leagueCode === selectedLeagueCode)) {
@@ -129,6 +84,10 @@ export default function BetValuesStatsPage(): JSX.Element {
 			cancelled = true;
 		};
 	}, [selectedSeasonId, hasValidSeason, dispatch]);
+
+	if (summariesError && seasonsNewestFirst.length === 0) {
+		return <CustomLoadingError />;
+	}
 
 	if (isPageLoading) {
 		return <CustomLoading />;

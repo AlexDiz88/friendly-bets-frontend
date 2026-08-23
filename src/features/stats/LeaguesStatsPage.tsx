@@ -6,10 +6,6 @@ import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import LeagueSelect from '../../components/selectors/LeagueSelect';
 import SeasonSelect from '../../components/selectors/SeasonSelect';
-import { SEASON_STATUS_ACTIVE } from '../../constants';
-import { getSeasons } from '../admin/seasons/seasonsSlice';
-import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
-import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
 import LeaguesBalanceMatrix from './LeaguesBalanceMatrix';
 import LeaguesStatsLeaderboard from './LeaguesStatsLeaderboard';
 import { findLeagueStats, mergePlayersWithLeagueStats } from './leaguePlayerStats';
@@ -22,30 +18,24 @@ import {
 } from './leaguesStatsPageStyles';
 import { selectPlayersStatsByLeagues } from './selectors';
 import { getAllPlayersStatsByLeagues } from './statsSlice';
+import useSeasonSummariesForStats from './useSeasonSummariesForStats';
 
 export default function LeaguesStatsPage(): JSX.Element {
 	const dispatch = useAppDispatch();
-	const activeSeasonId = useAppSelector(selectActiveSeasonId);
-	const allSeasons = useAppSelector(selectSeasons);
 	const statsByLeagues = useAppSelector(selectPlayersStatsByLeagues);
+	const {
+		seasonsNewestFirst,
+		selectedSeasonId,
+		setSelectedSeasonId,
+		leagues,
+		players,
+		hasValidSeason,
+		summariesError,
+	} = useSeasonSummariesForStats();
 
-	const [selectedSeasonId, setSelectedSeasonId] = useState('');
 	const [selectedLeagueCode, setSelectedLeagueCode] = useState('');
-	const [seasonsReady, setSeasonsReady] = useState(false);
 	const [loadedStatsSeasonId, setLoadedStatsSeasonId] = useState<string | null>(null);
 	const [loadingError, setLoadingError] = useState(false);
-
-	const seasonsNewestFirst = useMemo(
-		() => sortSeasonsNewestFirst(allSeasons),
-		[allSeasons]
-	);
-
-	const selectedSeason = useMemo(
-		() => allSeasons.find((season) => season.id === selectedSeasonId),
-		[allSeasons, selectedSeasonId]
-	);
-	const leagues = selectedSeason?.leagues ?? [];
-	const players = selectedSeason?.players ?? [];
 
 	const selectedLeague = leagues.find((league) => league.leagueCode === selectedLeagueCode);
 	const sortedPlayersStats = useMemo(() => {
@@ -60,52 +50,12 @@ export default function LeaguesStatsPage(): JSX.Element {
 		);
 	}, [players, selectedLeague, statsByLeagues]);
 
-	const hasValidSeason =
-		Boolean(selectedSeasonId) && allSeasons.some((season) => season.id === selectedSeasonId);
-
 	const isPageLoading =
-		!loadingError &&
-		(!seasonsReady || !hasValidSeason || loadedStatsSeasonId !== selectedSeasonId);
+		!loadingError && (!hasValidSeason || loadedStatsSeasonId !== selectedSeasonId);
 
 	const handleSelectLeague = (leagueCode: string): void => {
 		setSelectedLeagueCode(leagueCode);
 	};
-
-	useEffect(() => {
-		let cancelled = false;
-		setSeasonsReady(false);
-
-		void dispatch(getSeasons())
-			.unwrap()
-			.finally(() => {
-				if (!cancelled) {
-					setSeasonsReady(true);
-				}
-			});
-
-		return () => {
-			cancelled = true;
-		};
-	}, [dispatch]);
-
-	useEffect(() => {
-		if (!seasonsReady || allSeasons.length === 0) {
-			return;
-		}
-
-		if (selectedSeasonId && allSeasons.some((season) => season.id === selectedSeasonId)) {
-			return;
-		}
-
-		const activeInList = allSeasons.find((season) => season.status === SEASON_STATUS_ACTIVE);
-		if (activeInList) {
-			setSelectedSeasonId(activeInList.id);
-		} else if (activeSeasonId && allSeasons.some((season) => season.id === activeSeasonId)) {
-			setSelectedSeasonId(activeSeasonId);
-		} else {
-			setSelectedSeasonId(seasonsNewestFirst[0].id);
-		}
-	}, [seasonsReady, allSeasons, seasonsNewestFirst, activeSeasonId, selectedSeasonId]);
 
 	useEffect(() => {
 		if (leagues.length > 0 && !leagues.some((league) => league.leagueCode === selectedLeagueCode)) {
@@ -139,7 +89,11 @@ export default function LeaguesStatsPage(): JSX.Element {
 		};
 	}, [selectedSeasonId, hasValidSeason, dispatch]);
 
-	if (!seasonsReady || !hasValidSeason) {
+	if (summariesError && seasonsNewestFirst.length === 0) {
+		return <CustomLoadingError />;
+	}
+
+	if (seasonsNewestFirst.length === 0 || !hasValidSeason) {
 		return <CustomLoading />;
 	}
 

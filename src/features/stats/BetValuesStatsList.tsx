@@ -3,7 +3,7 @@ import { Avatar, Box, Collapse, Typography, type SxProps, type Theme } from '@mu
 import { t } from 'i18next';
 import { memo, useMemo, useState } from 'react';
 import { avatarBase64Converter } from '../../components/utils/imgBase64Converter';
-import User from '../auth/types/User';
+import SimpleUser from '../auth/types/SimpleUser';
 import {
 	betValueRangeAccent,
 	orderedRangeStats,
@@ -107,7 +107,7 @@ const PlayerCard = memo(function PlayerCard({
 	player,
 }: {
 	playerStats: PlayerStatsByBetValues;
-	player: User;
+	player: SimpleUser;
 }): JSX.Element {
 	const [open, setOpen] = useState(false);
 	const ranges = useMemo(
@@ -188,7 +188,7 @@ const PlayerCard = memo(function PlayerCard({
 
 interface Props {
 	playersStatsByBetValues: PlayerStatsByBetValues[];
-	players: User[];
+	players: SimpleUser[];
 }
 
 export default function BetValuesStatsList({
