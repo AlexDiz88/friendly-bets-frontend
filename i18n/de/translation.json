@@ -1015,6 +1015,7 @@
 	"calendarForLeagueMatchdayNotExist": "Der angegebene Spieltag der ausgewählten Liga wurde nicht in den Kalender aufgenommen!",
 	"noBetTitlesStats": "Derzeit keine Statistiken",
 	"noBetValuesStats": "Derzeit keine Quotenstatistiken",
+	"noTeamStats": "Derzeit sind keine Statistiken verfügbar",
 	"betValueRange": {
 		"SUPER_LOW": "Bombensicher",
 		"LOW": "Zuverlässig",

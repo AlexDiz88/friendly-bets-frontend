@@ -1015,6 +1015,7 @@
 	"calendarForLeagueMatchdayNotExist": "Указанный тур лиги не добавлен в календарь!",
 	"noBetTitlesStats": "В данный момент статистика отсутствует",
 	"noBetValuesStats": "В данный момент статистика по кэфам отсутствует",
+	"noTeamStats": "Статистика на данный момент отсутствует",
 	"betValueRange": {
 		"SUPER_LOW": "Железобетонные",
 		"LOW": "Надёжные",

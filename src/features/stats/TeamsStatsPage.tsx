@@ -2,7 +2,6 @@ import { Box, CircularProgress, SelectChangeEvent } from '@mui/material';
 import { t } from 'i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import CustomErrorMessage from '../../components/custom/CustomErrorMessage';
 import CustomLoading from '../../components/custom/loading/CustomLoading';
 import CustomLoadingError from '../../components/custom/loading/CustomLoadingError';
 import useFilterLanguageChange from '../../components/hooks/useFilterLanguageChange';
@@ -13,7 +12,7 @@ import { SEASON_STATUS_ACTIVE, TOTAL_STATS_BY_TEAMS_USER_ID } from '../../consta
 import { getSeasons } from '../admin/seasons/seasonsSlice';
 import { selectActiveSeasonId, selectSeasons } from '../admin/seasons/selectors';
 import { sortSeasonsNewestFirst } from '../admin/seasons/sortSeasons';
-import { selectError, selectStatsByTeams } from './selectors';
+import { selectStatsByTeams } from './selectors';
 import { getStatsByTeams } from './statsSlice';
 import TeamsStats from './TeamsStats';
 
@@ -41,12 +40,19 @@ const teamsStatsLeaguePlayerRowSx = {
 	alignItems: 'center',
 };
 
+const teamsStatsEmptySx = {
+	textAlign: 'center',
+	fontWeight: 600,
+	fontSize: 16,
+	py: 3,
+	px: 2,
+};
+
 export default function TeamsStatsPage(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const allSeasons = useAppSelector(selectSeasons);
 	const statsByTeams = useAppSelector(selectStatsByTeams);
-	const errorText = useAppSelector(selectError);
 
 	const [selectedSeasonId, setSelectedSeasonId] = useState('');
 	const [selectedLeagueCode, setSelectedLeagueCode] = useState('');
@@ -174,10 +180,24 @@ export default function TeamsStatsPage(): JSX.Element {
 					setLoadedStatsKey(statsKey);
 				}
 			})
-			.catch(() => {
-				if (!cancelled) {
-					setLoadingError(true);
+			.catch((err: unknown) => {
+				if (cancelled) {
+					return;
 				}
+				const message =
+					typeof err === 'string'
+						? err
+						: err && typeof err === 'object' && 'message' in err
+							? String((err as { message: unknown }).message)
+							: '';
+				if (
+					message === 'noPlayerStatsByTeamsInLeague' ||
+					message === 'noTotalStatsByTeamsInLeague'
+				) {
+					setLoadedStatsKey(statsKey);
+					return;
+				}
+				setLoadingError(true);
 			});
 
 		return () => {
@@ -222,10 +242,10 @@ export default function TeamsStatsPage(): JSX.Element {
 				<Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
 					<CircularProgress />
 				</Box>
-			) : statsByTeams ? (
+			) : statsByTeams && statsByTeams.teamStats.length > 0 ? (
 				<TeamsStats playersStatsByTeams={statsByTeams} />
 			) : (
-				<CustomErrorMessage message={errorText} />
+				<Box sx={teamsStatsEmptySx}>{t('noTeamStats')}</Box>
 			)}
 		</Box>
 	);
