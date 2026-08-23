@@ -20,6 +20,7 @@ import {
 	TableRow,
 	Tooltip,
 	Typography,
+	useMediaQuery,
 	useTheme,
 	type SxProps,
 	type Theme,
@@ -55,6 +56,17 @@ import {
 	monitoringLayerTitleSx,
 	monitoringLeagueColSx,
 	monitoringMatchdayColSx,
+	monitoringMobileHttpLogSx,
+	monitoringMobileKpiCardSx,
+	monitoringMobileKpiGridSx,
+	monitoringMobileKpiLayerSx,
+	monitoringMobileKpiMetaSx,
+	monitoringMobileRootSx,
+	monitoringMobileRunCardSx,
+	monitoringMobileSectionHeaderSx,
+	monitoringMobileStickySx,
+	monitoringMobileTitleSx,
+	monitoringMobileToolbarSx,
 	monitoringPageRootSx,
 	monitoringSectionHeaderSx,
 	monitoringSectionSx,
@@ -63,8 +75,17 @@ import {
 	monitoringTableSx,
 	monitoringTitleSx,
 	monitoringToolbarSx,
+	statusAccent,
 	statusChipSx,
 } from './externalApiMonitoringPageStyles';
+
+const LAYER_SHORT: Record<ExternalDataLayer, string> = {
+	SCHEDULE: 'SCH',
+	ODDS: 'ODDS',
+	LIVE: 'LIVE',
+	FULL_MATCH: 'FULL',
+	STANDINGS: 'STD',
+};
 
 function formatDuration(ms?: number | null): string {
 	if (ms == null) return '—';
@@ -303,9 +324,11 @@ const TRIGGER_ICON_SX = { fontSize: 16, opacity: 0.75, flexShrink: 0 } as const;
 function TriggerCell({
 	trigger,
 	layer,
+	iconOnly = false,
 }: {
 	trigger?: MonitoringTrigger | null;
 	layer: ExternalDataLayer;
+	iconOnly?: boolean;
 }): JSX.Element {
 	if (!trigger) {
 		return <Typography component="span">—</Typography>;
@@ -320,6 +343,13 @@ function TriggerCell({
 		) : null;
 	if (!icon) {
 		return <Typography component="span">{trigger}</Typography>;
+	}
+	if (iconOnly) {
+		return (
+			<Box sx={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }} title={trigger}>
+				{icon}
+			</Box>
+		);
 	}
 	return (
 		<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
@@ -435,10 +465,95 @@ function CountersBreakdown({
 	);
 }
 
+function MobileHttpLogs({
+	logs,
+}: {
+	logs: NonNullable<MonitoringRun['httpLogs']>;
+}): JSX.Element {
+	return (
+		<Box sx={{ mt: 0.5 }}>
+			{logs.map((log, idx) => (
+				<Box key={`http-${idx}`} sx={monitoringMobileHttpLogSx}>
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'baseline',
+							justifyContent: 'space-between',
+							gap: 0.75,
+							flexWrap: 'wrap',
+						}}
+					>
+						<Typography
+							sx={{
+								fontSize: '0.72rem',
+								fontWeight: 700,
+								lineHeight: 1.25,
+								minWidth: 0,
+								wordBreak: 'break-word',
+							}}
+						>
+							{log.requestType ?? '—'}
+							{log.httpStatus != null ? ` · ${log.httpStatus}` : ''}
+						</Typography>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexShrink: 0 }}>
+							<Typography
+								sx={{
+									fontSize: '0.68rem',
+									fontWeight: 700,
+									color: log.outcome && log.outcome !== 'SUCCESS' ? '#f43f5e' : '#22c55e',
+								}}
+							>
+								{log.outcome ?? '—'}
+							</Typography>
+							<Typography
+								sx={{
+									fontSize: '0.68rem',
+									color: 'text.secondary',
+									fontVariantNumeric: 'tabular-nums',
+								}}
+							>
+								{formatDuration(log.durationMs)}
+							</Typography>
+						</Box>
+					</Box>
+					{log.target ? (
+						<Typography
+							sx={{
+								mt: 0.25,
+								fontSize: '0.68rem',
+								lineHeight: 1.3,
+								color: 'text.secondary',
+								wordBreak: 'break-all',
+							}}
+						>
+							{log.target}
+						</Typography>
+					) : null}
+					{log.detail ? (
+						<Typography
+							sx={{
+								mt: 0.2,
+								fontSize: '0.68rem',
+								lineHeight: 1.3,
+								color: 'text.secondary',
+								wordBreak: 'break-word',
+								whiteSpace: 'normal',
+							}}
+						>
+							{log.detail}
+						</Typography>
+					) : null}
+				</Box>
+			))}
+		</Box>
+	);
+}
+
 export default function ExternalApiMonitoringPage(): JSX.Element {
 	const theme = useTheme();
+	const isCompact = useMediaQuery(theme.breakpoints.down('lg'), { noSsr: true });
 	const dispatch = useAppDispatch();
-	const { formatDetailed } = useFormatUserDateTime();
+	const { formatDetailed, formatDateTime, formatTime } = useFormatUserDateTime();
 	const [hours, setHours] = useState(72);
 	const [loading, setLoading] = useState(true);
 	const [runsByLayer, setRunsByLayer] = useState<Record<ExternalDataLayer, MonitoringRun[]>>({
@@ -454,6 +569,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 	const [detailLoading, setDetailLoading] = useState(false);
 	const [deleteLayer, setDeleteLayer] = useState<ExternalDataLayer | null>(null);
 	const [deleting, setDeleting] = useState(false);
+	const [mobileLayer, setMobileLayer] = useState<ExternalDataLayer>('SCHEDULE');
 
 	const load = useCallback(async (): Promise<void> => {
 		setLoading(true);
@@ -535,6 +651,376 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 			setDeleting(false);
 		}
 	};
+
+	if (isCompact) {
+		const mobileRows = runsByLayer[mobileLayer];
+		return (
+			<Box sx={monitoringMobileRootSx}>
+				<Box sx={monitoringMobileStickySx}>
+					<Box sx={monitoringMobileToolbarSx}>
+						<Typography sx={monitoringMobileTitleSx} noWrap>
+							{t('externalApiMonitoring.menuLink')}
+						</Typography>
+						<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
+							<Select
+								size="small"
+								value={hours}
+								onChange={(e) => setHours(Number(e.target.value))}
+								sx={{
+									minWidth: 84,
+									height: 40,
+									fontSize: '0.8rem',
+									'& .MuiSelect-select': { py: 0.75, px: 1.25 },
+								}}
+							>
+								<MenuItem value={24}>24h</MenuItem>
+								<MenuItem value={72}>72h</MenuItem>
+								<MenuItem value={168}>7d</MenuItem>
+							</Select>
+							<Tooltip title={t('externalApiMonitoring.refresh')}>
+								<span>
+									<IconButton
+										onClick={() => void load()}
+										disabled={loading}
+										sx={{ minWidth: 40, minHeight: 40 }}
+									>
+										{loading ? <CircularProgress size={18} /> : <RefreshIcon />}
+									</IconButton>
+								</span>
+							</Tooltip>
+						</Box>
+					</Box>
+					<Box sx={monitoringMobileKpiGridSx}>
+						{MONITORING_LAYERS.map((layer) => {
+							const run = latest[layer];
+							const selected = mobileLayer === layer;
+							return (
+									<Box
+										key={layer}
+										role="button"
+										tabIndex={0}
+										aria-pressed={selected}
+										aria-label={layerTitle(layer)}
+										title={layerTitle(layer)}
+									onClick={() => {
+										setMobileLayer(layer);
+										setExpandedId(null);
+										setDetail(null);
+									}}
+									onKeyDown={(e) => {
+										if (e.key === 'Enter' || e.key === ' ') {
+											e.preventDefault();
+											setMobileLayer(layer);
+											setExpandedId(null);
+											setDetail(null);
+										}
+									}}
+									sx={monitoringMobileKpiCardSx(theme, layer, run?.status, selected)}
+								>
+									<Typography
+										sx={[
+											monitoringMobileKpiLayerSx,
+											{ color: externalDataLayerAccent(layer) },
+										]}
+									>
+										{LAYER_SHORT[layer]}
+									</Typography>
+									<Box
+										sx={{
+											display: 'flex',
+											alignItems: 'center',
+											gap: 0.4,
+											pl: 0.35,
+											mt: 0.25,
+											minWidth: 0,
+										}}
+									>
+										{run ? (
+											<Box
+												sx={{
+													width: 6,
+													height: 6,
+													borderRadius: '50%',
+													flexShrink: 0,
+													bgcolor: statusAccent(run.status),
+												}}
+											/>
+										) : null}
+										<Typography
+											sx={[monitoringMobileKpiMetaSx, { pl: 0, mt: 0, flex: 1 }]}
+										>
+											{run ? formatTime(run.startedAt) : '—'}
+										</Typography>
+									</Box>
+								</Box>
+							);
+						})}
+					</Box>
+				</Box>
+
+				<Box sx={monitoringMobileSectionHeaderSx(theme, mobileLayer)}>
+					<Typography sx={monitoringSectionTitleSx(mobileLayer)}>
+						{layerTitle(mobileLayer)}
+						<Typography component="span" color="text.secondary" sx={{ ml: 0.75, fontWeight: 500 }}>
+							({mobileRows.length})
+						</Typography>
+					</Typography>
+					<Tooltip title={t('externalApiMonitoring.deleteLayer')}>
+						<span>
+							<IconButton
+								aria-label={t('externalApiMonitoring.deleteLayer')}
+								onClick={() => setDeleteLayer(mobileLayer)}
+								disabled={loading || deleting}
+								sx={{ minWidth: 40, minHeight: 40 }}
+							>
+								<DeleteOutlineIcon fontSize="small" />
+							</IconButton>
+						</span>
+					</Tooltip>
+				</Box>
+
+				{loading && mobileRows.length === 0 ? (
+					<Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+						<CircularProgress size={24} />
+					</Box>
+				) : mobileRows.length === 0 ? (
+					<Typography color="text.secondary" sx={{ px: 1, py: 2, fontSize: '0.85rem' }}>
+						{t('externalApiMonitoring.noRuns')}
+					</Typography>
+				) : (
+					mobileRows.map((run) => {
+						const open = expandedId === run.id;
+						const warning = isMonitoringWarningSummary(run.errorSummary);
+						const oddsScope =
+							mobileLayer === 'ODDS' ? formatOddsSlotScope(run.slotScope) : null;
+						return (
+							<Box
+								key={run.id}
+								sx={monitoringMobileRunCardSx(theme, mobileLayer, open)}
+								onClick={() => {
+									if (open) {
+										setExpandedId(null);
+										setDetail(null);
+									} else {
+										void openDetail(run.id);
+									}
+								}}
+							>
+								<Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.5 }}>
+									<ExpandMoreIcon
+										sx={{
+											fontSize: 18,
+											mt: 0.15,
+											transform: open ? 'rotate(180deg)' : 'none',
+											transition: 'transform 0.2s',
+											opacity: 0.7,
+											flexShrink: 0,
+										}}
+									/>
+									<Box sx={{ minWidth: 0, flex: 1 }}>
+										<Box
+											sx={{
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'space-between',
+												gap: 0.75,
+											}}
+										>
+											<Typography
+												sx={{
+													fontSize: '0.78rem',
+													fontWeight: 700,
+													lineHeight: 1.25,
+													fontVariantNumeric: 'tabular-nums',
+													minWidth: 0,
+												}}
+											>
+												{formatDateTime(run.startedAt)}
+											</Typography>
+											<Chip
+												size="small"
+												variant="outlined"
+												label={statusLabel(run.status)}
+												sx={statusChipSx(run.status)}
+											/>
+										</Box>
+										<Box
+											sx={{
+												display: 'flex',
+												alignItems: 'center',
+												gap: 0.6,
+												mt: 0.4,
+												minWidth: 0,
+											}}
+										>
+											<TriggerCell trigger={run.trigger} layer={mobileLayer} iconOnly />
+											<Box
+												sx={{
+													minWidth: 0,
+													flex: 1,
+													overflow: 'hidden',
+													'& > .MuiBox-root': { minWidth: 0, overflow: 'hidden' },
+													'& .MuiTypography-root': {
+														overflow: 'hidden',
+														textOverflow: 'ellipsis',
+														whiteSpace: 'nowrap',
+													},
+												}}
+											>
+												<ProviderCell provider={run.provider} />
+											</Box>
+											<LeagueCell leagueCode={run.leagueCode} />
+										</Box>
+										<Typography
+											sx={{
+												mt: 0.25,
+												fontSize: '0.72rem',
+												fontWeight: 600,
+												fontVariantNumeric: 'tabular-nums',
+												color: 'text.secondary',
+											}}
+										>
+											{formatDuration(run.durationMs)}
+											{' · '}
+											{t('externalApiMonitoring.col.http')}{' '}
+											<Box
+												component="span"
+												sx={{
+													color: hasHttpFailures(run.httpRequestsFailed)
+														? '#f43f5e'
+														: 'text.secondary',
+													fontWeight: hasHttpFailures(run.httpRequestsFailed) ? 700 : 600,
+												}}
+											>
+												{formatHttpRatio(run.httpRequestsFailed, run.httpRequestsTotal)}
+											</Box>
+											{mobileLayer === 'ODDS' ? (
+												<>
+													{' · '}
+													{formatOddsMatchday(run)}
+													{oddsScope ? ` ${oddsScope}` : ''}
+												</>
+											) : null}
+										</Typography>
+										<Typography
+											sx={{
+												mt: 0.35,
+												fontSize: '0.7rem',
+												lineHeight: 1.3,
+												color: 'text.secondary',
+												wordBreak: 'break-word',
+											}}
+										>
+											{countersSummary(mobileLayer, run.counters)}
+										</Typography>
+										{run.errorSummary ? (
+											<Typography
+												sx={{
+													mt: 0.35,
+													fontSize: '0.7rem',
+													lineHeight: 1.3,
+													color: warning ? '#d97706' : '#f43f5e',
+													fontWeight: 600,
+													whiteSpace: 'normal',
+													wordBreak: 'break-word',
+												}}
+											>
+												{formatMonitoringReason(run.errorSummary)}
+											</Typography>
+										) : null}
+									</Box>
+								</Box>
+								<Collapse in={open} timeout="auto" unmountOnExit>
+									<Box
+										sx={{ pt: 1, mt: 0.75, borderTop: '1px solid', borderColor: 'divider' }}
+										onClick={(e) => e.stopPropagation()}
+									>
+										{detailLoading && expandedId === run.id ? (
+											<CircularProgress size={18} />
+										) : detail && detail.id === run.id ? (
+											<Box>
+												{mobileLayer === 'ODDS' ? (
+													<Typography
+														variant="caption"
+														color="text.secondary"
+														display="block"
+														sx={{ mb: 1 }}
+													>
+														{t('externalApiMonitoring.oddsSlotDetail', {
+															matchday: formatOddsMatchday(detail),
+															scope: formatOddsSlotScope(detail.slotScope) ?? '—',
+														})}
+													</Typography>
+												) : null}
+												{detail.errorSummary ? (
+													<Typography
+														sx={{
+															mb: 1,
+															fontSize: '0.78rem',
+															color: isMonitoringWarningSummary(detail.errorSummary)
+																? '#d97706'
+																: '#f43f5e',
+															fontWeight: 600,
+															whiteSpace: 'normal',
+															wordBreak: 'break-word',
+														}}
+													>
+														{formatMonitoringReason(detail.errorSummary)}
+													</Typography>
+												) : null}
+												<CountersBreakdown
+													layer={mobileLayer}
+													counters={detail.counters ?? run.counters}
+												/>
+												{(detail.failedMatchScheduleIds?.length ?? 0) > 0 ? (
+													<Typography
+														variant="caption"
+														color="text.secondary"
+														display="block"
+														sx={{ mb: 1, wordBreak: 'break-all' }}
+													>
+														{t('externalApiMonitoring.failedIds')}:{' '}
+														{detail.failedMatchScheduleIds!.join(', ')}
+													</Typography>
+												) : null}
+												{(detail.httpLogs?.length ?? 0) === 0 ? (
+													<Typography variant="caption" color="text.secondary">
+														{t('externalApiMonitoring.noHttpLogs')}
+													</Typography>
+												) : (
+													<MobileHttpLogs logs={detail.httpLogs!} />
+												)}
+											</Box>
+										) : null}
+									</Box>
+								</Collapse>
+							</Box>
+						);
+					})
+				)}
+
+				<CustomCalendarDialog
+					open={deleteLayer != null}
+					onClose={() => {
+						if (!deleting) setDeleteLayer(null);
+					}}
+					onSave={() => void handleDeleteLayer()}
+					title={
+						deleteLayer
+							? t('externalApiMonitoring.deleteLayerTitle', { layer: layerTitle(deleteLayer) })
+							: undefined
+					}
+					helperText={
+						deleteLayer
+							? t('externalApiMonitoring.deleteLayerHelper', { layer: layerTitle(deleteLayer) })
+							: undefined
+					}
+					buttonAcceptText={t('externalApiMonitoring.deleteLayerConfirm')}
+					submitting={deleting}
+				/>
+			</Box>
+		);
+	}
 
 	return (
 		<Box sx={monitoringPageRootSx}>
