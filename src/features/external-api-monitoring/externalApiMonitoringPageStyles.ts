@@ -294,7 +294,7 @@ export const monitoringMobileRootSx: SxProps<Theme> = {
 	minWidth: 0,
 	mx: 0,
 	mt: `-${APP_HEADER_CONTENT_GAP_PX}px`,
-	px: 1.25,
+	px: 0.25,
 	pt: 1,
 	pb: 4,
 	boxSizing: 'border-box',
