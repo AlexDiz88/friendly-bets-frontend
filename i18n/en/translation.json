@@ -55,7 +55,7 @@
 	"externalMatchNoDataHint": "No data saved for this matchday yet.",
 	"externalMatchNoDataHintModerator": "No data yet. Tap «Sync matchday results».",
 	"externalMatchBettingUnavailableNoCalendar": "Betting for this matchday is currently unavailable — the matchday has not been added to the season calendar.",
-	"gameResultFinalized": "Result finalized",
+	"gameResultFinalized": "Finished",
 	"matchCenter": {
 		"halftime": "Half-time",
 		"live": "Live"
