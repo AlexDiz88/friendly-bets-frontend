@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs';
 import Calendar from '../admin/calendars/types/Calendar';
-import User from '../auth/types/User';
+import SimpleUser from '../auth/types/SimpleUser';
 import Bet from '../bets/types/Bet';
 
 /** Порядок лиг в сетке ставок участника на странице «По турам». */
@@ -58,7 +58,7 @@ export function pickDefaultCalendarNode(calendarNodes: Calendar[]): Calendar | u
 }
 
 /** Аватар игрока на «По турам» берётся из сезона, а не из каждой ставки. */
-export function attachSeasonPlayersToBets(bets: Bet[], players: User[]): Bet[] {
+export function attachSeasonPlayersToBets(bets: Bet[], players: SimpleUser[]): Bet[] {
 	if (bets.length === 0 || players.length === 0) {
 		return bets;
 	}

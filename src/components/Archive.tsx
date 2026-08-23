@@ -1,12 +1,9 @@
 import { Box } from '@mui/material';
 import { t } from 'i18next';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { SEASON_STATUS_FINISHED } from '../constants';
-import { getSeasons } from '../features/admin/seasons/seasonsSlice';
-import { selectSeasons } from '../features/admin/seasons/selectors';
-import { sortSeasonsNewestFirst } from '../features/admin/seasons/sortSeasons';
-import Season from '../features/admin/seasons/types/Season';
+import useSeasonSummaries from '../features/admin/seasons/useSeasonSummaries';
 import PlayersStats from '../features/stats/PlayersStats';
 import { selectPlayersStats } from '../features/stats/selectors';
 import { getAllPlayersStatsBySeason } from '../features/stats/statsSlice';
@@ -17,47 +14,47 @@ import SeasonSelect from './selectors/SeasonSelect';
 export default function Archive(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const playersStats = useAppSelector(selectPlayersStats);
-	const seasons: Season[] = useAppSelector(selectSeasons);
-	const [selectedSeason, setSelectedSeason] = useState<Season | undefined>(undefined);
-	const [filteredSeasons, setFilteredSeasons] = useState<Season[]>([]);
-	const [loading, setLoading] = useState(true);
+	const { seasonsNewestFirst, summariesReady, summariesError } = useSeasonSummaries();
+	const [selectedSeasonId, setSelectedSeasonId] = useState('');
+	const [loading, setLoading] = useState(false);
 	const [loadingError, setLoadingError] = useState(false);
 
+	const filteredSeasons = useMemo(
+		() =>
+			seasonsNewestFirst.filter((season) => season.status === SEASON_STATUS_FINISHED),
+		[seasonsNewestFirst]
+	);
+
 	const sortedPlayersStats =
-		selectedSeason === undefined
+		selectedSeasonId === ''
 			? []
 			: [...playersStats].sort((a, b) => b.actualBalance - a.actualBalance);
 
-	const handleSeasonChange = (seasonId: string): void => {
-		setSelectedSeason(seasons.find((season) => season.id === seasonId));
-	};
-
 	useEffect(() => {
-		dispatch(getSeasons());
-	}, []);
-
-	useEffect(() => {
-		const finishedSeasons = sortSeasonsNewestFirst(
-			seasons.filter((season) => season.status === SEASON_STATUS_FINISHED)
-		);
-		setFilteredSeasons(finishedSeasons);
-	}, [seasons]);
-
-	useEffect(() => {
-		if (selectedSeason) {
-			setLoading(true);
-			dispatch(getAllPlayersStatsBySeason(selectedSeason.id))
-				.then(() => {
-					setLoading(false);
-				})
-				.catch(() => {
-					setLoadingError(true);
-					setLoading(false);
-				});
-		} else {
+		if (!selectedSeasonId) {
 			setLoading(false);
+			return;
 		}
-	}, [selectedSeason, seasons]);
+		setLoading(true);
+		setLoadingError(false);
+		void dispatch(getAllPlayersStatsBySeason(selectedSeasonId))
+			.unwrap()
+			.then(() => {
+				setLoading(false);
+			})
+			.catch(() => {
+				setLoadingError(true);
+				setLoading(false);
+			});
+	}, [selectedSeasonId, dispatch]);
+
+	if (summariesError && seasonsNewestFirst.length === 0) {
+		return <CustomLoadingError />;
+	}
+
+	if (!summariesReady && seasonsNewestFirst.length === 0) {
+		return <CustomLoading />;
+	}
 
 	return (
 		<Box>
@@ -88,14 +85,14 @@ export default function Archive(): JSX.Element {
 								{t('chooseFinishedSeasonForDetailedStatistik')}
 							</Box>
 							<SeasonSelect
-								value={selectedSeason?.id ?? ''}
-								onChange={(event) => handleSeasonChange(event.target.value)}
+								value={selectedSeasonId}
+								onChange={(event) => setSelectedSeasonId(event.target.value)}
 								seasons={filteredSeasons}
 								sx={{ mx: 1, mb: 1, width: 'calc(100% - 16px)' }}
 							/>
 							<PlayersStats
 								playersStats={sortedPlayersStats}
-								seasonId={selectedSeason?.id}
+								seasonId={selectedSeasonId || undefined}
 							/>
 						</Box>
 					)}
