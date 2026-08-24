@@ -207,7 +207,9 @@
 		"save": "Сохранить",
 		"refresh": "Обновить",
 		"clear": "Очистить",
-		"processing": "Обработка…"
+		"processing": "Обработка…",
+		"sendDbBackupTelegram": "Отправить бэкап в Telegram",
+		"downloadDbBackup": "Скачать бэкап (zip-архив)"
 	},
 	"matchResultSyncSettingsTitle": "Синхронизация результатов",
 	"showMatchResultSyncSettings": "Показать настройки синхронизации",
@@ -348,6 +350,10 @@
 	"betTitlesStatsWillBeRecalculated": "Будет пересчитана статистика по типам ставок в сезоне",
 	"betValuesStatsWillBeRecalculated": "Будет пересчитана статистика по кэфам в сезоне",
 	"dbManagement": "Управление базой данных",
+	"dbBackupTitle": "Резервные копии базы",
+	"dbBackupHint": "Полная копия MongoDB ежедневно в 02:00 (Берлин) уходит в закрытый канал Telegram. Кнопки снизу — внеочередная отправка/скачивание zip. Для восстановления распаковать zip и выполнить 'mongorestore --dir=path/to/backup.zip'. Из канала удаляются снимки старше 365 дней. Обычные сообщения бот не трогает.",
+	"dbBackupSentToTelegram": "Снимок базы отправлен в Telegram",
+	"dbBackupDownloaded": "Снимок базы скачан",
 	"runScript": "Запустить скрипт",
 	"adminScriptSelect": "Скрипт",
 	"adminScriptUtcTimestampsMigration": "Миграция timestamps → Instant UTC",
@@ -908,7 +914,11 @@
 		"siteAccessProbeUrlRequired": "Укажите URL сайта",
 		"siteAccessProbeUrlInvalid": "Некорректный URL (нужен http/https)",
 		"siteAccessProbeUrlNotAllowed": "Внутренние/локальные адреса запрещены",
-		"siteAccessProbeFailed": "Не удалось выполнить проверку доступа"
+		"siteAccessProbeFailed": "Не удалось выполнить проверку доступа",
+		"telegramBackupNotConfigured": "Бэкап в Telegram не настроен (токен бота или chat id)",
+		"dbBackupFailed": "Не удалось создать снимок базы",
+		"dbBackupTelegramSendFailed": "Не удалось отправить снимок в Telegram",
+		"dbBackupAlreadyRunning": "Снимок базы уже создаётся, повторите через минуту"
 	},
 	"oddsDemo": {
 		"menuLink": "Кэфы (демо)",

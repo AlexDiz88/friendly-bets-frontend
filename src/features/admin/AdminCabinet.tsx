@@ -19,6 +19,7 @@ import ExternalDataLayersPanel from './external-data/ExternalDataLayersPanel';
 import ExternalTeamAliasesPanel from './external-data/ExternalTeamAliasesPanel';
 import ManualExternalSyncPanel from './external-data/ManualExternalSyncPanel';
 import SiteAccessProbePanel from './external-data/SiteAccessProbePanel';
+import DbBackupPanel from './backup/DbBackupPanel';
 import AdminScriptsPanel from './scripts/AdminScriptsPanel';
 import TeamsManagement from './teams/TeamsManagement';
 import TournamentFormatsManagement from './tournament-formats/TournamentFormatsManagement';
@@ -63,6 +64,7 @@ export default function AdminCabinet(): JSX.Element {
 					<SiteAccessProbePanel />
 
 					<AdminGroupHeading label={t('adminPanelGroupMaintenance')} />
+					<DbBackupPanel />
 					<AdminSection
 						title={t('dbManagement')}
 						hint={t('adminPanelMaintenanceHint')}

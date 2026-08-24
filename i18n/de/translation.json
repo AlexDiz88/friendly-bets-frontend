@@ -207,7 +207,9 @@
 		"save": "Speichern",
 		"refresh": "Aktualisieren",
 		"clear": "Leeren",
-		"processing": "Verarbeitung…"
+		"processing": "Verarbeitung…",
+		"sendDbBackupTelegram": "Backup an Telegram senden",
+		"downloadDbBackup": "Backup herunterladen (Zip-Archiv)"
 	},
 	"matchResultSyncSettingsTitle": "Ergebnis-Synchronisation",
 	"showMatchResultSyncSettings": "Sync-Einstellungen anzeigen",
@@ -348,6 +350,10 @@
 	"betTitlesStatsWillBeRecalculated": "Die Statistiken nach Wettetyp werden neu berechnet",
 	"betValuesStatsWillBeRecalculated": "Die Statistiken nach Quoten werden neu berechnet",
 	"dbManagement": "Datenbankverwaltung",
+	"dbBackupTitle": "Datenbank-Backups",
+	"dbBackupHint": "Täglich um 02:00 (Berlin) geht eine vollständige MongoDB-Kopie in einen privaten Telegram-Kanal. Die Buttons darunter senden außerplanmäßig oder laden das Zip. Zum Wiederherstellen Zip entpacken und 'mongorestore --dir=path/to/backup.zip' ausführen. Snapshots älter als 365 Tage werden aus dem Kanal entfernt. Gewöhnliche Nachrichten lässt der Bot unberührt.",
+	"dbBackupSentToTelegram": "Datenbank-Snapshot an Telegram gesendet",
+	"dbBackupDownloaded": "Datenbank-Snapshot heruntergeladen",
 	"runScript": "Skript starten",
 	"adminScriptSelect": "Skript",
 	"adminScriptUtcTimestampsMigration": "Timestamps → Instant UTC migrieren",
@@ -908,7 +914,11 @@
 		"siteAccessProbeUrlRequired": "Site-URL erforderlich",
 		"siteAccessProbeUrlInvalid": "Ungültige URL (http/https erforderlich)",
 		"siteAccessProbeUrlNotAllowed": "Interne/lokale Adressen sind nicht erlaubt",
-		"siteAccessProbeFailed": "Site-Zugangsprüfung fehlgeschlagen"
+		"siteAccessProbeFailed": "Site-Zugangsprüfung fehlgeschlagen",
+		"telegramBackupNotConfigured": "Telegram-Backup ist nicht konfiguriert (Bot-Token oder Chat-ID)",
+		"dbBackupFailed": "Datenbank-Snapshot konnte nicht erstellt werden",
+		"dbBackupTelegramSendFailed": "Snapshot konnte nicht an Telegram gesendet werden",
+		"dbBackupAlreadyRunning": "Ein Datenbank-Snapshot läuft bereits, bitte in einer Minute erneut versuchen"
 	},
 	"oddsDemo": {
 		"menuLink": "Quoten (Demo)",

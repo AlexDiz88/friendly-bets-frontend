@@ -207,7 +207,9 @@
 		"save": "Save",
 		"refresh": "Refresh",
 		"clear": "Clear",
-		"processing": "Processing…"
+		"processing": "Processing…",
+		"sendDbBackupTelegram": "Send backup to Telegram",
+		"downloadDbBackup": "Download backup (zip archive)"
 	},
 	"matchResultSyncSettingsTitle": "Match result sync",
 	"showMatchResultSyncSettings": "Show sync settings",
@@ -348,6 +350,10 @@
 	"betTitlesStatsWillBeRecalculated": "Stats by bet titles in the season will be recalculated",
 	"betValuesStatsWillBeRecalculated": "Stats by odds ranges in the season will be recalculated",
 	"dbManagement": "Database management",
+	"dbBackupTitle": "Database backups",
+	"dbBackupHint": "A full MongoDB copy is sent daily at 02:00 (Berlin) to a private Telegram channel. The buttons below send an extra copy or download the zip. To restore, unzip and run 'mongorestore --dir=path/to/backup.zip'. Snapshots older than 365 days are removed from the channel. The bot does not touch ordinary messages.",
+	"dbBackupSentToTelegram": "Database snapshot sent to Telegram",
+	"dbBackupDownloaded": "Database snapshot downloaded",
 	"runScript": "Run script",
 	"adminScriptSelect": "Script",
 	"adminScriptUtcTimestampsMigration": "Migrate timestamps → Instant UTC",
@@ -908,7 +914,11 @@
 		"siteAccessProbeUrlRequired": "Site URL is required",
 		"siteAccessProbeUrlInvalid": "Invalid URL (http/https required)",
 		"siteAccessProbeUrlNotAllowed": "Internal/local addresses are not allowed",
-		"siteAccessProbeFailed": "Site access probe failed"
+		"siteAccessProbeFailed": "Site access probe failed",
+		"telegramBackupNotConfigured": "Telegram backup is not configured (bot token or chat id)",
+		"dbBackupFailed": "Could not create the database snapshot",
+		"dbBackupTelegramSendFailed": "Could not send the snapshot to Telegram",
+		"dbBackupAlreadyRunning": "A database snapshot is already running, try again in a minute"
 	},
 	"oddsDemo": {
 		"menuLink": "Odds (demo)",
