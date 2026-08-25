@@ -23,6 +23,10 @@ export type ErrorLogEntry = {
 	externalMatchId?: string | null;
 	homeTeam?: string | null;
 	awayTeam?: string | null;
+	homeTeamTitle?: string | null;
+	awayTeamTitle?: string | null;
+	homeTeamLogoKey?: string | null;
+	awayTeamLogoKey?: string | null;
 	context?: Record<string, string> | null;
 };
 

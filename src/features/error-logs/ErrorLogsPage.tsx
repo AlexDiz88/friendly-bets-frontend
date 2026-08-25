@@ -1,6 +1,7 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
+	Avatar,
 	Box,
 	Chip,
 	CircularProgress,
@@ -8,13 +9,18 @@ import {
 	Tooltip,
 	Typography,
 	useTheme,
+	type SxProps,
+	type Theme,
 } from '@mui/material';
-import { t } from 'i18next';
+import i18n, { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
+import { leagueLogoAvatarSx } from '../../components/custom/avatar/LeagueAvatar';
 import CustomCalendarDialog from '../../components/custom/dialog/CustomCalendarDialog';
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../components/custom/snackbar/snackbarSlice';
+import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
+import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import {
 	clearErrorLogs,
 	deleteErrorLog,
@@ -23,13 +29,15 @@ import {
 } from './errorLogsApi';
 import {
 	ERROR_LOG_ACCENT,
-	ERROR_LOG_ID,
 	ERROR_LOG_LEAGUE,
 	ERROR_LOG_PROVIDER,
 	ERROR_LOG_TEAMS,
 	ERROR_LOG_WARN,
+	chipIdSx,
 	chipSx,
+	chipWithLogosSx,
 	errorLogCardSx,
+	errorLogChipLogoSx,
 	errorLogMessageSx,
 	errorLogMetaRowSx,
 	errorLogTimeSx,
@@ -48,6 +56,34 @@ function codeLabel(code: string): string {
 function layerLabel(layer: string): string {
 	const key = `errorLogs.layer.${layer}`;
 	return t(key) !== key ? t(key) : layer;
+}
+
+function ErrorLogChipLogo({ src, alt }: { src: string; alt: string }): JSX.Element {
+	return (
+		<Avatar
+			variant="square"
+			src={src}
+			alt={alt}
+			sx={[errorLogChipLogoSx, leagueLogoAvatarSx] as SxProps<Theme>}
+		/>
+	);
+}
+
+function teamChipTooltip(entry: ErrorLogEntry): string {
+	const home = resolveTeamDisplayName(
+		{ title: entry.homeTeamTitle || entry.homeTeam || '' },
+		t,
+		i18n.language
+	);
+	const away = resolveTeamDisplayName(
+		{ title: entry.awayTeamTitle || entry.awayTeam || '' },
+		t,
+		i18n.language
+	);
+	if (home && away) {
+		return `${home} — ${away}`;
+	}
+	return home || away;
 }
 
 export default function ErrorLogsPage(): JSX.Element {
@@ -173,8 +209,14 @@ export default function ErrorLogsPage(): JSX.Element {
 
 			{entries.map((entry) => {
 				const severity = (entry.severity || 'ERROR').toUpperCase();
-				const teams =
-					entry.homeTeam || entry.awayTeam
+				const hasTeamLogos = Boolean(
+					entry.homeTeamTitle ||
+						entry.awayTeamTitle ||
+						entry.homeTeamLogoKey ||
+						entry.awayTeamLogoKey
+				);
+				const teamsText =
+					!hasTeamLogos && (entry.homeTeam || entry.awayTeam)
 						? `${entry.homeTeam ?? '—'} — ${entry.awayTeam ?? '—'}`
 						: null;
 				return (
@@ -242,8 +284,19 @@ export default function ErrorLogsPage(): JSX.Element {
 							{entry.leagueCode ? (
 								<Chip
 									size="small"
-									label={entry.leagueCode}
-									sx={chipSx(ERROR_LOG_LEAGUE, theme)}
+									sx={chipWithLogosSx(ERROR_LOG_LEAGUE, theme)}
+									label={
+										<Box
+											component="span"
+											sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.45 }}
+										>
+											<ErrorLogChipLogo
+												src={pathToLogoImage(entry.leagueCode)}
+												alt={entry.leagueCode}
+											/>
+											{entry.leagueCode}
+										</Box>
+									}
 								/>
 							) : null}
 							{entry.matchday != null ? (
@@ -253,22 +306,51 @@ export default function ErrorLogsPage(): JSX.Element {
 									sx={chipSx(ERROR_LOG_LEAGUE, theme)}
 								/>
 							) : null}
+							{hasTeamLogos ? (
+								<Tooltip title={teamChipTooltip(entry)}>
+									<Chip
+										size="small"
+										sx={chipWithLogosSx(ERROR_LOG_TEAMS, theme)}
+										label={
+											<Box
+												component="span"
+												sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.45 }}
+											>
+												<ErrorLogChipLogo
+													src={resolveTeamLogoUrl({
+														title: entry.homeTeamTitle || entry.homeTeam || '',
+														logoKey: entry.homeTeamLogoKey || undefined,
+													})}
+													alt={entry.homeTeamTitle || entry.homeTeam || ''}
+												/>
+												<ErrorLogChipLogo
+													src={resolveTeamLogoUrl({
+														title: entry.awayTeamTitle || entry.awayTeam || '',
+														logoKey: entry.awayTeamLogoKey || undefined,
+													})}
+													alt={entry.awayTeamTitle || entry.awayTeam || ''}
+												/>
+											</Box>
+										}
+									/>
+								</Tooltip>
+							) : null}
 							{entry.externalMatchId ? (
 								<Chip
 									size="small"
 									label={`ext ${entry.externalMatchId}`}
-									sx={chipSx(ERROR_LOG_ID, theme)}
+									sx={chipIdSx(theme)}
 								/>
 							) : null}
 							{entry.matchScheduleId ? (
 								<Chip
 									size="small"
-									label={`id ${entry.matchScheduleId.slice(0, 8)}…`}
-									sx={chipSx(ERROR_LOG_ID, theme)}
+									label={`id ${entry.matchScheduleId}`}
+									sx={chipIdSx(theme)}
 								/>
 							) : null}
-							{teams ? (
-								<Chip size="small" label={teams} sx={chipSx(ERROR_LOG_TEAMS, theme)} />
+							{teamsText ? (
+								<Chip size="small" label={teamsText} sx={chipSx(ERROR_LOG_TEAMS, theme)} />
 							) : null}
 							{entry.season ? (
 								<Chip

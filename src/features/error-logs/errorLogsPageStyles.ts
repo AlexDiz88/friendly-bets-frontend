@@ -86,6 +86,49 @@ export function chipSx(color: string, theme: Theme): SxProps<Theme> {
 	};
 }
 
+export function chipIdSx(theme: Theme): SxProps<Theme> {
+	return {
+		...chipSx(ERROR_LOG_ID, theme),
+		height: 'auto',
+		minHeight: 24,
+		fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace",
+		fontWeight: 600,
+		letterSpacing: 0,
+		userSelect: 'all',
+		'& .MuiChip-label': {
+			px: 0.9,
+			py: 0.25,
+			overflow: 'visible',
+			textOverflow: 'clip',
+			whiteSpace: 'normal',
+			wordBreak: 'break-all',
+			lineHeight: 1.3,
+		},
+	};
+}
+
+export function chipWithLogosSx(color: string, theme: Theme): SxProps<Theme> {
+	return {
+		...chipSx(color, theme),
+		height: 24,
+		'& .MuiChip-label': {
+			display: 'flex',
+			alignItems: 'center',
+			px: 0.7,
+			overflow: 'visible',
+			textOverflow: 'clip',
+			whiteSpace: 'nowrap',
+		},
+	};
+}
+
+export const errorLogChipLogoSx: SxProps<Theme> = {
+	width: 16,
+	height: 16,
+	borderRadius: 0.5,
+	flexShrink: 0,
+};
+
 export const errorLogMessageSx: SxProps<Theme> = {
 	fontSize: '0.875rem',
 	lineHeight: 1.5,
