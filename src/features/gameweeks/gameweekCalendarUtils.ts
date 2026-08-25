@@ -78,25 +78,3 @@ export function attachSeasonPlayersToBets(bets: Bet[], players: SimpleUser[]): B
 		};
 	});
 }
-
-export const GAMEWEEK_NEIGHBOR_PREFETCH_DELAY_MS = 1500;
-
-/** Предыдущий и следующий тур в списке (порядок как в селекте). */
-export function prefetchGameweekNeighborBets(
-	calendarNodes: Calendar[],
-	currentNodeId: string,
-	prefetch: (nodeId: string) => void
-): void {
-	const index = calendarNodes.findIndex((n) => n.id === currentNodeId);
-	if (index < 0) {
-		return;
-	}
-	const prev = calendarNodes[index - 1];
-	const next = calendarNodes[index + 1];
-	if (prev) {
-		prefetch(prev.id);
-	}
-	if (next) {
-		prefetch(next.id);
-	}
-}

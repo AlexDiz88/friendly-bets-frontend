@@ -12,13 +12,11 @@ import {
 	fetchGameweekBets,
 	fetchGameweeksOverview,
 	getAllSeasonCalendarNodes,
-	invalidateGameweeksBetsCache,
 } from '../admin/calendars/calendarsSlice';
 import {
 	selectBetsByCalendarNodeId,
 	selectCalendarNodesHasBets,
 	selectGameweeksBetsLoadingForNode,
-	selectGameweeksOverviewSeasonId,
 } from '../admin/calendars/selectors';
 import Calendar from '../admin/calendars/types/Calendar';
 import { getCurrentSeasonCalendarNode } from '../admin/calendars/api';
@@ -27,11 +25,7 @@ import useSeasonSummaries from '../admin/seasons/useSeasonSummaries';
 import GameweekCalendarSelect from './GameweekCalendarSelect';
 import GameweekPlayerContainer from './GameweekPlayersContainer';
 import GameweekStats from './GameweekStats';
-import {
-	GAMEWEEK_NEIGHBOR_PREFETCH_DELAY_MS,
-	pickDefaultCalendarNode,
-	prefetchGameweekNeighborBets,
-} from './gameweekCalendarUtils';
+import { pickDefaultCalendarNode } from './gameweekCalendarUtils';
 import {
 	gameweekFiltersSx,
 	gameweekPageEmptyHintSx,
@@ -49,7 +43,6 @@ const Gameweek = (): JSX.Element => {
 	const { seasonChoices, seasonsNewestFirst, summariesReady, summariesError } =
 		useSeasonSummaries();
 	const calendarNodes = useAppSelector(selectCalendarNodesHasBets);
-	const overviewSeasonId = useAppSelector(selectGameweeksOverviewSeasonId);
 
 	const [selectedSeasonId, setSelectedSeasonId] = useState('');
 	const [selectedCalendarNode, setSelectedCalendarNode] = useState<Calendar | undefined>(undefined);
@@ -65,7 +58,7 @@ const Gameweek = (): JSX.Element => {
 		Boolean(selectedSeasonId) && seasonChoices.some((season) => season.id === selectedSeasonId);
 	const seasonId = hasValidSeason ? selectedSeasonId : undefined;
 	const selectedNodeId = selectedCalendarNode?.id;
-	const cachedBets = useAppSelector(selectBetsByCalendarNodeId(selectedNodeId));
+	const betsPage = useAppSelector(selectBetsByCalendarNodeId(selectedNodeId));
 	const betsLoading = useAppSelector(selectGameweeksBetsLoadingForNode(selectedNodeId));
 	const requestedNodeId = useMemo(
 		() => new URLSearchParams(location.search).get('node'),
@@ -122,15 +115,13 @@ const Gameweek = (): JSX.Element => {
 	);
 
 	const selectCalendarNode = useCallback(
-		(node: Calendar | undefined, options?: { skipBetsFetch?: boolean }): void => {
+		(node: Calendar | undefined): void => {
 			if (!node || !seasonId) {
 				setSelectedCalendarNode(node);
 				return;
 			}
 			setSelectedCalendarNode(node);
-			if (!options?.skipBetsFetch) {
-				loadBetsForNode(node.id);
-			}
+			loadBetsForNode(node.id);
 		},
 		[seasonId, loadBetsForNode]
 	);
@@ -194,19 +185,6 @@ const Gameweek = (): JSX.Element => {
 		};
 
 		const loadOverview = async (): Promise<void> => {
-			if (overviewSeasonId && overviewSeasonId !== seasonId) {
-				dispatch(invalidateGameweeksBetsCache());
-			}
-
-			if (overviewSeasonId === seasonId && calendarNodes.length > 0) {
-				await applyNodes(calendarNodes);
-				if (!cancelled) {
-					setOverviewLoading(false);
-					setOverviewError(false);
-				}
-				return;
-			}
-
 			setOverviewLoading(true);
 			setOverviewError(false);
 
@@ -276,28 +254,6 @@ const Gameweek = (): JSX.Element => {
 		selectedCalendarNode?.gameweekStats.length,
 	]);
 
-	useEffect(() => {
-		if (location.pathname !== '/gameweeks') {
-			return;
-		}
-		if (!selectedNodeId || calendarNodes.length === 0) {
-			return;
-		}
-		if (cachedBets === undefined) {
-			return;
-		}
-
-		const timeoutId = window.setTimeout(() => {
-			prefetchGameweekNeighborBets(calendarNodes, selectedNodeId, (neighborId) => {
-				void dispatch(fetchGameweekBets(neighborId));
-			});
-		}, GAMEWEEK_NEIGHBOR_PREFETCH_DELAY_MS);
-
-		return () => {
-			window.clearTimeout(timeoutId);
-		};
-	}, [location.pathname, selectedNodeId, cachedBets, calendarNodes, dispatch]);
-
 	const gameweekCardsCount =
 		selectedCalendarNode?.leagueMatchdayNodes?.reduce((sum, node) => sum + (node.betCountLimit ?? 0), 0) ??
 		0;
@@ -306,11 +262,11 @@ const Gameweek = (): JSX.Element => {
 		if (!selectedCalendarNode || !selectedSeason) {
 			return false;
 		}
-		if (cachedBets?.bets) {
+		if (betsPage?.bets) {
 			return true;
 		}
 		return betsLoading;
-	}, [selectedCalendarNode, selectedSeason, cachedBets, betsLoading]);
+	}, [selectedCalendarNode, selectedSeason, betsPage, betsLoading]);
 
 	if (summariesError && seasonChoices.length === 0) {
 		return <CustomLoadingError />;
@@ -367,10 +323,10 @@ const Gameweek = (): JSX.Element => {
 						<>
 							<GameweekStats calendarNode={selectedCalendarNode} season={selectedSeason} />
 							{showBetsSection ? (
-								cachedBets?.bets ? (
+								betsPage?.bets ? (
 									<GameweekPlayerContainer
 										season={selectedSeason}
-										bets={cachedBets.bets}
+										bets={betsPage.bets}
 										gameweekCardsCount={gameweekCardsCount}
 									/>
 								) : (
