@@ -45,13 +45,8 @@ export const fetchGameweekBets = createAsyncThunk(
 	{
 		condition: (calendarNodeId, { getState }) => {
 			const { calendars } = getState() as { calendars: CalendarsState };
-			if (calendars.betsByCalendarNodeId[calendarNodeId]) {
-				return false;
-			}
-			if (calendars.betsLoadingByCalendarNodeId?.[calendarNodeId]) {
-				return false;
-			}
-			return true;
+			// Не дублировать параллельный запрос того же тура; кэш ставок не используем.
+			return !calendars.betsLoadingByCalendarNodeId?.[calendarNodeId];
 		},
 	}
 );
@@ -86,10 +81,6 @@ const calendarsSlice = createSlice({
 		invalidateGameweeksOverview: (state) => {
 			state.gameweeksOverviewLoadedAt = undefined;
 			state.gameweeksOverviewSeasonId = undefined;
-		},
-		invalidateGameweeksBetsCache: (state) => {
-			state.betsByCalendarNodeId = {};
-			state.betsLoadingByCalendarNodeId = {};
 		},
 	},
 	extraReducers: (builder) => {
@@ -128,6 +119,7 @@ const calendarsSlice = createSlice({
 			})
 			.addCase(fetchGameweekBets.pending, (state, action) => {
 				state.betsLoadingByCalendarNodeId[action.meta.arg] = true;
+				delete state.betsByCalendarNodeId[action.meta.arg];
 			})
 			.addCase(fetchGameweekBets.fulfilled, (state, action) => {
 				state.betsByCalendarNodeId[action.meta.arg] = action.payload;
@@ -175,7 +167,6 @@ const calendarsSlice = createSlice({
 	},
 });
 
-export const { resetError, invalidateGameweeksOverview, invalidateGameweeksBetsCache } =
-	calendarsSlice.actions;
+export const { resetError, invalidateGameweeksOverview } = calendarsSlice.actions;
 
 export default calendarsSlice.reducer;
