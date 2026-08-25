@@ -121,6 +121,8 @@
 	"completedBets": "Completed",
 	"betsPaginationPrev": "Previous page",
 	"betsPaginationNext": "Next page",
+	"betsPaginationFirst": "First page",
+	"betsPaginationLast": "Last page",
 	"betsPaginationPage": "{{page}} / {{total}}",
 	"logout": "Logout",
 	"myProfile": "My profile",
@@ -1394,6 +1396,7 @@
 		}
 	},
 	"errorLogsTitle": "Error log",
+	"errorLogsTitleWithCount": "Error log ({{count}})",
 	"errorLogsCount": "Entries: {{count}}",
 	"errorLogsCountCapped": "Entries: {{total}} (showing {{shown}})",
 	"errorLogsPageSize": "Per page",

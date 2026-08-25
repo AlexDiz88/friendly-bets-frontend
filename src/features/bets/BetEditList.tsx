@@ -57,9 +57,16 @@ export default function BetEditList(): JSX.Element {
 
 	return (
 		<Box sx={betEditPageRootSx}>
-			<Box sx={{ borderBottom: 1, textAlign: 'center', pb: 0.5, mb: 1.5 }}>
+			<Box sx={{ borderBottom: 1, textAlign: 'center', pb: 0.5, mb: 0, mx: 2}}>
 				{t('editingBets')}
 			</Box>
+
+			<BetsPagination
+				page={page}
+				totalPages={totalPages}
+				onPageChange={handlePageChange}
+				navigationAriaLabel="editingBets"
+			/>
 
 			{loading ? (
 				<CustomLoading />
@@ -69,60 +76,52 @@ export default function BetEditList(): JSX.Element {
 						<CustomLoadingError />
 					) : (
 						<Box>
-							<Box>
-								{allBets &&
-									(() => {
-										const sortedBets = [...allBets].sort((betA, betB) => {
-											const dateA = betA.updatedAt
-												? new Date(betA.updatedAt)
-												: betA.betResultAddedAt
-												? new Date(betA.betResultAddedAt)
-												: new Date(betA.createdAt);
-											const dateB = betB.updatedAt
-												? new Date(betB.updatedAt)
-												: betB.betResultAddedAt
-												? new Date(betB.betResultAddedAt)
-												: new Date(betB.createdAt);
+							{allBets &&
+								(() => {
+									const sortedBets = [...allBets].sort((betA, betB) => {
+										const dateA = betA.updatedAt
+											? new Date(betA.updatedAt)
+											: betA.betResultAddedAt
+											? new Date(betA.betResultAddedAt)
+											: new Date(betA.createdAt);
+										const dateB = betB.updatedAt
+											? new Date(betB.updatedAt)
+											: betB.betResultAddedAt
+											? new Date(betB.betResultAddedAt)
+											: new Date(betB.createdAt);
 
-											return dateB.getTime() - dateA.getTime();
-										});
+										return dateB.getTime() - dateA.getTime();
+									});
 
-										return sortedBets.map((bet) => {
-											return (
-												<Box key={bet.id}>
-													{bet.betStatus === 'OPENED' ? (
-														isBetDetailsHidden(bet) ? (
-															<OpenedBetHiddenCard bet={bet} />
-														) : (
-															<OpenedBetCard bet={bet} />
-														)
+									return sortedBets.map((bet) => {
+										return (
+											<Box key={bet.id}>
+												{bet.betStatus === 'OPENED' ? (
+													isBetDetailsHidden(bet) ? (
+														<OpenedBetHiddenCard bet={bet} />
 													) : (
-														<Box>
-															{bet.betStatus === 'EMPTY' ? (
-																<>
-																	<EmptyBetCard bet={bet} />
-																</>
-															) : (
-																<Box>
-																	<CompleteBetCard bet={bet} />
-																</Box>
-															)}
-														</Box>
-													)}
-													<BetEditButtons bet={bet} />
-												</Box>
-											);
-										});
-									})()}
-							</Box>
+														<OpenedBetCard bet={bet} />
+													)
+												) : (
+													<Box>
+														{bet.betStatus === 'EMPTY' ? (
+															<>
+																<EmptyBetCard bet={bet} />
+															</>
+														) : (
+															<Box>
+																<CompleteBetCard bet={bet} />
+															</Box>
+														)}
+													</Box>
+												)}
+												<BetEditButtons bet={bet} />
+											</Box>
+										);
+									});
+								})()}
 						</Box>
 					)}
-					<BetsPagination
-						page={page}
-						totalPages={totalPages}
-						onPageChange={handlePageChange}
-						navigationAriaLabel="editingBets"
-					/>
 				</Box>
 			)}
 		</Box>

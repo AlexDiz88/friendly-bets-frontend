@@ -121,6 +121,8 @@
 	"completedBets": "Завершенные",
 	"betsPaginationPrev": "Предыдущая страница",
 	"betsPaginationNext": "Следующая страница",
+	"betsPaginationFirst": "В самое начало",
+	"betsPaginationLast": "В самый конец",
 	"betsPaginationPage": "{{page}} / {{total}}",
 	"logout": "Выйти",
 	"myProfile": "Мой профиль",
@@ -1394,6 +1396,7 @@
 		}
 	},
 	"errorLogsTitle": "Лог ошибок",
+	"errorLogsTitleWithCount": "Лог ошибок ({{count}})",
 	"errorLogsCount": "Записей: {{count}}",
 	"errorLogsCountCapped": "Записей: {{total}} (показано {{shown}})",
 	"errorLogsPageSize": "На странице",

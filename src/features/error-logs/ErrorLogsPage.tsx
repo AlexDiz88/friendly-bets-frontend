@@ -28,9 +28,9 @@ import { showErrorSnackbar, showSuccessSnackbar } from '../../components/custom/
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import { copyText } from '../api-sandbox/CopyableValue';
+import BetsPagination from '../bets/BetsPagination';
 import { externalDataLayerAccent } from '../../shared/externalDataLayerColors';
 import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
-import ErrorLogsPagination from './ErrorLogsPagination';
 import {
 	clearErrorLogs,
 	DEFAULT_ERROR_LOGS_PAGE_SIZE,
@@ -273,34 +273,29 @@ export default function ErrorLogsPage(): JSX.Element {
 	return (
 		<Box sx={errorLogsPageRootSx}>
 			<Typography component="h1" sx={errorLogsTitleSx}>
-				{t('errorLogsTitle')}
+				{t('errorLogsTitleWithCount', { count: totalCount })}
 			</Typography>
 
 			<Box sx={errorLogsToolbarSx}>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', minWidth: 0 }}>
-					<Typography variant="body2" color="text.secondary">
-						{t('errorLogsCount', { count: totalCount })}
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+					<Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
+						{t('errorLogsPageSize')}
 					</Typography>
-					<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-						<Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
-							{t('errorLogsPageSize')}
-						</Typography>
-						<FormControl size="small" sx={{ minWidth: '4.5rem' }}>
-							<Select
-								value={pageSize}
-								onChange={handlePageSizeChange}
-								displayEmpty
-								aria-label={t('errorLogsPageSize')}
-								sx={errorLogsPageSizeSelectSx}
-							>
-								{ERROR_LOGS_PAGE_SIZES.map((size) => (
-									<MenuItem key={size} value={size}>
-										{size}
-									</MenuItem>
-								))}
-							</Select>
-						</FormControl>
-					</Box>
+					<FormControl size="small" sx={{ minWidth: '4.5rem' }}>
+						<Select
+							value={pageSize}
+							onChange={handlePageSizeChange}
+							displayEmpty
+							aria-label={t('errorLogsPageSize')}
+							sx={errorLogsPageSizeSelectSx}
+						>
+							{ERROR_LOGS_PAGE_SIZES.map((size) => (
+								<MenuItem key={size} value={size}>
+									{size}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
 				</Box>
 				<Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
 					<span>
@@ -328,6 +323,13 @@ export default function ErrorLogsPage(): JSX.Element {
 					</span>
 				</Box>
 			</Box>
+
+			<BetsPagination
+				page={page}
+				totalPages={totalPages}
+				onPageChange={setPage}
+				navigationAriaLabel="errorLogsPaginationNav"
+			/>
 
 			{loading && entries.length === 0 ? (
 				<Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
@@ -543,13 +545,11 @@ export default function ErrorLogsPage(): JSX.Element {
 											});
 										}}
 										label={
-											<Box component="span" sx={{ display: 'inline' }}>
-												<Box component="span" sx={{ userSelect: 'none', mr: 0.5 }}>
+											<Box component="span" sx={{ display: 'inline', userSelect: 'none' }}>
+												<Box component="span" sx={{ mr: 0.5 }}>
 													id
 												</Box>
-												<Box component="span" sx={{ userSelect: 'all' }}>
-													{entry.matchScheduleId}
-												</Box>
+												<Box component="span">{entry.matchScheduleId}</Box>
 											</Box>
 										}
 										sx={[chipIdSx(theme), { cursor: 'pointer' }] as SxProps<Theme>}
@@ -574,8 +574,6 @@ export default function ErrorLogsPage(): JSX.Element {
 					</Box>
 				);
 			})}
-
-			<ErrorLogsPagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
 			<CustomCalendarDialog
 				open={clearOpen}

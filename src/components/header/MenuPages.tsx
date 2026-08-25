@@ -94,11 +94,11 @@ export function useHeaderMenu(): HeaderMenuState {
 
 	const pages = [
 		t('byGameweeks'),
-		t('allBets'),
 		t('byBetTitles'),
 		t('byBetValues'),
 		t('byTeams'),
 		t('byLeagues'),
+		t('allBets'),
 		t('news'),
 		t('archive'),
 		t('wc26.menu'),
