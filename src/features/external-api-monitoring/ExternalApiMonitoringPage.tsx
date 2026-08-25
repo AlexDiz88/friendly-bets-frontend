@@ -87,6 +87,55 @@ const LAYER_SHORT: Record<ExternalDataLayer, string> = {
 	STANDINGS: 'STD',
 };
 
+const EMPTY_LAYER_RUNS: Record<ExternalDataLayer, MonitoringRun[]> = {
+	SCHEDULE: [],
+	ODDS: [],
+	LIVE: [],
+	FULL_MATCH: [],
+	STANDINGS: [],
+};
+
+type LayerTotals = { total: number; failed: number };
+
+const EMPTY_LAYER_TOTALS: Record<ExternalDataLayer, LayerTotals> = {
+	SCHEDULE: { total: 0, failed: 0 },
+	ODDS: { total: 0, failed: 0 },
+	LIVE: { total: 0, failed: 0 },
+	FULL_MATCH: { total: 0, failed: 0 },
+	STANDINGS: { total: 0, failed: 0 },
+};
+
+function LayerRunCountLabel({
+	shown,
+	total,
+	failed,
+}: {
+	shown: number;
+	total: number;
+	failed: number;
+}): JSX.Element {
+	return (
+		<>
+			<Typography component="span" color="text.secondary" sx={{ ml: 0.75, fontWeight: 500 }}>
+				({total})
+			</Typography>
+			{failed > 0 ? (
+				<Typography
+					component="span"
+					sx={{ ml: 1, fontWeight: 600, color: statusAccent('FAILED'), fontSize: '0.82em' }}
+				>
+					{t('externalApiMonitoring.layerFailedCount', { failed })}
+				</Typography>
+			) : null}
+			{shown < total ? (
+				<Typography component="span" color="text.secondary" sx={{ ml: 1, fontWeight: 400, fontSize: '0.78em' }}>
+					{t('externalApiMonitoring.layerCountCapped', { shown, total })}
+				</Typography>
+			) : null}
+		</>
+	);
+}
+
 function formatDuration(ms?: number | null): string {
 	if (ms == null) return '—';
 	if (ms < 1000) return `${ms} ms`;
@@ -556,13 +605,8 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 	const { formatDetailed, formatDateTime, formatTime } = useFormatUserDateTime();
 	const [hours, setHours] = useState(72);
 	const [loading, setLoading] = useState(true);
-	const [runsByLayer, setRunsByLayer] = useState<Record<ExternalDataLayer, MonitoringRun[]>>({
-		SCHEDULE: [],
-		ODDS: [],
-		LIVE: [],
-		FULL_MATCH: [],
-		STANDINGS: [],
-	});
+	const [runsByLayer, setRunsByLayer] = useState<Record<ExternalDataLayer, MonitoringRun[]>>(EMPTY_LAYER_RUNS);
+	const [totalsByLayer, setTotalsByLayer] = useState<Record<ExternalDataLayer, LayerTotals>>(EMPTY_LAYER_TOTALS);
 	const [latest, setLatest] = useState<Partial<Record<ExternalDataLayer, MonitoringRun>>>({});
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 	const [detail, setDetail] = useState<MonitoringRun | null>(null);
@@ -574,22 +618,20 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 	const load = useCallback(async (): Promise<void> => {
 		setLoading(true);
 		try {
-			const [latestMap, ...lists] = await Promise.all([
+			const [latestMap, pages] = await Promise.all([
 				fetchMonitoringLatest(),
-				...MONITORING_LAYERS.map((layer) => fetchMonitoringRuns(layer, hours, 50)),
+				Promise.all(MONITORING_LAYERS.map((layer) => fetchMonitoringRuns(layer, hours, 50))),
 			]);
 			setLatest(latestMap);
-			const next: Record<ExternalDataLayer, MonitoringRun[]> = {
-				SCHEDULE: [],
-				ODDS: [],
-				LIVE: [],
-				FULL_MATCH: [],
-				STANDINGS: [],
-			};
+			const nextRuns: Record<ExternalDataLayer, MonitoringRun[]> = { ...EMPTY_LAYER_RUNS };
+			const nextTotals: Record<ExternalDataLayer, LayerTotals> = { ...EMPTY_LAYER_TOTALS };
 			MONITORING_LAYERS.forEach((layer, idx) => {
-				next[layer] = lists[idx] ?? [];
+				const page = pages[idx];
+				nextRuns[layer] = page.runs;
+				nextTotals[layer] = { total: page.total, failed: page.failed };
 			});
-			setRunsByLayer(next);
+			setRunsByLayer(nextRuns);
+			setTotalsByLayer(nextTotals);
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
@@ -654,6 +696,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 
 	if (isCompact) {
 		const mobileRows = runsByLayer[mobileLayer];
+		const mobileTotals = totalsByLayer[mobileLayer];
 		return (
 			<Box sx={monitoringMobileRootSx}>
 				<Box sx={monitoringMobileStickySx}>
@@ -761,9 +804,11 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 				<Box sx={monitoringMobileSectionHeaderSx(theme, mobileLayer)}>
 					<Typography sx={monitoringSectionTitleSx(mobileLayer)}>
 						{layerTitle(mobileLayer)}
-						<Typography component="span" color="text.secondary" sx={{ ml: 0.75, fontWeight: 500 }}>
-							({mobileRows.length})
-						</Typography>
+						<LayerRunCountLabel
+							shown={mobileRows.length}
+							total={mobileTotals.total}
+							failed={mobileTotals.failed}
+						/>
 					</Typography>
 					<Tooltip title={t('externalApiMonitoring.deleteLayer')}>
 						<span>
@@ -1055,6 +1100,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 			<Box sx={monitoringKpiGridSx}>
 				{MONITORING_LAYERS.map((layer) => {
 					const run = latest[layer];
+					const totals = totalsByLayer[layer];
 					return (
 						<Box key={layer} sx={monitoringKpiCardSx(theme, layer, run?.status)}>
 							<Typography sx={monitoringLayerTitleSx(layer)}>{layerTitle(layer)}</Typography>
@@ -1069,6 +1115,14 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 									<Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.75 }}>
 										{run.provider ?? '—'} · {formatDetailed(run.startedAt)}
 									</Typography>
+									{totals.total > 0 ? (
+										<Typography variant="caption" color="text.secondary" display="block">
+											{t('externalApiMonitoring.layerPeriodTotals', {
+												total: totals.total,
+												failed: totals.failed,
+											})}
+										</Typography>
+									) : null}
 								</>
 							) : (
 								<Typography variant="caption" color="text.secondary">
@@ -1082,14 +1136,17 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 
 			{MONITORING_LAYERS.map((layer) => {
 				const rows = runsByLayer[layer];
+				const totals = totalsByLayer[layer];
 				return (
 					<Box key={layer} sx={monitoringSectionSx(theme, layer)}>
 						<Box sx={monitoringSectionHeaderSx(theme, layer)}>
 							<Typography sx={monitoringSectionTitleSx(layer)}>
 								{layerTitle(layer)}
-								<Typography component="span" color="text.secondary" sx={{ ml: 1, fontWeight: 500 }}>
-									({rows.length})
-								</Typography>
+								<LayerRunCountLabel
+									shown={rows.length}
+									total={totals.total}
+									failed={totals.failed}
+								/>
 							</Typography>
 							<Tooltip title={t('externalApiMonitoring.deleteLayer')}>
 								<span>

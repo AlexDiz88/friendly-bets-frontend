@@ -1,5 +1,7 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import LastPageIcon from '@mui/icons-material/LastPage';
 import { Box, IconButton, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
@@ -35,6 +37,16 @@ export default function BetsPagination({
 		<Box sx={betsPaginationRootSx} role="navigation" aria-label={navLabel}>
 			<span>
 				<IconButton
+					aria-label={t('betsPaginationFirst')}
+					disabled={isFirst}
+					onClick={() => onPageChange(1)}
+					sx={betsPaginationNavBtnSx(isFirst)}
+				>
+					<FirstPageIcon sx={{ fontSize: 28 }} />
+				</IconButton>
+			</span>
+			<span>
+				<IconButton
 					aria-label={t('betsPaginationPrev')}
 					disabled={isFirst}
 					onClick={() => onPageChange(page - 1)}
@@ -58,6 +70,16 @@ export default function BetsPagination({
 					sx={betsPaginationNavBtnSx(isLast)}
 				>
 					<ChevronRightIcon sx={{ fontSize: 28 }} />
+				</IconButton>
+			</span>
+			<span>
+				<IconButton
+					aria-label={t('betsPaginationLast')}
+					disabled={isLast}
+					onClick={() => onPageChange(totalPages)}
+					sx={betsPaginationNavBtnSx(isLast)}
+				>
+					<LastPageIcon sx={{ fontSize: 28 }} />
 				</IconButton>
 			</span>
 		</Box>

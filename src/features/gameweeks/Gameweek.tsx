@@ -21,6 +21,7 @@ import {
 	selectGameweeksOverviewSeasonId,
 } from '../admin/calendars/selectors';
 import Calendar from '../admin/calendars/types/Calendar';
+import { getCurrentSeasonCalendarNode } from '../admin/calendars/api';
 import { selectActiveSeasonId } from '../admin/seasons/selectors';
 import useSeasonSummaries from '../admin/seasons/useSeasonSummaries';
 import GameweekCalendarSelect from './GameweekCalendarSelect';
@@ -163,7 +164,7 @@ const Gameweek = (): JSX.Element => {
 
 		let cancelled = false;
 
-		const applyNodes = (nodes: Calendar[]): void => {
+		const applyNodes = async (nodes: Calendar[]): Promise<void> => {
 			if (nodes.length === 0) {
 				setSelectedCalendarNode(undefined);
 				return;
@@ -172,7 +173,18 @@ const Gameweek = (): JSX.Element => {
 			const requestedNode = requestedNodeId
 				? nodes.find((node) => node.id === requestedNodeId)
 				: undefined;
-			const defaultNode = requestedNode ?? pickDefaultCalendarNode(nodes);
+
+			let defaultNode = requestedNode;
+			if (!defaultNode && seasonId) {
+				try {
+					const current = await getCurrentSeasonCalendarNode(seasonId);
+					defaultNode = nodes.find((node) => node.id === current.id);
+				} catch {
+					defaultNode = undefined;
+				}
+			}
+			defaultNode = defaultNode ?? pickDefaultCalendarNode(nodes);
+
 			if (defaultNode) {
 				setSelectedCalendarNode(defaultNode);
 				void dispatch(fetchGameweekBets(defaultNode.id));
@@ -187,9 +199,11 @@ const Gameweek = (): JSX.Element => {
 			}
 
 			if (overviewSeasonId === seasonId && calendarNodes.length > 0) {
-				applyNodes(calendarNodes);
-				setOverviewLoading(false);
-				setOverviewError(false);
+				await applyNodes(calendarNodes);
+				if (!cancelled) {
+					setOverviewLoading(false);
+					setOverviewError(false);
+				}
 				return;
 			}
 
@@ -228,7 +242,7 @@ const Gameweek = (): JSX.Element => {
 					return;
 				}
 
-				applyNodes(nodes);
+				await applyNodes(nodes);
 			} finally {
 				if (!cancelled) {
 					setOverviewLoading(false);

@@ -423,13 +423,13 @@ export const betsPaginationRootSx: SxProps<Theme> = (theme) => {
 	const p = statsThemePalette(theme);
 	return {
 		mt: 1.25,
-		mb: 0.5,
+		mb: 1.25,
 		py: 0.75,
-		px: 0.75,
+		px: 0.5,
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
-		gap: 0.75,
+		gap: 0.5,
 		width: '100%',
 		boxSizing: 'border-box',
 		borderRadius: 2,

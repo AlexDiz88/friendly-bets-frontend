@@ -7,6 +7,10 @@ function apiUrl(path: string): string {
 	return `${import.meta.env.VITE_PRODUCT_SERVER}${path}`;
 }
 
+export const ERROR_LOGS_PAGE_SIZES = [20, 50, 100, 500] as const;
+export type ErrorLogsPageSize = (typeof ERROR_LOGS_PAGE_SIZES)[number];
+export const DEFAULT_ERROR_LOGS_PAGE_SIZE: ErrorLogsPageSize = 20;
+
 export type ErrorLogEntry = {
 	id: string;
 	createdAt: string;
@@ -23,11 +27,26 @@ export type ErrorLogEntry = {
 	externalMatchId?: string | null;
 	homeTeam?: string | null;
 	awayTeam?: string | null;
+	homeTeamTitle?: string | null;
+	awayTeamTitle?: string | null;
+	homeTeamLogoKey?: string | null;
+	awayTeamLogoKey?: string | null;
+	firstOccurredAt?: string | null;
+	lastOccurredAt?: string | null;
+	occurredAt?: string[] | null;
+	occurrenceCount?: number | null;
 	context?: Record<string, string> | null;
 };
 
-export async function fetchErrorLogs(): Promise<ErrorLogEntry[]> {
-	const result = await apiFetch(apiUrl('/api/error-logs'), { method: 'GET' });
+export async function fetchErrorLogs(params: {
+	page: number;
+	size: number;
+}): Promise<ErrorLogEntry[]> {
+	const query = new URLSearchParams({
+		page: String(params.page),
+		size: String(params.size),
+	});
+	const result = await apiFetch(apiUrl(`/api/error-logs?${query}`), { method: 'GET' });
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);

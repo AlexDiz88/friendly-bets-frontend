@@ -33,6 +33,17 @@ export const errorLogsToolbarSx: SxProps<Theme> = {
 	flexWrap: 'wrap',
 };
 
+export const errorLogsPageSizeSelectSx: SxProps<Theme> = {
+	minWidth: '4.5rem',
+	height: 36,
+	fontSize: '0.85rem',
+	fontWeight: 600,
+	'& .MuiSelect-select': {
+		py: 0.75,
+		px: 1.25,
+	},
+};
+
 export function errorLogCardSx(theme: Theme, severity: string): SxProps<Theme> {
 	const isWarn = severity === 'WARN';
 	const accent = isWarn ? ERROR_LOG_WARN : ERROR_LOG_ACCENT;
@@ -86,6 +97,48 @@ export function chipSx(color: string, theme: Theme): SxProps<Theme> {
 	};
 }
 
+export function chipIdSx(theme: Theme): SxProps<Theme> {
+	return {
+		...chipSx(ERROR_LOG_ID, theme),
+		height: 'auto',
+		minHeight: 24,
+		fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace",
+		fontWeight: 600,
+		letterSpacing: 0,
+		'& .MuiChip-label': {
+			px: 0.9,
+			py: 0.25,
+			overflow: 'visible',
+			textOverflow: 'clip',
+			whiteSpace: 'normal',
+			wordBreak: 'break-all',
+			lineHeight: 1.3,
+		},
+	};
+}
+
+export function chipWithLogosSx(color: string, theme: Theme): SxProps<Theme> {
+	return {
+		...chipSx(color, theme),
+		height: 24,
+		'& .MuiChip-label': {
+			display: 'flex',
+			alignItems: 'center',
+			px: 0.7,
+			overflow: 'visible',
+			textOverflow: 'clip',
+			whiteSpace: 'nowrap',
+		},
+	};
+}
+
+export const errorLogChipLogoSx: SxProps<Theme> = {
+	width: 16,
+	height: 16,
+	borderRadius: 0.5,
+	flexShrink: 0,
+};
+
 export const errorLogMessageSx: SxProps<Theme> = {
 	fontSize: '0.875rem',
 	lineHeight: 1.5,
@@ -104,4 +157,40 @@ export const errorLogTimeSx: SxProps<Theme> = {
 	fontSize: '0.72rem',
 	color: 'text.secondary',
 	fontVariantNumeric: 'tabular-nums',
+};
+
+export const errorLogOccurrencesToggleSx: SxProps<Theme> = {
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'space-between',
+	gap: 1,
+	mt: 1,
+	ml: 0.75,
+	minHeight: 40,
+	px: 0.75,
+	borderRadius: 1.5,
+	cursor: 'pointer',
+	userSelect: 'none',
+	'&:hover': {
+		bgcolor: 'action.hover',
+	},
+};
+
+export const errorLogOccurrencesListSx: SxProps<Theme> = {
+	ml: 0.75,
+	mt: 0.35,
+	maxHeight: 240,
+	overflow: 'auto',
+	pr: 0.5,
+};
+
+export const errorLogOccurrenceRowSx: SxProps<Theme> = {
+	display: 'flex',
+	alignItems: 'baseline',
+	justifyContent: 'space-between',
+	gap: 1,
+	py: 0.3,
+	fontSize: '0.72rem',
+	fontVariantNumeric: 'tabular-nums',
+	color: 'text.secondary',
 };

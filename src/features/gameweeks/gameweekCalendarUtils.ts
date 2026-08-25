@@ -28,9 +28,9 @@ export function sortLeagueMatchdayNodesByLeagueCode<T extends { leagueCode?: str
 }
 
 /**
- * Тур по умолчанию при открытии «По турам»:
- * 1) текущий по датам start/end (с учётом «вчера»);
- * 2) иначе ближайший к сегодня по startDate.
+ * Запасной выбор тура только по датам start/end (якорь = вчера).
+ * Основной выбор текущего gameweek — backend
+ * {@code GET /api/calendars/seasons/{id}/current} (матчи → даты).
  */
 export function pickDefaultCalendarNode(calendarNodes: Calendar[]): Calendar | undefined {
 	if (calendarNodes.length === 0) {

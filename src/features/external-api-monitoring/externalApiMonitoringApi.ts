@@ -71,11 +71,17 @@ export const MONITORING_LAYERS: ExternalDataLayer[] = [
 	'STANDINGS',
 ];
 
+export type MonitoringLayerPage = {
+	runs: MonitoringRun[];
+	total: number;
+	failed: number;
+};
+
 export async function fetchMonitoringRuns(
 	layer: ExternalDataLayer,
 	hours = 24,
 	limit = 50
-): Promise<MonitoringRun[]> {
+): Promise<MonitoringLayerPage> {
 	const params = new URLSearchParams({
 		layer,
 		hours: String(hours),
@@ -86,7 +92,12 @@ export async function fetchMonitoringRuns(
 		const { message } = await result.json();
 		throw new Error(message);
 	}
-	return result.json();
+	const body: MonitoringLayerPage = await result.json();
+	return {
+		runs: body.runs ?? [],
+		total: body.total ?? 0,
+		failed: body.failed ?? 0,
+	};
 }
 
 export async function fetchMonitoringLatest(): Promise<Partial<Record<ExternalDataLayer, MonitoringRun>>> {

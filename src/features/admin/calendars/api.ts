@@ -4,6 +4,21 @@ import BetsPage from '../../bets/types/BetsPage';
 import Calendar from './types/Calendar';
 import NewCalendar from './types/NewCalendar';
 
+export async function getCurrentSeasonCalendarNode(seasonId: string): Promise<Calendar> {
+	let url = `${
+		import.meta.env.VITE_PRODUCT_SERVER || ''
+	}/api/calendars/seasons/${seasonId}/current`;
+	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+		url = `/api/calendars/seasons/${seasonId}/current`;
+	}
+	const result = await apiFetch(`${url}`);
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 export async function getAllSeasonCalendarNodes(
 	seasonId: string
 ): Promise<{ calendarNodes: Calendar[] }> {
