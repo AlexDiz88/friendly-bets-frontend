@@ -27,6 +27,10 @@ export type ErrorLogEntry = {
 	awayTeamTitle?: string | null;
 	homeTeamLogoKey?: string | null;
 	awayTeamLogoKey?: string | null;
+	firstOccurredAt?: string | null;
+	lastOccurredAt?: string | null;
+	occurredAt?: string[] | null;
+	occurrenceCount?: number | null;
 	context?: Record<string, string> | null;
 };
 

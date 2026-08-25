@@ -148,3 +148,39 @@ export const errorLogTimeSx: SxProps<Theme> = {
 	color: 'text.secondary',
 	fontVariantNumeric: 'tabular-nums',
 };
+
+export const errorLogOccurrencesToggleSx: SxProps<Theme> = {
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'space-between',
+	gap: 1,
+	mt: 1,
+	ml: 0.75,
+	minHeight: 40,
+	px: 0.75,
+	borderRadius: 1.5,
+	cursor: 'pointer',
+	userSelect: 'none',
+	'&:hover': {
+		bgcolor: 'action.hover',
+	},
+};
+
+export const errorLogOccurrencesListSx: SxProps<Theme> = {
+	ml: 0.75,
+	mt: 0.35,
+	maxHeight: 240,
+	overflow: 'auto',
+	pr: 0.5,
+};
+
+export const errorLogOccurrenceRowSx: SxProps<Theme> = {
+	display: 'flex',
+	alignItems: 'baseline',
+	justifyContent: 'space-between',
+	gap: 1,
+	py: 0.3,
+	fontSize: '0.72rem',
+	fontVariantNumeric: 'tabular-nums',
+	color: 'text.secondary',
+};
