@@ -1,13 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
-import { selectAllCalendarNodes } from '../admin/calendars/selectors';
 import type Calendar from '../admin/calendars/types/Calendar';
+import { getCurrentSeasonCalendarNode } from '../admin/calendars/api';
 import { getUserSlotBets } from '../bets/api';
-import {
-	pickDefaultCalendarNode,
-	sortLeagueMatchdayNodesByLeagueCode,
-} from './gameweekCalendarUtils';
+import { sortLeagueMatchdayNodesByLeagueCode } from './gameweekCalendarUtils';
 
 export type NearestGameweekBetProgressItem = {
 	leagueId: string;
@@ -32,40 +27,49 @@ export function useNearestGameweekBetProgress({
 	loading: boolean;
 	calendarsReady: boolean;
 } {
-	const dispatch = useAppDispatch();
-	const calendarNodes = useAppSelector(selectAllCalendarNodes);
-	const [calendarsReady, setCalendarsReady] = useState(false);
+	const [node, setNode] = useState<Calendar | undefined>(undefined);
+	const [nodeReady, setNodeReady] = useState(false);
 	const [items, setItems] = useState<NearestGameweekBetProgressItem[]>([]);
 	const [progressLoading, setProgressLoading] = useState(false);
 
 	useEffect(() => {
 		if (!enabled || !seasonId) {
-			setCalendarsReady(false);
+			setNode(undefined);
+			setNodeReady(false);
 			return;
 		}
-		const alreadyLoaded = calendarNodes.some((n) => n.seasonId === seasonId);
-		if (alreadyLoaded) {
-			setCalendarsReady(true);
-		} else {
-			setCalendarsReady(false);
-		}
-		void dispatch(getAllSeasonCalendarNodes(seasonId)).finally(() => {
-			setCalendarsReady(true);
-		});
-	}, [enabled, seasonId, dispatch]);
 
-	const nearestNode = useMemo(() => {
-		if (!enabled || !calendarsReady) {
-			return undefined;
-		}
-		return pickDefaultCalendarNode(calendarNodes);
-	}, [enabled, calendarsReady, calendarNodes]);
+		let cancelled = false;
+		setNodeReady(false);
 
-	const nearestNodeId = nearestNode?.id;
-	const nearestLeagueNodes = nearestNode?.leagueMatchdayNodes;
+		const load = async (): Promise<void> => {
+			try {
+				const current = await getCurrentSeasonCalendarNode(seasonId);
+				if (!cancelled) {
+					setNode(current);
+				}
+			} catch {
+				if (!cancelled) {
+					setNode(undefined);
+				}
+			} finally {
+				if (!cancelled) {
+					setNodeReady(true);
+				}
+			}
+		};
+
+		void load();
+		return () => {
+			cancelled = true;
+		};
+	}, [enabled, seasonId, refreshKey]);
+
+	const nearestNodeId = node?.id;
+	const nearestLeagueNodes = node?.leagueMatchdayNodes;
 
 	useEffect(() => {
-		if (!enabled || !seasonId || !calendarsReady || !nearestNodeId || !nearestLeagueNodes) {
+		if (!enabled || !seasonId || !nodeReady || !nearestNodeId || !nearestLeagueNodes) {
 			setItems([]);
 			setProgressLoading(false);
 			return;
@@ -117,7 +121,7 @@ export function useNearestGameweekBetProgress({
 		return () => {
 			cancelled = true;
 		};
-	}, [enabled, seasonId, calendarsReady, nearestNodeId, nearestLeagueNodes, refreshKey]);
+	}, [enabled, seasonId, nodeReady, nearestNodeId, nearestLeagueNodes, refreshKey]);
 
 	const complete = useMemo(() => {
 		if (items.length === 0) {
@@ -127,10 +131,10 @@ export function useNearestGameweekBetProgress({
 	}, [items]);
 
 	return {
-		node: nearestNode,
+		node,
 		items,
 		complete,
-		loading: enabled && (!calendarsReady || progressLoading),
-		calendarsReady,
+		loading: enabled && (!nodeReady || progressLoading),
+		calendarsReady: nodeReady,
 	};
 }

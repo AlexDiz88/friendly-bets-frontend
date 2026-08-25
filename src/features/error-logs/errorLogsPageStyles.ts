@@ -33,6 +33,93 @@ export const errorLogsToolbarSx: SxProps<Theme> = {
 	flexWrap: 'wrap',
 };
 
+export const errorLogsPageSizeSelectSx: SxProps<Theme> = {
+	minWidth: '4.5rem',
+	height: 36,
+	fontSize: '0.85rem',
+	fontWeight: 600,
+	'& .MuiSelect-select': {
+		py: 0.75,
+		px: 1.25,
+	},
+};
+
+export const ERROR_LOGS_PAGINATION_TOUCH_MIN = 44;
+
+export const errorLogsPaginationRootSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		mt: 1.25,
+		mb: 0.5,
+		py: 0.5,
+		px: 0.5,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 0.75,
+		width: '100%',
+		boxSizing: 'border-box',
+		borderRadius: 2,
+		border: '1px solid',
+		borderColor: alpha(ERROR_LOG_ACCENT, isDark ? 0.35 : 0.22),
+		background: isDark
+			? alpha(ERROR_LOG_ACCENT, 0.1)
+			: alpha(ERROR_LOG_ACCENT, 0.06),
+	};
+};
+
+export function errorLogsPaginationNavBtnSx(disabled: boolean): SxProps<Theme> {
+	return (theme) => {
+		const isDark = theme.palette.mode === 'dark';
+		return {
+			width: ERROR_LOGS_PAGINATION_TOUCH_MIN,
+			height: ERROR_LOGS_PAGINATION_TOUCH_MIN,
+			flexShrink: 0,
+			borderRadius: 1.5,
+			border: '1px solid',
+			borderColor: alpha(ERROR_LOG_ACCENT, isDark ? 0.4 : 0.28),
+			bgcolor: isDark ? alpha(ERROR_LOG_ACCENT, 0.16) : '#fff',
+			color: ERROR_LOG_ACCENT,
+			'&:hover': disabled
+				? undefined
+				: {
+						bgcolor: alpha(ERROR_LOG_ACCENT, isDark ? 0.28 : 0.12),
+					},
+			'&.Mui-disabled': {
+				opacity: 0.4,
+			},
+		};
+	};
+}
+
+export const errorLogsPaginationIndicatorSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	return {
+		flex: 1,
+		minWidth: 0,
+		minHeight: ERROR_LOGS_PAGINATION_TOUCH_MIN,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		px: 1.25,
+		borderRadius: 1.5,
+		border: '1px solid',
+		borderColor: alpha(ERROR_LOG_ACCENT, isDark ? 0.5 : 0.4),
+		background: isDark
+			? `linear-gradient(135deg, ${alpha(ERROR_LOG_ACCENT, 0.55)} 0%, ${alpha(ERROR_LOG_ACCENT, 0.85)} 100%)`
+			: `linear-gradient(135deg, ${alpha(ERROR_LOG_ACCENT, 0.85)} 0%, ${ERROR_LOG_ACCENT} 100%)`,
+	};
+};
+
+export const errorLogsPaginationPageTextSx: SxProps<Theme> = {
+	fontFamily: "'Exo 2', 'Shantell Sans', sans-serif",
+	fontWeight: 800,
+	fontSize: '0.95rem',
+	lineHeight: 1,
+	color: '#f8fafc',
+	fontVariantNumeric: 'tabular-nums',
+};
+
 export function errorLogCardSx(theme: Theme, severity: string): SxProps<Theme> {
 	const isWarn = severity === 'WARN';
 	const accent = isWarn ? ERROR_LOG_WARN : ERROR_LOG_ACCENT;
@@ -94,7 +181,6 @@ export function chipIdSx(theme: Theme): SxProps<Theme> {
 		fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace",
 		fontWeight: 600,
 		letterSpacing: 0,
-		userSelect: 'all',
 		'& .MuiChip-label': {
 			px: 0.9,
 			py: 0.25,

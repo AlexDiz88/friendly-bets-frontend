@@ -7,10 +7,14 @@ import {
 	Chip,
 	CircularProgress,
 	Collapse,
+	FormControl,
 	IconButton,
+	MenuItem,
+	Select,
 	Tooltip,
 	Typography,
 	useTheme,
+	type SelectChangeEvent,
 	type SxProps,
 	type Theme,
 } from '@mui/material';
@@ -23,12 +27,19 @@ import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton
 import { showErrorSnackbar, showSuccessSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
+import { copyText } from '../api-sandbox/CopyableValue';
+import { externalDataLayerAccent } from '../../shared/externalDataLayerColors';
+import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
+import ErrorLogsPagination from './ErrorLogsPagination';
 import {
 	clearErrorLogs,
+	DEFAULT_ERROR_LOGS_PAGE_SIZE,
 	deleteErrorLog,
+	ERROR_LOGS_PAGE_SIZES,
 	fetchErrorLogs,
 	fetchErrorLogsCount,
 	type ErrorLogEntry,
+	type ErrorLogsPageSize,
 } from './errorLogsApi';
 import {
 	ERROR_LOG_ACCENT,
@@ -48,11 +59,10 @@ import {
 	errorLogOccurrencesToggleSx,
 	errorLogTimeSx,
 	errorLogsPageRootSx,
+	errorLogsPageSizeSelectSx,
 	errorLogsTitleSx,
 	errorLogsToolbarSx,
 } from './errorLogsPageStyles';
-import { externalDataLayerAccent } from '../../shared/externalDataLayerColors';
-import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
 
 function codeLabel(code: string): string {
 	const key = `errorLogs.code.${code}`;
@@ -73,23 +83,6 @@ function ErrorLogChipLogo({ src, alt }: { src: string; alt: string }): JSX.Eleme
 			sx={[errorLogChipLogoSx, leagueLogoAvatarSx] as SxProps<Theme>}
 		/>
 	);
-}
-
-function teamChipTooltip(entry: ErrorLogEntry): string {
-	const home = resolveTeamDisplayName(
-		{ title: entry.homeTeamTitle || entry.homeTeam || '' },
-		t,
-		i18n.language
-	);
-	const away = resolveTeamDisplayName(
-		{ title: entry.awayTeamTitle || entry.awayTeam || '' },
-		t,
-		i18n.language
-	);
-	if (home && away) {
-		return `${home} — ${away}`;
-	}
-	return home || away;
 }
 
 function occurrenceTimes(entry: ErrorLogEntry): string[] {
@@ -196,15 +189,26 @@ export default function ErrorLogsPage(): JSX.Element {
 	const [loading, setLoading] = useState(true);
 	const [entries, setEntries] = useState<ErrorLogEntry[]>([]);
 	const [totalCount, setTotalCount] = useState(0);
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState<ErrorLogsPageSize>(DEFAULT_ERROR_LOGS_PAGE_SIZE);
 	const [clearOpen, setClearOpen] = useState(false);
 	const [clearing, setClearing] = useState(false);
+
+	const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
 	const load = useCallback(async () => {
 		setLoading(true);
 		try {
-			const [list, count] = await Promise.all([fetchErrorLogs(), fetchErrorLogsCount()]);
+			const [list, count] = await Promise.all([
+				fetchErrorLogs({ page: page - 1, size: pageSize }),
+				fetchErrorLogsCount(),
+			]);
 			setEntries(list);
 			setTotalCount(count);
+			const maxPage = Math.max(1, Math.ceil(count / pageSize));
+			if (page > maxPage) {
+				setPage(maxPage);
+			}
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
@@ -214,18 +218,29 @@ export default function ErrorLogsPage(): JSX.Element {
 		} finally {
 			setLoading(false);
 		}
-	}, [dispatch]);
+	}, [dispatch, page, pageSize]);
 
 	useEffect(() => {
 		void load();
 	}, [load]);
 
+	const handlePageSizeChange = (event: SelectChangeEvent<number>): void => {
+		const next = Number(event.target.value) as ErrorLogsPageSize;
+		setPageSize(next);
+		setPage(1);
+	};
+
 	const handleDelete = async (id: string): Promise<void> => {
 		try {
 			await deleteErrorLog(id);
-			setEntries((prev) => prev.filter((e) => e.id !== id));
-			setTotalCount((c) => Math.max(0, c - 1));
+			const newTotal = Math.max(0, totalCount - 1);
+			const maxPage = Math.max(1, Math.ceil(newTotal / pageSize));
 			dispatch(showSuccessSnackbar({ message: t('errorLogsEntryDeleted') }));
+			if (page > maxPage) {
+				setPage(maxPage);
+			} else {
+				await load();
+			}
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
@@ -241,6 +256,7 @@ export default function ErrorLogsPage(): JSX.Element {
 			await clearErrorLogs();
 			setEntries([]);
 			setTotalCount(0);
+			setPage(1);
 			setClearOpen(false);
 			dispatch(showSuccessSnackbar({ message: t('errorLogsCleared') }));
 		} catch (error) {
@@ -261,11 +277,31 @@ export default function ErrorLogsPage(): JSX.Element {
 			</Typography>
 
 			<Box sx={errorLogsToolbarSx}>
-				<Typography variant="body2" color="text.secondary">
-					{totalCount > entries.length
-						? t('errorLogsCountCapped', { total: totalCount, shown: entries.length })
-						: t('errorLogsCount', { count: totalCount })}
-				</Typography>
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', minWidth: 0 }}>
+					<Typography variant="body2" color="text.secondary">
+						{t('errorLogsCount', { count: totalCount })}
+					</Typography>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+						<Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
+							{t('errorLogsPageSize')}
+						</Typography>
+						<FormControl size="small" sx={{ minWidth: '4.5rem' }}>
+							<Select
+								value={pageSize}
+								onChange={handlePageSizeChange}
+								displayEmpty
+								aria-label={t('errorLogsPageSize')}
+								sx={errorLogsPageSizeSelectSx}
+							>
+								{ERROR_LOGS_PAGE_SIZES.map((size) => (
+									<MenuItem key={size} value={size}>
+										{size}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</Box>
+				</Box>
 				<Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
 					<span>
 						<Tooltip title={t('errorLogsRefresh')}>
@@ -324,9 +360,23 @@ export default function ErrorLogsPage(): JSX.Element {
 						entry.homeTeamLogoKey ||
 						entry.awayTeamLogoKey
 				);
+				const homeTeamName = resolveTeamDisplayName(
+					{ title: entry.homeTeamTitle || entry.homeTeam || '' },
+					t,
+					i18n.language
+				);
+				const awayTeamName = resolveTeamDisplayName(
+					{ title: entry.awayTeamTitle || entry.awayTeam || '' },
+					t,
+					i18n.language
+				);
+				const teamsLabel =
+					homeTeamName && awayTeamName
+						? `${homeTeamName} - ${awayTeamName}`
+						: homeTeamName || awayTeamName;
 				const teamsText =
 					!hasTeamLogos && (entry.homeTeam || entry.awayTeam)
-						? `${entry.homeTeam ?? '—'} — ${entry.awayTeam ?? '—'}`
+						? `${entry.homeTeam ?? '—'} - ${entry.awayTeam ?? '—'}`
 						: null;
 				const times = occurrenceTimes(entry);
 				const firstAt = times[0] ?? entry.createdAt;
@@ -440,7 +490,7 @@ export default function ErrorLogsPage(): JSX.Element {
 								/>
 							) : null}
 							{hasTeamLogos ? (
-								<Tooltip title={teamChipTooltip(entry)}>
+								<Tooltip title={teamsLabel}>
 									<Chip
 										size="small"
 										sx={chipWithLogosSx(ERROR_LOG_TEAMS, theme)}
@@ -456,6 +506,8 @@ export default function ErrorLogsPage(): JSX.Element {
 													})}
 													alt={entry.homeTeamTitle || entry.homeTeam || ''}
 												/>
+												{homeTeamName}
+												{' - '}
 												<ErrorLogChipLogo
 													src={resolveTeamLogoUrl({
 														title: entry.awayTeamTitle || entry.awayTeam || '',
@@ -463,6 +515,7 @@ export default function ErrorLogsPage(): JSX.Element {
 													})}
 													alt={entry.awayTeamTitle || entry.awayTeam || ''}
 												/>
+												{awayTeamName}
 											</Box>
 										}
 									/>
@@ -476,11 +529,32 @@ export default function ErrorLogsPage(): JSX.Element {
 								/>
 							) : null}
 							{entry.matchScheduleId ? (
-								<Chip
-									size="small"
-									label={`id ${entry.matchScheduleId}`}
-									sx={chipIdSx(theme)}
-								/>
+								<Tooltip title={t('apiSandbox.copy')}>
+									<Chip
+										size="small"
+										onClick={() => {
+											void copyText(entry.matchScheduleId!).then(() => {
+												dispatch(
+													showSuccessSnackbar({
+														message: t('apiSandbox.copied'),
+														duration: 1600,
+													})
+												);
+											});
+										}}
+										label={
+											<Box component="span" sx={{ display: 'inline' }}>
+												<Box component="span" sx={{ userSelect: 'none', mr: 0.5 }}>
+													id
+												</Box>
+												<Box component="span" sx={{ userSelect: 'all' }}>
+													{entry.matchScheduleId}
+												</Box>
+											</Box>
+										}
+										sx={[chipIdSx(theme), { cursor: 'pointer' }] as SxProps<Theme>}
+									/>
+								</Tooltip>
 							) : null}
 							{teamsText ? (
 								<Chip size="small" label={teamsText} sx={chipSx(ERROR_LOG_TEAMS, theme)} />
@@ -500,6 +574,8 @@ export default function ErrorLogsPage(): JSX.Element {
 					</Box>
 				);
 			})}
+
+			<ErrorLogsPagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
 			<CustomCalendarDialog
 				open={clearOpen}
