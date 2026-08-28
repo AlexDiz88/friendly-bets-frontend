@@ -9,6 +9,7 @@ import {
 	MenuItem,
 	OutlinedInput,
 	Select,
+	TextField,
 	type SelectChangeEvent,
 	Typography,
 } from '@mui/material';
@@ -37,14 +38,17 @@ import { resolveExternalSeasonForLeague } from '../../match-results/seasonExtern
 import type { ExternalMatch } from '../../match-results/types/ExternalMatch';
 import { matchSideToDisplayTeam } from '../../match-results/externalMatchDisplay';
 import {
+	fetchExternalDataLayerConfig,
 	syncExternalLive,
 	syncExternalSchedule,
 	syncExternalStandings,
 	syncOddsProviderSlot,
 } from './externalDataAdminApi';
 import {
+	CHAMPIONAT_PROVIDER,
 	MARATHONBET_PROVIDER,
 	MELBET_PROVIDER,
+	TWENTYFOUR_SCORE_PROVIDER,
 } from '../teams/teamProviderConstants';
 
 const SCHEDULE_LEAGUE_CODES = new Set(['EPL', 'BL', 'CL', 'LE', 'EC', 'WC']);
@@ -58,7 +62,15 @@ const ODDS_PROVIDER_LABEL_KEY: Record<string, string> = {
 	[MARATHONBET_PROVIDER]: 'externalTeamAliasProviderMarathonbet',
 	[MELBET_PROVIDER]: 'externalTeamAliasProviderMelbet',
 };
+const LIVE_PROVIDER_LABEL_KEY: Record<string, string> = {
+	[TWENTYFOUR_SCORE_PROVIDER]: 'externalTeamAliasProvider24score',
+	[CHAMPIONAT_PROVIDER]: 'externalTeamAliasProviderChampionat',
+};
 const MATCH_OPTION_AVATAR = 18;
+
+function todayUtcIsoDate(): string {
+	return new Date().toISOString().slice(0, 10);
+}
 
 function MatchOptionLabel({ match }: { match: ExternalMatch }): JSX.Element {
 	const homeTeam = matchSideToDisplayTeam(match, 'home');
@@ -108,6 +120,9 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	const [syncingSchedule, setSyncingSchedule] = useState(false);
 	const [syncingOdds, setSyncingOdds] = useState(false);
 	const [syncingLive, setSyncingLive] = useState(false);
+	const [liveDate, setLiveDate] = useState(todayUtcIsoDate);
+	const [liveProvider, setLiveProvider] = useState('');
+	const [liveProviders, setLiveProviders] = useState<string[]>([]);
 	const [syncingStandings, setSyncingStandings] = useState(false);
 	const [standingsLeagueCode, setStandingsLeagueCode] = useState('EPL');
 	const [forceOddsUpdate, setForceOddsUpdate] = useState(false);
@@ -122,6 +137,44 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 			void dispatch(getActiveSeason());
 		}
 	}, [activeSeason, dispatch]);
+
+	useEffect(() => {
+		if (!showPanel) {
+			return;
+		}
+		let cancelled = false;
+		void (async () => {
+			try {
+				const config = await fetchExternalDataLayerConfig();
+				if (cancelled) {
+					return;
+				}
+				const ids = [...(config.capabilities?.LIVE ?? [])].sort();
+				setLiveProviders(ids);
+				const primary = config.layers?.LIVE?.primaryProvider ?? '';
+				setLiveProvider((prev) => {
+					if (prev && ids.includes(prev)) {
+						return prev;
+					}
+					if (primary && ids.includes(primary)) {
+						return primary;
+					}
+					return ids[0] ?? '';
+				});
+			} catch (error) {
+				if (!cancelled) {
+					dispatch(
+						showErrorSnackbar({
+							message: error instanceof Error ? error.message : 'externalDataLayersLoadFailed',
+						})
+					);
+				}
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [showPanel, dispatch]);
 
 	const allLeagues = useMemo(() => activeSeason?.leagues ?? [], [activeSeason?.leagues]);
 	const scheduleLeagues = useMemo(
@@ -410,9 +463,12 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	};
 
 	const handleLiveSync = async (): Promise<void> => {
+		if (!liveProvider || !liveDate) {
+			return;
+		}
 		setSyncingLive(true);
 		try {
-			const result = await syncExternalLive();
+			const result = await syncExternalLive({ provider: liveProvider, date: liveDate });
 			dispatch(
 				showSuccessSnackbar({
 					message: t('externalDataLiveSyncSuccess', {
@@ -684,9 +740,37 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 			<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', mb: 1 }}>
 				{t('externalDataLiveSyncHint')}
 			</Typography>
+			<FormControl fullWidth size="small" sx={{ mb: 1 }}>
+				<InputLabel id="live-sync-provider-label">{t('externalDataLiveProvider')}</InputLabel>
+				<Select
+					labelId="live-sync-provider-label"
+					label={t('externalDataLiveProvider')}
+					value={liveProviders.includes(liveProvider) ? liveProvider : ''}
+					onChange={(e) => setLiveProvider(String(e.target.value))}
+					disabled={liveProviders.length === 0}
+				>
+					{liveProviders.map((provider) => (
+						<MenuItem key={provider} value={provider}>
+							{LIVE_PROVIDER_LABEL_KEY[provider]
+								? t(LIVE_PROVIDER_LABEL_KEY[provider])
+								: provider}
+						</MenuItem>
+					))}
+				</Select>
+			</FormControl>
+			<TextField
+				fullWidth
+				size="small"
+				type="date"
+				label={t('externalDataLiveSyncDate')}
+				value={liveDate}
+				onChange={(e) => setLiveDate(e.target.value)}
+				InputLabelProps={{ shrink: true }}
+				sx={{ mb: 1.5 }}
+			/>
 			<CustomSuccessButton
 				onClick={() => void handleLiveSync()}
-				disabled={syncingLive}
+				disabled={syncingLive || !liveProvider || !liveDate}
 				loading={syncingLive}
 				buttonText={t('externalDataLiveSyncNow')}
 				sx={{ width: '100%', mb: 2.5, mr: 0 }}

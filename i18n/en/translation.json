@@ -860,6 +860,9 @@
 		"externalDataLayersSaveFailed": "Failed to save data sources",
 		"oddsRefreshWithinHoursInvalid": "Odds refresh window: enter an integer from 1 to 168 hours",
 		"externalDataLiveSyncFailed": "Live sync failed",
+		"liveSyncDateRequired": "Live sync date is required",
+		"liveSyncProviderRequired": "LIVE provider is required",
+		"externalDataProviderUnavailable": "Provider is unavailable",
 		"soccer365GameIdRequired": "Match has no soccer365 game id",
 		"soccer365FullMatchParseFailed": "Failed to parse soccer365 game card",
 		"fullMatchKickoffRequired": "Match has no utc_kickoff — FULL cannot run",
@@ -1346,7 +1349,9 @@
 	"externalDataLiveSyncTitle": "Live sync now",
 	"externalDataLiveSyncNow": "Sync live now",
 	"externalDataLiveSyncSuccess": "Live: tracked {{tracked}}, HTTP {{http}}, updated {{updated}}, finished {{finished}}",
-	"externalDataLiveSyncHint": "Syncs all tracked season matches: one HTTP request per UTC kickoff date.",
+	"externalDataLiveSyncHint": "One HTTP request to the selected LIVE provider for the selected UTC kickoff date. Autosync still walks all candidate dates.",
+	"externalDataLiveProvider": "Provider",
+	"externalDataLiveSyncDate": "Date (UTC kickoff)",
 	"errorLogs": {
 		"menuLink": "Error log",
 		"hasEntriesAria": "Error log has entries",
@@ -1668,18 +1673,20 @@
 		}
 	},
 	"siteAccessProbeTitle": "Site access probe",
-	"siteAccessProbeHint": "Before integrating a new source: paste the home URL (or any public page). The request runs from the app server — localhost is not equal to prod. PASS = Java can usually fetch; CLOUDFLARE_JS_CHALLENGE = same as aiscore, do not start integration.",
+	"siteAccessProbeHint": "Before integrating a new source: paste the home URL (or any public page). The request runs from the app server — localhost is not equal to prod. PASS = Java can usually fetch; CLOUDFLARE_JS_CHALLENGE / AUTH_INTERSTITIAL = a wall (Cloudflare or SberID), do not start integration.",
 	"siteAccessProbeUrl": "Site URL",
 	"siteAccessProbeRun": "Probe",
 	"siteAccessProbeVerdict": {
 		"PASS": "PASS — reachable",
 		"CLOUDFLARE_JS_CHALLENGE": "Cloudflare JS challenge",
+		"AUTH_INTERSTITIAL": "SberID / SSO interstitial",
 		"HTTP_BLOCKED": "HTTP blocked",
 		"NETWORK_ERROR": "Network / DNS / TLS"
 	},
 	"siteAccessProbeVerdictHint": {
 		"PASS": "No JS challenge. Safe to try a parser/SPI.",
 		"CLOUDFLARE_JS_CHALLENGE": "Same protection as aiscore: Java from this host will not pass. Use another source or a proxy.",
+		"AUTH_INTERSTITIAL": "The site returned a login page (SberID) instead of content. Java HttpClient cannot complete it — switch primary or use another source.",
 		"HTTP_BLOCKED": "Site returned an HTTP error. Possibly geo/bot block — check status and snippet.",
 		"NETWORK_ERROR": "Request did not complete. Check URL and server network."
 	}

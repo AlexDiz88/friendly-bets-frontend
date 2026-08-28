@@ -14,6 +14,7 @@ function verdictColor(
 		case 'PASS':
 			return 'success';
 		case 'CLOUDFLARE_JS_CHALLENGE':
+		case 'AUTH_INTERSTITIAL':
 			return 'error';
 		case 'HTTP_BLOCKED':
 		case 'NETWORK_ERROR':

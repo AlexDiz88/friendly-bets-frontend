@@ -860,6 +860,9 @@
 		"externalDataLayersSaveFailed": "Не удалось сохранить источники данных",
 		"oddsRefreshWithinHoursInvalid": "Окно обновления кэфов: укажите целое число от 1 до 168 часов",
 		"externalDataLiveSyncFailed": "Live sync не удался",
+		"liveSyncDateRequired": "Укажите дату для live sync",
+		"liveSyncProviderRequired": "Укажите LIVE-провайдера",
+		"externalDataProviderUnavailable": "Провайдер недоступен",
 		"soccer365GameIdRequired": "Нет soccer365 game id у матча",
 		"soccer365FullMatchParseFailed": "Не удалось разобрать карточку soccer365",
 		"fullMatchKickoffRequired": "У матча нет utc_kickoff — FULL невозможен",
@@ -1346,7 +1349,9 @@
 	"externalDataLiveSyncTitle": "Live sync сейчас",
 	"externalDataLiveSyncNow": "Синхронизировать live",
 	"externalDataLiveSyncSuccess": "Live: отслеживается {{tracked}}, HTTP {{http}}, обновлено {{updated}}, завершено {{finished}}",
-	"externalDataLiveSyncHint": "Синхронизация всех отслеживаемых матчей сезона: один HTTP-запрос на каждую UTC-дату kickoff.",
+	"externalDataLiveSyncHint": "Один HTTP-запрос к выбранному LIVE-провайдеру на выбранную UTC-дату kickoff. Автосинк по-прежнему обходит все даты кандидатов.",
+	"externalDataLiveProvider": "Провайдер",
+	"externalDataLiveSyncDate": "Дата (UTC kickoff)",
 	"errorLogs": {
 		"menuLink": "Лог ошибок",
 		"hasEntriesAria": "В логе есть записи",
@@ -1668,18 +1673,20 @@
 		}
 	},
 	"siteAccessProbeTitle": "Проверка доступа к сайту",
-	"siteAccessProbeHint": "Перед интеграцией нового источника: вставь URL главной (или любой публичной страницы). Запрос идёт с сервера приложения — результат с localhost не равен проду. PASS = Java обычно может ходить; CLOUDFLARE_JS_CHALLENGE = как у aiscore, интеграцию не начинать.",
+	"siteAccessProbeHint": "Перед интеграцией нового источника: вставь URL главной (или любой публичной страницы). Запрос идёт с сервера приложения — результат с localhost не равен проду. PASS = Java обычно может ходить; CLOUDFLARE_JS_CHALLENGE / AUTH_INTERSTITIAL = стенка (Cloudflare или SberID), интеграцию не начинать.",
 	"siteAccessProbeUrl": "URL сайта",
 	"siteAccessProbeRun": "Проверить",
 	"siteAccessProbeVerdict": {
 		"PASS": "PASS — доступ есть",
 		"CLOUDFLARE_JS_CHALLENGE": "Cloudflare JS-challenge",
+		"AUTH_INTERSTITIAL": "SberID / SSO-заглушка",
 		"HTTP_BLOCKED": "HTTP блокировка",
 		"NETWORK_ERROR": "Сеть / DNS / TLS"
 	},
 	"siteAccessProbeVerdictHint": {
 		"PASS": "Ответ без JS-challenge. Можно пробовать парсер/SPI.",
 		"CLOUDFLARE_JS_CHALLENGE": "Та же защита, что у aiscore: Java с этого хоста не пройдёт. Нужен другой источник или proxy.",
+		"AUTH_INTERSTITIAL": "Вместо страницы пришла авторизация (SberID). Java HttpClient это не проходит — смени primary или нужен другой источник.",
 		"HTTP_BLOCKED": "Сайт ответил ошибкой HTTP. Возможно geo/bot block — смотри статус и сниппет.",
 		"NETWORK_ERROR": "Запрос не дошёл. Проверь URL и сеть сервера."
 	}

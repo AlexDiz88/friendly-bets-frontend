@@ -46,7 +46,10 @@ export async function patchExternalDataLayerConfig(
 	return result.json();
 }
 
-export async function syncExternalLive(): Promise<{
+export async function syncExternalLive(params: {
+	provider: string;
+	date: string;
+}): Promise<{
 	httpRequests: number;
 	trackedCount: number;
 	updated: number;
@@ -54,7 +57,11 @@ export async function syncExternalLive(): Promise<{
 	message?: string;
 	datesSynced?: string[];
 }> {
-	const result = await apiFetch(apiUrl('/api/admin/external-data/live/sync'), {
+	const query = new URLSearchParams({
+		provider: params.provider,
+		date: params.date,
+	});
+	const result = await apiFetch(apiUrl(`/api/admin/external-data/live/sync?${query}`), {
 		method: 'POST',
 	});
 	if (result.status >= 400) {
@@ -214,6 +221,7 @@ export async function syncMarathonbetOdds(params: {
 export type SiteAccessProbeVerdict =
 	| 'PASS'
 	| 'CLOUDFLARE_JS_CHALLENGE'
+	| 'AUTH_INTERSTITIAL'
 	| 'HTTP_BLOCKED'
 	| 'NETWORK_ERROR';
 
