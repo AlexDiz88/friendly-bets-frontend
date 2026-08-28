@@ -1676,10 +1676,13 @@
 	"siteAccessProbeHint": "Before integrating a new source: paste the home URL (or any public page). The request runs from the app server — localhost is not equal to prod. PASS = Java can usually fetch; CLOUDFLARE_JS_CHALLENGE / AUTH_INTERSTITIAL = a wall (Cloudflare or SberID), do not start integration.",
 	"siteAccessProbeUrl": "Site URL",
 	"siteAccessProbeRun": "Probe",
+	"siteAccessProbeBodyLength": "fetched {{chars}} chars",
+	"siteAccessProbeSnippet": "Visible page text (HTML stripped)",
 	"siteAccessProbeVerdict": {
 		"PASS": "PASS — reachable",
 		"CLOUDFLARE_JS_CHALLENGE": "Cloudflare JS challenge",
 		"AUTH_INTERSTITIAL": "SberID / SSO interstitial",
+		"GRAPHQL_NEEDS_QUERY": "GraphQL needs a query",
 		"HTTP_BLOCKED": "HTTP blocked",
 		"NETWORK_ERROR": "Network / DNS / TLS"
 	},
@@ -1687,6 +1690,7 @@
 		"PASS": "No JS challenge. Safe to try a parser/SPI.",
 		"CLOUDFLARE_JS_CHALLENGE": "Same protection as aiscore: Java from this host will not pass. Use another source or a proxy.",
 		"AUTH_INTERSTITIAL": "The site returned a login page (SberID) instead of content. Java HttpClient cannot complete it — switch primary or use another source.",
+		"GRAPHQL_NEEDS_QUERY": "The GraphQL endpoint is reachable from this host. HTTP 400 is an empty GET, not Cloudflare. POST a query.",
 		"HTTP_BLOCKED": "Site returned an HTTP error. Possibly geo/bot block — check status and snippet.",
 		"NETWORK_ERROR": "Request did not complete. Check URL and server network."
 	}

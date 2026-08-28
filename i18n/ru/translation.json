@@ -1676,10 +1676,13 @@
 	"siteAccessProbeHint": "Перед интеграцией нового источника: вставь URL главной (или любой публичной страницы). Запрос идёт с сервера приложения — результат с localhost не равен проду. PASS = Java обычно может ходить; CLOUDFLARE_JS_CHALLENGE / AUTH_INTERSTITIAL = стенка (Cloudflare или SberID), интеграцию не начинать.",
 	"siteAccessProbeUrl": "URL сайта",
 	"siteAccessProbeRun": "Проверить",
+	"siteAccessProbeBodyLength": "скачано {{chars}} символов",
+	"siteAccessProbeSnippet": "Текст со страницы (без HTML)",
 	"siteAccessProbeVerdict": {
 		"PASS": "PASS — доступ есть",
 		"CLOUDFLARE_JS_CHALLENGE": "Cloudflare JS-challenge",
 		"AUTH_INTERSTITIAL": "SberID / SSO-заглушка",
+		"GRAPHQL_NEEDS_QUERY": "GraphQL без query",
 		"HTTP_BLOCKED": "HTTP блокировка",
 		"NETWORK_ERROR": "Сеть / DNS / TLS"
 	},
@@ -1687,6 +1690,7 @@
 		"PASS": "Ответ без JS-challenge. Можно пробовать парсер/SPI.",
 		"CLOUDFLARE_JS_CHALLENGE": "Та же защита, что у aiscore: Java с этого хоста не пройдёт. Нужен другой источник или proxy.",
 		"AUTH_INTERSTITIAL": "Вместо страницы пришла авторизация (SberID). Java HttpClient это не проходит — смени primary или нужен другой источник.",
+		"GRAPHQL_NEEDS_QUERY": "Эндпоинт GraphQL с этого хоста доступен. 400 из‑за пустого GET — не Cloudflare. Нужен POST с query.",
 		"HTTP_BLOCKED": "Сайт ответил ошибкой HTTP. Возможно geo/bot block — смотри статус и сниппет.",
 		"NETWORK_ERROR": "Запрос не дошёл. Проверь URL и сеть сервера."
 	}

@@ -222,6 +222,7 @@ export type SiteAccessProbeVerdict =
 	| 'PASS'
 	| 'CLOUDFLARE_JS_CHALLENGE'
 	| 'AUTH_INTERSTITIAL'
+	| 'GRAPHQL_NEEDS_QUERY'
 	| 'HTTP_BLOCKED'
 	| 'NETWORK_ERROR';
 
@@ -236,6 +237,7 @@ export type SiteAccessProbeResult = {
 	cfMitigated?: string | null;
 	cloudflareDetected?: boolean;
 	jsChallengeSuspected?: boolean;
+	bodyLength?: number | null;
 	bodySnippet?: string | null;
 	errorDetail?: string | null;
 };

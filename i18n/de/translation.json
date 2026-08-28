@@ -1676,10 +1676,13 @@
 	"siteAccessProbeHint": "Vor einer neuen Integration: Startseiten-URL (oder öffentliche Seite) einfügen. Der Request kommt vom App-Server — localhost ≠ Prod. PASS = Java kann meist zugreifen; CLOUDFLARE_JS_CHALLENGE / AUTH_INTERSTITIAL = Sperre (Cloudflare oder SberID), keine Integration starten.",
 	"siteAccessProbeUrl": "Site-URL",
 	"siteAccessProbeRun": "Prüfen",
+	"siteAccessProbeBodyLength": "{{chars}} Zeichen geladen",
+	"siteAccessProbeSnippet": "Sichtbarer Seitentext (ohne HTML)",
 	"siteAccessProbeVerdict": {
 		"PASS": "PASS — erreichbar",
 		"CLOUDFLARE_JS_CHALLENGE": "Cloudflare JS-Challenge",
 		"AUTH_INTERSTITIAL": "SberID / SSO-Zwischenseite",
+		"GRAPHQL_NEEDS_QUERY": "GraphQL ohne Query",
 		"HTTP_BLOCKED": "HTTP-Sperre",
 		"NETWORK_ERROR": "Netz / DNS / TLS"
 	},
@@ -1687,6 +1690,7 @@
 		"PASS": "Keine JS-Challenge. Parser/SPI kann versucht werden.",
 		"CLOUDFLARE_JS_CHALLENGE": "Gleiche Absicherung wie aiscore: Java von diesem Host kommt nicht durch. Andere Quelle oder Proxy nötig.",
 		"AUTH_INTERSTITIAL": "Statt der Seite kam eine Anmeldung (SberID). Java HttpClient kommt nicht durch — Primary wechseln oder andere Quelle nutzen.",
+		"GRAPHQL_NEEDS_QUERY": "GraphQL-Endpunkt von diesem Host erreichbar. HTTP 400 kommt vom leeren GET, nicht von Cloudflare. POST mit Query nötig.",
 		"HTTP_BLOCKED": "HTTP-Fehler. Möglicherweise Geo/Bot-Block — Status und Snippet prüfen.",
 		"NETWORK_ERROR": "Request fehlgeschlagen. URL und Servernetz prüfen."
 	}
