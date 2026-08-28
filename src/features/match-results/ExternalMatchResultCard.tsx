@@ -11,9 +11,11 @@ import {
 	liveMatchMinuteSx,
 	liveMatchScoreSx,
 	matchResultStatusChipSx,
+	matchSettlingChipSx,
 } from './liveMatchBadgeStyles';
 import {
 	getMatchStatusChipColor,
+	isAwaitingMatchFinalization,
 	isMatchBreakStatus,
 	isPenaltyShootoutStatus,
 	normalizeMatchStatus,
@@ -191,12 +193,19 @@ export default function ExternalMatchResultCard({
 		slotId,
 	});
 	const minuteDisplay = formatLiveMinuteForDisplay(displayMinute);
-	const statusLabel = finalized ? t('gameResultFinalized') : translateMatchStatus(status, t);
+	const awaitingFinalization = isAwaitingMatchFinalization(status, finalized);
+	const statusLabel = finalized
+		? t('gameResultFinalized')
+		: awaitingFinalization
+			? t('gameResultSettling')
+			: translateMatchStatus(status, t);
 	const statusColor = finalized ? 'success' : getMatchStatusChipColor(status);
 	const isPaused = isMatchBreakStatus(status);
 	const isPenalty = isPenaltyShootoutStatus(status);
 	const liveStacked =
-		!finalized && (isLiveMatchStatus(status) || Boolean(minuteDisplay));
+		!finalized &&
+		!awaitingFinalization &&
+		(isLiveMatchStatus(status) || Boolean(minuteDisplay));
 	const showLiveBadge =
 		liveStacked && !isPaused && !isPenalty && normalizeMatchStatus(status) !== 'FINISHED';
 	/** Над счётом: минута, либо «Пенальти» вместо времени. */
@@ -224,11 +233,19 @@ export default function ExternalMatchResultCard({
 				<Typography
 					variant="caption"
 					color="text.secondary"
-					sx={{ fontSize: '0.68rem', lineHeight: 1.2, minHeight: '0.82rem' }}
+					sx={{
+						fontSize: '0.68rem',
+						lineHeight: 1.2,
+						minHeight: '0.82rem',
+						minWidth: 0,
+						overflow: 'hidden',
+						textOverflow: 'ellipsis',
+						whiteSpace: 'nowrap',
+					}}
 				>
 					{matchDateLabel ?? ''}
 				</Typography>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0 }}>
 					{showLiveBadge ? (
 						<LiveMatchBadge />
 					) : (isPaused || isPenalty) && liveStacked ? (
@@ -239,8 +256,9 @@ export default function ExternalMatchResultCard({
 						<Chip
 							size="small"
 							label={statusLabel}
-							color={statusColor}
-							sx={matchResultStatusChipSx}
+							color={awaitingFinalization ? 'default' : statusColor}
+							variant="filled"
+							sx={awaitingFinalization ? matchSettlingChipSx : matchResultStatusChipSx}
 						/>
 					)}
 					{headerActions}

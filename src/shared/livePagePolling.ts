@@ -1,5 +1,6 @@
 import { isLiveMatchStatus } from '../features/match-results/externalMatchScoreView';
 import { isExternalMatchAwaitingLiveSync } from '../features/match-results/externalMatchKickoff';
+import { isFinishedAwaitingFullMatch } from '../features/match-results/matchStatusI18n';
 
 /**
  * Интервал опроса нашего API (MongoDB) на страницах с live-матчами.
@@ -22,6 +23,9 @@ export function matchNeedsLivePoll(match: LivePollMatch): boolean {
 		return false;
 	}
 	if (isLiveMatchStatus(match.status ?? '')) {
+		return true;
+	}
+	if (isFinishedAwaitingFullMatch(match.status ?? '')) {
 		return true;
 	}
 	if (match.liveMinuteLabel?.trim()) {
