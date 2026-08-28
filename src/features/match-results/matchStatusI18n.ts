@@ -29,6 +29,27 @@ export function isPenaltyShootoutStatus(status: string): boolean {
 	return normalizeMatchStatus(status) === 'PENALTY_SHOOTOUT';
 }
 
+/**
+ * LIVE уже зафиксировал финиш (FINISHED / AWARDED / …), FULL_MATCH ещё не залочил итог.
+ * Совпадает с backend LiveMatchSupport.needsFullMatch (кроме проверки fullDetailsFetchedAt).
+ */
+const AWAITING_FULL_MATCH_STATUSES = new Set([
+	'FINISHED',
+	'AWARDED',
+	'COMPLETED',
+	'FT',
+	'AET',
+	'PEN',
+]);
+
+export function isFinishedAwaitingFullMatch(status: string): boolean {
+	return AWAITING_FULL_MATCH_STATUSES.has(normalizeMatchStatus(status));
+}
+
+export function isAwaitingMatchFinalization(status: string, finalized: boolean): boolean {
+	return !finalized && isFinishedAwaitingFullMatch(status);
+}
+
 /** Статусы матча → ключ i18n `matchStatus.*` */
 export function translateMatchStatus(status: string, t: TFunction): string {
 	const normalized = normalizeMatchStatus(status);

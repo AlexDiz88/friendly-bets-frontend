@@ -117,3 +117,38 @@ export const matchResultStatusChipSx: SxProps<Theme> = {
 	fontSize: '0.65rem',
 	'& .MuiChip-label': { px: 0.5, py: 0, fontSize: '0.65rem' },
 };
+
+/** LIVE FINISHED → FULL_MATCH ещё не финализировал: light-orange чип + медленное мигание. */
+export const matchSettlingChipSx: SxProps<Theme> = (theme) => {
+	const isDark = theme.palette.mode === 'dark';
+	const color = isDark ? '#ffd8a8' : '#c2410c';
+	const bg = isDark ? 'rgba(194, 65, 12, 0.32)' : '#fff4e6';
+	const border = isDark ? 'rgba(255, 186, 120, 0.45)' : 'rgba(251, 146, 60, 0.55)';
+	return {
+		height: 18,
+		fontWeight: 700,
+		color,
+		bgcolor: bg,
+		border: '1px solid',
+		borderColor: border,
+		animation: 'matchSettlingChipPulse 2.8s ease-in-out infinite',
+		'&.MuiChip-filled': {
+			color,
+			bgcolor: bg,
+			borderColor: border,
+		},
+		'& .MuiChip-label': {
+			px: 0.55,
+			py: 0,
+			fontSize: '0.58rem',
+			whiteSpace: 'nowrap',
+		},
+		'@keyframes matchSettlingChipPulse': {
+			'0%, 100%': { opacity: 1 },
+			'50%': { opacity: isDark ? 0.58 : 0.45 },
+		},
+		'@media (prefers-reduced-motion: reduce)': {
+			animation: 'none',
+		},
+	};
+};

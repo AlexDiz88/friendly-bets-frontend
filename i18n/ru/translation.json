@@ -56,6 +56,7 @@
 	"externalMatchNoDataHintModerator": "Данных нет. Нажмите «Синхронизировать результаты тура».",
 	"externalMatchBettingUnavailableNoCalendar": "Приём ставок на этот тур недоступен — тур ещё не был добавлен в календарь сезона.",
 	"gameResultFinalized": "Завершён",
+	"gameResultSettling": "Подведение итогов матча",
 	"matchCenter": {
 		"halftime": "Перерыв",
 		"live": "Live"
