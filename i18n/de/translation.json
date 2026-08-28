@@ -860,6 +860,9 @@
 		"externalDataLayersSaveFailed": "Datenquellen konnten nicht gespeichert werden",
 		"oddsRefreshWithinHoursInvalid": "Quoten-Refresh-Fenster: ganze Zahl von 1 bis 168 Stunden angeben",
 		"externalDataLiveSyncFailed": "Live-Sync fehlgeschlagen",
+		"liveSyncDateRequired": "Datum für Live-Sync angeben",
+		"liveSyncProviderRequired": "LIVE-Anbieter angeben",
+		"externalDataProviderUnavailable": "Anbieter nicht verfügbar",
 		"soccer365GameIdRequired": "Spiel hat keine soccer365 game id",
 		"soccer365FullMatchParseFailed": "soccer365-Spielkarte konnte nicht gelesen werden",
 		"fullMatchKickoffRequired": "Spiel hat kein utc_kickoff — FULL nicht möglich",
@@ -1346,7 +1349,9 @@
 	"externalDataLiveSyncTitle": "Live-Sync jetzt",
 	"externalDataLiveSyncNow": "Live jetzt synchronisieren",
 	"externalDataLiveSyncSuccess": "Live: verfolgt {{tracked}}, HTTP {{http}}, aktualisiert {{updated}}, beendet {{finished}}",
-	"externalDataLiveSyncHint": "Synchronisiert alle verfolgten Saisonspiele: ein HTTP-Request pro UTC-Kickoff-Datum.",
+	"externalDataLiveSyncHint": "Ein HTTP-Request an den gewählten LIVE-Anbieter für das gewählte UTC-Kickoff-Datum. Autosync läuft weiter über alle Kandidatendaten.",
+	"externalDataLiveProvider": "Anbieter",
+	"externalDataLiveSyncDate": "Datum (UTC-Kickoff)",
 	"errorLogs": {
 		"menuLink": "Fehlerprotokoll",
 		"hasEntriesAria": "Das Log enthält Einträge",
@@ -1668,18 +1673,24 @@
 		}
 	},
 	"siteAccessProbeTitle": "Site-Zugangsprüfung",
-	"siteAccessProbeHint": "Vor einer neuen Integration: Startseiten-URL (oder öffentliche Seite) einfügen. Der Request kommt vom App-Server — localhost ≠ Prod. PASS = Java kann meist zugreifen; CLOUDFLARE_JS_CHALLENGE = wie bei aiscore, keine Integration starten.",
+	"siteAccessProbeHint": "Vor einer neuen Integration: Startseiten-URL (oder öffentliche Seite) einfügen. Der Request kommt vom App-Server — localhost ≠ Prod. PASS = Java kann meist zugreifen; CLOUDFLARE_JS_CHALLENGE / AUTH_INTERSTITIAL = Sperre (Cloudflare oder SberID), keine Integration starten.",
 	"siteAccessProbeUrl": "Site-URL",
 	"siteAccessProbeRun": "Prüfen",
+	"siteAccessProbeBodyLength": "{{chars}} Zeichen geladen",
+	"siteAccessProbeSnippet": "Sichtbarer Seitentext (ohne HTML)",
 	"siteAccessProbeVerdict": {
 		"PASS": "PASS — erreichbar",
 		"CLOUDFLARE_JS_CHALLENGE": "Cloudflare JS-Challenge",
+		"AUTH_INTERSTITIAL": "SberID / SSO-Zwischenseite",
+		"GRAPHQL_NEEDS_QUERY": "GraphQL ohne Query",
 		"HTTP_BLOCKED": "HTTP-Sperre",
 		"NETWORK_ERROR": "Netz / DNS / TLS"
 	},
 	"siteAccessProbeVerdictHint": {
 		"PASS": "Keine JS-Challenge. Parser/SPI kann versucht werden.",
 		"CLOUDFLARE_JS_CHALLENGE": "Gleiche Absicherung wie aiscore: Java von diesem Host kommt nicht durch. Andere Quelle oder Proxy nötig.",
+		"AUTH_INTERSTITIAL": "Statt der Seite kam eine Anmeldung (SberID). Java HttpClient kommt nicht durch — Primary wechseln oder andere Quelle nutzen.",
+		"GRAPHQL_NEEDS_QUERY": "GraphQL-Endpunkt von diesem Host erreichbar. HTTP 400 kommt vom leeren GET, nicht von Cloudflare. POST mit Query nötig.",
 		"HTTP_BLOCKED": "HTTP-Fehler. Möglicherweise Geo/Bot-Block — Status und Snippet prüfen.",
 		"NETWORK_ERROR": "Request fehlgeschlagen. URL und Servernetz prüfen."
 	}

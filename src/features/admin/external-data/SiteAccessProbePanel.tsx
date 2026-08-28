@@ -13,7 +13,10 @@ function verdictColor(
 	switch (verdict) {
 		case 'PASS':
 			return 'success';
+		case 'GRAPHQL_NEEDS_QUERY':
+			return 'success';
 		case 'CLOUDFLARE_JS_CHALLENGE':
+		case 'AUTH_INTERSTITIAL':
 			return 'error';
 		case 'HTTP_BLOCKED':
 		case 'NETWORK_ERROR':
@@ -104,6 +107,13 @@ export default function SiteAccessProbePanel(): JSX.Element {
 						{result.jsChallengeSuspected ? (
 							<Chip size="small" color="error" variant="outlined" label="JS challenge" />
 						) : null}
+						{result.bodyLength != null ? (
+							<Chip
+								size="small"
+								variant="outlined"
+								label={t('siteAccessProbeBodyLength', { chars: result.bodyLength })}
+							/>
+						) : null}
 					</Box>
 
 					<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>
@@ -137,23 +147,28 @@ export default function SiteAccessProbePanel(): JSX.Element {
 					) : null}
 
 					{result.bodySnippet ? (
-						<Box
-							component="pre"
-							sx={{
-								m: 0,
-								p: 1,
-								borderRadius: 1,
-								bgcolor: 'action.hover',
-								fontSize: '0.7rem',
-								fontFamily: 'monospace',
-								whiteSpace: 'pre-wrap',
-								wordBreak: 'break-word',
-								maxHeight: 160,
-								overflow: 'auto',
-							}}
-						>
-							{result.bodySnippet}
-						</Box>
+						<>
+							<Typography sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
+								{t('siteAccessProbeSnippet')}
+							</Typography>
+							<Box
+								component="pre"
+								sx={{
+									m: 0,
+									p: 1,
+									borderRadius: 1,
+									bgcolor: 'action.hover',
+									fontSize: '0.75rem',
+									fontFamily: 'inherit',
+									whiteSpace: 'pre-wrap',
+									wordBreak: 'break-word',
+									maxHeight: 280,
+									overflow: 'auto',
+								}}
+							>
+								{result.bodySnippet}
+							</Box>
+						</>
 					) : null}
 				</Box>
 			) : null}
