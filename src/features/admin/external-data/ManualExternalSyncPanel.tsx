@@ -54,7 +54,11 @@ import {
 	isInactiveExternalProvider,
 	sortProvidersLiveFirst,
 } from '../teams/teamProviderConstants';
-import { ProviderSelectItems, renderProviderSelectValue } from '../teams/ProviderOptionLabel';
+import {
+	ProviderSelectItems,
+	providerSelectSx,
+	renderProviderSelectValue,
+} from '../teams/ProviderOptionLabel';
 
 const SCHEDULE_LEAGUE_CODES = new Set(['EPL', 'BL', 'CL', 'LE', 'EC', 'WC']);
 const STANDINGS_LEAGUE_CODES = new Set(['EPL', 'BL']);
@@ -605,11 +609,12 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 						setForceMatchIds([]);
 					}}
 					renderValue={renderProviderSelectValue((id) => t(ODDS_PROVIDER_LABEL_KEY[id] ?? id))}
+					sx={providerSelectSx}
 				>
-					<ProviderSelectItems
-						providers={ODDS_PROVIDERS}
-						labelFor={(id) => t(ODDS_PROVIDER_LABEL_KEY[id] ?? id)}
-					/>
+					{ProviderSelectItems({
+						providers: ODDS_PROVIDERS,
+						labelFor: (id) => t(ODDS_PROVIDER_LABEL_KEY[id] ?? id),
+					})}
 				</Select>
 			</FormControl>
 			{oddsLeagues.length > 0 ? (
@@ -757,11 +762,12 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 					renderValue={renderProviderSelectValue((id) =>
 						LIVE_PROVIDER_LABEL_KEY[id] ? t(LIVE_PROVIDER_LABEL_KEY[id]) : id
 					)}
+					sx={providerSelectSx}
 				>
-					<ProviderSelectItems
-						providers={liveProviders}
-						labelFor={(id) => (LIVE_PROVIDER_LABEL_KEY[id] ? t(LIVE_PROVIDER_LABEL_KEY[id]) : id)}
-					/>
+					{ProviderSelectItems({
+						providers: liveProviders,
+						labelFor: (id) => (LIVE_PROVIDER_LABEL_KEY[id] ? t(LIVE_PROVIDER_LABEL_KEY[id]) : id),
+					})}
 				</Select>
 			</FormControl>
 			<TextField

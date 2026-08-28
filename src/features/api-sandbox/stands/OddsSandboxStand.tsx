@@ -15,7 +15,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import { listedProviders, resolveSelectedProvider } from '../../admin/teams/teamProviderConstants';
-import { ProviderSelectItems, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
+import { ProviderSelectItems, providerSelectSx, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
 import {
 	LAYER_ACCENT,
 	sandboxFieldLabelSx,
@@ -183,8 +183,9 @@ export default function OddsSandboxStand({
 							value={safeProvider}
 							onChange={(e) => onFormChange({ ...form, provider: String(e.target.value) })}
 							renderValue={renderProviderSelectValue()}
+							sx={providerSelectSx}
 						>
-							<ProviderSelectItems providers={providerOptions} />
+							{ProviderSelectItems({ providers: providerOptions })}
 						</Select>
 					</FormControl>
 				</Box>
