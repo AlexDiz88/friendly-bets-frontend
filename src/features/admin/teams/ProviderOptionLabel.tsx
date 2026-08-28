@@ -10,10 +10,10 @@ const INACTIVE_GROUP_VALUE = '__inactive_providers_group__';
 
 const PROVIDER_LOGO_SIZE = 18;
 
-const providerLogoSx: SxProps<Theme> = [
+const providerLogoSx = [
 	{ width: PROVIDER_LOGO_SIZE, height: PROVIDER_LOGO_SIZE, flexShrink: 0, pointerEvents: 'none' },
 	leagueLogoAvatarSx,
-];
+] as SxProps<Theme>;
 
 /** Aligns logo + label in the closed Select field. */
 export const providerSelectSx: SxProps<Theme> = {
