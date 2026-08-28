@@ -4,7 +4,6 @@ import {
 	CircularProgress,
 	FormControl,
 	InputLabel,
-	MenuItem,
 	Select,
 	Typography,
 } from '@mui/material';
@@ -34,11 +33,14 @@ import {
 	FOOTBALL24_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 	CHAMPIONAT_PROVIDER,
+	EURO_FOOTBALL_PROVIDER,
 	RUSCORE_PROVIDER,
 	FLASHSCORE_PROVIDER,
 	FLASHSCORE_UA_PROVIDER,
 	LIVERESULT_PROVIDER,
+	firstLiveProvider,
 } from '../teams/teamProviderConstants';
+import { ProviderSelectItems, renderProviderSelectValue } from '../teams/ProviderOptionLabel';
 import {
 	ExternalTeamNameChip,
 	fetchExternalTeamNames,
@@ -53,6 +55,7 @@ const PROVIDERS = [
 	MELBET_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 	CHAMPIONAT_PROVIDER,
+	EURO_FOOTBALL_PROVIDER,
 	RUSCORE_PROVIDER,
 	FLASHSCORE_PROVIDER,
 	FLASHSCORE_UA_PROVIDER,
@@ -67,6 +70,7 @@ const PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
 	[MELBET_PROVIDER]: new Set(['EPL', 'BL']),
 	[TWENTYFOUR_SCORE_PROVIDER]: new Set(['EPL', 'BL']),
 	[CHAMPIONAT_PROVIDER]: new Set(['EPL', 'BL']),
+	[EURO_FOOTBALL_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
 	[RUSCORE_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
 	[FLASHSCORE_PROVIDER]: new Set(['EPL', 'BL']),
 	[FLASHSCORE_UA_PROVIDER]: new Set(['EPL', 'BL']),
@@ -81,6 +85,7 @@ const PROVIDER_LABEL_KEY: Record<string, string> = {
 	[MELBET_PROVIDER]: 'externalTeamAliasProviderMelbet',
 	[TWENTYFOUR_SCORE_PROVIDER]: 'externalTeamAliasProvider24score',
 	[CHAMPIONAT_PROVIDER]: 'externalTeamAliasProviderChampionat',
+	[EURO_FOOTBALL_PROVIDER]: 'externalTeamAliasProviderEuroFootball',
 	[RUSCORE_PROVIDER]: 'externalTeamAliasProviderRuscore',
 	[FLASHSCORE_PROVIDER]: 'externalTeamAliasProviderFlashscore',
 	[FLASHSCORE_UA_PROVIDER]: 'externalTeamAliasProviderFlashscoreUa',
@@ -91,7 +96,7 @@ export default function ExternalTeamAliasesPanel(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const activeSeason = useAppSelector(selectActiveSeason);
 	const [, setSearchParams] = useSearchParams();
-	const [provider, setProvider] = useState<string>(SOCCER365_PROVIDER);
+	const [provider, setProvider] = useState<string>(() => firstLiveProvider(PROVIDERS));
 	const [leagueCode, setLeagueCode] = useState('EPL');
 	const [loadingNames, setLoadingNames] = useState(false);
 	const [forceOverwrite, setForceOverwrite] = useState(false);
@@ -186,12 +191,12 @@ export default function ExternalTeamAliasesPanel(): JSX.Element {
 						label={t('externalTeamAliasProvider')}
 						value={provider}
 						onChange={(e: SelectChangeEvent) => handleProviderChange(e.target.value)}
+						renderValue={renderProviderSelectValue((id) => t(PROVIDER_LABEL_KEY[id] ?? id))}
 					>
-						{PROVIDERS.map((id) => (
-							<MenuItem key={id} value={id}>
-								{t(PROVIDER_LABEL_KEY[id])}
-							</MenuItem>
-						))}
+						<ProviderSelectItems
+							providers={PROVIDERS}
+							labelFor={(id) => t(PROVIDER_LABEL_KEY[id] ?? id)}
+						/>
 					</Select>
 				</FormControl>
 				{leagues.length > 0 ? (

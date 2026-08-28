@@ -33,6 +33,7 @@ import {
 	SPORTS_RU_PROVIDER,
 	FOOTBALL24_PROVIDER,
 	LIVERESULT_PROVIDER,
+	firstLiveProvider,
 } from '../admin/teams/teamProviderConstants';
 
 function todayIsoDate(): string {
@@ -65,7 +66,7 @@ export default function ApiSandboxPage(): JSX.Element {
 	const [configLoading, setConfigLoading] = useState(true);
 
 	const [schedule, setSchedule] = useState<LayerStandState<ScheduleStandForm>>({
-		form: { provider: 'soccer365.ru', competitionId: '', round: '', limit: '1' },
+		form: { provider: SPORTS_RU_PROVIDER, competitionId: '', round: '', limit: '1' },
 		loading: false,
 		result: null,
 	});
@@ -78,7 +79,7 @@ export default function ApiSandboxPage(): JSX.Element {
 		result: null,
 	});
 	const [fullMatch, setFullMatch] = useState<LayerStandState<FullMatchStandForm>>({
-		form: { provider: 'soccer365.ru', gameId: '', date: todayIsoDate(), titleContains: '' },
+		form: { provider: 'ruscore.ru', gameId: '', date: todayIsoDate(), titleContains: '' },
 		loading: false,
 		result: null,
 	});
@@ -100,12 +101,12 @@ export default function ApiSandboxPage(): JSX.Element {
 				const liveProviders = config.capabilities?.LIVE || [];
 				const fullProviders = config.capabilities?.FULL_MATCH || [];
 				const standingsProviders = config.capabilities?.STANDINGS || [];
-				const oddsProvider = oddsProviders[0] || 'marathonbet';
+				const oddsProvider = firstLiveProvider(oddsProviders, 'marathonbet');
 				setSchedule((prev) => ({
 					...prev,
 					form: {
 						...prev.form,
-						provider: scheduleProviders[0] || prev.form.provider,
+						provider: firstLiveProvider(scheduleProviders, prev.form.provider),
 					},
 				}));
 				setOddsTournament((prev) => ({
@@ -120,21 +121,21 @@ export default function ApiSandboxPage(): JSX.Element {
 					...prev,
 					form: {
 						...prev.form,
-						provider: liveProviders[0] || prev.form.provider,
+						provider: firstLiveProvider(liveProviders, prev.form.provider),
 					},
 				}));
 				setFullMatch((prev) => ({
 					...prev,
 					form: {
 						...prev.form,
-						provider: fullProviders[0] || prev.form.provider,
+						provider: firstLiveProvider(fullProviders, prev.form.provider),
 					},
 				}));
 				setStandings((prev) => ({
 					...prev,
 					form: {
 						...prev.form,
-						provider: standingsProviders[0] || prev.form.provider,
+						provider: firstLiveProvider(standingsProviders, prev.form.provider),
 					},
 				}));
 			})

@@ -9,10 +9,12 @@ import {
 	FOOTBALL24_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 	CHAMPIONAT_PROVIDER,
+	EURO_FOOTBALL_PROVIDER,
 	RUSCORE_PROVIDER,
 	FLASHSCORE_PROVIDER,
 	FLASHSCORE_UA_PROVIDER,
 	LIVERESULT_PROVIDER,
+	isInactiveExternalProvider,
 } from './teamProviderConstants';
 
 const DROPPED_PROVIDERS = new Set([
@@ -26,8 +28,7 @@ const DROPPED_PROVIDERS = new Set([
 
 /**
  * Single source of truth for external API alias fields in the team admin form.
- * When adding a new provider alias: append an entry here (and i18n keys).
- * Completeness check, load, save, and form fields all derive from this list.
+ * Completeness ignores inactive providers (`INACTIVE_EXTERNAL_PROVIDERS`); fields stay editable.
  */
 /** Logo files live at `/upload/api-logos/{provider}.png` (marathonbet → marathonbet.png). */
 export function teamApiLogoSrc(provider: string): string {
@@ -69,6 +70,13 @@ export const TEAM_EXTERNAL_ALIAS_FIELDS = [
 		sectionKey: 'teamChampionatSection',
 		labelKey: 'teamChampionatExternalName',
 		inputId: 'championat-external-name',
+	},
+	{
+		provider: EURO_FOOTBALL_PROVIDER,
+		field: 'euroFootballExternalName',
+		sectionKey: 'teamEuroFootballSection',
+		labelKey: 'teamEuroFootballExternalName',
+		inputId: 'eurofootball-external-name',
 	},
 	{
 		provider: RUSCORE_PROVIDER,
@@ -219,7 +227,9 @@ export function isTeamFormComplete(values: TeamFormValues): boolean {
 	) {
 		return false;
 	}
-	return TEAM_EXTERNAL_ALIAS_FIELDS.every(({ field }) => formFieldFilled(values[field]));
+	return TEAM_EXTERNAL_ALIAS_FIELDS.filter(({ provider }) => !isInactiveExternalProvider(provider)).every(
+		({ field }) => formFieldFilled(values[field])
+	);
 }
 
 export function isTeamComplete(team: Team): boolean {

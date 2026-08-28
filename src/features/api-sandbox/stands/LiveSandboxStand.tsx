@@ -2,7 +2,6 @@ import {
 	Box,
 	Chip,
 	FormControl,
-	MenuItem,
 	Select,
 	Table,
 	TableBody,
@@ -22,6 +21,8 @@ import { resolveExternalMatchScoreView } from '../../match-results/externalMatch
 import { resolveLiveMinuteLabel } from '../../../shared/liveMinuteResolver';
 import { useFormatUserDateTime } from '../../../shared/useFormatUserDateTime';
 import type { SandboxResult } from '../apiSandboxApi';
+import { EURO_FOOTBALL_PROVIDER, listedProviders, resolveSelectedProvider } from '../../admin/teams/teamProviderConstants';
+import { ProviderSelectItems, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
 import {
 	LAYER_ACCENT,
 	sandboxFieldLabelSx,
@@ -124,8 +125,8 @@ export default function LiveSandboxStand({
 	const layer = 'LIVE' as const;
 	const accent = LAYER_ACCENT[layer];
 	const parsed = (result?.parsed || null) as LiveParsed | null;
-	const providerOptions = providers.length > 0 ? providers : ['24score.pro'];
-	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
+	const providerOptions = listedProviders(providers, ['24score.pro']);
+	const safeProvider = resolveSelectedProvider(providerOptions, form.provider);
 	const [selectedMatch, setSelectedMatch] = useState<LiveParsedMatch | null>(null);
 	const [previewFetchedAt, setPreviewFetchedAt] = useState<string | null>(null);
 
@@ -280,7 +281,11 @@ export default function LiveSandboxStand({
 					{t('apiSandbox.layer.LIVE')}
 				</Typography>
 				<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', mt: -1 }}>
-					{t('apiSandbox.liveHint')}
+					{t(
+						safeProvider === EURO_FOOTBALL_PROVIDER
+							? 'apiSandbox.liveHintEuroFootball'
+							: 'apiSandbox.liveHint'
+					)}
 				</Typography>
 
 				<Box>
@@ -289,12 +294,9 @@ export default function LiveSandboxStand({
 						<Select
 							value={safeProvider}
 							onChange={(e) => onFormChange({ ...form, provider: String(e.target.value) })}
+							renderValue={renderProviderSelectValue()}
 						>
-							{providerOptions.map((p) => (
-								<MenuItem key={p} value={p}>
-									{p}
-								</MenuItem>
-							))}
+							<ProviderSelectItems providers={providerOptions} />
 						</Select>
 					</FormControl>
 				</Box>

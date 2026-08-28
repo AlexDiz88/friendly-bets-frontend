@@ -159,11 +159,20 @@ export default function SiteAccessProbePanel(): JSX.Element {
 									borderRadius: 1,
 									bgcolor: 'action.hover',
 									fontSize: '0.75rem',
-									fontFamily: 'inherit',
+									fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+									lineHeight: 1.45,
 									whiteSpace: 'pre-wrap',
 									wordBreak: 'break-word',
-									maxHeight: 280,
-									overflow: 'auto',
+									maxHeight: '70vh',
+									overflowY: 'auto',
+									overflowX: 'auto',
+									overscrollBehavior: 'contain',
+									scrollbarWidth: 'thin',
+									'&::-webkit-scrollbar': { width: 8, height: 8 },
+									'&::-webkit-scrollbar-thumb': {
+										borderRadius: 4,
+										bgcolor: 'text.disabled',
+									},
 								}}
 							>
 								{result.bodySnippet}
