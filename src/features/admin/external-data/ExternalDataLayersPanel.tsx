@@ -22,7 +22,11 @@ import {
 	EXTERNAL_DATA_LAYER_PALETTE,
 } from '../../../shared/externalDataLayerColors';
 import AdminSection from '../AdminSection';
-import { ProviderSelectItems, renderProviderSelectValue } from '../teams/ProviderOptionLabel';
+import {
+	ProviderSelectItems,
+	providerSelectSx,
+	renderProviderSelectValue,
+} from '../teams/ProviderOptionLabel';
 import { sortProvidersLiveFirst } from '../teams/teamProviderConstants';
 import {
 	ExternalDataLayer,
@@ -236,9 +240,10 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 													? t('externalDataProviderNone')
 													: renderProviderSelectValue()(v)
 											}
+											sx={providerSelectSx}
 										>
 											<MenuItem value={NONE}>{t('externalDataProviderNone')}</MenuItem>
-											<ProviderSelectItems providers={options} />
+											{ProviderSelectItems({ providers: options })}
 										</Select>
 									</FormControl>
 									<FormControl fullWidth size="small" sx={{ mb: layer === 'ODDS' ? 1 : 0 }}>
@@ -253,9 +258,10 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 													? t('externalDataProviderNone')
 													: renderProviderSelectValue()(v)
 											}
+											sx={providerSelectSx}
 										>
 											<MenuItem value={NONE}>{t('externalDataProviderNone')}</MenuItem>
-											<ProviderSelectItems providers={options} />
+											{ProviderSelectItems({ providers: options })}
 										</Select>
 									</FormControl>
 									{layer === 'ODDS' && (

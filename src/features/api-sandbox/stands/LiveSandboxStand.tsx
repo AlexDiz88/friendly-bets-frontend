@@ -22,7 +22,7 @@ import { resolveLiveMinuteLabel } from '../../../shared/liveMinuteResolver';
 import { useFormatUserDateTime } from '../../../shared/useFormatUserDateTime';
 import type { SandboxResult } from '../apiSandboxApi';
 import { EURO_FOOTBALL_PROVIDER, listedProviders, resolveSelectedProvider } from '../../admin/teams/teamProviderConstants';
-import { ProviderSelectItems, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
+import { ProviderSelectItems, providerSelectSx, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
 import {
 	LAYER_ACCENT,
 	sandboxFieldLabelSx,
@@ -295,8 +295,9 @@ export default function LiveSandboxStand({
 							value={safeProvider}
 							onChange={(e) => onFormChange({ ...form, provider: String(e.target.value) })}
 							renderValue={renderProviderSelectValue()}
+							sx={providerSelectSx}
 						>
-							<ProviderSelectItems providers={providerOptions} />
+							{ProviderSelectItems({ providers: providerOptions })}
 						</Select>
 					</FormControl>
 				</Box>

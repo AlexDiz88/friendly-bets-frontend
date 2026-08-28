@@ -28,7 +28,7 @@ import CopyableValue from '../CopyableValue';
 import SandboxIdHints from '../SandboxIdHints';
 import SandboxResultPanel from '../SandboxResultPanel';
 import { SPORTS_RU_PROVIDER, FOOTBALL24_PROVIDER, listedProviders, resolveSelectedProvider } from '../../admin/teams/teamProviderConstants';
-import { ProviderSelectItems, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
+import { ProviderSelectItems, providerSelectSx, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
 
 export type ScheduleStandForm = {
 	provider: string;
@@ -181,8 +181,9 @@ export default function ScheduleSandboxStand({
 								})
 							}
 							renderValue={renderProviderSelectValue()}
+							sx={providerSelectSx}
 						>
-							<ProviderSelectItems providers={providerOptions} />
+							{ProviderSelectItems({ providers: providerOptions })}
 						</Select>
 					</FormControl>
 				</Box>

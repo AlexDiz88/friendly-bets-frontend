@@ -40,7 +40,11 @@ import {
 	LIVERESULT_PROVIDER,
 	firstLiveProvider,
 } from '../teams/teamProviderConstants';
-import { ProviderSelectItems, renderProviderSelectValue } from '../teams/ProviderOptionLabel';
+import {
+	ProviderSelectItems,
+	providerSelectSx,
+	renderProviderSelectValue,
+} from '../teams/ProviderOptionLabel';
 import {
 	ExternalTeamNameChip,
 	fetchExternalTeamNames,
@@ -192,11 +196,12 @@ export default function ExternalTeamAliasesPanel(): JSX.Element {
 						value={provider}
 						onChange={(e: SelectChangeEvent) => handleProviderChange(e.target.value)}
 						renderValue={renderProviderSelectValue((id) => t(PROVIDER_LABEL_KEY[id] ?? id))}
+						sx={providerSelectSx}
 					>
-						<ProviderSelectItems
-							providers={PROVIDERS}
-							labelFor={(id) => t(PROVIDER_LABEL_KEY[id] ?? id)}
-						/>
+						{ProviderSelectItems({
+							providers: PROVIDERS,
+							labelFor: (id) => t(PROVIDER_LABEL_KEY[id] ?? id),
+						})}
 					</Select>
 				</FormControl>
 				{leagues.length > 0 ? (

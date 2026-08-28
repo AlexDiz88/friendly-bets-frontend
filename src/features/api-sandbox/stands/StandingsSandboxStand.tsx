@@ -12,7 +12,7 @@ import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessBut
 import LeagueStandingsView from '../../match-results/LeagueStandingsView';
 import type { LeagueStandingsPage } from '../../match-results/types/LeagueStandings';
 import { LIVERESULT_PROVIDER, listedProviders, resolveSelectedProvider } from '../../admin/teams/teamProviderConstants';
-import { ProviderSelectItems, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
+import { ProviderSelectItems, providerSelectSx, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
 import type { SandboxResult } from '../apiSandboxApi';
 import {
 	LAYER_ACCENT,
@@ -179,8 +179,9 @@ export default function StandingsSandboxStand({
 						value={safeProvider}
 						onChange={(e) => onFormChange({ ...form, provider: e.target.value })}
 						renderValue={renderProviderSelectValue()}
+						sx={providerSelectSx}
 					>
-						<ProviderSelectItems providers={providerOptions} />
+						{ProviderSelectItems({ providers: providerOptions })}
 					</Select>
 				</FormControl>
 
