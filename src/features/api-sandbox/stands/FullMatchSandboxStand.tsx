@@ -2,7 +2,6 @@ import {
 	Box,
 	Chip,
 	FormControl,
-	MenuItem,
 	Select,
 	Table,
 	TableBody,
@@ -33,6 +32,8 @@ import {
 import CopyableValue from '../CopyableValue';
 import SandboxIdHints from '../SandboxIdHints';
 import SandboxResultPanel from '../SandboxResultPanel';
+import { listedProviders, resolveSelectedProvider } from '../../admin/teams/teamProviderConstants';
+import { ProviderSelectItems, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
 
 export type FullMatchStandForm = {
 	provider: string;
@@ -160,8 +161,8 @@ export default function FullMatchSandboxStand({
 	const { formatDateTime } = useFormatUserDateTime();
 	const layer = 'FULL_MATCH' as const;
 	const accent = LAYER_ACCENT[layer];
-	const providerOptions = providers.length > 0 ? providers : ['soccer365.ru'];
-	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
+	const providerOptions = listedProviders(providers, ['ruscore.ru']);
+	const safeProvider = resolveSelectedProvider(providerOptions, form.provider);
 	const isRuscore = safeProvider === 'ruscore.ru';
 	const isFlashscore = safeProvider === 'flashscorekz.com';
 	const isDayBrowseProvider = isRuscore || isFlashscore;
@@ -437,12 +438,9 @@ export default function FullMatchSandboxStand({
 									gameId: '',
 								})
 							}
+							renderValue={renderProviderSelectValue()}
 						>
-							{providerOptions.map((p) => (
-								<MenuItem key={p} value={p}>
-									{p}
-								</MenuItem>
-							))}
+							<ProviderSelectItems providers={providerOptions} />
 						</Select>
 					</FormControl>
 				</Box>

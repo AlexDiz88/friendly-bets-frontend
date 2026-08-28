@@ -2,7 +2,6 @@ import {
 	Box,
 	Chip,
 	FormControl,
-	MenuItem,
 	Select,
 	Table,
 	TableBody,
@@ -28,7 +27,8 @@ import {
 import CopyableValue from '../CopyableValue';
 import SandboxIdHints from '../SandboxIdHints';
 import SandboxResultPanel from '../SandboxResultPanel';
-import { SOCCER365_PROVIDER, SPORTS_RU_PROVIDER, FOOTBALL24_PROVIDER } from '../../admin/teams/teamProviderConstants';
+import { SPORTS_RU_PROVIDER, FOOTBALL24_PROVIDER, listedProviders, resolveSelectedProvider } from '../../admin/teams/teamProviderConstants';
+import { ProviderSelectItems, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
 
 export type ScheduleStandForm = {
 	provider: string;
@@ -81,8 +81,8 @@ export default function ScheduleSandboxStand({
 	const layer = 'SCHEDULE' as const;
 	const accent = LAYER_ACCENT[layer];
 	const parsed = (result?.parsed || null) as ScheduleParsed | null;
-	const providerOptions = providers.length > 0 ? providers : [SOCCER365_PROVIDER];
-	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
+	const providerOptions = listedProviders(providers, [SPORTS_RU_PROVIDER]);
+	const safeProvider = resolveSelectedProvider(providerOptions, form.provider);
 	const isSportsRu = safeProvider === SPORTS_RU_PROVIDER;
 	const isFootball24 = safeProvider === FOOTBALL24_PROVIDER;
 
@@ -180,12 +180,9 @@ export default function ScheduleSandboxStand({
 									competitionId: '',
 								})
 							}
+							renderValue={renderProviderSelectValue()}
 						>
-							{providerOptions.map((p) => (
-								<MenuItem key={p} value={p}>
-									{p}
-								</MenuItem>
-							))}
+							<ProviderSelectItems providers={providerOptions} />
 						</Select>
 					</FormControl>
 				</Box>

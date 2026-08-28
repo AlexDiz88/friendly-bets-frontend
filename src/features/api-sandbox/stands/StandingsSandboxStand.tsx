@@ -11,7 +11,8 @@ import { useTranslation } from 'react-i18next';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
 import LeagueStandingsView from '../../match-results/LeagueStandingsView';
 import type { LeagueStandingsPage } from '../../match-results/types/LeagueStandings';
-import { LIVERESULT_PROVIDER } from '../../admin/teams/teamProviderConstants';
+import { LIVERESULT_PROVIDER, listedProviders, resolveSelectedProvider } from '../../admin/teams/teamProviderConstants';
+import { ProviderSelectItems, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
 import type { SandboxResult } from '../apiSandboxApi';
 import {
 	LAYER_ACCENT,
@@ -128,8 +129,8 @@ export default function StandingsSandboxStand({
 	const layer = 'STANDINGS' as const;
 	const accent = LAYER_ACCENT[layer];
 	const parsed = (result?.parsed || null) as StandingsParsed | null;
-	const providerOptions = providers.length > 0 ? providers : [LIVERESULT_PROVIDER];
-	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
+	const providerOptions = listedProviders(providers, [LIVERESULT_PROVIDER]);
+	const safeProvider = resolveSelectedProvider(providerOptions, form.provider);
 
 	const previewPage = useMemo(() => {
 		if (!result?.success || !parsed?.rows?.length) {
@@ -177,12 +178,9 @@ export default function StandingsSandboxStand({
 					<Select
 						value={safeProvider}
 						onChange={(e) => onFormChange({ ...form, provider: e.target.value })}
+						renderValue={renderProviderSelectValue()}
 					>
-						{providerOptions.map((provider) => (
-							<MenuItem key={provider} value={provider}>
-								{provider}
-							</MenuItem>
-						))}
+						<ProviderSelectItems providers={providerOptions} />
 					</Select>
 				</FormControl>
 

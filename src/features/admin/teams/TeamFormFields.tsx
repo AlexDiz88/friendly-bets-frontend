@@ -15,6 +15,8 @@ import {
 	TeamFormValues,
 	teamApiLogoSrc,
 } from './teamFormUtils';
+import { isInactiveExternalProvider } from './teamProviderConstants';
+import { InactiveProviderMark } from './ProviderOptionLabel';
 
 type TeamFormFieldsProps = {
 	values: TeamFormValues;
@@ -149,43 +151,84 @@ export default function TeamFormFields({
 					</Typography>
 				</AccordionSummary>
 				<AccordionDetails sx={detailsSx}>
-					{TEAM_EXTERNAL_ALIAS_FIELDS.map(({ field, sectionKey, labelKey, inputId, provider }) => (
-						<Box
-							key={field}
-							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								gap: 1,
-								mb: 1.5,
-								'&:last-of-type': { mb: 0 },
-							}}
+					<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+						{TEAM_EXTERNAL_ALIAS_FIELDS.filter(({ provider }) => !isInactiveExternalProvider(provider)).map(
+							(field) => (
+								<AliasFieldRow key={field.field} {...field} values={values} onChange={onChange} />
+							)
+						)}
+					</Box>
+					{TEAM_EXTERNAL_ALIAS_FIELDS.some(({ provider }) => isInactiveExternalProvider(provider)) ? (
+						<Typography
+							variant="caption"
+							color="text.secondary"
+							sx={{ display: 'block', mt: 0.25, mb: 1, fontWeight: 600 }}
 						>
-							<Box
-								component="img"
-								src={teamApiLogoSrc(provider)}
-								alt={t(sectionKey)}
-								title={t(sectionKey)}
-								sx={{
-									width: 20,
-									height: 20,
-									objectFit: 'contain',
-									flexShrink: 0,
-									borderRadius: 0.5,
-								}}
-							/>
-							<TextField
-								fullWidth
-								size="small"
-								id={inputId}
-								label={t(labelKey)}
-								variant="outlined"
-								value={values[field]}
-								onChange={(e) => onChange({ [field]: e.target.value })}
-							/>
-						</Box>
-					))}
+							{t('inactiveExternalProvidersGroup')}
+						</Typography>
+					) : null}
+					<Box sx={{ display: 'flex', flexDirection: 'column' }}>
+						{TEAM_EXTERNAL_ALIAS_FIELDS.filter(({ provider }) => isInactiveExternalProvider(provider)).map(
+							(field) => (
+								<AliasFieldRow key={field.field} {...field} values={values} onChange={onChange} />
+							)
+						)}
+					</Box>
 				</AccordionDetails>
 			</Accordion>
 		</FormControl>
+	);
+}
+
+type AliasField = (typeof TEAM_EXTERNAL_ALIAS_FIELDS)[number];
+
+function AliasFieldRow({
+	field,
+	sectionKey,
+	labelKey,
+	inputId,
+	provider,
+	values,
+	onChange,
+}: AliasField & {
+	values: TeamFormValues;
+	onChange: (patch: Partial<TeamFormValues>) => void;
+}): JSX.Element {
+	const inactive = isInactiveExternalProvider(provider);
+	return (
+		<Box
+			sx={{
+				display: 'flex',
+				alignItems: 'center',
+				gap: 1,
+				mb: 1.5,
+				'&:last-of-type': { mb: 0 },
+			}}
+		>
+			<Box
+				component="img"
+				src={teamApiLogoSrc(provider)}
+				alt={t(sectionKey)}
+				title={t(sectionKey)}
+				sx={{
+					width: 20,
+					height: 20,
+					objectFit: 'contain',
+					flexShrink: 0,
+					borderRadius: 0.5,
+					opacity: inactive ? 0.55 : 1,
+				}}
+			/>
+			<TextField
+				fullWidth
+				size="small"
+				id={inputId}
+				label={t(labelKey)}
+				variant="outlined"
+				value={values[field]}
+				onChange={(e) => onChange({ [field]: e.target.value })}
+			/>
+			{inactive ? <InactiveProviderMark /> : null}
+		</Box>
 	);
 }

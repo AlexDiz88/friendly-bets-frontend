@@ -22,6 +22,8 @@ import {
 	EXTERNAL_DATA_LAYER_PALETTE,
 } from '../../../shared/externalDataLayerColors';
 import AdminSection from '../AdminSection';
+import { ProviderSelectItems, renderProviderSelectValue } from '../teams/ProviderOptionLabel';
+import { sortProvidersLiveFirst } from '../teams/teamProviderConstants';
 import {
 	ExternalDataLayer,
 	ExternalDataLayerConfig,
@@ -109,8 +111,7 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 	}, [showPanel, config, load]);
 
 	const optionsFor = (layer: ExternalDataLayer): string[] => {
-		const fromCaps = config?.capabilities?.[layer] ?? [];
-		return fromCaps;
+		return sortProvidersLiveFirst(config?.capabilities?.[layer] ?? []);
 	};
 
 	const handleEnabled = (layer: ExternalDataLayer, enabled: boolean): void => {
@@ -230,13 +231,14 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 											label={t('externalDataPrimary')}
 											value={safePrimary}
 											onChange={(e: SelectChangeEvent) => handlePrimary(layer, e.target.value)}
+											renderValue={(v) =>
+												v === NONE
+													? t('externalDataProviderNone')
+													: renderProviderSelectValue()(v)
+											}
 										>
 											<MenuItem value={NONE}>{t('externalDataProviderNone')}</MenuItem>
-											{options.map((id) => (
-												<MenuItem key={id} value={id}>
-													{id}
-												</MenuItem>
-											))}
+											<ProviderSelectItems providers={options} />
 										</Select>
 									</FormControl>
 									<FormControl fullWidth size="small" sx={{ mb: layer === 'ODDS' ? 1 : 0 }}>
@@ -246,13 +248,14 @@ export default function ExternalDataLayersPanel(): JSX.Element {
 											label={t('externalDataSecondary')}
 											value={safeSecondary}
 											onChange={(e: SelectChangeEvent) => handleSecondary(layer, e.target.value)}
+											renderValue={(v) =>
+												v === NONE
+													? t('externalDataProviderNone')
+													: renderProviderSelectValue()(v)
+											}
 										>
 											<MenuItem value={NONE}>{t('externalDataProviderNone')}</MenuItem>
-											{options.map((id) => (
-												<MenuItem key={id} value={id}>
-													{id}
-												</MenuItem>
-											))}
+											<ProviderSelectItems providers={options} />
 										</Select>
 									</FormControl>
 									{layer === 'ODDS' && (

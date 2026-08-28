@@ -2,7 +2,6 @@ import {
 	Box,
 	Chip,
 	FormControl,
-	MenuItem,
 	Select,
 	Table,
 	TableBody,
@@ -15,7 +14,8 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessButton';
-import type { SandboxResult } from '../apiSandboxApi';
+import { listedProviders, resolveSelectedProvider } from '../../admin/teams/teamProviderConstants';
+import { ProviderSelectItems, renderProviderSelectValue } from '../../admin/teams/ProviderOptionLabel';
 import {
 	LAYER_ACCENT,
 	sandboxFieldLabelSx,
@@ -28,6 +28,7 @@ import {
 import CopyableValue from '../CopyableValue';
 import SandboxIdHints from '../SandboxIdHints';
 import SandboxResultPanel from '../SandboxResultPanel';
+import type { SandboxResult } from '../apiSandboxApi';
 
 export type OddsMode = 'tournament' | 'event';
 
@@ -84,7 +85,7 @@ export default function OddsSandboxStand({
 	const { t } = useTranslation();
 	const layer = 'ODDS' as const;
 	const accent = LAYER_ACCENT[layer];
-	const providerOptions = providers.length > 0 ? providers : ['marathonbet'];
+	const providerOptions = listedProviders(providers, ['marathonbet']);
 
 	const active = activeMode === 'tournament' ? tournament : event;
 	const onFormChange = activeMode === 'tournament' ? onTournamentFormChange : onEventFormChange;
@@ -92,7 +93,7 @@ export default function OddsSandboxStand({
 	const form = active.form;
 	const loading = active.loading;
 	const result = active.result;
-	const safeProvider = providerOptions.includes(form.provider) ? form.provider : providerOptions[0];
+	const safeProvider = resolveSelectedProvider(providerOptions, form.provider);
 	const parsed = (result?.parsed || null) as OddsParsed | null;
 
 	const summary =
@@ -181,12 +182,9 @@ export default function OddsSandboxStand({
 						<Select
 							value={safeProvider}
 							onChange={(e) => onFormChange({ ...form, provider: String(e.target.value) })}
+							renderValue={renderProviderSelectValue()}
 						>
-							{providerOptions.map((p) => (
-								<MenuItem key={p} value={p}>
-									{p}
-								</MenuItem>
-							))}
+							<ProviderSelectItems providers={providerOptions} />
 						</Select>
 					</FormControl>
 				</Box>

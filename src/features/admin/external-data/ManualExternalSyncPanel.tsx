@@ -46,10 +46,15 @@ import {
 } from './externalDataAdminApi';
 import {
 	CHAMPIONAT_PROVIDER,
+	EURO_FOOTBALL_PROVIDER,
 	MARATHONBET_PROVIDER,
 	MELBET_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
+	firstLiveProvider,
+	isInactiveExternalProvider,
+	sortProvidersLiveFirst,
 } from '../teams/teamProviderConstants';
+import { ProviderSelectItems, renderProviderSelectValue } from '../teams/ProviderOptionLabel';
 
 const SCHEDULE_LEAGUE_CODES = new Set(['EPL', 'BL', 'CL', 'LE', 'EC', 'WC']);
 const STANDINGS_LEAGUE_CODES = new Set(['EPL', 'BL']);
@@ -65,6 +70,7 @@ const ODDS_PROVIDER_LABEL_KEY: Record<string, string> = {
 const LIVE_PROVIDER_LABEL_KEY: Record<string, string> = {
 	[TWENTYFOUR_SCORE_PROVIDER]: 'externalTeamAliasProvider24score',
 	[CHAMPIONAT_PROVIDER]: 'externalTeamAliasProviderChampionat',
+	[EURO_FOOTBALL_PROVIDER]: 'externalTeamAliasProviderEuroFootball',
 };
 const MATCH_OPTION_AVATAR = 18;
 
@@ -149,17 +155,17 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 				if (cancelled) {
 					return;
 				}
-				const ids = [...(config.capabilities?.LIVE ?? [])].sort();
+				const ids = sortProvidersLiveFirst(config.capabilities?.LIVE ?? []);
 				setLiveProviders(ids);
 				const primary = config.layers?.LIVE?.primaryProvider ?? '';
 				setLiveProvider((prev) => {
 					if (prev && ids.includes(prev)) {
 						return prev;
 					}
-					if (primary && ids.includes(primary)) {
+					if (primary && ids.includes(primary) && !isInactiveExternalProvider(primary)) {
 						return primary;
 					}
-					return ids[0] ?? '';
+					return firstLiveProvider(ids, primary && ids.includes(primary) ? primary : '');
 				});
 			} catch (error) {
 				if (!cancelled) {
@@ -598,12 +604,12 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 						setOddsProvider(String(e.target.value));
 						setForceMatchIds([]);
 					}}
+					renderValue={renderProviderSelectValue((id) => t(ODDS_PROVIDER_LABEL_KEY[id] ?? id))}
 				>
-					{ODDS_PROVIDERS.map((provider) => (
-						<MenuItem key={provider} value={provider}>
-							{t(ODDS_PROVIDER_LABEL_KEY[provider])}
-						</MenuItem>
-					))}
+					<ProviderSelectItems
+						providers={ODDS_PROVIDERS}
+						labelFor={(id) => t(ODDS_PROVIDER_LABEL_KEY[id] ?? id)}
+					/>
 				</Select>
 			</FormControl>
 			{oddsLeagues.length > 0 ? (
@@ -748,14 +754,14 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 					value={liveProviders.includes(liveProvider) ? liveProvider : ''}
 					onChange={(e) => setLiveProvider(String(e.target.value))}
 					disabled={liveProviders.length === 0}
+					renderValue={renderProviderSelectValue((id) =>
+						LIVE_PROVIDER_LABEL_KEY[id] ? t(LIVE_PROVIDER_LABEL_KEY[id]) : id
+					)}
 				>
-					{liveProviders.map((provider) => (
-						<MenuItem key={provider} value={provider}>
-							{LIVE_PROVIDER_LABEL_KEY[provider]
-								? t(LIVE_PROVIDER_LABEL_KEY[provider])
-								: provider}
-						</MenuItem>
-					))}
+					<ProviderSelectItems
+						providers={liveProviders}
+						labelFor={(id) => (LIVE_PROVIDER_LABEL_KEY[id] ? t(LIVE_PROVIDER_LABEL_KEY[id]) : id)}
+					/>
 				</Select>
 			</FormControl>
 			<TextField

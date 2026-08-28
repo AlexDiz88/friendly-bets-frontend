@@ -6,6 +6,7 @@ import {
 	FOOTBALL24_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 	CHAMPIONAT_PROVIDER,
+	EURO_FOOTBALL_PROVIDER,
 	RUSCORE_PROVIDER,
 	FLASHSCORE_PROVIDER,
 	LIVERESULT_PROVIDER,
@@ -76,6 +77,12 @@ export const SANDBOX_ID_HINTS: Partial<
 		[CHAMPIONAT_PROVIDER]: [
 			{ label: 'EPL', value: 'Премьер-лига' },
 			{ label: 'BL', value: 'Бундеслига' },
+		],
+		[EURO_FOOTBALL_PROVIDER]: [
+			{ label: 'EPL', value: 'Англия' },
+			{ label: 'BL', value: 'Бундеслига' },
+			{ label: 'CL', value: 'Лига чемпионов' },
+			{ label: 'LE', value: 'Лига Европы' },
 		],
 	},
 	FULL_MATCH: {
