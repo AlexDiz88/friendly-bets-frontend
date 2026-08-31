@@ -52,7 +52,7 @@ function zoneLegendLabel(
 }
 
 function formatGoals(goalsFor: number, goalsAgainst: number): string {
-	return `${goalsFor} - ${goalsAgainst}`;
+	return `${goalsFor}-${goalsAgainst}`;
 }
 
 function formatGoalDifference(value: number): string {
