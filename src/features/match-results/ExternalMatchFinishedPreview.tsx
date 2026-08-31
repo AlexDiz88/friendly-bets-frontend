@@ -53,7 +53,7 @@ export default function ExternalMatchFinishedPreview({
 
 	const renderTeamSide = (side: 'home' | 'away'): JSX.Element => {
 		const team = side === 'home' ? homeTeam : awayTeam;
-		const name = resolveTeamDisplayName(team, t, i18n.language);
+		const name = resolveTeamDisplayName(team, i18n.language);
 		const sideSx =
 			side === 'home' ? externalMatchBetsDialogTeamSideHomeSx : externalMatchBetsDialogTeamSideAwaySx;
 

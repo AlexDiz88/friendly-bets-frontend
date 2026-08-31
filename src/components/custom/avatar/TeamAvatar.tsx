@@ -23,7 +23,7 @@ const TeamAvatar = ({
 				alt="team_logo"
 				src={resolveTeamLogoUrl(team)}
 			/>
-			{resolveTeamDisplayName(team, t, i18n.language)}
+			{resolveTeamDisplayName(team, i18n.language)}
 		</Box>
 	);
 };

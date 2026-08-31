@@ -1,66 +1,51 @@
-import { TFunction } from 'i18next';
 import Team from '../../features/admin/teams/types/Team';
 import { pathToLogoImage } from './imgBase64Converter';
 
-export function teamI18nKey(team: Pick<Team, 'title'> | undefined): string {
-	return team?.title?.trim() ?? '';
+export function teamLogoKey(team: Pick<Team, 'title' | 'logoKey'> | undefined): string {
+	return team?.logoKey?.trim() || team?.title?.trim() || '';
 }
 
 export function resolveTeamLogoUrl(team: Pick<Team, 'title' | 'logoKey'> | undefined): string {
-	return pathToLogoImage(team?.logoKey || teamI18nKey(team));
+	return pathToLogoImage(teamLogoKey(team));
+}
+
+/** @deprecated use {@link teamLogoKey} */
+export function teamI18nKey(team: Pick<Team, 'title'> | undefined): string {
+	return teamLogoKey(team);
 }
 
 export function resolveTeamDisplayName(
 	team: Pick<Team, 'title' | 'displayNames'> | undefined,
-	t: TFunction,
 	language: string
 ): string {
 	if (!team) {
 		return '';
 	}
-	const lang = language ?? '';
 	const names = team.displayNames;
-	let localizedName: string | undefined;
+	const lang = language ?? '';
 	if (lang.startsWith('ru')) {
-		localizedName = names?.ru?.trim();
-	} else if (lang.startsWith('de')) {
-		localizedName = names?.de?.trim();
-	} else {
-		localizedName = names?.en?.trim();
+		return names?.ru?.trim() || names?.en?.trim() || team.title?.trim() || '';
 	}
-	if (localizedName) {
-		return localizedName;
+	if (lang.startsWith('de')) {
+		return names?.de?.trim() || names?.en?.trim() || team.title?.trim() || '';
 	}
-	const key = teamI18nKey(team);
-	if (key) {
-		const translated = t(`teams:${key}`, { defaultValue: '' });
-		if (translated) {
-			return translated;
-		}
-	}
-	return key;
+	return names?.en?.trim() || team.title?.trim() || '';
 }
 
-/** Russian label for sorting admin team lists (displayNames.ru, then i18n, then title). */
+/** Russian label for sorting admin team lists. */
 export function resolveTeamRussianSortName(
-	team: Pick<Team, 'title' | 'displayNames'> | undefined,
-	t: TFunction
+	team: Pick<Team, 'title' | 'displayNames'> | undefined
 ): string {
 	if (!team) {
 		return '';
 	}
-	const ru = team.displayNames?.ru?.trim();
-	if (ru) {
-		return ru;
-	}
-	return resolveTeamDisplayName(team, t, 'ru') || team.title;
+	return team.displayNames?.ru?.trim() || team.displayNames?.en?.trim() || team.title?.trim() || '';
 }
 
-/** Match team by title, display names (ru/en/de), and localized labels. */
+/** Match team by title and display names (ru/en/de). */
 export function teamMatchesSearchQuery(
 	team: Pick<Team, 'title' | 'displayNames'> | undefined,
-	query: string,
-	t: TFunction
+	query: string
 ): boolean {
 	if (!team) {
 		return false;
@@ -80,8 +65,5 @@ export function teamMatchesSearchQuery(
 	add(team.displayNames?.ru);
 	add(team.displayNames?.en);
 	add(team.displayNames?.de);
-	add(resolveTeamDisplayName(team, t, 'ru'));
-	add(resolveTeamDisplayName(team, t, 'en'));
-	add(resolveTeamDisplayName(team, t, 'de'));
 	return [...parts].some((part) => part.includes(q));
 }

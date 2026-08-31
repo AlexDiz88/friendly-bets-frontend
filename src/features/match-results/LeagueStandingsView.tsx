@@ -187,7 +187,7 @@ export default function LeagueStandingsView({
 								logoKey: row.logoKey ?? undefined,
 								displayNames: row.displayNames ?? undefined,
 							};
-							const teamLabel = resolveTeamDisplayName(team, t, i18n.language);
+							const teamLabel = resolveTeamDisplayName(team, i18n.language);
 							return (
 								<tr key={`${row.rank}-${row.teamId}`}>
 									<td

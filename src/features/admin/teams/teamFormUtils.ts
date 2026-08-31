@@ -1,4 +1,3 @@
-import i18n from '../../../i18n';
 import NewTeam from './types/NewTeam';
 import Team, { TeamDisplayNames, TeamExternalAlias } from './types/Team';
 import {
@@ -156,66 +155,11 @@ function formFieldFilled(value: string): boolean {
 	return value.trim() !== '';
 }
 
-/** All editable team fields (country, i18n names, provider aliases). */
-const TEAM_I18N_LANGS: { lng: string; field: keyof Pick<TeamFormValues, 'nameEn' | 'nameRu' | 'nameDe'> }[] =
-	[
-		{ lng: 'en', field: 'nameEn' },
-		{ lng: 'ru', field: 'nameRu' },
-		{ lng: 'de', field: 'nameDe' },
-	];
-
-/** Display names from teams.json by title key (en → nameEn, ru → nameRu, de → nameDe). */
-export function resolveDisplayNamesFromTeamTitle(
-	title: string
-): Partial<Pick<TeamFormValues, 'nameEn' | 'nameRu' | 'nameDe'>> {
-	const key = title.trim();
-	if (!key) {
-		return {};
-	}
-	const result: Partial<Pick<TeamFormValues, 'nameEn' | 'nameRu' | 'nameDe'>> = {};
-	for (const { lng, field } of TEAM_I18N_LANGS) {
-		if (i18n.exists(key, { lng, ns: 'teams' })) {
-			result[field] = i18n.t(key, { lng, ns: 'teams' });
-		}
-	}
-	return result;
-}
-
-/** Fill nameEn/nameRu/nameDe from i18n when empty (or all fields when onlyEmptyFields is false). */
-export function applyI18nDisplayNamesToFormValues(
-	values: TeamFormValues,
-	onlyEmptyFields = true
-): TeamFormValues {
-	const fromI18n = resolveDisplayNamesFromTeamTitle(values.title);
-	if (!fromI18n.nameEn && !fromI18n.nameRu && !fromI18n.nameDe) {
-		return values;
-	}
-	return {
-		...values,
-		nameEn:
-			onlyEmptyFields && values.nameEn.trim()
-				? values.nameEn
-				: (fromI18n.nameEn ?? values.nameEn),
-		nameRu:
-			onlyEmptyFields && values.nameRu.trim()
-				? values.nameRu
-				: (fromI18n.nameRu ?? values.nameRu),
-		nameDe:
-			onlyEmptyFields && values.nameDe.trim()
-				? values.nameDe
-				: (fromI18n.nameDe ?? values.nameDe),
-	};
-}
-
 export function mergeTeamFormPatch(
 	prev: TeamFormValues,
 	patch: Partial<TeamFormValues>
 ): TeamFormValues {
-	const next = { ...prev, ...patch };
-	if (patch.title !== undefined) {
-		return applyI18nDisplayNamesToFormValues(next, true);
-	}
-	return next;
+	return { ...prev, ...patch };
 }
 
 export function isTeamFormComplete(values: TeamFormValues): boolean {
@@ -242,17 +186,14 @@ export function teamToFormValues(team: Team): TeamFormValues {
 		const alias = team.externalAliases?.find((a) => a.provider === provider);
 		aliasValues[field] = alias?.externalName ?? '';
 	}
-	return applyI18nDisplayNamesToFormValues(
-		{
-			title: team.title ?? '',
-			country: team.country ?? '',
-			nameEn: team.displayNames?.en ?? '',
-			nameRu: team.displayNames?.ru ?? '',
-			nameDe: team.displayNames?.de ?? '',
-			...aliasValues,
-		},
-		true
-	);
+	return {
+		title: team.title ?? '',
+		country: team.country ?? '',
+		nameEn: team.displayNames?.en ?? '',
+		nameRu: team.displayNames?.ru ?? '',
+		nameDe: team.displayNames?.de ?? '',
+		...aliasValues,
+	};
 }
 
 function buildDisplayNames(

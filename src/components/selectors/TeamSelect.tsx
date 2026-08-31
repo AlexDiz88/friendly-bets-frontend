@@ -35,8 +35,8 @@ const TeamSelect = ({ label, value, onChange, teams }: TeamSelectProps): JSX.Ele
 			teams
 				? [...teams].sort((a, b) =>
 						a.title && b.title
-							? resolveTeamDisplayName(a, t, i18n.language).localeCompare(
-									resolveTeamDisplayName(b, t, i18n.language),
+							? resolveTeamDisplayName(a, i18n.language).localeCompare(
+									resolveTeamDisplayName(b, i18n.language),
 									i18n.language
 								)
 							: 0

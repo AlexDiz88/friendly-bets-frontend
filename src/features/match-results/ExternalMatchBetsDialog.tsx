@@ -165,7 +165,7 @@ export default function ExternalMatchBetsDialog({
 		}
 
 		const team = side === 'home' ? homeTeam : awayTeam;
-		const name = resolveTeamDisplayName(team, t, i18n.language);
+		const name = resolveTeamDisplayName(team, i18n.language);
 		const sideSx =
 			side === 'home' ? externalMatchBetsDialogTeamSideHomeSx : externalMatchBetsDialogTeamSideAwaySx;
 

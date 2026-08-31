@@ -115,14 +115,14 @@ export default function EditTeamPanel(): JSX.Element {
 	const sortedTeams = useMemo(
 		() =>
 			[...teams].sort((a, b) =>
-				resolveTeamRussianSortName(a, t).localeCompare(resolveTeamRussianSortName(b, t), 'ru')
+				resolveTeamRussianSortName(a).localeCompare(resolveTeamRussianSortName(b), 'ru')
 			),
 		[teams]
 	);
 
 	const filterTeamOptions = useCallback(
 		(options: Team[], state: FilterOptionsState<Team>) =>
-			options.filter((team) => teamMatchesSearchQuery(team, state.inputValue, t)),
+			options.filter((team) => teamMatchesSearchQuery(team, state.inputValue)),
 		[]
 	);
 
@@ -245,7 +245,7 @@ export default function EditTeamPanel(): JSX.Element {
 						setTeamSelectOpen(false);
 						setSelected(team);
 					}}
-					getOptionLabel={(team) => resolveTeamDisplayName(team, t, i18n.language)}
+					getOptionLabel={(team) => resolveTeamDisplayName(team, i18n.language)}
 					filterOptions={filterTeamOptions}
 					isOptionEqualToValue={(a, b) => a.id === b.id}
 					renderOption={(props, team) => (

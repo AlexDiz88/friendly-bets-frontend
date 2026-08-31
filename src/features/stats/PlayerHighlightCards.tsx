@@ -98,7 +98,7 @@ function TeamLogoName({
 					whiteSpace: 'nowrap',
 				}}
 			>
-				{resolveTeamDisplayName(team, t, language) || team.title || '—'}
+				{resolveTeamDisplayName(team, language) || team.title || '—'}
 			</Typography>
 		</Box>
 	);

@@ -45,7 +45,7 @@ interface RowProps {
 
 function Row({ tStats }: RowProps): JSX.Element {
 	const { i18n } = useTranslation();
-	const teamLabel = resolveTeamDisplayName(tStats.team, t, i18n.language);
+	const teamLabel = resolveTeamDisplayName(tStats.team, i18n.language);
 	const [open, setOpen] = useState(false);
 	const toggleOpen = (): void => setOpen((prev) => !prev);
 

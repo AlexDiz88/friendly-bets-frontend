@@ -224,7 +224,7 @@ export default function OddsPickDialog({
 						</Box>
 						<Box sx={oddsPickDialogTeamsRowSx}>
 							<Typography sx={oddsPickDialogHomeTeamNameSx}>
-								{resolveTeamDisplayName(homeTeam, t, i18n.language)}
+								{resolveTeamDisplayName(homeTeam, i18n.language)}
 							</Typography>
 							<Avatar
 								variant="square"
@@ -238,7 +238,7 @@ export default function OddsPickDialog({
 								sx={oddsPickDialogTeamAvatarSx}
 							/>
 							<Typography sx={oddsPickDialogAwayTeamNameSx}>
-								{resolveTeamDisplayName(awayTeam, t, i18n.language)}
+								{resolveTeamDisplayName(awayTeam, i18n.language)}
 							</Typography>
 						</Box>
 					</Box>
@@ -313,7 +313,7 @@ export default function OddsPickDialog({
 											sx={oddsPickConfirmTeamAvatarSx}
 										/>
 										<Typography sx={oddsPickConfirmTeamNameSx}>
-											{resolveTeamDisplayName(homeTeam, t, i18n.language)}
+											{resolveTeamDisplayName(homeTeam, i18n.language)}
 										</Typography>
 									</Box>
 									<Typography sx={oddsPickConfirmVsSx}>—</Typography>
@@ -324,7 +324,7 @@ export default function OddsPickDialog({
 											sx={oddsPickConfirmTeamAvatarSx}
 										/>
 										<Typography sx={oddsPickConfirmTeamNameSx}>
-											{resolveTeamDisplayName(awayTeam, t, i18n.language)}
+											{resolveTeamDisplayName(awayTeam, i18n.language)}
 										</Typography>
 									</Box>
 								</Box>
