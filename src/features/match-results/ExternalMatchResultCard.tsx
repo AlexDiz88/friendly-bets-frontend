@@ -87,7 +87,7 @@ function CompactMatchRow({
 						whiteSpace: 'nowrap',
 					}}
 				>
-					{resolveTeamDisplayName(homeTeam, t, i18n.language)}
+					{resolveTeamDisplayName(homeTeam, i18n.language)}
 				</Typography>
 				<Avatar
 					variant="square"
@@ -159,7 +159,7 @@ function CompactMatchRow({
 						whiteSpace: 'nowrap',
 					}}
 				>
-					{resolveTeamDisplayName(awayTeam, t, i18n.language)}
+					{resolveTeamDisplayName(awayTeam, i18n.language)}
 				</Typography>
 			</Box>
 		</Box>

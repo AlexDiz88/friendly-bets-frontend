@@ -75,8 +75,8 @@ export default function AddTeamToLeague({
 	const sortedLeagueTeams = useMemo(
 		() =>
 			[...leagueTeams].sort((a, b) =>
-				resolveTeamDisplayName(a, t, i18n.language).localeCompare(
-					resolveTeamDisplayName(b, t, i18n.language),
+				resolveTeamDisplayName(a, i18n.language).localeCompare(
+					resolveTeamDisplayName(b, i18n.language),
 					i18n.language.startsWith('ru') ? 'ru' : undefined
 				)
 			),
@@ -86,8 +86,8 @@ export default function AddTeamToLeague({
 	const sortedAllTeams = useMemo(
 		() =>
 			[...allTeams].sort((a, b) =>
-				resolveTeamDisplayName(a, t, i18n.language).localeCompare(
-					resolveTeamDisplayName(b, t, i18n.language),
+				resolveTeamDisplayName(a, i18n.language).localeCompare(
+					resolveTeamDisplayName(b, i18n.language),
 					i18n.language.startsWith('ru') ? 'ru' : undefined
 				)
 			),

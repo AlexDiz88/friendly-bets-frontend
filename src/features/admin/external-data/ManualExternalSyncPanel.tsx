@@ -85,8 +85,8 @@ function todayUtcIsoDate(): string {
 function MatchOptionLabel({ match }: { match: ExternalMatch }): JSX.Element {
 	const homeTeam = matchSideToDisplayTeam(match, 'home');
 	const awayTeam = matchSideToDisplayTeam(match, 'away');
-	const homeName = resolveTeamDisplayName(homeTeam, t, i18n.language);
-	const awayName = resolveTeamDisplayName(awayTeam, t, i18n.language);
+	const homeName = resolveTeamDisplayName(homeTeam, i18n.language);
+	const awayName = resolveTeamDisplayName(awayTeam, i18n.language);
 	return (
 		<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minWidth: 0, ml: 0.5 }}>
 			<Avatar

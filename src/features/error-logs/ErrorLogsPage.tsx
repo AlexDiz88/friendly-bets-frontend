@@ -364,12 +364,10 @@ export default function ErrorLogsPage(): JSX.Element {
 				);
 				const homeTeamName = resolveTeamDisplayName(
 					{ title: entry.homeTeamTitle || entry.homeTeam || '' },
-					t,
 					i18n.language
 				);
 				const awayTeamName = resolveTeamDisplayName(
 					{ title: entry.awayTeamTitle || entry.awayTeam || '' },
-					t,
 					i18n.language
 				);
 				const teamsLabel =

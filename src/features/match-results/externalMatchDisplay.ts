@@ -1,7 +1,7 @@
 import Team from '../admin/teams/types/Team';
 import { ExternalMatch } from './types/ExternalMatch';
 
-/** Команда для отображения на странице результатов (логотип + i18n по title). */
+/** Команда для отображения на странице результатов (логотип + displayNames). */
 export function matchSideToDisplayTeam(match: ExternalMatch, side: 'home' | 'away'): Team {
 	const apiName = side === 'home' ? match.homeTeamName : match.awayTeamName;
 	const resolvedTitle =

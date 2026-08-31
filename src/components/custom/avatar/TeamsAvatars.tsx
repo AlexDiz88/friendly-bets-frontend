@@ -33,14 +33,14 @@ const TeamsAvatars = ({
 				alt="team_logo"
 				src={resolveTeamLogoUrl(homeTeam)}
 			/>
-			{resolveTeamDisplayName(homeTeam, t, i18n.language)}
+			{resolveTeamDisplayName(homeTeam, i18n.language)}
 			<Avatar
 				sx={[{ mr: 0.3, ml: 1, height, width: height }, leagueLogoAvatarSx] as SxProps<Theme>}
 				variant="square"
 				alt="team_logo"
 				src={resolveTeamLogoUrl(awayTeam)}
 			/>
-			{resolveTeamDisplayName(awayTeam, t, i18n.language)}
+			{resolveTeamDisplayName(awayTeam, i18n.language)}
 		</Box>
 	);
 };
