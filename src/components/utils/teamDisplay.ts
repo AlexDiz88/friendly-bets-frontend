@@ -9,11 +9,6 @@ export function resolveTeamLogoUrl(team: Pick<Team, 'title' | 'logoKey'> | undef
 	return pathToLogoImage(teamLogoKey(team));
 }
 
-/** @deprecated use {@link teamLogoKey} */
-export function teamI18nKey(team: Pick<Team, 'title'> | undefined): string {
-	return teamLogoKey(team);
-}
-
 export function resolveTeamDisplayName(
 	team: Pick<Team, 'title' | 'displayNames'> | undefined,
 	language: string

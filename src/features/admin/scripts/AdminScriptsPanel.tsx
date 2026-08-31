@@ -21,17 +21,14 @@ import { showErrorSnackbar, showSuccessSnackbar } from '../../../components/cust
 import { ADMIN_FORM_FIELD_SX, ADMIN_SELECT_SX } from '../adminPanelStyles';
 import {
 	migrateTimestampsToUtcInstant,
-	migrateTeamDisplayNames,
 	unsetMatchScheduleExternalIds,
 	type MatchScheduleExternalIdsMigrationResult,
-	type TeamDisplayNamesMigrationResult,
 	type UtcTimestampsMigrationResult,
 } from './adminScriptsApi';
 
 type AdminScriptId =
 	| 'migrate-timestamps-to-utc-instant'
-	| 'unset-match-schedule-external-ids'
-	| 'migrate-team-display-names';
+	| 'unset-match-schedule-external-ids';
 
 type AdminScriptDef = {
 	id: AdminScriptId;
@@ -66,20 +63,6 @@ const ADMIN_SCRIPTS: AdminScriptDef[] = [
 			return t('matchScheduleExternalIdsMigrationSuccess', {
 				matched: result.matched ?? 0,
 				modified: result.modified ?? 0,
-			});
-		},
-	},
-	{
-		id: 'migrate-team-display-names',
-		titleKey: 'adminScriptTeamDisplayNamesMigration',
-		hintKey: 'runScriptTeamDisplayNamesMigrationHint',
-		run: async () => {
-			const result: TeamDisplayNamesMigrationResult = await migrateTeamDisplayNames();
-			return t('teamDisplayNamesMigrationSuccess', {
-				scanned: result.scanned ?? 0,
-				updated: result.updated ?? 0,
-				alreadyComplete: result.alreadyComplete ?? 0,
-				noCatalog: result.noCatalogEntry ?? 0,
 			});
 		},
 	},
