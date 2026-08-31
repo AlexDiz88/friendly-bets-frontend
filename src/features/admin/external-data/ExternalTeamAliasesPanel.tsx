@@ -68,17 +68,17 @@ const PROVIDERS = [
 
 const PROVIDER_LEAGUE_CODES: Record<string, Set<string>> = {
 	[SOCCER365_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'EC', 'WC']),
-	[SPORTS_RU_PROVIDER]: new Set(['EPL', 'BL']),
+	[SPORTS_RU_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
 	[FOOTBALL24_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
 	[MARATHONBET_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE', 'WC']),
-	[MELBET_PROVIDER]: new Set(['EPL', 'BL']),
-	[TWENTYFOUR_SCORE_PROVIDER]: new Set(['EPL', 'BL']),
+	[MELBET_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
+	[TWENTYFOUR_SCORE_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
 	[CHAMPIONAT_PROVIDER]: new Set(['EPL', 'BL']),
 	[EURO_FOOTBALL_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
 	[RUSCORE_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
-	[FLASHSCORE_PROVIDER]: new Set(['EPL', 'BL']),
-	[FLASHSCORE_UA_PROVIDER]: new Set(['EPL', 'BL']),
-	[LIVERESULT_PROVIDER]: new Set(['EPL', 'BL']),
+	[FLASHSCORE_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
+	[FLASHSCORE_UA_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
+	[LIVERESULT_PROVIDER]: new Set(['EPL', 'BL', 'CL', 'LE']),
 };
 
 const PROVIDER_LABEL_KEY: Record<string, string> = {
