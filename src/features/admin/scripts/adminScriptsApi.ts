@@ -19,28 +19,8 @@ export type MatchScheduleExternalIdsMigrationResult = {
 	message?: string;
 };
 
-export type TeamDisplayNamesMigrationResult = {
-	scanned?: number;
-	updated?: number;
-	alreadyComplete?: number;
-	noCatalogEntry?: number;
-	missingCatalogTitles?: string[];
-	message?: string;
-};
-
 export async function migrateTimestampsToUtcInstant(): Promise<UtcTimestampsMigrationResult> {
 	const result = await apiFetch(apiUrl('/api/admin/scripts/migrate-timestamps-to-utc-instant'), {
-		method: 'POST',
-	});
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
-}
-
-export async function migrateTeamDisplayNames(): Promise<TeamDisplayNamesMigrationResult> {
-	const result = await apiFetch(apiUrl('/api/admin/scripts/migrate-team-display-names'), {
 		method: 'POST',
 	});
 	if (result.status >= 400) {
