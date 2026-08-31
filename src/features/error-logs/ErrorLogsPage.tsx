@@ -567,7 +567,15 @@ export default function ErrorLogsPage(): JSX.Element {
 						</Box>
 
 						{entry.message ? (
-							<Typography sx={{ ...errorLogMessageSx, pl: 0.75 }}>{entry.message}</Typography>
+							<Typography sx={{ ...errorLogMessageSx, pl: 0.75, whiteSpace: 'pre-wrap' }}>
+								{entry.message}
+							</Typography>
+						) : null}
+						{entry.context?.details &&
+						!(entry.message && entry.message.includes(entry.context.details)) ? (
+							<Typography sx={{ ...errorLogMessageSx, pl: 0.75, whiteSpace: 'pre-wrap' }}>
+								{entry.context.details}
+							</Typography>
 						) : null}
 					</Box>
 				);
