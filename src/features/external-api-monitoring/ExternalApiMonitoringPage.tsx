@@ -1170,7 +1170,9 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 								{t('externalApiMonitoring.noRuns')}
 							</Typography>
 						) : (
-							<TableContainer sx={monitoringTableContainerSx}>
+							<TableContainer
+								sx={monitoringTableContainerSx(rows.some((r) => r.id === expandedId))}
+							>
 								<Table size="small" stickyHeader sx={monitoringTableSx(theme, layer)}>
 									<TableHead>
 										<TableRow>

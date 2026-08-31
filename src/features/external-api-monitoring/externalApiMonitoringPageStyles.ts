@@ -145,10 +145,15 @@ export function monitoringSectionTitleSx(layer: ExternalDataLayer): SxProps<Them
 	};
 }
 
-export const monitoringTableContainerSx: SxProps<Theme> = {
-	maxHeight: 360,
-	overflow: 'auto',
-};
+export const monitoringTableContainerCollapsedMaxHeightPx = 360;
+
+/** Table body for a layer section — grows when a run row is expanded so HTTP detail is not clipped. */
+export function monitoringTableContainerSx(expandedInSection: boolean): SxProps<Theme> {
+	return {
+		maxHeight: expandedInSection ? 'none' : monitoringTableContainerCollapsedMaxHeightPx,
+		overflow: 'auto',
+	};
+}
 
 export function monitoringTableSx(theme: Theme, layer: ExternalDataLayer): SxProps<Theme> {
 	const pal = layerPalette(layer);
