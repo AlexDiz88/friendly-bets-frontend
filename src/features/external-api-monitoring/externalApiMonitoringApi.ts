@@ -75,18 +75,35 @@ export type MonitoringLayerPage = {
 	runs: MonitoringRun[];
 	total: number;
 	failed: number;
+	offset?: number;
+	limit?: number;
+	hasMore?: boolean;
+};
+
+export type MonitoringRunsQuery = {
+	hours?: number;
+	limit?: number;
+	offset?: number;
+	/** Comma-separated statuses or `issues` (FAILED+PARTIAL). */
+	status?: string;
 };
 
 export async function fetchMonitoringRuns(
 	layer: ExternalDataLayer,
-	hours = 24,
-	limit = 50
+	query: MonitoringRunsQuery = {}
 ): Promise<MonitoringLayerPage> {
+	const hours = query.hours ?? 24;
+	const limit = query.limit ?? 50;
+	const offset = query.offset ?? 0;
 	const params = new URLSearchParams({
 		layer,
 		hours: String(hours),
 		limit: String(limit),
+		offset: String(offset),
 	});
+	if (query.status) {
+		params.set('status', query.status);
+	}
 	const result = await apiFetch(apiUrl(`/api/admin/external-api-monitoring?${params}`));
 	if (result.status >= 400) {
 		const { message } = await result.json();
@@ -97,6 +114,9 @@ export async function fetchMonitoringRuns(
 		runs: body.runs ?? [],
 		total: body.total ?? 0,
 		failed: body.failed ?? 0,
+		offset: body.offset ?? offset,
+		limit: body.limit ?? limit,
+		hasMore: body.hasMore ?? false,
 	};
 }
 

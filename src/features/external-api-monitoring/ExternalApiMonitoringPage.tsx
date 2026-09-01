@@ -6,9 +6,12 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import {
 	Avatar,
 	Box,
+	Button,
+	Checkbox,
 	Chip,
 	CircularProgress,
 	Collapse,
+	FormControlLabel,
 	IconButton,
 	MenuItem,
 	Select,
@@ -95,24 +98,28 @@ const EMPTY_LAYER_RUNS: Record<ExternalDataLayer, MonitoringRun[]> = {
 	STANDINGS: [],
 };
 
-type LayerTotals = { total: number; failed: number };
+type LayerTotals = { total: number; failed: number; hasMore: boolean };
 
 const EMPTY_LAYER_TOTALS: Record<ExternalDataLayer, LayerTotals> = {
-	SCHEDULE: { total: 0, failed: 0 },
-	ODDS: { total: 0, failed: 0 },
-	LIVE: { total: 0, failed: 0 },
-	FULL_MATCH: { total: 0, failed: 0 },
-	STANDINGS: { total: 0, failed: 0 },
+	SCHEDULE: { total: 0, failed: 0, hasMore: false },
+	ODDS: { total: 0, failed: 0, hasMore: false },
+	LIVE: { total: 0, failed: 0, hasMore: false },
+	FULL_MATCH: { total: 0, failed: 0, hasMore: false },
+	STANDINGS: { total: 0, failed: 0, hasMore: false },
 };
+
+const MONITORING_PAGE_LIMITS = [50, 100, 200, 500] as const;
 
 function LayerRunCountLabel({
 	shown,
 	total,
 	failed,
+	offset = 0,
 }: {
 	shown: number;
 	total: number;
 	failed: number;
+	offset?: number;
 }): JSX.Element {
 	return (
 		<>
@@ -129,7 +136,11 @@ function LayerRunCountLabel({
 			) : null}
 			{shown < total ? (
 				<Typography component="span" color="text.secondary" sx={{ ml: 1, fontWeight: 400, fontSize: '0.78em' }}>
-					{t('externalApiMonitoring.layerCountCapped', { shown, total })}
+					{t('externalApiMonitoring.layerCountRange', {
+						from: total === 0 ? 0 : offset + 1,
+						to: offset + shown,
+						total,
+					})}
 				</Typography>
 			) : null}
 		</>
@@ -604,7 +615,11 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 	const dispatch = useAppDispatch();
 	const { formatDetailed, formatDateTime, formatTime } = useFormatUserDateTime();
 	const [hours, setHours] = useState(72);
+	const [pageLimit, setPageLimit] = useState<number>(100);
+	const [errorsOnly, setErrorsOnly] = useState(false);
+	const [offset, setOffset] = useState(0);
 	const [loading, setLoading] = useState(true);
+	const [loadingMore, setLoadingMore] = useState(false);
 	const [runsByLayer, setRunsByLayer] = useState<Record<ExternalDataLayer, MonitoringRun[]>>(EMPTY_LAYER_RUNS);
 	const [totalsByLayer, setTotalsByLayer] = useState<Record<ExternalDataLayer, LayerTotals>>(EMPTY_LAYER_TOTALS);
 	const [latest, setLatest] = useState<Partial<Record<ExternalDataLayer, MonitoringRun>>>({});
@@ -615,20 +630,27 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 	const [deleting, setDeleting] = useState(false);
 	const [mobileLayer, setMobileLayer] = useState<ExternalDataLayer>('SCHEDULE');
 
-	const load = useCallback(async (): Promise<void> => {
+	const reload = useCallback(async (): Promise<void> => {
 		setLoading(true);
 		try {
+			const statusFilter = errorsOnly ? 'issues' : undefined;
+			const query = { hours, limit: pageLimit, offset: 0, status: statusFilter };
 			const [latestMap, pages] = await Promise.all([
 				fetchMonitoringLatest(),
-				Promise.all(MONITORING_LAYERS.map((layer) => fetchMonitoringRuns(layer, hours, 50))),
+				Promise.all(MONITORING_LAYERS.map((layer) => fetchMonitoringRuns(layer, query))),
 			]);
 			setLatest(latestMap);
+			setOffset(0);
 			const nextRuns: Record<ExternalDataLayer, MonitoringRun[]> = { ...EMPTY_LAYER_RUNS };
 			const nextTotals: Record<ExternalDataLayer, LayerTotals> = { ...EMPTY_LAYER_TOTALS };
 			MONITORING_LAYERS.forEach((layer, idx) => {
 				const page = pages[idx];
 				nextRuns[layer] = page.runs;
-				nextTotals[layer] = { total: page.total, failed: page.failed };
+				nextTotals[layer] = {
+					total: page.total,
+					failed: page.failed,
+					hasMore: page.hasMore ?? false,
+				};
 			});
 			setRunsByLayer(nextRuns);
 			setTotalsByLayer(nextTotals);
@@ -641,11 +663,49 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 		} finally {
 			setLoading(false);
 		}
-	}, [dispatch, hours]);
+	}, [dispatch, errorsOnly, hours, pageLimit]);
+
+	const loadMore = useCallback(async (): Promise<void> => {
+		setLoadingMore(true);
+		const nextOffset = offset + pageLimit;
+		try {
+			const statusFilter = errorsOnly ? 'issues' : undefined;
+			const query = { hours, limit: pageLimit, offset: nextOffset, status: statusFilter };
+			const pages = await Promise.all(MONITORING_LAYERS.map((layer) => fetchMonitoringRuns(layer, query)));
+			setOffset(nextOffset);
+			setRunsByLayer((prev) => {
+				const nextRuns = { ...prev };
+				MONITORING_LAYERS.forEach((layer, idx) => {
+					nextRuns[layer] = [...(prev[layer] ?? []), ...pages[idx].runs];
+				});
+				return nextRuns;
+			});
+			setTotalsByLayer((prev) => {
+				const nextTotals = { ...prev };
+				MONITORING_LAYERS.forEach((layer, idx) => {
+					const page = pages[idx];
+					nextTotals[layer] = {
+						total: page.total,
+						failed: page.failed,
+						hasMore: page.hasMore ?? false,
+					};
+				});
+				return nextTotals;
+			});
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : 'externalApiMonitoringLoadFailed',
+				})
+			);
+		} finally {
+			setLoadingMore(false);
+		}
+	}, [dispatch, errorsOnly, hours, offset, pageLimit]);
 
 	useEffect(() => {
-		void load();
-	}, [load]);
+		void reload();
+	}, [reload]);
 
 	const openDetail = async (id: string): Promise<void> => {
 		setExpandedId(id);
@@ -682,7 +742,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 					}),
 				})
 			);
-			await load();
+			await reload();
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
@@ -723,7 +783,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 							<Tooltip title={t('externalApiMonitoring.refresh')}>
 								<span>
 									<IconButton
-										onClick={() => void load()}
+										onClick={() => void reload()}
 										disabled={loading}
 										sx={{ minWidth: 40, minHeight: 40 }}
 									>
@@ -1073,7 +1133,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 			<Typography sx={monitoringHintSx}>{t('externalApiMonitoring.hint')}</Typography>
 
 			<Box sx={monitoringToolbarSx}>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
 					<Typography variant="body2" color="text.secondary">
 						{t('externalApiMonitoring.period')}
 					</Typography>
@@ -1087,10 +1147,36 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 						<MenuItem value={72}>72h</MenuItem>
 						<MenuItem value={168}>7d</MenuItem>
 					</Select>
+					<Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+						{t('externalApiMonitoring.pageSize')}
+					</Typography>
+					<Select
+						size="small"
+						value={pageLimit}
+						onChange={(e) => setPageLimit(Number(e.target.value))}
+						sx={{ minWidth: 88 }}
+					>
+						{MONITORING_PAGE_LIMITS.map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
+							</MenuItem>
+						))}
+					</Select>
+					<FormControlLabel
+						control={
+							<Checkbox
+								size="small"
+								checked={errorsOnly}
+								onChange={(e) => setErrorsOnly(e.target.checked)}
+							/>
+						}
+						label={t('externalApiMonitoring.errorsOnly')}
+						sx={{ ml: 0.5, mr: 0 }}
+					/>
 				</Box>
 				<Tooltip title={t('externalApiMonitoring.refresh')}>
 					<span>
-						<IconButton onClick={() => void load()} disabled={loading} sx={{ minWidth: 40, minHeight: 40 }}>
+						<IconButton onClick={() => void reload()} disabled={loading} sx={{ minWidth: 40, minHeight: 40 }}>
 							{loading ? <CircularProgress size={18} /> : <RefreshIcon />}
 						</IconButton>
 					</span>
@@ -1146,6 +1232,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 									shown={rows.length}
 									total={totals.total}
 									failed={totals.failed}
+									offset={offset}
 								/>
 							</Typography>
 							<Tooltip title={t('externalApiMonitoring.deleteLayer')}>
@@ -1410,6 +1497,15 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 					</Box>
 				);
 			})}
+
+			{MONITORING_LAYERS.some((layer) => totalsByLayer[layer].hasMore) ? (
+				<Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, mb: 1 }}>
+					<Button variant="outlined" onClick={() => void loadMore()} disabled={loading || loadingMore}>
+						{loadingMore ? <CircularProgress size={18} sx={{ mr: 1 }} /> : null}
+						{t('externalApiMonitoring.loadMore')}
+					</Button>
+				</Box>
+			) : null}
 
 			<CustomCalendarDialog
 				open={deleteLayer != null}
