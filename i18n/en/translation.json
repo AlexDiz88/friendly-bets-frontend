@@ -1414,6 +1414,7 @@
 			"liveMatchSyncStuck": "LIVE: match stuck without terminal status",
 			"liveMatchNotInFeed": "LIVE: match missing from provider feed",
 			"liveMatchAmbiguous": "LIVE: multiple provider candidates",
+			"liveMatchNeverPolled": "LIVE: match never polled after kickoff",
 			"externalApiMonitoringStatusInvalid": "Invalid monitoring status filter",
 			"marathonbetFetchFailed": "Marathonbet: fetch failed"
 		}

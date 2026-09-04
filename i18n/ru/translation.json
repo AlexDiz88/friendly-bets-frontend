@@ -1414,6 +1414,7 @@
 			"liveMatchSyncStuck": "LIVE: матч долго без терминального статуса",
 			"liveMatchNotInFeed": "LIVE: матч не найден в ответе провайдера",
 			"liveMatchAmbiguous": "LIVE: несколько кандидатов у провайдера",
+			"liveMatchNeverPolled": "LIVE: матч не опрашивался после kickoff",
 			"externalApiMonitoringStatusInvalid": "Некорректный фильтр статуса мониторинга",
 			"marathonbetFetchFailed": "Marathonbet: ошибка загрузки"
 		}
