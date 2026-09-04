@@ -39,6 +39,7 @@ import type { ExternalMatch } from '../../match-results/types/ExternalMatch';
 import { matchSideToDisplayTeam } from '../../match-results/externalMatchDisplay';
 import {
 	fetchExternalDataLayerConfig,
+	syncExternalFullMatch,
 	syncExternalLive,
 	syncExternalSchedule,
 	syncExternalStandings,
@@ -47,8 +48,11 @@ import {
 import {
 	CHAMPIONAT_PROVIDER,
 	EURO_FOOTBALL_PROVIDER,
+	FLASHSCORE_PROVIDER,
 	MARATHONBET_PROVIDER,
 	MELBET_PROVIDER,
+	RUSCORE_PROVIDER,
+	SOCCER365_PROVIDER,
 	TWENTYFOUR_SCORE_PROVIDER,
 	firstLiveProvider,
 	isInactiveExternalProvider,
@@ -75,6 +79,11 @@ const LIVE_PROVIDER_LABEL_KEY: Record<string, string> = {
 	[TWENTYFOUR_SCORE_PROVIDER]: 'externalTeamAliasProvider24score',
 	[CHAMPIONAT_PROVIDER]: 'externalTeamAliasProviderChampionat',
 	[EURO_FOOTBALL_PROVIDER]: 'externalTeamAliasProviderEuroFootball',
+};
+const FULL_MATCH_PROVIDER_LABEL_KEY: Record<string, string> = {
+	[RUSCORE_PROVIDER]: 'externalTeamAliasProviderRuscore',
+	[FLASHSCORE_PROVIDER]: 'externalTeamAliasProviderFlashscore',
+	[SOCCER365_PROVIDER]: 'externalTeamAliasProviderSoccer365',
 };
 const MATCH_OPTION_AVATAR = 18;
 
@@ -133,6 +142,10 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	const [liveDate, setLiveDate] = useState(todayUtcIsoDate);
 	const [liveProvider, setLiveProvider] = useState('');
 	const [liveProviders, setLiveProviders] = useState<string[]>([]);
+	const [syncingFullMatch, setSyncingFullMatch] = useState(false);
+	const [fullMatchDate, setFullMatchDate] = useState(todayUtcIsoDate);
+	const [fullMatchProvider, setFullMatchProvider] = useState('');
+	const [fullMatchProviders, setFullMatchProviders] = useState<string[]>([]);
 	const [syncingStandings, setSyncingStandings] = useState(false);
 	const [standingsLeagueCode, setStandingsLeagueCode] = useState('EPL');
 	const [forceOddsUpdate, setForceOddsUpdate] = useState(false);
@@ -159,17 +172,29 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 				if (cancelled) {
 					return;
 				}
-				const ids = sortProvidersLiveFirst(config.capabilities?.LIVE ?? []);
-				setLiveProviders(ids);
-				const primary = config.layers?.LIVE?.primaryProvider ?? '';
+				const liveIds = sortProvidersLiveFirst(config.capabilities?.LIVE ?? []);
+				setLiveProviders(liveIds);
+				const livePrimary = config.layers?.LIVE?.primaryProvider ?? '';
 				setLiveProvider((prev) => {
-					if (prev && ids.includes(prev)) {
+					if (prev && liveIds.includes(prev)) {
 						return prev;
 					}
-					if (primary && ids.includes(primary) && !isInactiveExternalProvider(primary)) {
-						return primary;
+					if (livePrimary && liveIds.includes(livePrimary) && !isInactiveExternalProvider(livePrimary)) {
+						return livePrimary;
 					}
-					return firstLiveProvider(ids, primary && ids.includes(primary) ? primary : '');
+					return firstLiveProvider(liveIds, livePrimary && liveIds.includes(livePrimary) ? livePrimary : '');
+				});
+				const fullIds = sortProvidersLiveFirst(config.capabilities?.FULL_MATCH ?? []);
+				setFullMatchProviders(fullIds);
+				const fullPrimary = config.layers?.FULL_MATCH?.primaryProvider ?? '';
+				setFullMatchProvider((prev) => {
+					if (prev && fullIds.includes(prev)) {
+						return prev;
+					}
+					if (fullPrimary && fullIds.includes(fullPrimary) && !isInactiveExternalProvider(fullPrimary)) {
+						return fullPrimary;
+					}
+					return firstLiveProvider(fullIds, fullPrimary && fullIds.includes(fullPrimary) ? fullPrimary : '');
 				});
 			} catch (error) {
 				if (!cancelled) {
@@ -500,6 +525,37 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		}
 	};
 
+	const handleFullMatchSync = async (): Promise<void> => {
+		if (!fullMatchProvider || !fullMatchDate) {
+			return;
+		}
+		setSyncingFullMatch(true);
+		try {
+			const result = await syncExternalFullMatch({
+				provider: fullMatchProvider,
+				date: fullMatchDate,
+			});
+			dispatch(
+				showSuccessSnackbar({
+					message: t('externalDataFullMatchSyncSuccess', {
+						candidates: result.candidates,
+						succeeded: result.succeeded,
+						notReady: result.notReady,
+						failed: result.failed,
+					}),
+				})
+			);
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : 'externalDataFullMatchSyncFailed',
+				})
+			);
+		} finally {
+			setSyncingFullMatch(false);
+		}
+	};
+
 	const handleStandingsSync = async (): Promise<void> => {
 		if (!effectiveStandingsLeague) {
 			return;
@@ -785,6 +841,50 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 				disabled={syncingLive || !liveProvider || !liveDate}
 				loading={syncingLive}
 				buttonText={t('externalDataLiveSyncNow')}
+				sx={{ width: '100%', mb: 2.5, mr: 0 }}
+			/>
+
+			<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
+				{t('externalDataFullMatchSyncTitle')}
+			</Typography>
+			<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', mb: 1 }}>
+				{t('externalDataFullMatchSyncHint')}
+			</Typography>
+			<FormControl fullWidth size="small" sx={{ mb: 1 }}>
+				<InputLabel id="full-match-sync-provider-label">{t('externalDataFullMatchProvider')}</InputLabel>
+				<Select
+					labelId="full-match-sync-provider-label"
+					label={t('externalDataFullMatchProvider')}
+					value={fullMatchProviders.includes(fullMatchProvider) ? fullMatchProvider : ''}
+					onChange={(e) => setFullMatchProvider(String(e.target.value))}
+					disabled={fullMatchProviders.length === 0}
+					renderValue={renderProviderSelectValue((id) =>
+						FULL_MATCH_PROVIDER_LABEL_KEY[id] ? t(FULL_MATCH_PROVIDER_LABEL_KEY[id]) : id
+					)}
+					sx={providerSelectSx}
+				>
+					{ProviderSelectItems({
+						providers: fullMatchProviders,
+						labelFor: (id) =>
+							FULL_MATCH_PROVIDER_LABEL_KEY[id] ? t(FULL_MATCH_PROVIDER_LABEL_KEY[id]) : id,
+					})}
+				</Select>
+			</FormControl>
+			<TextField
+				fullWidth
+				size="small"
+				type="date"
+				label={t('externalDataFullMatchSyncDate')}
+				value={fullMatchDate}
+				onChange={(e) => setFullMatchDate(e.target.value)}
+				InputLabelProps={{ shrink: true }}
+				sx={{ mb: 1.5 }}
+			/>
+			<CustomSuccessButton
+				onClick={() => void handleFullMatchSync()}
+				disabled={syncingFullMatch || !fullMatchProvider || !fullMatchDate}
+				loading={syncingFullMatch}
+				buttonText={t('externalDataFullMatchSyncNow')}
 				sx={{ width: '100%', mb: 2.5, mr: 0 }}
 			/>
 

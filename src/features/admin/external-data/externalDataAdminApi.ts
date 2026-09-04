@@ -71,6 +71,33 @@ export async function syncExternalLive(params: {
 	return result.json();
 }
 
+export type FullMatchSyncResult = {
+	provider: string;
+	date: string;
+	candidates: number;
+	succeeded: number;
+	notReady: number;
+	failed: number;
+};
+
+export async function syncExternalFullMatch(params: {
+	provider: string;
+	date: string;
+}): Promise<FullMatchSyncResult> {
+	const query = new URLSearchParams({
+		provider: params.provider,
+		date: params.date,
+	});
+	const result = await apiFetch(apiUrl(`/api/admin/external-data/full-match/sync?${query}`), {
+		method: 'POST',
+	});
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
 export type ExternalTeamNameChip = {
 	externalName: string;
 	provider: string;
