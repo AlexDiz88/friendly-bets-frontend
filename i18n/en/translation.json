@@ -1417,6 +1417,7 @@
 			"liveMatchNotInFeed": "LIVE: match missing from provider feed",
 			"liveMatchAmbiguous": "LIVE: multiple provider candidates",
 			"liveMatchNeverPolled": "LIVE: match never polled after kickoff",
+			"liveSecondaryCatchUpUnavailable": "LIVE: secondary catch-up needed but not configured",
 			"externalApiMonitoringStatusInvalid": "Invalid monitoring status filter",
 			"marathonbetFetchFailed": "Marathonbet: fetch failed"
 		}
