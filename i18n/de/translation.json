@@ -1414,6 +1414,7 @@
 			"liveMatchSyncStuck": "LIVE: Spiel hängt ohne Endstatus",
 			"liveMatchNotInFeed": "LIVE: Spiel fehlt im Provider-Feed",
 			"liveMatchAmbiguous": "LIVE: mehrere Provider-Kandidaten",
+			"liveMatchNeverPolled": "LIVE: Spiel nach Kickoff nie abgefragt",
 			"externalApiMonitoringStatusInvalid": "Ungültiger Monitoring-Statusfilter",
 			"marathonbetFetchFailed": "Marathonbet: Abruf fehlgeschlagen"
 		}
