@@ -853,6 +853,8 @@
 		"sportsRuCalendarPathNotConfigured": "sports.ru calendar URL is not configured for this league",
 		"sportsRuLeagueScheduleNotSupported": "sports.ru SCHEDULE is not supported for this league yet (EPL/BL only)",
 		"sportsRuMatchdayOneTeamNamesEmpty": "sports.ru calendar has no matchday-1 fixtures — team names unavailable",
+		"sportsRuCalendarParseEmpty": "sports.ru calendar loaded but no rounds/matches were recognized (markup changed?)",
+		"sportsRuRoundNotFoundInCalendar": "sports.ru calendar has no matches for the current/next matchday",
 		"sportsRuTeamAliasMissing": "Missing sports.ru team alias",
 		"football24FetchFailed": "Failed to load football24.ua API",
 		"football24LeagueNotConfigured": "football24.ua leagueId is not configured for this league",
