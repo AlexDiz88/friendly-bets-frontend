@@ -25,6 +25,7 @@ import {
 import type { MatchdaySlot } from '../../components/matchday/types';
 import { APP_HEADER_CONTENT_GAP_PX } from '../../components/header/headerLayout';
 import { getAllSeasonCalendarNodes } from '../admin/calendars/calendarsSlice';
+import { getCurrentSeasonCalendarNode } from '../admin/calendars/api';
 import { selectAllCalendarNodes } from '../admin/calendars/selectors';
 import { findLeagueMatchdayInCalendars } from '../bets/betSizeDefaults';
 import NearestGameweekBetsPlate, {
@@ -79,6 +80,7 @@ export default function MatchdayPage(): JSX.Element {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const pendingMatchDayFromQuery = useRef<string | null>(null);
 	const appliedMatchdayQueryKey = useRef('');
+	const calendarDefaultSeasonId = useRef<string | null>(null);
 	const [plateRefreshKey, setPlateRefreshKey] = useState(0);
 	const [pageView, setPageView] = useState<MatchResultsPageView>('matches');
 	const isMatchesView = pageView === 'matches';
@@ -90,9 +92,8 @@ export default function MatchdayPage(): JSX.Element {
 		[activeSeason?.leagues]
 	);
 
-	const [selectedLeagueCode, setSelectedLeagueCode] = useState(
-		matchResultLeagues[0]?.leagueCode ?? ''
-	);
+	const [selectedLeagueCode, setSelectedLeagueCode] = useState('');
+	const [leagueDefaultReady, setLeagueDefaultReady] = useState(false);
 
 	const effectiveLeagueCode = useMemo(() => {
 		if (matchResultLeagues.length === 0) {
@@ -101,7 +102,7 @@ export default function MatchdayPage(): JSX.Element {
 		if (matchResultLeagues.some((l) => l.leagueCode === selectedLeagueCode)) {
 			return selectedLeagueCode;
 		}
-		return matchResultLeagues[0].leagueCode;
+		return '';
 	}, [matchResultLeagues, selectedLeagueCode]);
 
 	const selectedLeague: League | undefined = useMemo(
@@ -219,7 +220,8 @@ export default function MatchdayPage(): JSX.Element {
 		refreshKey: plateRefreshKey,
 	});
 
-	const matchesLoading = competitionInfoLoading || loading;
+	const matchesLoading =
+		!leagueDefaultReady || competitionInfoLoading || loading;
 
 	const isMatchdayAligned = useMemo(() => {
 		if (matchdayTouched) {
@@ -421,14 +423,75 @@ export default function MatchdayPage(): JSX.Element {
 	}, [activeSeason?.id, dispatch, isMatchesView]);
 
 	useEffect(() => {
-		if (matchResultLeagues.length > 0) {
-			setSelectedLeagueCode((prev) =>
-				matchResultLeagues.some((l) => l.leagueCode === prev)
-					? prev
-					: matchResultLeagues[0].leagueCode
-			);
+		if (matchResultLeagues.length === 0) {
+			setSelectedLeagueCode('');
+			return;
 		}
+		setSelectedLeagueCode((prev) =>
+			matchResultLeagues.some((l) => l.leagueCode === prev) ? prev : ''
+		);
 	}, [matchResultLeagues]);
+
+	useEffect(() => {
+		if (!activeSeason?.id || matchResultLeagues.length === 0) {
+			setLeagueDefaultReady(false);
+			return;
+		}
+
+		const leagueParam = searchParams.get('league');
+		if (leagueParam) {
+			calendarDefaultSeasonId.current = activeSeason.id;
+			setLeagueDefaultReady(true);
+			return;
+		}
+
+		if (calendarDefaultSeasonId.current === activeSeason.id) {
+			setLeagueDefaultReady(true);
+			return;
+		}
+
+		let cancelled = false;
+		setLeagueDefaultReady(false);
+
+		const applyCalendarDefault = async (): Promise<void> => {
+			try {
+				const current = await getCurrentSeasonCalendarNode(activeSeason.id);
+				if (cancelled) {
+					return;
+				}
+				const code =
+					current.resultsLeagueCode ??
+					current.leagueMatchdayNodes?.[0]?.leagueCode ??
+					'';
+				const matchDay =
+					current.resultsMatchDay ??
+					current.leagueMatchdayNodes?.[0]?.matchDay ??
+					'';
+				if (code && matchResultLeagues.some((l) => l.leagueCode === code)) {
+					setSelectedLeagueCode(code);
+					if (matchDay) {
+						pendingMatchDayFromQuery.current = matchDay;
+					}
+				} else {
+					setSelectedLeagueCode(matchResultLeagues[0].leagueCode);
+				}
+			} catch {
+				if (!cancelled) {
+					setSelectedLeagueCode(matchResultLeagues[0].leagueCode);
+				}
+			} finally {
+				if (!cancelled) {
+					calendarDefaultSeasonId.current = activeSeason.id;
+					setLeagueDefaultReady(true);
+				}
+			}
+		};
+
+		void applyCalendarDefault();
+		return () => {
+			cancelled = true;
+		};
+	}, [activeSeason?.id, matchResultLeagues, searchParams]);
 
 	useEffect(() => {
 		const leagueParam = searchParams.get('league');
@@ -449,6 +512,7 @@ export default function MatchdayPage(): JSX.Element {
 		}
 		appliedMatchdayQueryKey.current = queryKey;
 		setPageView('matches');
+		setLeagueDefaultReady(true);
 
 		if (matchDayParam) {
 			pendingMatchDayFromQuery.current = matchDayParam;
