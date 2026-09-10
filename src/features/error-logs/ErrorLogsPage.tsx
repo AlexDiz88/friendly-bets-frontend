@@ -98,7 +98,13 @@ function formatErrorLogMessage(message: string | null | undefined, hideMappingLa
 
 function parseFailedMatchesFromMessage(
 	message: string | null | undefined
-): Array<{ homeTitle?: string; awayTitle?: string; homeLogoKey?: string; awayLogoKey?: string }> {
+): Array<{
+	matchScheduleId?: string | null;
+	homeTitle?: string;
+	awayTitle?: string;
+	homeLogoKey?: string;
+	awayLogoKey?: string;
+}> {
 	if (!message) {
 		return [];
 	}
