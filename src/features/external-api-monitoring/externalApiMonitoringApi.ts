@@ -31,12 +31,25 @@ export type MonitoringCounters = {
 export type MonitoringHttpLog = {
 	requestType?: string | null;
 	target?: string | null;
+	teams?: string | null;
+	homeTitle?: string | null;
+	awayTitle?: string | null;
+	homeLogoKey?: string | null;
+	awayLogoKey?: string | null;
 	httpStatus?: number | null;
 	outcome?: string | null;
 	durationMs?: number;
 	detail?: string | null;
 	retryAfterSeconds?: number | null;
 	requestedAt?: string | null;
+};
+
+export type MonitoringFailedMatch = {
+	matchScheduleId?: string | null;
+	homeTitle?: string | null;
+	awayTitle?: string | null;
+	homeLogoKey?: string | null;
+	awayLogoKey?: string | null;
 };
 
 export type MonitoringRun = {
@@ -60,6 +73,8 @@ export type MonitoringRun = {
 	httpLogs?: MonitoringHttpLog[];
 	errorSummary?: string | null;
 	failedMatchScheduleIds?: string[] | null;
+	failedMatchLabels?: string[] | null;
+	failedMatches?: MonitoringFailedMatch[] | null;
 	failoverUsed?: boolean;
 };
 

@@ -26,7 +26,8 @@ import CustomCalendarDialog from '../../components/custom/dialog/CustomCalendarD
 import CustomSuccessButton from '../../components/custom/btn/CustomSuccessButton';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import { pathToLogoImage } from '../../components/utils/imgBase64Converter';
-import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
+import { resolveTeamDisplayName } from '../../components/utils/teamDisplay';
+import MatchTeamsWithLogos from '../../components/MatchTeamsWithLogos';
 import { copyText } from '../api-sandbox/CopyableValue';
 import BetsPagination from '../bets/BetsPagination';
 import { externalDataLayerAccent } from '../../shared/externalDataLayerColors';
@@ -72,6 +73,54 @@ function codeLabel(code: string): string {
 function layerLabel(layer: string): string {
 	const key = `errorLogs.layer.${layer}`;
 	return t(key) !== key ? t(key) : layer;
+}
+
+/** Drop bracket team labels from mappingFailures when logos are rendered separately. */
+function formatErrorLogMessage(message: string | null | undefined, hideMappingLabels: boolean): string | null {
+	if (!message || !message.trim()) {
+		return null;
+	}
+	if (!hideMappingLabels) {
+		return message;
+	}
+	return message
+		.split(';')
+		.map((part) => part.trim())
+		.filter(Boolean)
+		.map((part) => {
+			if (!part.startsWith('mappingFailures=')) {
+				return part;
+			}
+			return part.replace(/\s*\[[^\]]*]\s*$/, '').trim();
+		})
+		.join('; ');
+}
+
+function parseFailedMatchesFromMessage(
+	message: string | null | undefined
+): Array<{ homeTitle?: string; awayTitle?: string; homeLogoKey?: string; awayLogoKey?: string }> {
+	if (!message) {
+		return [];
+	}
+	const match = /mappingFailures=\d+\s*\[([^\]]+)]/.exec(message);
+	if (!match?.[1]) {
+		return [];
+	}
+	return match[1]
+		.split(',')
+		.map((pair) => pair.trim())
+		.filter(Boolean)
+		.map((pair) => {
+			const parts = pair.split(/\s+-\s+/);
+			const homeTitle = parts[0]?.trim() || pair;
+			const awayTitle = parts[1]?.trim() || '';
+			return {
+				homeTitle,
+				awayTitle,
+				homeLogoKey: homeTitle,
+				awayLogoKey: awayTitle || undefined,
+			};
+		});
 }
 
 function ErrorLogChipLogo({ src, alt }: { src: string; alt: string }): JSX.Element {
@@ -356,28 +405,20 @@ export default function ErrorLogsPage(): JSX.Element {
 
 			{entries.map((entry) => {
 				const severity = (entry.severity || 'ERROR').toUpperCase();
-				const hasTeamLogos = Boolean(
-					entry.homeTeamTitle ||
-						entry.awayTeamTitle ||
-						entry.homeTeamLogoKey ||
-						entry.awayTeamLogoKey
-				);
-				const homeTeamName = resolveTeamDisplayName(
-					{ title: entry.homeTeamTitle || entry.homeTeam || '' },
-					i18n.language
-				);
-				const awayTeamName = resolveTeamDisplayName(
-					{ title: entry.awayTeamTitle || entry.awayTeam || '' },
-					i18n.language
-				);
+				const homeTitle = entry.homeTeamTitle || entry.homeTeam || '';
+				const awayTitle = entry.awayTeamTitle || entry.awayTeam || '';
+				const hasTeams = Boolean(homeTitle || awayTitle);
+				const homeTeamName = resolveTeamDisplayName({ title: homeTitle }, i18n.language);
+				const awayTeamName = resolveTeamDisplayName({ title: awayTitle }, i18n.language);
 				const teamsLabel =
 					homeTeamName && awayTeamName
 						? `${homeTeamName} - ${awayTeamName}`
 						: homeTeamName || awayTeamName;
-				const teamsText =
-					!hasTeamLogos && (entry.homeTeam || entry.awayTeam)
-						? `${entry.homeTeam ?? '—'} - ${entry.awayTeam ?? '—'}`
-						: null;
+				const failedMatches =
+					entry.failedMatches && entry.failedMatches.length > 0
+						? entry.failedMatches
+						: parseFailedMatchesFromMessage(entry.message);
+				const displayMessage = formatErrorLogMessage(entry.message, failedMatches.length > 0);
 				const times = occurrenceTimes(entry);
 				const firstAt = times[0] ?? entry.createdAt;
 				const repeatCount = Math.max(entry.occurrenceCount ?? 0, times.length);
@@ -489,34 +530,24 @@ export default function ErrorLogsPage(): JSX.Element {
 									sx={chipSx(ERROR_LOG_LEAGUE, theme)}
 								/>
 							) : null}
-							{hasTeamLogos ? (
+							{hasTeams ? (
 								<Tooltip title={teamsLabel}>
 									<Chip
 										size="small"
 										sx={chipWithLogosSx(ERROR_LOG_TEAMS, theme)}
 										label={
-											<Box
-												component="span"
-												sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.45 }}
-											>
-												<ErrorLogChipLogo
-													src={resolveTeamLogoUrl({
-														title: entry.homeTeamTitle || entry.homeTeam || '',
-														logoKey: entry.homeTeamLogoKey || undefined,
-													})}
-													alt={entry.homeTeamTitle || entry.homeTeam || ''}
-												/>
-												{homeTeamName}
-												{' - '}
-												<ErrorLogChipLogo
-													src={resolveTeamLogoUrl({
-														title: entry.awayTeamTitle || entry.awayTeam || '',
-														logoKey: entry.awayTeamLogoKey || undefined,
-													})}
-													alt={entry.awayTeamTitle || entry.awayTeam || ''}
-												/>
-												{awayTeamName}
-											</Box>
+											<MatchTeamsWithLogos
+												home={{
+													title: homeTitle,
+													logoKey: entry.homeTeamLogoKey || undefined,
+												}}
+												away={{
+													title: awayTitle,
+													logoKey: entry.awayTeamLogoKey || undefined,
+												}}
+												height={14}
+												sx={{ fontSize: '0.75rem' }}
+											/>
 										}
 									/>
 								</Tooltip>
@@ -554,9 +585,6 @@ export default function ErrorLogsPage(): JSX.Element {
 									/>
 								</Tooltip>
 							) : null}
-							{teamsText ? (
-								<Chip size="small" label={teamsText} sx={chipSx(ERROR_LOG_TEAMS, theme)} />
-							) : null}
 							{entry.season ? (
 								<Chip
 									size="small"
@@ -566,10 +594,23 @@ export default function ErrorLogsPage(): JSX.Element {
 							) : null}
 						</Box>
 
-						{entry.message ? (
+						{displayMessage ? (
 							<Typography sx={{ ...errorLogMessageSx, pl: 0.75, whiteSpace: 'pre-wrap' }}>
-								{entry.message}
+								{displayMessage}
 							</Typography>
+						) : null}
+						{failedMatches.length > 0 ? (
+							<Box sx={{ pl: 0.75, mt: 0.75, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+								{failedMatches.map((m, idx) => (
+									<MatchTeamsWithLogos
+										key={`${entry.id}-fm-${m.matchScheduleId ?? idx}`}
+										home={{ title: m.homeTitle, logoKey: m.homeLogoKey }}
+										away={{ title: m.awayTitle, logoKey: m.awayLogoKey }}
+										height={16}
+										sx={{ fontSize: '0.8rem' }}
+									/>
+								))}
+							</Box>
 						) : null}
 						{entry.context?.details &&
 						!(entry.message && entry.message.includes(entry.context.details)) ? (

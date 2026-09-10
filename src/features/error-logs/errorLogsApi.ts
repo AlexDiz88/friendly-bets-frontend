@@ -31,6 +31,13 @@ export type ErrorLogEntry = {
 	awayTeamTitle?: string | null;
 	homeTeamLogoKey?: string | null;
 	awayTeamLogoKey?: string | null;
+	failedMatches?: Array<{
+		matchScheduleId?: string | null;
+		homeTitle?: string | null;
+		awayTitle?: string | null;
+		homeLogoKey?: string | null;
+		awayLogoKey?: string | null;
+	}> | null;
 	firstOccurredAt?: string | null;
 	lastOccurredAt?: string | null;
 	occurredAt?: string[] | null;
