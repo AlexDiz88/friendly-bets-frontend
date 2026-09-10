@@ -1614,7 +1614,8 @@
 		"errorsOnly": "Только ошибки",
 		"loadMore": "Загрузить ещё",
 		"layerPeriodTotals": "за период: {{total}} · ошибок: {{failed}}",
-		"failedIds": "Failed match IDs",
+		"failedMatches": "Неудачные матчи",
+		"failedIds": "ID матчей с ошибкой",
 		"noHttpLogs": "HTTP-логов нет",
 		"deleteLayer": "Удалить данные слоя",
 		"deleteLayerTitle": "Удалить данные слоя {{layer}}?",
@@ -1655,6 +1656,7 @@
 		"http": {
 			"type": "Type",
 			"target": "Target",
+			"teams": "Команды",
 			"status": "Status",
 			"outcome": "Outcome",
 			"duration": "Длит.",

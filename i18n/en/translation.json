@@ -1614,6 +1614,7 @@
 		"errorsOnly": "Errors only",
 		"loadMore": "Load more",
 		"layerPeriodTotals": "in period: {{total}} · failed: {{failed}}",
+		"failedMatches": "Failed matches",
 		"failedIds": "Failed match IDs",
 		"noHttpLogs": "No HTTP logs",
 		"deleteLayer": "Delete layer data",
@@ -1655,6 +1656,7 @@
 		"http": {
 			"type": "Type",
 			"target": "Target",
+			"teams": "Teams",
 			"status": "Status",
 			"outcome": "Outcome",
 			"duration": "Duration",

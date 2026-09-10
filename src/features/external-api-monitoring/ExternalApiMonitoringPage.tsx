@@ -33,6 +33,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import LeagueAvatar, { leagueLogoAvatarSx } from '../../components/custom/avatar/LeagueAvatar';
 import CustomCalendarDialog from '../../components/custom/dialog/CustomCalendarDialog';
+import MatchTeamsWithLogos from '../../components/MatchTeamsWithLogos';
 import { showErrorSnackbar, showSuccessSnackbar } from '../../components/custom/snackbar/snackbarSlice';
 import { teamApiLogoSrc } from '../admin/teams/teamFormUtils';
 import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
@@ -45,6 +46,8 @@ import {
 	MONITORING_LAYERS,
 	type ExternalDataLayer,
 	type MonitoringCounters,
+	type MonitoringFailedMatch,
+	type MonitoringHttpLog,
 	type MonitoringRun,
 	type MonitoringStatus,
 	type MonitoringTrigger,
@@ -325,19 +328,23 @@ function formatOddsSlotScope(scope?: string | null): string | null {
 	return translated !== key ? translated : scope;
 }
 
-function parseMonitoringReasonParts(summary: string): Array<{ key: string; count?: number; raw: string }> {
+function parseMonitoringReasonParts(
+	summary: string
+): Array<{ key: string; count?: number; labels?: string; raw: string }> {
 	return summary
 		.split(';')
 		.map((part) => part.trim())
 		.filter(Boolean)
 		.map((raw) => {
-			const match = /^([a-zA-Z][a-zA-Z0-9]*)(?:=(\d+))?$/.exec(raw);
+			const match = /^([a-zA-Z][a-zA-Z0-9]*)(?:=(\d+))?(?:\s*\[([^\]]*)\])?$/.exec(raw);
 			if (!match) {
 				return { key: raw, raw };
 			}
+			const labels = match[3]?.trim();
 			return {
 				key: match[1],
 				count: match[2] != null ? Number(match[2]) : undefined,
+				labels: labels || undefined,
 				raw,
 			};
 		});
@@ -346,10 +353,18 @@ function parseMonitoringReasonParts(summary: string): Array<{ key: string; count
 function formatMonitoringReason(summary?: string | null): string | null {
 	if (!summary || !summary.trim()) return null;
 	return parseMonitoringReasonParts(summary)
-		.map(({ key, count, raw }) => {
+		.map(({ key, count, labels, raw }) => {
 			const i18nKey = `externalApiMonitoring.reason.${key}`;
 			const translated = t(i18nKey, { count: count ?? 0 });
-			return translated !== i18nKey ? translated : raw;
+			const base =
+				translated !== i18nKey
+					? translated
+					: raw.replace(/\s*\[[^\]]*]\s*$/, '').trim() || raw;
+			// Team names for mappingFailures are shown with logos separately.
+			if (key === 'mappingFailures') {
+				return base;
+			}
+			return labels ? `${base} [${labels}]` : base;
 		})
 		.join(' · ');
 }
@@ -358,6 +373,49 @@ function isMonitoringWarningSummary(summary?: string | null): boolean {
 	if (!summary) return false;
 	const parts = parseMonitoringReasonParts(summary);
 	return parts.length > 0 && parts.every((p) => MONITORING_WARNING_KEYS.has(p.key));
+}
+
+function failedMatchesFromDetail(detail: MonitoringRun): MonitoringFailedMatch[] {
+	if (detail.failedMatches && detail.failedMatches.length > 0) {
+		return detail.failedMatches;
+	}
+	const labels = detail.failedMatchLabels?.filter((x) => x && x.trim()) ?? [];
+	if (labels.length > 0) {
+		return labels.map((label) => {
+			const parts = label.split(/\s+-\s+/);
+			return {
+				homeTitle: parts[0]?.trim() || label,
+				awayTitle: parts[1]?.trim() || '',
+			};
+		});
+	}
+	return [];
+}
+
+function httpLogTeams(
+	log: MonitoringHttpLog
+): {
+	homeTitle?: string;
+	awayTitle?: string;
+	homeLogoKey?: string;
+	awayLogoKey?: string;
+} | null {
+	if (log.homeTitle || log.awayTitle) {
+		return {
+			homeTitle: log.homeTitle || undefined,
+			awayTitle: log.awayTitle || undefined,
+			homeLogoKey: log.homeLogoKey || undefined,
+			awayLogoKey: log.awayLogoKey || undefined,
+		};
+	}
+	if (log.teams?.trim()) {
+		const parts = log.teams.split(/\s+-\s+/);
+		return {
+			homeTitle: parts[0]?.trim() || log.teams.trim(),
+			awayTitle: parts[1]?.trim() || '',
+		};
+	}
+	return null;
 }
 
 function ProviderCell({ provider }: { provider?: string | null }): JSX.Element {
@@ -589,6 +647,19 @@ function MobileHttpLogs({
 							{log.target}
 						</Typography>
 					) : null}
+					{(() => {
+						const teams = httpLogTeams(log);
+						return teams ? (
+							<Box sx={{ mt: 0.35 }}>
+								<MatchTeamsWithLogos
+									home={{ title: teams.homeTitle, logoKey: teams.homeLogoKey }}
+									away={{ title: teams.awayTitle, logoKey: teams.awayLogoKey }}
+									height={16}
+									sx={{ fontSize: '0.72rem' }}
+								/>
+							</Box>
+						) : null;
+					})()}
 					{log.detail ? (
 						<Typography
 							sx={{
@@ -1077,16 +1148,28 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 													layer={mobileLayer}
 													counters={detail.counters ?? run.counters}
 												/>
-												{(detail.failedMatchScheduleIds?.length ?? 0) > 0 ? (
-													<Typography
-														variant="caption"
-														color="text.secondary"
-														display="block"
-														sx={{ mb: 1, wordBreak: 'break-all' }}
-													>
-														{t('externalApiMonitoring.failedIds')}:{' '}
-														{detail.failedMatchScheduleIds!.join(', ')}
-													</Typography>
+												{failedMatchesFromDetail(detail).length > 0 ? (
+													<Box sx={{ mb: 1 }}>
+														<Typography
+															variant="caption"
+															color="text.secondary"
+															display="block"
+															sx={{ mb: 0.5 }}
+														>
+															{t('externalApiMonitoring.failedMatches')}:
+														</Typography>
+														<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+															{failedMatchesFromDetail(detail).map((m, idx) => (
+																<MatchTeamsWithLogos
+																	key={`${m.matchScheduleId ?? 'm'}-${idx}`}
+																	home={{ title: m.homeTitle, logoKey: m.homeLogoKey }}
+																	away={{ title: m.awayTitle, logoKey: m.awayLogoKey }}
+																	height={16}
+																	sx={{ fontSize: '0.78rem' }}
+																/>
+															))}
+														</Box>
+													</Box>
 												) : null}
 												{(detail.httpLogs?.length ?? 0) === 0 ? (
 													<Typography variant="caption" color="text.secondary">
@@ -1422,16 +1505,28 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																				layer={layer}
 																				counters={detail.counters ?? run.counters}
 																			/>
-																			{(detail.failedMatchScheduleIds?.length ?? 0) > 0 ? (
-																				<Typography
-																					variant="caption"
-																					color="text.secondary"
-																					display="block"
-																					sx={{ mb: 1 }}
-																				>
-																					{t('externalApiMonitoring.failedIds')}:{' '}
-																					{detail.failedMatchScheduleIds!.join(', ')}
-																				</Typography>
+																			{failedMatchesFromDetail(detail).length > 0 ? (
+																				<Box sx={{ mb: 1 }}>
+																					<Typography
+																						variant="caption"
+																						color="text.secondary"
+																						display="block"
+																						sx={{ mb: 0.5 }}
+																					>
+																						{t('externalApiMonitoring.failedMatches')}:
+																					</Typography>
+																					<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+																						{failedMatchesFromDetail(detail).map((m, idx) => (
+																							<MatchTeamsWithLogos
+																								key={`${m.matchScheduleId ?? 'm'}-${idx}`}
+																								home={{ title: m.homeTitle, logoKey: m.homeLogoKey }}
+																								away={{ title: m.awayTitle, logoKey: m.awayLogoKey }}
+																								height={16}
+																								sx={{ fontSize: '0.8rem' }}
+																							/>
+																						))}
+																					</Box>
+																				</Box>
 																			) : null}
 																			{(detail.httpLogs?.length ?? 0) === 0 ? (
 																				<Typography variant="caption" color="text.secondary">
@@ -1443,6 +1538,7 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																						<TableRow>
 																							<TableCell>{t('externalApiMonitoring.http.type')}</TableCell>
 																							<TableCell>{t('externalApiMonitoring.http.target')}</TableCell>
+																							<TableCell>{t('externalApiMonitoring.http.teams')}</TableCell>
 																							<TableCell>{t('externalApiMonitoring.http.status')}</TableCell>
 																							<TableCell>{t('externalApiMonitoring.http.outcome')}</TableCell>
 																							<TableCell>{t('externalApiMonitoring.http.duration')}</TableCell>
@@ -1454,6 +1550,32 @@ export default function ExternalApiMonitoringPage(): JSX.Element {
 																							<TableRow key={`${run.id}-http-${idx}`}>
 																								<TableCell>{log.requestType ?? '—'}</TableCell>
 																								<TableCell>{log.target ?? '—'}</TableCell>
+																								<TableCell
+																									sx={{
+																										maxWidth: 260,
+																										whiteSpace: 'normal',
+																										wordBreak: 'break-word',
+																									}}
+																								>
+																									{(() => {
+																										const teams = httpLogTeams(log);
+																										if (!teams) return '—';
+																										return (
+																											<MatchTeamsWithLogos
+																												home={{
+																													title: teams.homeTitle,
+																													logoKey: teams.homeLogoKey,
+																												}}
+																												away={{
+																													title: teams.awayTitle,
+																													logoKey: teams.awayLogoKey,
+																												}}
+																												height={16}
+																												sx={{ fontSize: '0.78rem' }}
+																											/>
+																										);
+																									})()}
+																								</TableCell>
 																								<TableCell>{log.httpStatus ?? '—'}</TableCell>
 																								<TableCell
 																									sx={{
