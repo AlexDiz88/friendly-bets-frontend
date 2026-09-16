@@ -1703,7 +1703,8 @@
 			"LIVE": {
 				"updated": "matches updated with live status/score",
 				"finishedDetected": "matches detected as finished",
-				"skipped": "skipped (no LIVE-window candidates / missing utc_kickoff)"
+				"skipped": "skipped (no LIVE-window candidates / missing utc_kickoff)",
+				"mappingFailures": "mapF — match not found in feed (24score aliases / league / team names)"
 			},
 			"FULL_MATCH": {
 				"requested": "full match-card requests",
