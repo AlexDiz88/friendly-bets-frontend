@@ -1703,7 +1703,8 @@
 			"LIVE": {
 				"updated": "Matches mit Live-Status/Stand aktualisiert",
 				"finishedDetected": "Matches als beendet erkannt",
-				"skipped": "übersprungen (keine LIVE-Kandidaten / kein utc_kickoff)"
+				"skipped": "übersprungen (keine LIVE-Kandidaten / kein utc_kickoff)",
+				"mappingFailures": "mapF — Match nicht im Feed (24score-Aliase / Liga / Teamnamen)"
 			},
 			"FULL_MATCH": {
 				"requested": "Anfragen vollständiger Matchkarten",

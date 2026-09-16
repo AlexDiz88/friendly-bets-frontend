@@ -1703,7 +1703,8 @@
 			"LIVE": {
 				"updated": "матчей обновлено live-статусом/счётом",
 				"finishedDetected": "матчей, у которых зафиксирован финиш",
-				"skipped": "пропущено (нет кандидатов в окне LIVE / нет utc_kickoff)"
+				"skipped": "пропущено (нет кандидатов в окне LIVE / нет utc_kickoff)",
+				"mappingFailures": "mapF — матч не найден в фиде (алиасы 24score / лига / имя команд)"
 			},
 			"FULL_MATCH": {
 				"requested": "запросов полной карточки матча",

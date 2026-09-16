@@ -231,12 +231,17 @@ function counterDetailEntries(
 			}
 			return entries;
 		}
-		case 'LIVE':
-			return [
+		case 'LIVE': {
+			const liveEntries: Array<{ key: CounterDetailKey; value: number }> = [
 				{ key: 'updated', value: counters.updated ?? 0 },
 				{ key: 'finishedDetected', value: counters.finishedDetected ?? 0 },
 				{ key: 'skipped', value: counters.skipped ?? 0 },
 			];
+			if (counters.mappingFailures) {
+				liveEntries.push({ key: 'mappingFailures', value: counters.mappingFailures });
+			}
+			return liveEntries;
+		}
 		case 'FULL_MATCH':
 			return [
 				{ key: 'requested', value: counters.requested ?? 0 },
@@ -273,8 +278,11 @@ function countersSummary(layer: ExternalDataLayer, counters?: MonitoringCounters
 			return `↑${counters.upserted ?? 0} · skip ${counters.skipped ?? 0} · rounds ${counters.roundsParsed ?? 0}`;
 		case 'ODDS':
 			return `elig ${counters.eligible ?? 0} · match ${counters.matched ?? 0} · save ${counters.saved ?? 0} · SSE ${counters.sseCalls ?? 0} · ${oddsSkipSummary(counters)}`;
-		case 'LIVE':
-			return `upd ${counters.updated ?? 0} · fin ${counters.finishedDetected ?? 0} · skip ${counters.skipped ?? 0}`;
+		case 'LIVE': {
+			const base = `upd ${counters.updated ?? 0} · fin ${counters.finishedDetected ?? 0} · skip ${counters.skipped ?? 0}`;
+			const mapF = counters.mappingFailures ?? 0;
+			return mapF > 0 ? `${base} · mapF ${mapF}` : base;
+		}
 		case 'FULL_MATCH':
 			return `req ${counters.requested ?? 0} · save ${counters.saved ?? 0} · skip ${counters.skipped ?? 0}`;
 		default:
