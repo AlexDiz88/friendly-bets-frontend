@@ -1428,6 +1428,7 @@
 			"liveMatchNotInFeed": "LIVE: match missing from provider feed",
 			"liveMatchAmbiguous": "LIVE: multiple provider candidates",
 			"liveMatchNeverPolled": "LIVE: match never polled after kickoff",
+			"liveWakeDisabled": "LIVE: auto-sync disabled — CRON will not continue after manual sync",
 			"liveSecondaryCatchUpUnavailable": "LIVE: secondary catch-up needed but not configured",
 			"externalApiMonitoringStatusInvalid": "Invalid monitoring status filter",
 			"marathonbetFetchFailed": "Marathonbet: fetch failed"
