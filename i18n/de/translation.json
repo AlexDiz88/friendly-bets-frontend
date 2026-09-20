@@ -1428,6 +1428,7 @@
 			"liveMatchNotInFeed": "LIVE: Spiel fehlt im Provider-Feed",
 			"liveMatchAmbiguous": "LIVE: mehrere Provider-Kandidaten",
 			"liveMatchNeverPolled": "LIVE: Spiel nach Kickoff nie abgefragt",
+			"liveWakeDisabled": "LIVE: Auto-Sync aus — nach manuellem Sync startet CRON nicht",
 			"liveSecondaryCatchUpUnavailable": "LIVE: Secondary-Catch-up nötig, aber nicht gesetzt",
 			"externalApiMonitoringStatusInvalid": "Ungültiger Monitoring-Statusfilter",
 			"marathonbetFetchFailed": "Marathonbet: Abruf fehlgeschlagen"
