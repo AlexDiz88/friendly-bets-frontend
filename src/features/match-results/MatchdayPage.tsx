@@ -83,6 +83,8 @@ export default function MatchdayPage(): JSX.Element {
 	const pendingMatchDayFromQuery = useRef<string | null>(null);
 	const appliedMatchdayQueryKey = useRef('');
 	const calendarDefaultSeasonId = useRef<string | null>(null);
+	/** Уже загруженный тур — чтобы Таблица↔Матчи не качали matchdays дважды. */
+	const loadedMatchdayKeyRef = useRef('');
 	const [currentCalendarNode, setCurrentCalendarNode] = useState<Calendar | null>(null);
 	const [currentCalendarReady, setCurrentCalendarReady] = useState(false);
 	const [plateRefreshKey, setPlateRefreshKey] = useState(0);
@@ -400,6 +402,17 @@ export default function MatchdayPage(): JSX.Element {
 	useVisibilityPageRefresh(isMatchesView && isExternalPageReady, reloadMatchday);
 	useLivePagePolling(isMatchesView && isExternalPageReady && hasLiveMatches, reloadMatchday);
 
+	// Таблица → Матчи: не дублируем loading-запрос, но тихо освежаем кэш (live/счёт)
+	const wasMatchesViewRef = useRef(isMatchesView);
+	useEffect(() => {
+		const justEnteredMatches = isMatchesView && !wasMatchesViewRef.current;
+		wasMatchesViewRef.current = isMatchesView;
+		if (!justEnteredMatches || !isExternalPageReady || !loadedMatchdayKeyRef.current) {
+			return;
+		}
+		void reloadMatchday();
+	}, [isMatchesView, isExternalPageReady, reloadMatchday]);
+
 	// App уже грузит active; здесь только если ещё нет (без повторного запроса по user.id)
 	useEffect(() => {
 		if (!activeSeason) {
@@ -440,19 +453,15 @@ export default function MatchdayPage(): JSX.Element {
 	}, [activeSeason?.id, plateRefreshKey]);
 
 	useEffect(() => {
-		if (!isMatchesView || !activeSeason?.id) {
-			if (!isMatchesView) {
-				setCalendarsReady(true);
-			} else {
-				setCalendarsReady(false);
-			}
+		if (!activeSeason?.id) {
+			setCalendarsReady(false);
 			return;
 		}
 		setCalendarsReady(false);
 		void dispatch(getAllSeasonCalendarNodes(activeSeason.id)).finally(() => {
 			setCalendarsReady(true);
 		});
-	}, [activeSeason?.id, dispatch, isMatchesView]);
+	}, [activeSeason?.id, dispatch]);
 
 	useEffect(() => {
 		if (matchResultLeagues.length === 0) {
@@ -540,6 +549,7 @@ export default function MatchdayPage(): JSX.Element {
 		if (leagueParam !== selectedLeagueCode) {
 			setSelectedLeagueCode(leagueParam);
 			setMatchdayTouched(false);
+			loadedMatchdayKeyRef.current = '';
 			setData(null);
 			setCompetitionInfo(null);
 			setCompetitionInfoLoading(true);
@@ -561,15 +571,13 @@ export default function MatchdayPage(): JSX.Element {
 		}
 		setMatchdayTouched(true);
 		setMatchday(nextValue);
+		loadedMatchdayKeyRef.current = '';
 		setData(null);
 		setLoading(true);
 	}, [competitionInfoLoading, matchdaySlots, effectiveLeagueCode, effectiveMatchday]);
 
 	useEffect(() => {
-		if (!isMatchesView || !effectiveLeagueCode || !selectedLeague?.id) {
-			if (!isMatchesView) {
-				setCompetitionInfoLoading(false);
-			}
+		if (!effectiveLeagueCode || !selectedLeague?.id) {
 			return;
 		}
 
@@ -591,7 +599,7 @@ export default function MatchdayPage(): JSX.Element {
 		return () => {
 			cancelled = true;
 		};
-	}, [effectiveLeagueCode, externalSeason, selectedLeague?.id, isMatchesView]);
+	}, [effectiveLeagueCode, externalSeason, selectedLeague?.id]);
 
 	// Готовность грузить матчи: один сигнал вместо competitionInfo+matchdayTouched в deps
 	// (touched при том же effectiveMatchday не должен давать второй запрос того же тура).
@@ -608,6 +616,11 @@ export default function MatchdayPage(): JSX.Element {
 		}
 
 		const targetMatchday = effectiveMatchday;
+		const loadKey = `${selectedLeague.id}|${effectiveLeagueCode}|${targetMatchday}|${externalSeason}`;
+		if (loadedMatchdayKeyRef.current === loadKey) {
+			setLoading(false);
+			return;
+		}
 
 		let cancelled = false;
 		const loadMatches = async (): Promise<void> => {
@@ -619,9 +632,13 @@ export default function MatchdayPage(): JSX.Element {
 					externalSeason,
 					selectedLeague.id
 				);
-				if (!cancelled) setData(page);
+				if (!cancelled) {
+					setData(page);
+					loadedMatchdayKeyRef.current = loadKey;
+				}
 			} catch (error) {
 				if (!cancelled) {
+					loadedMatchdayKeyRef.current = '';
 					setData(null);
 					dispatch(
 						showErrorSnackbar({
@@ -689,6 +706,7 @@ export default function MatchdayPage(): JSX.Element {
 	const handleLeagueChange = (e: SelectChangeEvent): void => {
 		setMatchdayTouched(false);
 		setSelectedLeagueCode(e.target.value);
+		loadedMatchdayKeyRef.current = '';
 		setData(null);
 		setCompetitionInfo(null);
 		setCompetitionInfoLoading(true);
@@ -699,6 +717,7 @@ export default function MatchdayPage(): JSX.Element {
 	const handleMatchdayChange = (md: number): void => {
 		setMatchdayTouched(true);
 		setMatchday(md);
+		loadedMatchdayKeyRef.current = '';
 		setData(null);
 		setLoading(true);
 		setSearchParams({}, { replace: true });
@@ -715,6 +734,7 @@ export default function MatchdayPage(): JSX.Element {
 					pendingMatchDayFromQuery.current = null;
 					setMatchdayTouched(true);
 					setMatchday(nextValue);
+					loadedMatchdayKeyRef.current = '';
 					setData(null);
 					setLoading(true);
 				}
@@ -722,6 +742,7 @@ export default function MatchdayPage(): JSX.Element {
 			}
 			setSelectedLeagueCode(leagueCode);
 			setMatchdayTouched(false);
+			loadedMatchdayKeyRef.current = '';
 			setData(null);
 			setCompetitionInfo(null);
 			setCompetitionInfoLoading(true);
