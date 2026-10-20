@@ -884,6 +884,8 @@
 		"fullMatchNotFound": "No external FULL match found (kickoff + aliases)",
 		"fullMatchAmbiguous": "Multiple external FULL matches matched — check aliases",
 		"fullMatchNotReady": "FULL: provider match is not finished yet — finalize deferred",
+		"layerCircuitOpen": "Layer disabled by circuit breaker after consecutive network failures",
+		"layerCircuitAutoReenabled": "Layer re-enabled after circuit breaker cooldown",
 		"twentyFourScoreFetchFailed": "Failed to fetch 24score.pro data",
 		"championatFetchFailed": "Failed to fetch championat.com data",
 		"championatTournamentNotConfigured": "championat.com tournament is not configured for this league",

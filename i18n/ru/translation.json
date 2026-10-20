@@ -884,6 +884,8 @@
 		"fullMatchNotFound": "Внешний матч для FULL не найден (kickoff + алиасы)",
 		"fullMatchAmbiguous": "Несколько внешних матчей подходят для FULL — уточните алиасы",
 		"fullMatchNotReady": "FULL: у источника матч ещё не завершён — финализация отложена",
+		"layerCircuitOpen": "Слой отключён circuit breaker после серии сетевых ошибок",
+		"layerCircuitAutoReenabled": "Слой снова включён после паузы circuit breaker",
 		"twentyFourScoreFetchFailed": "Не удалось загрузить данные 24score.pro",
 		"championatFetchFailed": "Не удалось загрузить данные championat.com",
 		"championatTournamentNotConfigured": "Турнир championat.com не настроен для лиги",

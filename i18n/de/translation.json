@@ -884,6 +884,8 @@
 		"fullMatchNotFound": "Kein externes FULL-Spiel gefunden (Kickoff + Aliase)",
 		"fullMatchAmbiguous": "Mehrere externe FULL-Spiele passen — Aliase prüfen",
 		"fullMatchNotReady": "FULL: Quelle zeigt Spiel noch nicht als beendet — Finalisierung verschoben",
+		"layerCircuitOpen": "Schicht durch Circuit Breaker nach Netzfehlern deaktiviert",
+		"layerCircuitAutoReenabled": "Schicht nach Circuit-Breaker-Pause wieder aktiviert",
 		"twentyFourScoreFetchFailed": "24score.pro-Daten konnten nicht geladen werden",
 		"championatFetchFailed": "championat.com-Daten konnten nicht geladen werden",
 		"championatTournamentNotConfigured": "championat.com-Turnier ist für diese Liga nicht konfiguriert",
