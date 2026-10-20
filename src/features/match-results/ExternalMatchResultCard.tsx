@@ -13,14 +13,17 @@ import {
 	matchResultStatusChipSx,
 	matchSettlingChipSx,
 } from './liveMatchBadgeStyles';
+import MatchResultOddsChips from './MatchResultOddsChips';
 import {
 	getMatchStatusChipColor,
 	isAwaitingMatchFinalization,
 	isMatchBreakStatus,
+	isMatchNotStarted,
 	isPenaltyShootoutStatus,
 	normalizeMatchStatus,
 	translateMatchStatus,
 } from './matchStatusI18n';
+import type { MatchResultOdds } from './types/ExternalMatch';
 
 const MATCH_ROW_AVATAR = 26;
 
@@ -36,8 +39,11 @@ export type ExternalMatchResultCardProps = {
 	leagueCode?: string | null;
 	slotId?: string | null;
 	matchDateLabel?: string;
+	matchResultOdds?: MatchResultOdds | null;
 	headerActions?: React.ReactNode;
 	onClick?: () => void;
+	/** Open participants' bets (e.g. before kickoff — card click opens odds pick instead). */
+	onStatusClick?: () => void;
 	interactive?: boolean;
 };
 
@@ -178,8 +184,10 @@ export default function ExternalMatchResultCard({
 	leagueCode,
 	slotId,
 	matchDateLabel,
+	matchResultOdds,
 	headerActions,
 	onClick,
+	onStatusClick,
 	interactive = false,
 }: ExternalMatchResultCardProps): JSX.Element {
 	const { t } = useTranslation();
@@ -210,6 +218,12 @@ export default function ExternalMatchResultCard({
 		liveStacked && !isPaused && !isPenalty && normalizeMatchStatus(status) !== 'FINISHED';
 	/** Над счётом: минута, либо «Пенальти» вместо времени. */
 	const liveMinuteDisplay = isPenalty && liveStacked ? statusLabel : minuteDisplay;
+	const kickoffNotReached = kickoffUtcMs <= 0 || kickoffUtcMs > Date.now();
+	const showMatchResultOdds =
+		Boolean(matchResultOdds) &&
+		isMatchNotStarted(status) &&
+		kickoffNotReached &&
+		!finalized;
 
 	return (
 		<Box
@@ -223,11 +237,13 @@ export default function ExternalMatchResultCard({
 		>
 			<Box
 				sx={{
+					position: 'relative',
 					display: 'flex',
 					justifyContent: 'space-between',
 					alignItems: 'center',
 					mb: 0.25,
 					gap: 0.5,
+					minHeight: '1.15rem',
 				}}
 			>
 				<Typography
@@ -238,6 +254,8 @@ export default function ExternalMatchResultCard({
 						lineHeight: 1.2,
 						minHeight: '0.82rem',
 						minWidth: 0,
+						flex: 1,
+						pr: showMatchResultOdds ? '5.5rem' : 0,
 						overflow: 'hidden',
 						textOverflow: 'ellipsis',
 						whiteSpace: 'nowrap',
@@ -245,7 +263,31 @@ export default function ExternalMatchResultCard({
 				>
 					{matchDateLabel ?? ''}
 				</Typography>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0 }}>
+				{showMatchResultOdds && matchResultOdds ? (
+					<Box
+						sx={{
+							position: 'absolute',
+							left: '50%',
+							top: '50%',
+							transform: 'translate(-50%, -50%)',
+							pointerEvents: 'none',
+						}}
+					>
+						<MatchResultOddsChips odds={matchResultOdds} />
+					</Box>
+				) : null}
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'flex-end',
+						gap: 0.25,
+						flex: 1,
+						pl: showMatchResultOdds ? '5.5rem' : 0,
+						minWidth: 0,
+					}}
+				>
+					{headerActions}
 					{showLiveBadge ? (
 						<LiveMatchBadge />
 					) : (isPaused || isPenalty) && liveStacked ? (
@@ -258,10 +300,25 @@ export default function ExternalMatchResultCard({
 							label={statusLabel}
 							color={awaitingFinalization ? 'default' : statusColor}
 							variant="filled"
-							sx={awaitingFinalization ? matchSettlingChipSx : matchResultStatusChipSx}
+							onClick={
+								onStatusClick
+									? (event) => {
+											event.stopPropagation();
+											onStatusClick();
+										}
+									: undefined
+							}
+							sx={[
+								awaitingFinalization ? matchSettlingChipSx : matchResultStatusChipSx,
+								onStatusClick
+									? {
+											cursor: 'pointer',
+											'&:hover': { filter: 'brightness(1.08)' },
+										}
+									: null,
+							]}
 						/>
 					)}
-					{headerActions}
 				</Box>
 			</Box>
 			<CompactMatchRow

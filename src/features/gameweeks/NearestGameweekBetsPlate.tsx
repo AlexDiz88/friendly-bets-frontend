@@ -14,6 +14,7 @@ import {
 	nearestGameweekBetsPlateLoadingSx,
 	nearestGameweekBetsPlateSx,
 } from './nearestGameweekBetsPlateStyles';
+import type Calendar from '../admin/calendars/types/Calendar';
 import type { NearestGameweekBetProgressItem } from './useNearestGameweekBetProgress';
 import { useNearestGameweekBetProgress } from './useNearestGameweekBetProgress';
 
@@ -28,6 +29,10 @@ type Props = {
 	seasonId: string | undefined;
 	compact?: boolean;
 	refreshKey?: unknown;
+	/** Родитель уже грузит GET .../current — без второго запроса. */
+	preferPrefetchedNode?: boolean;
+	prefetchedNode?: Calendar | null;
+	prefetchedNodeReady?: boolean;
 	onLeagueClick: (target: NearestGameweekLeagueClick) => void;
 };
 
@@ -36,6 +41,9 @@ export default function NearestGameweekBetsPlate({
 	seasonId,
 	compact = false,
 	refreshKey,
+	preferPrefetchedNode = false,
+	prefetchedNode,
+	prefetchedNodeReady,
 	onLeagueClick,
 }: Props): JSX.Element | null {
 	const { t } = useTranslation();
@@ -43,6 +51,9 @@ export default function NearestGameweekBetsPlate({
 		enabled,
 		seasonId,
 		refreshKey,
+		preferPrefetchedNode,
+		prefetchedNode,
+		prefetchedNodeReady,
 	});
 
 	if (!enabled) {

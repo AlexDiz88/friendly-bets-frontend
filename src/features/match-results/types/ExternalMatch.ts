@@ -43,6 +43,14 @@ export interface ExternalMatch {
 	addedTimeSecondHalf?: number | null;
 	/** FULL_MATCH team stats (null until finalized with stats). */
 	stats?: MatchTeamStats | null;
+	/** Compact 1X2 preview for not-started matches; absent when no odds / already started. */
+	matchResultOdds?: MatchResultOdds | null;
+}
+
+export interface MatchResultOdds {
+	home: string;
+	draw: string;
+	away: string;
 }
 
 export interface MatchdayPageData {

@@ -41,6 +41,8 @@ type Props = {
 	addedTimeSecondHalf?: number | null;
 	/** When true, render nothing if there are no periods (caller can skip section). */
 	hideWhenEmpty?: boolean;
+	/** Outer divider borders; false when nested in accordion/dialog details. */
+	framed?: boolean;
 };
 
 function periodLabelKey(period: MatchEventsPeriod): string {
@@ -211,26 +213,28 @@ export default function MatchEventsTimeline({
 	addedTimeFirstHalf,
 	addedTimeSecondHalf,
 	hideWhenEmpty = true,
+	framed = true,
 }: Props): JSX.Element | null {
 	const { t } = useTranslation();
 	const periods = useMemo(
 		() => buildMatchEventsPeriods(events, addedTimeFirstHalf, addedTimeSecondHalf),
 		[events, addedTimeFirstHalf, addedTimeSecondHalf]
 	);
+	const rootSx = matchEventsTimelineRootSx(framed);
 
 	if (periods.length === 0) {
 		if (hideWhenEmpty) {
 			return null;
 		}
 		return (
-			<Box sx={matchEventsTimelineRootSx}>
+			<Box sx={rootSx}>
 				<Typography sx={matchEventsEmptySx}>{t('matchEvents.empty')}</Typography>
 			</Box>
 		);
 	}
 
 	return (
-		<Box sx={matchEventsTimelineRootSx} aria-label={t('matchEvents.title')}>
+		<Box sx={rootSx} aria-label={t('matchEvents.title')}>
 			{periods.map((block) => (
 				<Box key={block.period} sx={{ display: 'flex', flexDirection: 'column', gap: 0.35 }}>
 					<Box sx={matchEventsPeriodHeaderSx}>

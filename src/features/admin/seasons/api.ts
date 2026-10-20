@@ -100,32 +100,53 @@ export async function changeSeasonStatus(id: string, status: string): Promise<Se
 	return result.json();
 }
 
-export async function getActiveSeason(): Promise<Season> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/active`;
-	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = '/api/seasons/active';
-	}
-	const result = await apiFetch(`${url}`);
+/** Параллельные вызовы делят один HTTP-запрос (App + страницы часто стартуют вместе). */
+let activeSeasonInflight: Promise<Season> | null = null;
 
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
+export async function getActiveSeason(): Promise<Season> {
+	if (activeSeasonInflight) {
+		return activeSeasonInflight;
 	}
-	return result.json();
+	activeSeasonInflight = (async (): Promise<Season> => {
+		let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/active`;
+		if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+			url = '/api/seasons/active';
+		}
+		const result = await apiFetch(`${url}`);
+
+		if (result.status >= 400) {
+			const { message }: { message: string } = await result.json();
+			throw new Error(message);
+		}
+		return result.json();
+	})().finally(() => {
+		activeSeasonInflight = null;
+	});
+	return activeSeasonInflight;
 }
 
-export async function getActiveSeasonId(): Promise<{ value: string }> {
-	let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/active/id`;
-	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = '/api/seasons/active/id';
-	}
-	const result = await apiFetch(`${url}`);
+let activeSeasonIdInflight: Promise<{ value: string }> | null = null;
 
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
+export async function getActiveSeasonId(): Promise<{ value: string }> {
+	if (activeSeasonIdInflight) {
+		return activeSeasonIdInflight;
 	}
-	return result.json();
+	activeSeasonIdInflight = (async (): Promise<{ value: string }> => {
+		let url = `${import.meta.env.VITE_PRODUCT_SERVER}/api/seasons/active/id`;
+		if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+			url = '/api/seasons/active/id';
+		}
+		const result = await apiFetch(`${url}`);
+
+		if (result.status >= 400) {
+			const { message }: { message: string } = await result.json();
+			throw new Error(message);
+		}
+		return result.json();
+	})().finally(() => {
+		activeSeasonIdInflight = null;
+	});
+	return activeSeasonIdInflight;
 }
 
 export async function getScheduledSeason(): Promise<Season> {

@@ -102,7 +102,7 @@ export const externalMatchBetsDialogPaperSx: SxProps<Theme> = (theme) => {
 		mx: 1,
 		display: 'flex',
 		flexDirection: 'column',
-		maxHeight: 'min(90vh, 720px)',
+		maxHeight: '90vh',
 		bgcolor: isDark ? '#0b1424' : '#e8f4ef',
 		backgroundImage: isDark
 			? 'radial-gradient(ellipse 100% 70% at 50% -10%, rgba(0, 107, 66, 0.24) 0%, transparent 55%)'
@@ -239,27 +239,33 @@ export const externalMatchBetsDialogCountSx: SxProps<Theme> = (theme) => {
 export const externalMatchBetsDialogBodySx: SxProps<Theme> = {
 	flex: 1,
 	minHeight: 0,
-	overflow: 'hidden',
+	overflowY: 'auto',
+	overflowX: 'hidden',
 	display: 'flex',
 	flexDirection: 'column',
+	WebkitOverflowScrolling: 'touch',
+	'&::-webkit-scrollbar': { width: 4 },
+	'&::-webkit-scrollbar-thumb': {
+		borderRadius: 4,
+		bgcolor: 'rgba(0, 130, 75, 0.35)',
+	},
+};
+
+export const externalMatchBetsDialogEventsSx: SxProps<Theme> = {
+	flexShrink: 0,
 	px: 1.25,
-	py: 1,
+	pt: 0.85,
+	pb: 0.35,
 };
 
 export const externalMatchBetsDialogListSx: SxProps<Theme> = {
 	display: 'flex',
 	flexDirection: 'column',
 	gap: 0.45,
-	flex: 1,
-	minHeight: 0,
-	overflowY: 'auto',
-	overflowX: 'hidden',
-	pr: 0.25,
-	'&::-webkit-scrollbar': { width: 4 },
-	'&::-webkit-scrollbar-thumb': {
-		borderRadius: 4,
-		bgcolor: 'rgba(0, 130, 75, 0.35)',
-	},
+	flexShrink: 0,
+	px: 1.25,
+	pt: 1,
+	pb: 1,
 };
 
 export function externalMatchBetsDialogRowSx(

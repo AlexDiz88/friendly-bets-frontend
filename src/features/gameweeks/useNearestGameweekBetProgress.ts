@@ -16,10 +16,17 @@ export function useNearestGameweekBetProgress({
 	enabled,
 	seasonId,
 	refreshKey,
+	/** Родитель владеет GET .../current — не стартовать свой запрос (даже пока ready=false). */
+	preferPrefetchedNode = false,
+	prefetchedNode,
+	prefetchedNodeReady = false,
 }: {
 	enabled: boolean;
 	seasonId: string | undefined;
 	refreshKey?: unknown;
+	preferPrefetchedNode?: boolean;
+	prefetchedNode?: Calendar | null;
+	prefetchedNodeReady?: boolean;
 }): {
 	node: Calendar | undefined;
 	items: NearestGameweekBetProgressItem[];
@@ -27,34 +34,37 @@ export function useNearestGameweekBetProgress({
 	loading: boolean;
 	calendarsReady: boolean;
 } {
-	const [node, setNode] = useState<Calendar | undefined>(undefined);
-	const [nodeReady, setNodeReady] = useState(false);
+	const [fetchedNode, setFetchedNode] = useState<Calendar | undefined>(undefined);
+	const [fetchedNodeReady, setFetchedNodeReady] = useState(false);
 	const [items, setItems] = useState<NearestGameweekBetProgressItem[]>([]);
 	const [progressLoading, setProgressLoading] = useState(false);
 
 	useEffect(() => {
+		if (preferPrefetchedNode) {
+			return;
+		}
 		if (!enabled || !seasonId) {
-			setNode(undefined);
-			setNodeReady(false);
+			setFetchedNode(undefined);
+			setFetchedNodeReady(false);
 			return;
 		}
 
 		let cancelled = false;
-		setNodeReady(false);
+		setFetchedNodeReady(false);
 
 		const load = async (): Promise<void> => {
 			try {
 				const current = await getCurrentSeasonCalendarNode(seasonId);
 				if (!cancelled) {
-					setNode(current);
+					setFetchedNode(current);
 				}
 			} catch {
 				if (!cancelled) {
-					setNode(undefined);
+					setFetchedNode(undefined);
 				}
 			} finally {
 				if (!cancelled) {
-					setNodeReady(true);
+					setFetchedNodeReady(true);
 				}
 			}
 		};
@@ -63,7 +73,10 @@ export function useNearestGameweekBetProgress({
 		return () => {
 			cancelled = true;
 		};
-	}, [enabled, seasonId, refreshKey]);
+	}, [enabled, seasonId, refreshKey, preferPrefetchedNode]);
+
+	const node = preferPrefetchedNode ? prefetchedNode ?? undefined : fetchedNode;
+	const nodeReady = preferPrefetchedNode ? prefetchedNodeReady : fetchedNodeReady;
 
 	const nearestNodeId = node?.id;
 	const nearestLeagueNodes = node?.leagueMatchdayNodes;

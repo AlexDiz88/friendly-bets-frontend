@@ -4,19 +4,32 @@ import BetsPage from '../../bets/types/BetsPage';
 import Calendar from './types/Calendar';
 import NewCalendar from './types/NewCalendar';
 
+/** Параллельные вызовы с одним seasonId делят один HTTP-запрос. */
+const currentNodeInflight = new Map<string, Promise<Calendar>>();
+
 export async function getCurrentSeasonCalendarNode(seasonId: string): Promise<Calendar> {
-	let url = `${
-		import.meta.env.VITE_PRODUCT_SERVER || ''
-	}/api/calendars/seasons/${seasonId}/current`;
-	if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
-		url = `/api/calendars/seasons/${seasonId}/current`;
+	const existing = currentNodeInflight.get(seasonId);
+	if (existing) {
+		return existing;
 	}
-	const result = await apiFetch(`${url}`);
-	if (result.status >= 400) {
-		const { message }: { message: string } = await result.json();
-		throw new Error(message);
-	}
-	return result.json();
+	const request = (async (): Promise<Calendar> => {
+		let url = `${
+			import.meta.env.VITE_PRODUCT_SERVER || ''
+		}/api/calendars/seasons/${seasonId}/current`;
+		if (import.meta.env.VITE_PRODUCT_SERVER === 'localhost') {
+			url = `/api/calendars/seasons/${seasonId}/current`;
+		}
+		const result = await apiFetch(`${url}`);
+		if (result.status >= 400) {
+			const { message }: { message: string } = await result.json();
+			throw new Error(message);
+		}
+		return result.json();
+	})().finally(() => {
+		currentNodeInflight.delete(seasonId);
+	});
+	currentNodeInflight.set(seasonId, request);
+	return request;
 }
 
 export async function getAllSeasonCalendarNodes(

@@ -36,12 +36,13 @@ import { resolveExternalMatchKickoffUtcMs } from './externalMatchKickoff';
 import { matchSideToDisplayTeam } from './externalMatchDisplay';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getActiveSeason } from '../admin/seasons/seasonsSlice';
-import { selectActiveSeason } from '../admin/seasons/selectors';
+import { selectActiveSeason, selectActiveSeasonId } from '../admin/seasons/selectors';
 import { selectUser } from '../auth/selectors';
 import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
 import GameScore from '../bets/types/GameScore';
 import { isSensitiveKnockoutSlot } from '../bets/knockoutBetPrivacy';
 import League from '../admin/leagues/types/League';
+import type Calendar from '../admin/calendars/types/Calendar';
 import {
 	getLeagueExternalCompetitionInfo,
 	getMatchdayFromCache,
@@ -76,16 +77,20 @@ export default function MatchdayPage(): JSX.Element {
 	const user = useAppSelector(selectUser);
 	const { formatDateTime } = useFormatUserDateTime();
 	const activeSeason = useAppSelector(selectActiveSeason);
+	const activeSeasonId = useAppSelector(selectActiveSeasonId);
 	const calendarNodes = useAppSelector(selectAllCalendarNodes);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const pendingMatchDayFromQuery = useRef<string | null>(null);
 	const appliedMatchdayQueryKey = useRef('');
 	const calendarDefaultSeasonId = useRef<string | null>(null);
+	const [currentCalendarNode, setCurrentCalendarNode] = useState<Calendar | null>(null);
+	const [currentCalendarReady, setCurrentCalendarReady] = useState(false);
 	const [plateRefreshKey, setPlateRefreshKey] = useState(0);
 	const [pageView, setPageView] = useState<MatchResultsPageView>('matches');
 	const isMatchesView = pageView === 'matches';
 
-	useFetchActiveSeason(activeSeason?.id);
+	// id из Redux (App уже грузит), не activeSeason?.id — иначе лишний /active/id до прихода полного сезона
+	useFetchActiveSeason(activeSeasonId || activeSeason?.id);
 
 	const matchResultLeagues = useMemo(
 		() => activeSeason?.leagues ?? [],
@@ -395,17 +400,44 @@ export default function MatchdayPage(): JSX.Element {
 	useVisibilityPageRefresh(isMatchesView && isExternalPageReady, reloadMatchday);
 	useLivePagePolling(isMatchesView && isExternalPageReady && hasLiveMatches, reloadMatchday);
 
+	// App уже грузит active; здесь только если ещё нет (без повторного запроса по user.id)
 	useEffect(() => {
 		if (!activeSeason) {
-			dispatch(getActiveSeason());
+			void dispatch(getActiveSeason());
 		}
 	}, [activeSeason, dispatch]);
 
 	useEffect(() => {
-		if (user?.id) {
-			dispatch(getActiveSeason());
+		if (!activeSeason?.id) {
+			setCurrentCalendarNode(null);
+			setCurrentCalendarReady(false);
+			return;
 		}
-	}, [user?.id, dispatch]);
+
+		let cancelled = false;
+		setCurrentCalendarReady(false);
+
+		void getCurrentSeasonCalendarNode(activeSeason.id)
+			.then((current) => {
+				if (!cancelled) {
+					setCurrentCalendarNode(current);
+				}
+			})
+			.catch(() => {
+				if (!cancelled) {
+					setCurrentCalendarNode(null);
+				}
+			})
+			.finally(() => {
+				if (!cancelled) {
+					setCurrentCalendarReady(true);
+				}
+			});
+
+		return () => {
+			cancelled = true;
+		};
+	}, [activeSeason?.id, plateRefreshKey]);
 
 	useEffect(() => {
 		if (!isMatchesView || !activeSeason?.id) {
@@ -450,48 +482,36 @@ export default function MatchdayPage(): JSX.Element {
 			return;
 		}
 
-		let cancelled = false;
-		setLeagueDefaultReady(false);
+		if (!currentCalendarReady) {
+			setLeagueDefaultReady(false);
+			return;
+		}
 
-		const applyCalendarDefault = async (): Promise<void> => {
-			try {
-				const current = await getCurrentSeasonCalendarNode(activeSeason.id);
-				if (cancelled) {
-					return;
-				}
-				const code =
-					current.resultsLeagueCode ??
-					current.leagueMatchdayNodes?.[0]?.leagueCode ??
-					'';
-				const matchDay =
-					current.resultsMatchDay ??
-					current.leagueMatchdayNodes?.[0]?.matchDay ??
-					'';
-				if (code && matchResultLeagues.some((l) => l.leagueCode === code)) {
-					setSelectedLeagueCode(code);
-					if (matchDay) {
-						pendingMatchDayFromQuery.current = matchDay;
-					}
-				} else {
-					setSelectedLeagueCode(matchResultLeagues[0].leagueCode);
-				}
-			} catch {
-				if (!cancelled) {
-					setSelectedLeagueCode(matchResultLeagues[0].leagueCode);
-				}
-			} finally {
-				if (!cancelled) {
-					calendarDefaultSeasonId.current = activeSeason.id;
-					setLeagueDefaultReady(true);
-				}
+		const code =
+			currentCalendarNode?.resultsLeagueCode ??
+			currentCalendarNode?.leagueMatchdayNodes?.[0]?.leagueCode ??
+			'';
+		const matchDay =
+			currentCalendarNode?.resultsMatchDay ??
+			currentCalendarNode?.leagueMatchdayNodes?.[0]?.matchDay ??
+			'';
+		if (code && matchResultLeagues.some((l) => l.leagueCode === code)) {
+			setSelectedLeagueCode(code);
+			if (matchDay) {
+				pendingMatchDayFromQuery.current = matchDay;
 			}
-		};
-
-		void applyCalendarDefault();
-		return () => {
-			cancelled = true;
-		};
-	}, [activeSeason?.id, matchResultLeagues, searchParams]);
+		} else {
+			setSelectedLeagueCode(matchResultLeagues[0].leagueCode);
+		}
+		calendarDefaultSeasonId.current = activeSeason.id;
+		setLeagueDefaultReady(true);
+	}, [
+		activeSeason?.id,
+		matchResultLeagues,
+		searchParams,
+		currentCalendarReady,
+		currentCalendarNode,
+	]);
 
 	useEffect(() => {
 		const leagueParam = searchParams.get('league');
@@ -534,11 +554,16 @@ export default function MatchdayPage(): JSX.Element {
 		}
 		const nextValue = matchDayStringToSlotValue(pending, matchdaySlots);
 		pendingMatchDayFromQuery.current = null;
+		// Уже тот же слот (обычно competitionInfo.currentMatchday) — не трогаем touched:
+		// иначе matchday останется дефолтным 1, а touched=true уведёт UI на 1-й тур.
+		if (nextValue === effectiveMatchday) {
+			return;
+		}
 		setMatchdayTouched(true);
 		setMatchday(nextValue);
 		setData(null);
 		setLoading(true);
-	}, [competitionInfoLoading, matchdaySlots, effectiveLeagueCode]);
+	}, [competitionInfoLoading, matchdaySlots, effectiveLeagueCode, effectiveMatchday]);
 
 	useEffect(() => {
 		if (!isMatchesView || !effectiveLeagueCode || !selectedLeague?.id) {
@@ -568,17 +593,17 @@ export default function MatchdayPage(): JSX.Element {
 		};
 	}, [effectiveLeagueCode, externalSeason, selectedLeague?.id, isMatchesView]);
 
+	// Готовность грузить матчи: один сигнал вместо competitionInfo+matchdayTouched в deps
+	// (touched при том же effectiveMatchday не должен давать второй запрос того же тура).
+	const matchdayLoadReady =
+		isMatchesView &&
+		!competitionInfoLoading &&
+		(matchdayTouched || Boolean(competitionInfo)) &&
+		Boolean(selectedLeague?.id) &&
+		Boolean(effectiveLeagueCode);
+
 	useEffect(() => {
-		if (!isMatchesView) {
-			return;
-		}
-		if (competitionInfoLoading) {
-			return;
-		}
-		if (!matchdayTouched && !competitionInfo) {
-			return;
-		}
-		if (!selectedLeague?.id || !effectiveLeagueCode) {
+		if (!matchdayLoadReady || !selectedLeague?.id || !effectiveLeagueCode) {
 			return;
 		}
 
@@ -614,15 +639,12 @@ export default function MatchdayPage(): JSX.Element {
 			cancelled = true;
 		};
 	}, [
-		competitionInfoLoading,
-		competitionInfo,
-		matchdayTouched,
+		matchdayLoadReady,
 		effectiveMatchday,
 		effectiveLeagueCode,
 		externalSeason,
 		selectedLeague?.id,
 		dispatch,
-		isMatchesView,
 	]);
 
 	useEffect(() => {
@@ -716,6 +738,30 @@ export default function MatchdayPage(): JSX.Element {
 		);
 	}, [data?.matches]);
 
+	const canOpenBetsFromStatusChip = useCallback(
+		(match: ExternalMatch): boolean => {
+			if (!canOpenMatchBetsDialog(match)) {
+				return false;
+			}
+			// Same knockout privacy gate as the count badge — no bet reveal before KO.
+			if (
+				isSensitiveKnockoutSlot(selectedLeague?.leagueCode, betMatchDay) &&
+				isMatchOpenForBetting(match)
+			) {
+				return false;
+			}
+			// After kickoff the whole card already opens bets; chip is only needed before start
+			// (card click opens odds pick).
+			return isMatchOpenForBetting(match);
+		},
+		[
+			canOpenMatchBetsDialog,
+			isMatchOpenForBetting,
+			selectedLeague?.leagueCode,
+			betMatchDay,
+		]
+	);
+
 	const renderViewMatchBetsButton = (match: ExternalMatch): JSX.Element | null => {
 		if (!showViewMatchBetsButton(match)) {
 			return null;
@@ -751,6 +797,9 @@ export default function MatchdayPage(): JSX.Element {
 					enabled
 					seasonId={activeSeason?.id}
 					refreshKey={plateRefreshKey}
+					preferPrefetchedNode
+					prefetchedNode={currentCalendarNode}
+					prefetchedNodeReady={currentCalendarReady}
 					onLeagueClick={handleNearestGameweekLeagueClick}
 				/>
 			) : null}
@@ -931,8 +980,14 @@ export default function MatchdayPage(): JSX.Element {
 										leagueCode={match.leagueCode}
 										slotId={match.slotId ?? betMatchDay}
 										matchDateLabel={matchDate}
+										matchResultOdds={match.matchResultOdds}
 										headerActions={renderViewMatchBetsButton(match)}
 										onClick={betEnabled ? () => handleMatchClick(match) : undefined}
+										onStatusClick={
+											canOpenBetsFromStatusChip(match)
+												? () => setBetsMatch(match)
+												: undefined
+										}
 										interactive={betEnabled}
 									/>
 								</Box>
