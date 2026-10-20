@@ -70,7 +70,10 @@ import {
 	errorLogsPageRootSx,
 	errorLogsPageSizeSelectSx,
 	errorLogsTitleSx,
+	errorLogsToolbarActionBtnSx,
+	errorLogsToolbarActionsSx,
 	errorLogsToolbarSx,
+	errorLogsToolbarTopSx,
 } from './errorLogsPageStyles';
 
 function codeLabel(code: string): string {
@@ -424,43 +427,43 @@ export default function ErrorLogsPage(): JSX.Element {
 			</Typography>
 
 			<Box sx={errorLogsToolbarSx}>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
-					<Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
-						{t('errorLogsPageSize')}
-					</Typography>
-					<FormControl size="small" sx={{ minWidth: '4.5rem' }}>
-						<Select
-							value={pageSize}
-							onChange={handlePageSizeChange}
-							displayEmpty
-							aria-label={t('errorLogsPageSize')}
-							sx={errorLogsPageSizeSelectSx}
-						>
-							{ERROR_LOGS_PAGE_SIZES.map((size) => (
-								<MenuItem key={size} value={size}>
-									{size}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
-					<FormControlLabel
-						control={
-							<Checkbox
-								size="small"
-								checked={includeArchived}
-								onChange={handleIncludeArchivedChange}
-								disabled={loading}
-							/>
-						}
-						label={
-							<Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
-								{t('errorLogsShowArchived')}
-							</Typography>
-						}
-						sx={{ ml: 0.25, mr: 0 }}
-					/>
-				</Box>
-				<Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center', flexWrap: 'wrap' }}>
+				<Box sx={errorLogsToolbarTopSx}>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minWidth: 0 }}>
+						<Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
+							{t('errorLogsPageSize')}
+						</Typography>
+						<FormControl size="small" sx={{ minWidth: '4.5rem' }}>
+							<Select
+								value={pageSize}
+								onChange={handlePageSizeChange}
+								displayEmpty
+								aria-label={t('errorLogsPageSize')}
+								sx={errorLogsPageSizeSelectSx}
+							>
+								{ERROR_LOGS_PAGE_SIZES.map((size) => (
+									<MenuItem key={size} value={size}>
+										{size}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+						<FormControlLabel
+							control={
+								<Checkbox
+									size="small"
+									checked={includeArchived}
+									onChange={handleIncludeArchivedChange}
+									disabled={loading}
+								/>
+							}
+							label={
+								<Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+									{t('errorLogsShowArchived')}
+								</Typography>
+							}
+							sx={{ ml: 0.25, mr: 0 }}
+						/>
+					</Box>
 					<span>
 						<Tooltip title={t('errorLogsRefresh')}>
 							<span>
@@ -476,30 +479,29 @@ export default function ErrorLogsPage(): JSX.Element {
 							</span>
 						</Tooltip>
 					</span>
-					<span>
-						<CustomSuccessButton
-							buttonText={t('errorLogsArchiveAll')}
-							onClick={() => setConfirmMode('archiveAll')}
-							disabled={activeCount === 0 || loading}
-							sx={{ height: '2.25rem' }}
-						/>
-					</span>
-					<span>
-						<CustomSuccessButton
-							buttonText={t('errorLogsClearAll')}
-							onClick={() => setConfirmMode('clearActive')}
-							disabled={activeCount === 0 || loading}
-							sx={{ height: '2.25rem' }}
-						/>
-					</span>
-					<span>
-						<CustomSuccessButton
-							buttonText={t('errorLogsClearArchive')}
-							onClick={() => setConfirmMode('clearArchive')}
-							disabled={archivedCount === 0 || loading}
-							sx={{ height: '2.25rem' }}
-						/>
-					</span>
+				</Box>
+				<Box sx={errorLogsToolbarActionsSx}>
+					<CustomSuccessButton
+						buttonText={t('errorLogsArchiveAll')}
+						onClick={() => setConfirmMode('archiveAll')}
+						disabled={activeCount === 0 || loading}
+						textSize="0.75rem"
+						sx={errorLogsToolbarActionBtnSx}
+					/>
+					<CustomSuccessButton
+						buttonText={t('errorLogsClearAll')}
+						onClick={() => setConfirmMode('clearActive')}
+						disabled={activeCount === 0 || loading}
+						textSize="0.75rem"
+						sx={errorLogsToolbarActionBtnSx}
+					/>
+					<CustomSuccessButton
+						buttonText={t('errorLogsClearArchive')}
+						onClick={() => setConfirmMode('clearArchive')}
+						disabled={archivedCount === 0 || loading}
+						textSize="0.75rem"
+						sx={errorLogsToolbarActionBtnSx}
+					/>
 				</Box>
 			</Box>
 
