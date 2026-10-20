@@ -81,7 +81,7 @@ export default function UserSettings(): JSX.Element {
 		setAnchorElUser(event.currentTarget);
 		if (canViewErrorLogs) {
 			void fetchErrorLogsCount()
-				.then((count) => setErrorLogsNonEmpty(count > 0))
+				.then((counts) => setErrorLogsNonEmpty(counts.activeCount > 0))
 				.catch(() => setErrorLogsNonEmpty(false));
 		} else {
 			setErrorLogsNonEmpty(false);
