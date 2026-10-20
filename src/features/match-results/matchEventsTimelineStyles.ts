@@ -41,17 +41,21 @@ const palette = (mode: 'light' | 'dark') => {
 	};
 };
 
-export const matchEventsTimelineRootSx: SxProps<Theme> = (theme) => {
+export const matchEventsTimelineRootSx = (framed = true): SxProps<Theme> => (theme) => {
 	const p = palette(theme.palette.mode);
 	return {
 		display: 'flex',
 		flexDirection: 'column',
-		gap: 0.65,
+		gap: 0.5,
 		px: 0.25,
 		py: 0.25,
-		borderTop: '1px solid',
-		borderBottom: '1px solid',
-		borderColor: p.divider,
+		...(framed
+			? {
+					borderTop: '1px solid',
+					borderBottom: '1px solid',
+					borderColor: p.divider,
+				}
+			: {}),
 	};
 };
 

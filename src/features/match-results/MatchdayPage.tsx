@@ -716,6 +716,30 @@ export default function MatchdayPage(): JSX.Element {
 		);
 	}, [data?.matches]);
 
+	const canOpenBetsFromStatusChip = useCallback(
+		(match: ExternalMatch): boolean => {
+			if (!canOpenMatchBetsDialog(match)) {
+				return false;
+			}
+			// Same knockout privacy gate as the count badge — no bet reveal before KO.
+			if (
+				isSensitiveKnockoutSlot(selectedLeague?.leagueCode, betMatchDay) &&
+				isMatchOpenForBetting(match)
+			) {
+				return false;
+			}
+			// After kickoff the whole card already opens bets; chip is only needed before start
+			// (card click opens odds pick).
+			return isMatchOpenForBetting(match);
+		},
+		[
+			canOpenMatchBetsDialog,
+			isMatchOpenForBetting,
+			selectedLeague?.leagueCode,
+			betMatchDay,
+		]
+	);
+
 	const renderViewMatchBetsButton = (match: ExternalMatch): JSX.Element | null => {
 		if (!showViewMatchBetsButton(match)) {
 			return null;
@@ -931,8 +955,14 @@ export default function MatchdayPage(): JSX.Element {
 										leagueCode={match.leagueCode}
 										slotId={match.slotId ?? betMatchDay}
 										matchDateLabel={matchDate}
+										matchResultOdds={match.matchResultOdds}
 										headerActions={renderViewMatchBetsButton(match)}
 										onClick={betEnabled ? () => handleMatchClick(match) : undefined}
+										onStatusClick={
+											canOpenBetsFromStatusChip(match)
+												? () => setBetsMatch(match)
+												: undefined
+										}
 										interactive={betEnabled}
 									/>
 								</Box>

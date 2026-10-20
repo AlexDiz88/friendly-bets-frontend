@@ -36,6 +36,7 @@ import {
 	externalMatchBetsDialogBodySx,
 	externalMatchBetsDialogCountSx,
 	externalMatchBetsDialogEmptySx,
+	externalMatchBetsDialogEventsSx,
 	externalMatchBetsDialogFooterSx,
 	externalMatchBetsDialogHeaderSx,
 	externalMatchBetsDialogListSx,
@@ -246,29 +247,31 @@ export default function ExternalMatchBetsDialog({
 				) : null}
 			</Box>
 
-			{(match.goals && match.goals.length > 0)
-				|| match.addedTimeFirstHalf
-				|| match.addedTimeSecondHalf ? (
-				<Box sx={{ px: 1.25, pt: 0.85, pb: 0.35, flexShrink: 0 }}>
-					<MatchEventsTimeline
-						events={match.goals}
-						addedTimeFirstHalf={match.addedTimeFirstHalf}
-						addedTimeSecondHalf={match.addedTimeSecondHalf}
-					/>
-				</Box>
-			) : null}
-
-			<MatchStatsSection stats={match.stats} />
-
 			<Box sx={externalMatchBetsDialogBodySx}>
+				{(match.goals && match.goals.length > 0)
+					|| match.addedTimeFirstHalf
+					|| match.addedTimeSecondHalf ? (
+					<Box sx={externalMatchBetsDialogEventsSx}>
+						<MatchEventsTimeline
+							events={match.goals}
+							addedTimeFirstHalf={match.addedTimeFirstHalf}
+							addedTimeSecondHalf={match.addedTimeSecondHalf}
+						/>
+					</Box>
+				) : null}
+
+				<MatchStatsSection stats={match.stats} />
+
 				{loading ? (
-					<Box sx={externalMatchBetsDialogLoadingSx}>
+					<Box sx={[externalMatchBetsDialogLoadingSx, { px: 1.25 }] as SxProps<Theme>}>
 						<CircularProgress size={26} sx={{ color: '#00824b' }} />
 					</Box>
 				) : sortedBets.length === 0 ? (
-					<Typography sx={externalMatchBetsDialogEmptySx}>
-						{t('wc26.externalResults.matchBets.empty')}
-					</Typography>
+					<Box sx={{ px: 1.25, pb: 1 }}>
+						<Typography sx={externalMatchBetsDialogEmptySx}>
+							{t('wc26.externalResults.matchBets.empty')}
+						</Typography>
+					</Box>
 				) : (
 					<Box sx={externalMatchBetsDialogListSx}>
 						{sortedBets.map((bet) => {
