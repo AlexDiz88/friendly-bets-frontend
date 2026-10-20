@@ -1,4 +1,6 @@
 import { Avatar, Box, Chip, Typography } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
+import type { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { resolveTeamDisplayName, resolveTeamLogoUrl } from '../../components/utils/teamDisplay';
 import { useDisplayLiveMinuteLabel } from '../../shared/useDisplayLiveMinuteLabel';
@@ -302,21 +304,23 @@ export default function ExternalMatchResultCard({
 							variant="filled"
 							onClick={
 								onStatusClick
-									? (event) => {
+									? (event: MouseEvent) => {
 											event.stopPropagation();
 											onStatusClick();
 										}
 									: undefined
 							}
-							sx={[
-								awaitingFinalization ? matchSettlingChipSx : matchResultStatusChipSx,
-								onStatusClick
-									? {
-											cursor: 'pointer',
-											'&:hover': { filter: 'brightness(1.08)' },
-										}
-									: null,
-							]}
+							sx={
+								[
+									awaitingFinalization ? matchSettlingChipSx : matchResultStatusChipSx,
+									onStatusClick
+										? {
+												cursor: 'pointer',
+												'&:hover': { filter: 'brightness(1.08)' },
+											}
+										: null,
+								] as SxProps<Theme>
+							}
 						/>
 					)}
 				</Box>
