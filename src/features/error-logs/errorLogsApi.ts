@@ -43,15 +43,25 @@ export type ErrorLogEntry = {
 	occurredAt?: string[] | null;
 	occurrenceCount?: number | null;
 	context?: Record<string, string> | null;
+	archived?: boolean;
+	archivedAt?: string | null;
+};
+
+export type ErrorLogsCount = {
+	count: number;
+	activeCount: number;
+	archivedCount: number;
 };
 
 export async function fetchErrorLogs(params: {
 	page: number;
 	size: number;
+	includeArchived?: boolean;
 }): Promise<ErrorLogEntry[]> {
 	const query = new URLSearchParams({
 		page: String(params.page),
 		size: String(params.size),
+		includeArchived: String(params.includeArchived ?? false),
 	});
 	const result = await apiFetch(apiUrl(`/api/error-logs?${query}`), { method: 'GET' });
 	if (result.status >= 400) {
@@ -61,14 +71,47 @@ export async function fetchErrorLogs(params: {
 	return result.json();
 }
 
-export async function fetchErrorLogsCount(): Promise<number> {
-	const result = await apiFetch(apiUrl('/api/error-logs/count'), { method: 'GET' });
+export async function fetchErrorLogsCount(includeArchived = false): Promise<ErrorLogsCount> {
+	const query = new URLSearchParams({
+		includeArchived: String(includeArchived),
+	});
+	const result = await apiFetch(apiUrl(`/api/error-logs/count?${query}`), { method: 'GET' });
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);
 	}
-	const body: { count?: number } = await result.json();
-	return body.count ?? 0;
+	const body: Partial<ErrorLogsCount> = await result.json();
+	return {
+		count: body.count ?? 0,
+		activeCount: body.activeCount ?? 0,
+		archivedCount: body.archivedCount ?? 0,
+	};
+}
+
+export async function archiveErrorLog(id: string): Promise<void> {
+	const result = await apiFetch(apiUrl(`/api/error-logs/${id}/archive`), { method: 'PATCH' });
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+}
+
+export async function unarchiveErrorLog(id: string): Promise<void> {
+	const result = await apiFetch(apiUrl(`/api/error-logs/${id}/unarchive`), { method: 'PATCH' });
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+}
+
+export async function archiveAllErrorLogs(): Promise<number> {
+	const result = await apiFetch(apiUrl('/api/error-logs/archive-all'), { method: 'POST' });
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	const body: { archived?: number } = await result.json();
+	return body.archived ?? 0;
 }
 
 export async function deleteErrorLog(id: string): Promise<void> {
@@ -79,8 +122,20 @@ export async function deleteErrorLog(id: string): Promise<void> {
 	}
 }
 
+/** Hard-delete active (non-archived) entries only. */
 export async function clearErrorLogs(): Promise<number> {
 	const result = await apiFetch(apiUrl('/api/error-logs'), { method: 'DELETE' });
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	const body: { cleared?: number } = await result.json();
+	return body.cleared ?? 0;
+}
+
+/** Hard-delete archived entries only. */
+export async function clearArchivedErrorLogs(): Promise<number> {
+	const result = await apiFetch(apiUrl('/api/error-logs/archived'), { method: 'DELETE' });
 	if (result.status >= 400) {
 		const { message }: { message: string } = await result.json();
 		throw new Error(message);

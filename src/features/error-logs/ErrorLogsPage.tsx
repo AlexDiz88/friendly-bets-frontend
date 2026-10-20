@@ -1,13 +1,17 @@
+import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import UnarchiveOutlinedIcon from '@mui/icons-material/UnarchiveOutlined';
 import {
 	Avatar,
 	Box,
+	Checkbox,
 	Chip,
 	CircularProgress,
 	Collapse,
 	FormControl,
+	FormControlLabel,
 	IconButton,
 	MenuItem,
 	Select,
@@ -33,12 +37,16 @@ import BetsPagination from '../bets/BetsPagination';
 import { externalDataLayerAccent } from '../../shared/externalDataLayerColors';
 import { useFormatUserDateTime } from '../../shared/useFormatUserDateTime';
 import {
+	archiveAllErrorLogs,
+	archiveErrorLog,
+	clearArchivedErrorLogs,
 	clearErrorLogs,
 	DEFAULT_ERROR_LOGS_PAGE_SIZE,
 	deleteErrorLog,
 	ERROR_LOGS_PAGE_SIZES,
 	fetchErrorLogs,
 	fetchErrorLogsCount,
+	unarchiveErrorLog,
 	type ErrorLogEntry,
 	type ErrorLogsPageSize,
 } from './errorLogsApi';
@@ -237,6 +245,8 @@ function OccurrenceHistory({
 	);
 }
 
+type ConfirmDialogMode = 'clearActive' | 'archiveAll' | 'clearArchive';
+
 export default function ErrorLogsPage(): JSX.Element {
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
@@ -244,23 +254,28 @@ export default function ErrorLogsPage(): JSX.Element {
 	const [loading, setLoading] = useState(true);
 	const [entries, setEntries] = useState<ErrorLogEntry[]>([]);
 	const [totalCount, setTotalCount] = useState(0);
+	const [activeCount, setActiveCount] = useState(0);
+	const [archivedCount, setArchivedCount] = useState(0);
+	const [includeArchived, setIncludeArchived] = useState(false);
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState<ErrorLogsPageSize>(DEFAULT_ERROR_LOGS_PAGE_SIZE);
-	const [clearOpen, setClearOpen] = useState(false);
-	const [clearing, setClearing] = useState(false);
+	const [confirmMode, setConfirmMode] = useState<ConfirmDialogMode | null>(null);
+	const [confirming, setConfirming] = useState(false);
 
 	const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
 	const load = useCallback(async () => {
 		setLoading(true);
 		try {
-			const [list, count] = await Promise.all([
-				fetchErrorLogs({ page: page - 1, size: pageSize }),
-				fetchErrorLogsCount(),
+			const [list, counts] = await Promise.all([
+				fetchErrorLogs({ page: page - 1, size: pageSize, includeArchived }),
+				fetchErrorLogsCount(includeArchived),
 			]);
 			setEntries(list);
-			setTotalCount(count);
-			const maxPage = Math.max(1, Math.ceil(count / pageSize));
+			setTotalCount(counts.count);
+			setActiveCount(counts.activeCount);
+			setArchivedCount(counts.archivedCount);
+			const maxPage = Math.max(1, Math.ceil(counts.count / pageSize));
 			if (page > maxPage) {
 				setPage(maxPage);
 			}
@@ -273,7 +288,7 @@ export default function ErrorLogsPage(): JSX.Element {
 		} finally {
 			setLoading(false);
 		}
-	}, [dispatch, page, pageSize]);
+	}, [dispatch, includeArchived, page, pageSize]);
 
 	useEffect(() => {
 		void load();
@@ -285,17 +300,27 @@ export default function ErrorLogsPage(): JSX.Element {
 		setPage(1);
 	};
 
+	const handleIncludeArchivedChange = (_: unknown, checked: boolean): void => {
+		setIncludeArchived(checked);
+		setPage(1);
+	};
+
+	const reloadAfterMutation = async (nextTotalHint?: number): Promise<void> => {
+		if (nextTotalHint != null) {
+			const maxPage = Math.max(1, Math.ceil(nextTotalHint / pageSize));
+			if (page > maxPage) {
+				setPage(maxPage);
+				return;
+			}
+		}
+		await load();
+	};
+
 	const handleDelete = async (id: string): Promise<void> => {
 		try {
 			await deleteErrorLog(id);
-			const newTotal = Math.max(0, totalCount - 1);
-			const maxPage = Math.max(1, Math.ceil(newTotal / pageSize));
 			dispatch(showSuccessSnackbar({ message: t('errorLogsEntryDeleted') }));
-			if (page > maxPage) {
-				setPage(maxPage);
-			} else {
-				await load();
-			}
+			await reloadAfterMutation(Math.max(0, totalCount - 1));
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
@@ -305,25 +330,92 @@ export default function ErrorLogsPage(): JSX.Element {
 		}
 	};
 
-	const handleClearAll = async (): Promise<void> => {
-		setClearing(true);
+	const handleArchive = async (id: string): Promise<void> => {
 		try {
-			await clearErrorLogs();
-			setEntries([]);
-			setTotalCount(0);
-			setPage(1);
-			setClearOpen(false);
-			dispatch(showSuccessSnackbar({ message: t('errorLogsCleared') }));
+			await archiveErrorLog(id);
+			dispatch(showSuccessSnackbar({ message: t('errorLogsEntryArchived') }));
+			const nextHint = includeArchived ? totalCount : Math.max(0, totalCount - 1);
+			await reloadAfterMutation(nextHint);
 		} catch (error) {
 			dispatch(
 				showErrorSnackbar({
-					message: error instanceof Error ? error.message : 'errorLogsClearFailed',
+					message: error instanceof Error ? error.message : 'errorLogsArchiveFailed',
+				})
+			);
+		}
+	};
+
+	const handleUnarchive = async (id: string): Promise<void> => {
+		try {
+			await unarchiveErrorLog(id);
+			dispatch(showSuccessSnackbar({ message: t('errorLogsEntryUnarchived') }));
+			await reloadAfterMutation();
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : 'errorLogsUnarchiveFailed',
+				})
+			);
+		}
+	};
+
+	const handleConfirm = async (): Promise<void> => {
+		if (!confirmMode) {
+			return;
+		}
+		setConfirming(true);
+		try {
+			if (confirmMode === 'clearActive') {
+				await clearErrorLogs();
+				dispatch(showSuccessSnackbar({ message: t('errorLogsCleared') }));
+			} else if (confirmMode === 'archiveAll') {
+				await archiveAllErrorLogs();
+				dispatch(showSuccessSnackbar({ message: t('errorLogsArchivedAll') }));
+			} else {
+				await clearArchivedErrorLogs();
+				dispatch(showSuccessSnackbar({ message: t('errorLogsArchiveCleared') }));
+			}
+			setConfirmMode(null);
+			if (page === 1) {
+				await load();
+			} else {
+				setPage(1);
+			}
+		} catch (error) {
+			const fallback =
+				confirmMode === 'clearActive'
+					? 'errorLogsClearFailed'
+					: confirmMode === 'archiveAll'
+						? 'errorLogsArchiveAllFailed'
+						: 'errorLogsClearArchiveFailed';
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : fallback,
 				})
 			);
 		} finally {
-			setClearing(false);
+			setConfirming(false);
 		}
 	};
+
+	const confirmTitle =
+		confirmMode === 'clearActive'
+			? t('errorLogsClearAllTitle')
+			: confirmMode === 'archiveAll'
+				? t('errorLogsArchiveAllTitle')
+				: t('errorLogsClearArchiveTitle');
+	const confirmHelper =
+		confirmMode === 'clearActive'
+			? t('errorLogsClearAllHelper', { count: activeCount })
+			: confirmMode === 'archiveAll'
+				? t('errorLogsArchiveAllHelper', { count: activeCount })
+				: t('errorLogsClearArchiveHelper', { count: archivedCount });
+	const confirmAccept =
+		confirmMode === 'clearActive'
+			? t('errorLogsClearAll')
+			: confirmMode === 'archiveAll'
+				? t('errorLogsArchiveAll')
+				: t('errorLogsClearArchive');
 
 	return (
 		<Box sx={errorLogsPageRootSx}>
@@ -332,7 +424,7 @@ export default function ErrorLogsPage(): JSX.Element {
 			</Typography>
 
 			<Box sx={errorLogsToolbarSx}>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
 					<Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
 						{t('errorLogsPageSize')}
 					</Typography>
@@ -351,8 +443,24 @@ export default function ErrorLogsPage(): JSX.Element {
 							))}
 						</Select>
 					</FormControl>
+					<FormControlLabel
+						control={
+							<Checkbox
+								size="small"
+								checked={includeArchived}
+								onChange={handleIncludeArchivedChange}
+								disabled={loading}
+							/>
+						}
+						label={
+							<Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+								{t('errorLogsShowArchived')}
+							</Typography>
+						}
+						sx={{ ml: 0.25, mr: 0 }}
+					/>
 				</Box>
-				<Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
+				<Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center', flexWrap: 'wrap' }}>
 					<span>
 						<Tooltip title={t('errorLogsRefresh')}>
 							<span>
@@ -370,9 +478,25 @@ export default function ErrorLogsPage(): JSX.Element {
 					</span>
 					<span>
 						<CustomSuccessButton
+							buttonText={t('errorLogsArchiveAll')}
+							onClick={() => setConfirmMode('archiveAll')}
+							disabled={activeCount === 0 || loading}
+							sx={{ height: '2.25rem' }}
+						/>
+					</span>
+					<span>
+						<CustomSuccessButton
 							buttonText={t('errorLogsClearAll')}
-							onClick={() => setClearOpen(true)}
-							disabled={totalCount === 0 || loading}
+							onClick={() => setConfirmMode('clearActive')}
+							disabled={activeCount === 0 || loading}
+							sx={{ height: '2.25rem' }}
+						/>
+					</span>
+					<span>
+						<CustomSuccessButton
+							buttonText={t('errorLogsClearArchive')}
+							onClick={() => setConfirmMode('clearArchive')}
+							disabled={archivedCount === 0 || loading}
 							sx={{ height: '2.25rem' }}
 						/>
 					</span>
@@ -405,12 +529,17 @@ export default function ErrorLogsPage(): JSX.Element {
 					}}
 				>
 					<Typography sx={{ fontWeight: 600, mb: 0.5 }}>{t('errorLogsEmptyTitle')}</Typography>
-					<Typography variant="body2">{t('errorLogsEmpty')}</Typography>
+					<Typography variant="body2">
+						{includeArchived && activeCount === 0 && archivedCount === 0
+							? t('errorLogsEmptyArchived')
+							: t('errorLogsEmpty')}
+					</Typography>
 				</Box>
 			) : null}
 
 			{entries.map((entry) => {
 				const severity = (entry.severity || 'ERROR').toUpperCase();
+				const archived = Boolean(entry.archived);
 				const homeTitle = entry.homeTeamTitle || entry.homeTeam || '';
 				const awayTitle = entry.awayTeamTitle || entry.awayTeam || '';
 				const hasTeams = Boolean(homeTitle || awayTitle);
@@ -429,7 +558,13 @@ export default function ErrorLogsPage(): JSX.Element {
 				const firstAt = times[0] ?? entry.createdAt;
 				const repeatCount = Math.max(entry.occurrenceCount ?? 0, times.length);
 				return (
-					<Box key={entry.id} sx={errorLogCardSx(theme, severity)}>
+					<Box
+						key={entry.id}
+						sx={[
+							errorLogCardSx(theme, severity),
+							archived ? { opacity: 0.72 } : null,
+						] as SxProps<Theme>}
+					>
 						<Box
 							sx={{
 								display: 'flex',
@@ -459,6 +594,13 @@ export default function ErrorLogsPage(): JSX.Element {
 									>
 										{codeLabel(entry.code)}
 									</Typography>
+									{archived ? (
+										<Chip
+											size="small"
+											label={t('errorLogsArchivedChip')}
+											sx={chipSx('#64748b', theme)}
+										/>
+									) : null}
 									{repeatCount > 1 ? (
 										<Chip
 											size="small"
@@ -471,20 +613,55 @@ export default function ErrorLogsPage(): JSX.Element {
 									) : null}
 								</Box>
 							</Box>
-							<span>
-								<Tooltip title={t('errorLogsDeleteEntry')}>
+							<Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+								{archived ? (
 									<span>
-										<IconButton
-											aria-label={t('errorLogsDeleteEntry')}
-											size="small"
-											onClick={() => void handleDelete(entry.id)}
-											sx={{ minWidth: 40, minHeight: 40 }}
-										>
-											<DeleteOutlineIcon fontSize="small" />
-										</IconButton>
+										<Tooltip title={t('errorLogsUnarchiveEntry')}>
+											<span>
+												<IconButton
+													aria-label={t('errorLogsUnarchiveEntry')}
+													size="small"
+													onClick={() => void handleUnarchive(entry.id)}
+													sx={{ minWidth: 40, minHeight: 40 }}
+												>
+													<UnarchiveOutlinedIcon fontSize="small" />
+												</IconButton>
+											</span>
+										</Tooltip>
 									</span>
-								</Tooltip>
-							</span>
+								) : (
+									<>
+										<span>
+											<Tooltip title={t('errorLogsArchiveEntry')}>
+												<span>
+													<IconButton
+														aria-label={t('errorLogsArchiveEntry')}
+														size="small"
+														onClick={() => void handleArchive(entry.id)}
+														sx={{ minWidth: 40, minHeight: 40 }}
+													>
+														<ArchiveOutlinedIcon fontSize="small" />
+													</IconButton>
+												</span>
+											</Tooltip>
+										</span>
+										<span>
+											<Tooltip title={t('errorLogsDeleteEntry')}>
+												<span>
+													<IconButton
+														aria-label={t('errorLogsDeleteEntry')}
+														size="small"
+														onClick={() => void handleDelete(entry.id)}
+														sx={{ minWidth: 40, minHeight: 40 }}
+													>
+														<DeleteOutlineIcon fontSize="small" />
+													</IconButton>
+												</span>
+											</Tooltip>
+										</span>
+									</>
+								)}
+							</Box>
 						</Box>
 
 						<OccurrenceHistory times={times} formatDetailed={formatDetailed} />
@@ -629,13 +806,13 @@ export default function ErrorLogsPage(): JSX.Element {
 			})}
 
 			<CustomCalendarDialog
-				open={clearOpen}
-				onClose={() => setClearOpen(false)}
-				onSave={() => void handleClearAll()}
-				title={t('errorLogsClearAllTitle')}
-				helperText={t('errorLogsClearAllHelper', { count: totalCount })}
-				buttonAcceptText={t('errorLogsClearAll')}
-				submitting={clearing}
+				open={confirmMode != null}
+				onClose={() => setConfirmMode(null)}
+				onSave={() => void handleConfirm()}
+				title={confirmTitle}
+				helperText={confirmHelper}
+				buttonAcceptText={confirmAccept}
+				submitting={confirming}
 			/>
 		</Box>
 	);
