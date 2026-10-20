@@ -26,11 +26,33 @@ export const errorLogsTitleSx: SxProps<Theme> = {
 
 export const errorLogsToolbarSx: SxProps<Theme> = {
 	display: 'flex',
+	flexDirection: 'column',
+	gap: 1,
+	mb: 1.75,
+};
+
+export const errorLogsToolbarTopSx: SxProps<Theme> = {
+	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'space-between',
 	gap: 1,
-	mb: 1.75,
-	flexWrap: 'wrap',
+	width: '100%',
+};
+
+export const errorLogsToolbarActionsSx: SxProps<Theme> = {
+	display: 'flex',
+	alignItems: 'center',
+	flexWrap: 'nowrap',
+	gap: 0.5,
+	width: '100%',
+};
+
+export const errorLogsToolbarActionBtnSx: SxProps<Theme> = {
+	height: '2.25rem',
+	flex: '1 1 0',
+	minWidth: 0,
+	px: 0.75,
+	mr: 0,
 };
 
 export const errorLogsPageSizeSelectSx: SxProps<Theme> = {
