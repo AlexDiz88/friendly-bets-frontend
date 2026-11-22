@@ -45,6 +45,7 @@ import {
 	syncExternalStandings,
 	syncOddsProviderSlot,
 } from './externalDataAdminApi';
+import { settleMatchdayAndRecalculateStats } from '../../match-results/matchScheduleAdminApi';
 import {
 	CHAMPIONAT_PROVIDER,
 	EURO_FOOTBALL_PROVIDER,
@@ -146,6 +147,11 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	const [fullMatchDate, setFullMatchDate] = useState(todayUtcIsoDate);
 	const [fullMatchProvider, setFullMatchProvider] = useState('');
 	const [fullMatchProviders, setFullMatchProviders] = useState<string[]>([]);
+	const [settleLeagueCode, setSettleLeagueCode] = useState('BL');
+	const [settleMatchday, setSettleMatchday] = useState(1);
+	const [settleSlots, setSettleSlots] = useState<MatchdaySlot[]>([]);
+	const [settleMetaLoading, setSettleMetaLoading] = useState(false);
+	const [syncingSettle, setSyncingSettle] = useState(false);
 	const [syncingStandings, setSyncingStandings] = useState(false);
 	const [standingsLeagueCode, setStandingsLeagueCode] = useState('EPL');
 	const [forceOddsUpdate, setForceOddsUpdate] = useState(false);
@@ -216,6 +222,7 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		() => allLeagues.filter((l) => SCHEDULE_LEAGUE_CODES.has(l.leagueCode)),
 		[allLeagues]
 	);
+	const settleLeagues = scheduleLeagues;
 	const standingsLeagues = useMemo(
 		() => allLeagues.filter((l) => STANDINGS_LEAGUE_CODES.has(l.leagueCode)),
 		[allLeagues]
@@ -252,6 +259,31 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		}
 		return scheduleSlotValues[0] ?? scheduleMatchday;
 	}, [scheduleMatchday, scheduleSlotValues]);
+
+	const effectiveSettleLeague = useMemo(() => {
+		if (settleLeagues.some((l) => l.leagueCode === settleLeagueCode)) {
+			return settleLeagueCode;
+		}
+		return settleLeagues[0]?.leagueCode ?? '';
+	}, [settleLeagues, settleLeagueCode]);
+
+	const settleLeague = useMemo(
+		() => settleLeagues.find((l) => l.leagueCode === effectiveSettleLeague),
+		[settleLeagues, effectiveSettleLeague]
+	);
+
+	const settleExternalSeason = useMemo(
+		() => resolveExternalSeasonForLeague(activeSeason, effectiveSettleLeague),
+		[activeSeason, effectiveSettleLeague]
+	);
+
+	const settleSlotValues = useMemo(() => settleSlots.map((s) => s.value), [settleSlots]);
+	const effectiveSettleMatchday = useMemo(() => {
+		if (settleSlotValues.includes(settleMatchday)) {
+			return settleMatchday;
+		}
+		return settleSlotValues[0] ?? settleMatchday;
+	}, [settleMatchday, settleSlotValues]);
 
 	const oddsLeagues = useMemo(() => {
 		const allowed = ODDS_PROVIDER_LEAGUE_CODES[oddsProvider] ?? new Set<string>();
@@ -328,6 +360,52 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 			cancelled = true;
 		};
 	}, [scheduleLeague?.id, scheduleExternalSeason, dispatch]);
+
+	useEffect(() => {
+		if (!settleLeague?.id) {
+			setSettleSlots([]);
+			return;
+		}
+		let cancelled = false;
+		setSettleMetaLoading(true);
+		void (async () => {
+			try {
+				const info = await getLeagueExternalCompetitionInfo(settleLeague.id, settleExternalSeason);
+				if (cancelled) {
+					return;
+				}
+				const slots =
+					info.matchdaySlots && info.matchdaySlots.length > 0
+						? externalSlotsToMatchdaySlots(info.matchdaySlots)
+						: Array.from({ length: Math.max(1, info.matchdayCount) }, (_, i) => ({
+								value: i + 1,
+								label: String(i + 1),
+								kind: 'REGULAR' as const,
+							}));
+				setSettleSlots(slots);
+				const current = slots.some((s) => s.value === info.currentMatchday)
+					? info.currentMatchday
+					: (slots[0]?.value ?? 1);
+				setSettleMatchday(current);
+			} catch (error) {
+				if (!cancelled) {
+					dispatch(
+						showErrorSnackbar({
+							message: error instanceof Error ? error.message : 'currentMatchdayUnresolved',
+						})
+					);
+					setSettleSlots([]);
+				}
+			} finally {
+				if (!cancelled) {
+					setSettleMetaLoading(false);
+				}
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [settleLeague?.id, settleExternalSeason, dispatch]);
 
 	useEffect(() => {
 		if (!forceOddsUpdate || !oddsLeague?.id) {
@@ -579,6 +657,38 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 			);
 		} finally {
 			setSyncingStandings(false);
+		}
+	};
+
+	const handleSettleMatchday = async (): Promise<void> => {
+		if (!activeSeason?.id || !effectiveSettleLeague || settleSlots.length === 0) {
+			return;
+		}
+		setSyncingSettle(true);
+		try {
+			const result = await settleMatchdayAndRecalculateStats({
+				seasonId: activeSeason.id,
+				leagueCode: effectiveSettleLeague,
+				matchday: effectiveSettleMatchday,
+				externalSeason: settleExternalSeason,
+			});
+			dispatch(
+				showSuccessSnackbar({
+					message: t('externalDataSettleMatchdaySuccess', {
+						matches: result.matchesSubmitted,
+						bets: result.betsProcessed,
+						stats: result.gameweekStatsRecalculated ? t('yes') : t('no'),
+					}),
+				})
+			);
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : 'externalDataSettleMatchdayFailed',
+				})
+			);
+		} finally {
+			setSyncingSettle(false);
 		}
 	};
 
@@ -885,6 +995,57 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 				disabled={syncingFullMatch || !fullMatchProvider || !fullMatchDate}
 				loading={syncingFullMatch}
 				buttonText={t('externalDataFullMatchSyncNow')}
+				sx={{ width: '100%', mb: 2.5, mr: 0 }}
+			/>
+
+			<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
+				{t('externalDataSettleMatchdayTitle')}
+			</Typography>
+			<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', mb: 1 }}>
+				{t('externalDataSettleMatchdayHint')}
+			</Typography>
+			{settleLeagues.length > 0 ? (
+				<Box
+					sx={{
+						mb: 1.5,
+						display: 'flex',
+						alignItems: 'center',
+						gap: 1,
+						minWidth: 0,
+					}}
+				>
+					<LeagueSelect
+						leagues={settleLeagues}
+						value={effectiveSettleLeague}
+						onChange={(e) => setSettleLeagueCode(String(e.target.value))}
+						withoutAll
+						compact
+					/>
+					{settleMetaLoading && settleSlots.length === 0 ? (
+						<CircularProgress size={22} sx={{ flexShrink: 0 }} />
+					) : settleSlots.length > 0 ? (
+						<MatchdayGridSelect
+							value={effectiveSettleMatchday}
+							matchdayCount={settleSlots.length || 1}
+							slots={settleSlots}
+							onChange={setSettleMatchday}
+							disabled={settleMetaLoading || syncingSettle}
+							aria-label={t('externalDataSettleMatchday')}
+						/>
+					) : null}
+				</Box>
+			) : null}
+			<CustomSuccessButton
+				onClick={() => void handleSettleMatchday()}
+				disabled={
+					syncingSettle ||
+					!activeSeason?.id ||
+					!effectiveSettleLeague ||
+					settleMetaLoading ||
+					settleSlots.length === 0
+				}
+				loading={syncingSettle}
+				buttonText={t('externalDataSettleMatchdayNow')}
 				sx={{ width: '100%', mb: 2.5, mr: 0 }}
 			/>
 
