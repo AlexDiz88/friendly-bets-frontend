@@ -962,7 +962,8 @@
 		"telegramBackupNotConfigured": "Бэкап в Telegram не настроен (токен бота или chat id)",
 		"dbBackupFailed": "Не удалось создать снимок базы",
 		"dbBackupTelegramSendFailed": "Не удалось отправить снимок в Telegram",
-		"dbBackupAlreadyRunning": "Снимок базы уже создаётся, повторите через минуту"
+		"dbBackupAlreadyRunning": "Снимок базы уже создаётся, повторите через минуту",
+		"externalDataFullMatchRerunFailed": "Не удалось сбросить/перезапустить FULL"
 	},
 	"oddsDemo": {
 		"menuLink": "Кэфы (демо)",
@@ -1776,5 +1777,14 @@
 		"GRAPHQL_NEEDS_QUERY": "Эндпоинт GraphQL с этого хоста доступен. 400 из‑за пустого GET — не Cloudflare. Нужен POST с query.",
 		"HTTP_BLOCKED": "Сайт ответил ошибкой HTTP. Возможно geo/bot block — смотри статус и сниппет.",
 		"NETWORK_ERROR": "Запрос не дошёл. Проверь URL и сеть сервера."
-	}
+	},
+	"externalDataFullMatchRerunTitle": "FULL_MATCH: сброс и повтор",
+	"externalDataFullMatchRerunHint": "Выберите лигу, тур и матчи. Стирает FULL-карточку, заново тянет FULL через primary и запускает auto-settle по отмеченным матчам.",
+	"externalDataFullMatchRerunNow": "Сбросить FULL и пересчитать выбранные",
+	"externalDataFullMatchRerunSuccess": "FULL rerun: успешно {{count}} матч(ей)",
+	"externalDataFullMatchRerunPartialSuccess": "FULL rerun: успели {{count}} до ошибки",
+	"externalDataFullMatchRerunMatchday": "Тур",
+	"externalDataFullMatchRerunMatches": "Матчи",
+	"externalDataFullMatchRerunMatchesEmpty": "Выберите матчи",
+	"externalDataFullMatchRerunMatchesSelected": "Выбрано: {{count}}"
 }

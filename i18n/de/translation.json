@@ -962,7 +962,8 @@
 		"telegramBackupNotConfigured": "Telegram-Backup ist nicht konfiguriert (Bot-Token oder Chat-ID)",
 		"dbBackupFailed": "Datenbank-Snapshot konnte nicht erstellt werden",
 		"dbBackupTelegramSendFailed": "Snapshot konnte nicht an Telegram gesendet werden",
-		"dbBackupAlreadyRunning": "Ein Datenbank-Snapshot läuft bereits, bitte in einer Minute erneut versuchen"
+		"dbBackupAlreadyRunning": "Ein Datenbank-Snapshot läuft bereits, bitte in einer Minute erneut versuchen",
+		"externalDataFullMatchRerunFailed": "FULL Reset/Rerun fehlgeschlagen"
 	},
 	"oddsDemo": {
 		"menuLink": "Quoten (Demo)",
@@ -1776,5 +1777,14 @@
 		"GRAPHQL_NEEDS_QUERY": "GraphQL-Endpunkt von diesem Host erreichbar. HTTP 400 kommt vom leeren GET, nicht von Cloudflare. POST mit Query nötig.",
 		"HTTP_BLOCKED": "HTTP-Fehler. Möglicherweise Geo/Bot-Block — Status und Snippet prüfen.",
 		"NETWORK_ERROR": "Request fehlgeschlagen. URL und Servernetz prüfen."
-	}
+	},
+	"externalDataFullMatchRerunTitle": "FULL_MATCH: Reset und Rerun",
+	"externalDataFullMatchRerunHint": "Liga, Spieltag und Matches wählen. Löscht die FULL-Karte, holt FULL erneut über primary und startet Auto-Settle für die ausgewählten Matches.",
+	"externalDataFullMatchRerunNow": "FULL zurücksetzen und Settle für Auswahl",
+	"externalDataFullMatchRerunSuccess": "FULL-Rerun: {{count}} Match(es) ok",
+	"externalDataFullMatchRerunPartialSuccess": "FULL-Rerun: {{count}} vor Fehler erfolgreich",
+	"externalDataFullMatchRerunMatchday": "Spieltag",
+	"externalDataFullMatchRerunMatches": "Matches",
+	"externalDataFullMatchRerunMatchesEmpty": "Matches auswählen",
+	"externalDataFullMatchRerunMatchesSelected": "Ausgewählt: {{count}}"
 }

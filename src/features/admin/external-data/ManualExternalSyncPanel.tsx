@@ -39,6 +39,7 @@ import type { ExternalMatch } from '../../match-results/types/ExternalMatch';
 import { matchSideToDisplayTeam } from '../../match-results/externalMatchDisplay';
 import {
 	fetchExternalDataLayerConfig,
+	rerunExternalFullMatch,
 	syncExternalFullMatch,
 	syncExternalLive,
 	syncExternalSchedule,
@@ -147,6 +148,13 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 	const [fullMatchDate, setFullMatchDate] = useState(todayUtcIsoDate);
 	const [fullMatchProvider, setFullMatchProvider] = useState('');
 	const [fullMatchProviders, setFullMatchProviders] = useState<string[]>([]);
+	const [rerunLeagueCode, setRerunLeagueCode] = useState('BL');
+	const [rerunMatchday, setRerunMatchday] = useState(1);
+	const [rerunSlots, setRerunSlots] = useState<MatchdaySlot[]>([]);
+	const [rerunMatches, setRerunMatches] = useState<ExternalMatch[]>([]);
+	const [rerunMatchIds, setRerunMatchIds] = useState<string[]>([]);
+	const [rerunMetaLoading, setRerunMetaLoading] = useState(false);
+	const [syncingFullMatchRerun, setSyncingFullMatchRerun] = useState(false);
 	const [settleLeagueCode, setSettleLeagueCode] = useState('BL');
 	const [settleMatchday, setSettleMatchday] = useState(1);
 	const [settleSlots, setSettleSlots] = useState<MatchdaySlot[]>([]);
@@ -285,6 +293,32 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		return settleSlotValues[0] ?? settleMatchday;
 	}, [settleMatchday, settleSlotValues]);
 
+	const rerunLeagues = scheduleLeagues;
+	const effectiveRerunLeague = useMemo(() => {
+		if (rerunLeagues.some((l) => l.leagueCode === rerunLeagueCode)) {
+			return rerunLeagueCode;
+		}
+		return rerunLeagues[0]?.leagueCode ?? '';
+	}, [rerunLeagues, rerunLeagueCode]);
+
+	const rerunLeague = useMemo(
+		() => rerunLeagues.find((l) => l.leagueCode === effectiveRerunLeague),
+		[rerunLeagues, effectiveRerunLeague]
+	);
+
+	const rerunExternalSeason = useMemo(
+		() => resolveExternalSeasonForLeague(activeSeason, effectiveRerunLeague),
+		[activeSeason, effectiveRerunLeague]
+	);
+
+	const rerunSlotValues = useMemo(() => rerunSlots.map((s) => s.value), [rerunSlots]);
+	const effectiveRerunMatchday = useMemo(() => {
+		if (rerunSlotValues.includes(rerunMatchday)) {
+			return rerunMatchday;
+		}
+		return rerunSlotValues[0] ?? rerunMatchday;
+	}, [rerunMatchday, rerunSlotValues]);
+
 	const oddsLeagues = useMemo(() => {
 		const allowed = ODDS_PROVIDER_LEAGUE_CODES[oddsProvider] ?? new Set<string>();
 		return allLeagues.filter((l) => allowed.has(l.leagueCode));
@@ -406,6 +440,103 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 			cancelled = true;
 		};
 	}, [settleLeague?.id, settleExternalSeason, dispatch]);
+
+	useEffect(() => {
+		if (!showPanel || !rerunLeague?.id) {
+			setRerunSlots([]);
+			setRerunMatches([]);
+			setRerunMatchIds([]);
+			return;
+		}
+		let cancelled = false;
+		setRerunMetaLoading(true);
+		void (async () => {
+			try {
+				const info = await getLeagueExternalCompetitionInfo(rerunLeague.id, rerunExternalSeason);
+				if (cancelled) {
+					return;
+				}
+				const slots =
+					info.matchdaySlots && info.matchdaySlots.length > 0
+						? externalSlotsToMatchdaySlots(info.matchdaySlots)
+						: Array.from({ length: Math.max(1, info.matchdayCount) }, (_, i) => ({
+								value: i + 1,
+								label: String(i + 1),
+								kind: 'REGULAR' as const,
+							}));
+				setRerunSlots(slots);
+				const current = slots.some((s) => s.value === info.currentMatchday)
+					? info.currentMatchday
+					: (slots[0]?.value ?? 1);
+				setRerunMatchday(current);
+				setRerunMatchIds([]);
+			} catch (error) {
+				if (!cancelled) {
+					dispatch(
+						showErrorSnackbar({
+							message: error instanceof Error ? error.message : 'currentMatchdayUnresolved',
+						})
+					);
+					setRerunSlots([]);
+					setRerunMatches([]);
+				}
+			} finally {
+				if (!cancelled) {
+					setRerunMetaLoading(false);
+				}
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [showPanel, rerunLeague?.id, rerunExternalSeason, dispatch]);
+
+	useEffect(() => {
+		if (!showPanel || !rerunLeague?.id || !effectiveRerunLeague || rerunSlots.length === 0) {
+			return;
+		}
+		let cancelled = false;
+		setRerunMetaLoading(true);
+		setRerunMatchIds([]);
+		void (async () => {
+			try {
+				const page = await getMatchdayFromCache(
+					effectiveRerunLeague,
+					effectiveRerunMatchday,
+					rerunExternalSeason,
+					rerunLeague.id
+				);
+				if (cancelled) {
+					return;
+				}
+				setRerunMatches(page.matches.filter((m) => Boolean(m.id)));
+			} catch (error) {
+				if (!cancelled) {
+					dispatch(
+						showErrorSnackbar({
+							message: error instanceof Error ? error.message : 'externalMatchLoadError',
+						})
+					);
+					setRerunMatches([]);
+				}
+			} finally {
+				if (!cancelled) {
+					setRerunMetaLoading(false);
+				}
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [
+		showPanel,
+		rerunLeague?.id,
+		effectiveRerunLeague,
+		effectiveRerunMatchday,
+		rerunExternalSeason,
+		rerunSlots.length,
+		dispatch,
+	]);
 
 	useEffect(() => {
 		if (!forceOddsUpdate || !oddsLeague?.id) {
@@ -632,6 +763,46 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 		} finally {
 			setSyncingFullMatch(false);
 		}
+	};
+
+	const handleFullMatchRerun = async (): Promise<void> => {
+		if (rerunMatchIds.length === 0) {
+			return;
+		}
+		setSyncingFullMatchRerun(true);
+		let ok = 0;
+		try {
+			for (const id of rerunMatchIds) {
+				await rerunExternalFullMatch(id);
+				ok += 1;
+			}
+			dispatch(
+				showSuccessSnackbar({
+					message: t('externalDataFullMatchRerunSuccess', { count: ok }),
+				})
+			);
+			setRerunMatchIds([]);
+		} catch (error) {
+			dispatch(
+				showErrorSnackbar({
+					message: error instanceof Error ? error.message : 'externalDataFullMatchRerunFailed',
+				})
+			);
+			if (ok > 0) {
+				dispatch(
+					showSuccessSnackbar({
+						message: t('externalDataFullMatchRerunPartialSuccess', { count: ok }),
+					})
+				);
+			}
+		} finally {
+			setSyncingFullMatchRerun(false);
+		}
+	};
+
+	const handleRerunMatchIdsChange = (event: SelectChangeEvent<string[]>): void => {
+		const value = event.target.value;
+		setRerunMatchIds(typeof value === 'string' ? value.split(',') : value);
 	};
 
 	const handleStandingsSync = async (): Promise<void> => {
@@ -995,6 +1166,116 @@ export default function ManualExternalSyncPanel(): JSX.Element {
 				disabled={syncingFullMatch || !fullMatchProvider || !fullMatchDate}
 				loading={syncingFullMatch}
 				buttonText={t('externalDataFullMatchSyncNow')}
+				sx={{ width: '100%', mb: 1.5, mr: 0 }}
+			/>
+
+			<Typography sx={{ fontWeight: 600, mb: 1, fontSize: '0.9rem' }}>
+				{t('externalDataFullMatchRerunTitle')}
+			</Typography>
+			<Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', mb: 1 }}>
+				{t('externalDataFullMatchRerunHint')}
+			</Typography>
+			{rerunLeagues.length > 0 ? (
+				<Box sx={{ mb: 1 }}>
+					<LeagueSelect
+						leagues={rerunLeagues}
+						value={effectiveRerunLeague}
+						onChange={(e) => {
+							setRerunLeagueCode(String(e.target.value));
+							setRerunMatchIds([]);
+						}}
+						withoutAll
+						fullLeagueNames
+					/>
+				</Box>
+			) : null}
+			{rerunMetaLoading && rerunSlots.length === 0 ? (
+				<Box sx={{ display: 'flex', justifyContent: 'center', py: 1, mb: 1 }}>
+					<CircularProgress size={22} />
+				</Box>
+			) : (
+				<>
+					<Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>
+						{t('externalDataFullMatchRerunMatchday')}
+					</Typography>
+					<Box sx={{ mb: 1 }}>
+						<MatchdayGridSelect
+							value={effectiveRerunMatchday}
+							matchdayCount={rerunSlots.length || 1}
+							slots={rerunSlots}
+							onChange={(md) => {
+								setRerunMatchday(md);
+								setRerunMatchIds([]);
+							}}
+							disabled={rerunMetaLoading || rerunSlots.length === 0}
+							aria-label={t('externalDataFullMatchRerunMatchday')}
+						/>
+					</Box>
+					<FormControl fullWidth size="small" disabled={rerunMetaLoading || rerunMatches.length === 0} sx={{ mb: 1 }}>
+						<InputLabel id="full-match-rerun-matches-label">{t('externalDataFullMatchRerunMatches')}</InputLabel>
+						<Select
+							labelId="full-match-rerun-matches-label"
+							multiple
+							value={rerunMatchIds}
+							onChange={handleRerunMatchIdsChange}
+							input={<OutlinedInput label={t('externalDataFullMatchRerunMatches')} />}
+							renderValue={(selected) =>
+								selected.length === 0
+									? t('externalDataFullMatchRerunMatchesEmpty')
+									: t('externalDataFullMatchRerunMatchesSelected', { count: selected.length })
+							}
+						>
+							{rerunMatches.map((match) => (
+								<MenuItem key={match.id} value={match.id!}>
+									<Checkbox size="small" checked={rerunMatchIds.includes(match.id!)} />
+									<MatchOptionLabel match={match} />
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+					{rerunMatchIds.length > 0 ? (
+						<Box
+							component="ul"
+							sx={{
+								listStyle: 'none',
+								m: 0,
+								mb: 1.5,
+								p: 0,
+								display: 'flex',
+								flexDirection: 'column',
+								gap: 0.75,
+							}}
+						>
+							{rerunMatches
+								.filter((match) => match.id != null && rerunMatchIds.includes(match.id))
+								.map((match) => (
+									<Box
+										component="li"
+										key={match.id}
+										sx={{
+											display: 'flex',
+											alignItems: 'center',
+											minWidth: 0,
+											px: 0.5,
+										}}
+									>
+										<MatchOptionLabel match={match} />
+									</Box>
+								))}
+						</Box>
+					) : null}
+				</>
+			)}
+			<CustomSuccessButton
+				onClick={() => void handleFullMatchRerun()}
+				disabled={
+					syncingFullMatchRerun ||
+					rerunMatchIds.length === 0 ||
+					rerunMetaLoading ||
+					!rerunLeague?.id
+				}
+				loading={syncingFullMatchRerun}
+				buttonText={t('externalDataFullMatchRerunNow')}
 				sx={{ width: '100%', mb: 2.5, mr: 0 }}
 			/>
 

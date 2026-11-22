@@ -98,6 +98,18 @@ export async function syncExternalFullMatch(params: {
 	return result.json();
 }
 
+/** Wipe FULL card and re-run FULL + auto-settle for one match_schedules id. */
+export async function rerunExternalFullMatch(matchScheduleId: string): Promise<void> {
+	const id = matchScheduleId.trim();
+	const result = await apiFetch(apiUrl(`/api/admin/external-data/full-match/${encodeURIComponent(id)}/rerun`), {
+		method: 'POST',
+	});
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+}
+
 export type ExternalTeamNameChip = {
 	externalName: string;
 	provider: string;
