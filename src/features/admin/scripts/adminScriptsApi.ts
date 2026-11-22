@@ -19,6 +19,14 @@ export type MatchScheduleExternalIdsMigrationResult = {
 	message?: string;
 };
 
+export type PlayerStatsDedupResult = {
+	groupsScanned?: number;
+	groupsWithDuplicates?: number;
+	documentsRemoved?: number;
+	uniqueIndexEnsured?: boolean;
+	message?: string;
+};
+
 export async function migrateTimestampsToUtcInstant(): Promise<UtcTimestampsMigrationResult> {
 	const result = await apiFetch(apiUrl('/api/admin/scripts/migrate-timestamps-to-utc-instant'), {
 		method: 'POST',
@@ -32,6 +40,17 @@ export async function migrateTimestampsToUtcInstant(): Promise<UtcTimestampsMigr
 
 export async function unsetMatchScheduleExternalIds(): Promise<MatchScheduleExternalIdsMigrationResult> {
 	const result = await apiFetch(apiUrl('/api/admin/scripts/unset-match-schedule-external-ids'), {
+		method: 'POST',
+	});
+	if (result.status >= 400) {
+		const { message }: { message: string } = await result.json();
+		throw new Error(message);
+	}
+	return result.json();
+}
+
+export async function dedupePlayerStats(): Promise<PlayerStatsDedupResult> {
+	const result = await apiFetch(apiUrl('/api/admin/scripts/dedupe-player-stats'), {
 		method: 'POST',
 	});
 	if (result.status >= 400) {

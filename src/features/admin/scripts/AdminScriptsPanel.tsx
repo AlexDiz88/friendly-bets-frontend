@@ -20,15 +20,18 @@ import CustomSuccessButton from '../../../components/custom/btn/CustomSuccessBut
 import { showErrorSnackbar, showSuccessSnackbar } from '../../../components/custom/snackbar/snackbarSlice';
 import { ADMIN_FORM_FIELD_SX, ADMIN_SELECT_SX } from '../adminPanelStyles';
 import {
+	dedupePlayerStats,
 	migrateTimestampsToUtcInstant,
 	unsetMatchScheduleExternalIds,
 	type MatchScheduleExternalIdsMigrationResult,
+	type PlayerStatsDedupResult,
 	type UtcTimestampsMigrationResult,
 } from './adminScriptsApi';
 
 type AdminScriptId =
 	| 'migrate-timestamps-to-utc-instant'
-	| 'unset-match-schedule-external-ids';
+	| 'unset-match-schedule-external-ids'
+	| 'dedupe-player-stats';
 
 type AdminScriptDef = {
 	id: AdminScriptId;
@@ -63,6 +66,19 @@ const ADMIN_SCRIPTS: AdminScriptDef[] = [
 			return t('matchScheduleExternalIdsMigrationSuccess', {
 				matched: result.matched ?? 0,
 				modified: result.modified ?? 0,
+			});
+		},
+	},
+	{
+		id: 'dedupe-player-stats',
+		titleKey: 'adminScriptDedupePlayerStats',
+		hintKey: 'runScriptDedupePlayerStatsHint',
+		run: async () => {
+			const result: PlayerStatsDedupResult = await dedupePlayerStats();
+			return t('playerStatsDedupSuccess', {
+				groups: result.groupsWithDuplicates ?? 0,
+				removed: result.documentsRemoved ?? 0,
+				index: result.uniqueIndexEnsured ? t('yes') : t('no'),
 			});
 		},
 	},
